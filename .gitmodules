@@ -1,0 +1,3 @@
+[submodule "back-end/odoo"]
+	path = back-end/odoo
+	url = https://github.com/odoo/odoo.git
