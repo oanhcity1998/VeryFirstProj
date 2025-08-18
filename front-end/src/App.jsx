@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./layouts/mainLayout";
 import Home from "./views/Home";
 import Profile from "./views/Profile";
+import CustomerList from "./views/CustomerList";
+import CustomerDetail from "./views/CustomerDetail"; 
 
 export default function App() {
   return (
@@ -11,6 +13,8 @@ export default function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/customerlist" element={<CustomerList/>} />
+           <Route path="customerlist/:id" element={<CustomerDetail />} /> 
         </Route>
       </Routes>
     </BrowserRouter>

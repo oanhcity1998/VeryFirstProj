@@ -1,0 +1,29 @@
+.customer-detail-card {
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 100px); /* keep inside viewport */
+  overflow: hidden; /* prevent card itself from overflowing */
+}
+
+.customer-detail-card .ant-card-body {
+  flex: 1;
+  overflow-y: auto;  /* ✅ scroll vertical if content too tall */
+  overflow-x: hidden; /* prevent horizontal overflow */
+  padding-right: 8px; /* space for scrollbar */
+}
+
+.customer-detail-extra {
+  display: flex;
+  gap: 10px;
+}
+
+.customer-info-form {
+  padding-right: 12px;
+  min-width: 300px;
+}
+
+.customer-extra-card {
+  border-radius: 8px;
+  min-width: 300px;
+}

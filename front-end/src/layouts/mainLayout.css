@@ -1,0 +1,105 @@
+/* mainLayout.css */
+
+.main-layout {
+  height: 100vh;
+}
+
+.main-header {
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  gap: 20px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.trigger-btn {
+  font-size: 16px;
+  width: 40px;
+  height: 40px;
+}
+
+.header-search {
+  flex: 1;
+  max-width: 700px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.main-content {
+  margin: 20px;
+  background: #fff;
+  padding: 20px;
+}
+
+/* mainLayout.css */
+
+.main-layout {
+  height: 100vh;
+}
+
+.main-header {
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  gap: 20px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.trigger-btn {
+  font-size: 16px;
+  width: 40px;
+  height: 40px;
+}
+
+.header-search {
+  flex: 1;
+  max-width: 700px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.header-actions .bell-icon {
+  font-size: 22px;   /* ✅ bigger bell */
+}
+
+.header-actions .ant-avatar {
+  background-color: #87d068;
+}
+
+.header-actions .ant-avatar {
+  background-color: #87d068; /* ✅ default avatar color */
+}
+
+.main-content {
+  flex: 1;
+  overflow: hidden;   /* 👈 this will HIDE anything that goes outside */
+  position: relative; /* ensures children respect boundaries */
+}
+

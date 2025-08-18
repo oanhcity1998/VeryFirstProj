@@ -1,57 +1,74 @@
-// src/layout/MainLayout.jsx
-import { useState } from "react";
-import { Layout, Menu, Button } from "antd";
+import React, { useState } from "react";
+import { Layout, Button, Input, Avatar, Badge, Drawer, Form, Select } from "antd";
 import {
+  SettingOutlined,
+  FilterOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
-  HomeOutlined,
-  UserOutlined,
+  BellOutlined,
 } from "@ant-design/icons";
-import { Link, Outlet } from "react-router-dom";
+import SidebarMenu from "../components/SidebarMenu";
+import { Outlet } from "react-router-dom";
+import "./mainLayout.css";
+import FilterDrawer from "../components/FilterDrawer";
 
 const { Header, Sider, Content } = Layout;
+const { Search } = Input;
+const { Option } = Select;
 
-export default function MainLayout() {
+const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      {/* Sidebar */}
-      <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div
-          style={{
-            height: 32,
-            margin: 16,
-            background: "rgba(255, 255, 255, 0.2)",
-          }}
-        />
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
-          <Menu.Item key="1" icon={<HomeOutlined />}>
-            <Link to="/">Home</Link>
-          </Menu.Item>
-          <Menu.Item key="2" icon={<UserOutlined />}>
-            <Link to="/profile">Profile</Link>
-          </Menu.Item>
-        </Menu>
+    <Layout className="main-layout">
+      <Sider theme="dark" collapsible collapsed={collapsed} trigger={null} width={200}>
+        <SidebarMenu collapsed={collapsed} />
       </Sider>
 
-      {/* Main content area */}
       <Layout>
-        {/* Header with trigger button */}
-        <Header style={{ padding: 0, background: "#fff" }}>
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{ fontSize: "16px", width: 64, height: 64 }}
-          />
+        <Header className="main-header">
+          {/* Left: trigger + search */}
+          <div className="header-left">
+            <Button
+              type="text"
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={() => setCollapsed(!collapsed)}
+              className="trigger-btn"
+            />
+            <Search placeholder="Search..." allowClear className="header-search" />
+          </div>
+
+          {/* Right: actions */}
+          <div className="header-actions">
+            {/* ✅ Filter button opens drawer */}
+            <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>
+              Bộ lọc
+            </Button>
+
+            <Button icon={<SettingOutlined />}>Cài đặt</Button>
+
+            <Badge count={3} offset={[0, 5]}>
+              <BellOutlined className="bell-icon" />
+            </Badge>
+
+            <Avatar>U</Avatar>
+          </div>
         </Header>
 
-        {/* Page content */}
-        <Content style={{ margin: "24px 16px", padding: 24, background: "#fff" }}>
-          <Outlet /> {/* Where each page (view) will load */}
+        <Content className="main-content">
+          <Outlet />
         </Content>
       </Layout>
+
+      {/* ✅ Drawer for filters */}
+       <FilterDrawer
+        open={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        onConfirm={(values) => console.log("Apply filter:", values)}
+      />
     </Layout>
   );
-}
+};
+
+export default MainLayout;
