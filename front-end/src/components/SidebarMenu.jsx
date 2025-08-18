@@ -22,7 +22,7 @@ const SidebarMenu = ({ collapsed }) => {
           Home
         </Menu.Item>
         <Menu.Item key="2" icon={<UserOutlined />}>
-          Video
+          <Link to="/customerlist">Customer</Link> 
         </Menu.Item>
         <Menu.Item key="3" icon={<UploadOutlined />}>
           Upload
