@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   Card,
   Input,
@@ -8,14 +8,18 @@ import {
   Row,
   Col,
   Avatar,
+  Breadcrumb,
 } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, UserOutlined } from "@ant-design/icons";
 import "./CustomerDetail.css";
 
 const { TextArea } = Input;
 
+
 export default function CustomerDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
 
   // Mock data (replace with API)
   const mockCustomer = {
@@ -34,6 +38,13 @@ export default function CustomerDetail() {
     taxStatus: "Đã quyết toán",
     notes: "Khách hàng tiềm năng",
   };
+
+   const breadcrumbItems = [
+    { title: <Link to="/customerlist">Danh sách khách hàng</Link> },
+    { title: "Thông tin chi tiết" },
+    // Optional: show current customer name
+    { title: mockCustomer.name },
+  ];
 
   const tabs = [
     {
@@ -107,7 +118,16 @@ export default function CustomerDetail() {
 
   return (
     <Card
-      title="Danh sách khách hàng / Thông tin chi tiết"
+      title={
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <Button
+            type="text"
+            icon={<ArrowLeftOutlined />}
+            onClick={() => navigate(-1)} // 👈 go back
+          />
+          <Breadcrumb items={breadcrumbItems} separator=">" />
+        </div>
+      }
       className="customer-detail-card"
       extra={
         <div className="customer-detail-extra">
@@ -116,14 +136,7 @@ export default function CustomerDetail() {
         </div>
       }
     >
-    <Tabs
-        type="card"
-        defaultActiveKey="1"
-        items={tabs}
-        tabBarGutter={32}   // spacing between tabs
-        tabPosition="top"   // keep them on top
-    />
-
+      <Tabs type="card" defaultActiveKey="1" items={tabs} tabBarGutter={32} />
     </Card>
   );
 }
