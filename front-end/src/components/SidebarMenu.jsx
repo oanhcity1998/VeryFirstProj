@@ -1,7 +1,8 @@
 import React from "react";
 import { Menu } from "antd";
 import { HomeOutlined, UserOutlined, UploadOutlined } from "@ant-design/icons";
-import "./SidebarMenu.css"; // ✅ import CSS file
+import "./SidebarMenu.css"; // 
+import { Link } from "react-router-dom";  
 
 const SidebarMenu = ({ collapsed }) => {
   return (
