@@ -14,6 +14,7 @@ import {
   message,
 } from "antd";
 import { ArrowLeftOutlined, UserOutlined } from "@ant-design/icons";
+import "./CustomerDetail.css";   // ✅ make sure this line stays
 
 const { TextArea } = Input;
 
@@ -21,14 +22,10 @@ export default function CustomerDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // edit mode
   const [isEditing, setIsEditing] = useState(false);
-
-  // delete modal state
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  // fake customer data
   const mockCustomer = {
     id,
     name: "Công ty ABC",
@@ -51,7 +48,6 @@ export default function CustomerDetail() {
 
   const toggleEdit = () => {
     if (isEditing) {
-      // 👉 save logic here (API call)
       message.success("Thông tin đã được lưu!");
     }
     setIsEditing(!isEditing);
@@ -60,7 +56,6 @@ export default function CustomerDetail() {
   const handleDelete = async () => {
     try {
       setDeleting(true);
-      // 👉 call API here: await api.delete(`/customers/${mockCustomer.id}`);
       message.success("Đã xóa khách hàng");
       navigate("/customerlist");
     } finally {
@@ -84,7 +79,7 @@ export default function CustomerDetail() {
           {/* Left column */}
           <Col span={12}>
             <Card size="small" title="Thông tin khách hàng">
-              <Form layout="vertical">
+              <Form layout="vertical" className="customer-info-form">
                 <Form.Item label="Tên khách hàng">
                   <Input value={mockCustomer.name} readOnly={!isEditing} />
                 </Form.Item>
@@ -123,7 +118,8 @@ export default function CustomerDetail() {
           <Col span={12}>
             <Card
               size="small"
-              title="Thông tin bổ sung"
+              title="Thông tin chung"
+              className="customer-extra-card"
             >
               <Form layout="vertical">
                 <Form.Item label="Số lượng chi nhánh">
@@ -158,6 +154,7 @@ export default function CustomerDetail() {
 
   return (
     <Card
+      className="customer-detail-card"
       title={
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <Button
@@ -169,10 +166,8 @@ export default function CustomerDetail() {
         </div>
       }
       extra={
-        <div style={{ display: "flex", gap: "8px" }}>
-          <Button onClick={toggleEdit}>
-            {isEditing ? "Lưu" : "Chỉnh sửa"}
-          </Button>
+        <div className="customer-detail-extra">
+          <Button onClick={toggleEdit}>{isEditing ? "Lưu" : "Chỉnh sửa"}</Button>
           <Button danger onClick={() => setDeleteOpen(true)}>Xóa</Button>
         </div>
       }
