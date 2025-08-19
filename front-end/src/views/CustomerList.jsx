@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Space } from "antd";
+import { Button, Space, Modal, message  } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import TableCustomer from "../components/TableCustomer";
 import CreateCustomerForm from "../components/CreateCustomerForm";
@@ -24,18 +24,55 @@ const CustomerList = () => {
     },
   ]);
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const [deleteOpen, setDeleteOpen] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+
+    // handle delete
+    const handleDelete = async () => {
+    try {
+        setDeleting(true);
+        // TODO: replace with your real API delete call
+        // await api.delete(`/customers/${customer.id}`);
+
+        message.success("Đã xóa khách hàng");
+        navigate("/customerlist");
+    } catch (err) {
+        message.error("Không thể xóa khách hàng");
+    } finally {
+        setDeleting(false);
+        setDeleteOpen(false);
+    }
+    };
 
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
         <h2>Danh sách khách hàng</h2>
         <Space>
-          <Button danger icon={<DeleteOutlined />}>Xoá</Button>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsModalOpen(true)}>
-            Tạo
-          </Button>
+            {/* Delete button  */}
+            <Button danger onClick={() => setDeleteOpen(true)}>
+                Xóa
+            </Button>
+            <Modal
+                open={deleteOpen}
+                title="Xác nhận xóa"
+                onOk={handleDelete}
+                onCancel={() => setDeleteOpen(false)}
+                okText="Xóa"
+                cancelText="Hủy"
+                okButtonProps={{ danger: true, loading: deleting }}
+                centered
+                >
+                <p>Bạn có chắc muốn xóa khách hàng này? Hành động này không thể hoàn tác.</p>
+            </Modal>
+
+            {/* Create button  */}
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsModalOpen(true)}>
+                Tạo
+            </Button>
         </Space>
       </div>
 

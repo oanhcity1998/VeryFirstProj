@@ -8,15 +8,16 @@ import {
   Form,
   Row,
   Col,
-  Avatar,
   Breadcrumb,
   Modal,
+  Select,
   message,
 } from "antd";
-import { ArrowLeftOutlined, UserOutlined } from "@ant-design/icons";
-import "./CustomerDetail.css";   // ✅ make sure this line stays
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import "./CustomerDetail.css";
 
 const { TextArea } = Input;
+const { Option } = Select;
 
 export default function CustomerDetail() {
   const { id } = useParams();
@@ -26,7 +27,8 @@ export default function CustomerDetail() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  const mockCustomer = {
+  // move mock data into state
+  const [customer, setCustomer] = useState({
     id,
     name: "Công ty ABC",
     contractName: "ABC Corp",
@@ -44,7 +46,7 @@ export default function CustomerDetail() {
     documentsPerMonth: 30,
     taxStatus: "Đã quyết toán",
     notes: "Khách hàng tiềm năng",
-  };
+  });
 
   const toggleEdit = () => {
     if (isEditing) {
@@ -67,7 +69,7 @@ export default function CustomerDetail() {
   const breadcrumbItems = [
     { title: <Link to="/customerlist">Danh sách khách hàng</Link> },
     { title: "Thông tin chi tiết" },
-    { title: mockCustomer.name },
+    { title: customer.name },
   ];
 
   const tabs = [
@@ -81,34 +83,92 @@ export default function CustomerDetail() {
             <Card size="small" title="Thông tin khách hàng">
               <Form layout="vertical" className="customer-info-form">
                 <Form.Item label="Tên khách hàng">
-                  <Input value={mockCustomer.name} readOnly={!isEditing} />
+                  <Input
+                    value={customer.name}
+                    readOnly={!isEditing}
+                    onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
+                  />
                 </Form.Item>
                 <Form.Item label="Tên DN ghi trên hợp đồng">
-                  <Input value={mockCustomer.contractName} readOnly={!isEditing} />
+                  <Input
+                    value={customer.contractName}
+                    readOnly={!isEditing}
+                    onChange={(e) =>
+                      setCustomer({ ...customer, contractName: e.target.value })
+                    }
+                  />
                 </Form.Item>
                 <Form.Item label="Tên DN bằng tiếng Anh">
-                  <Input value={mockCustomer.englishName} readOnly={!isEditing} />
+                  <Input
+                    value={customer.englishName}
+                    readOnly={!isEditing}
+                    onChange={(e) =>
+                      setCustomer({ ...customer, englishName: e.target.value })
+                    }
+                  />
                 </Form.Item>
                 <Form.Item label="Mã số thuế">
-                  <Input value={mockCustomer.taxCode} readOnly={!isEditing} />
+                  <Input
+                    value={customer.taxCode}
+                    readOnly={!isEditing}
+                    onChange={(e) =>
+                      setCustomer({ ...customer, taxCode: e.target.value })
+                    }
+                  />
                 </Form.Item>
                 <Form.Item label="Số điện thoại">
-                  <Input value={mockCustomer.phone} readOnly={!isEditing} />
+                  <Input
+                    value={customer.phone}
+                    readOnly={!isEditing}
+                    onChange={(e) =>
+                      setCustomer({ ...customer, phone: e.target.value })
+                    }
+                  />
                 </Form.Item>
                 <Form.Item label="Email">
-                  <Input value={mockCustomer.email} readOnly={!isEditing} />
+                  <Input
+                    value={customer.email}
+                    readOnly={!isEditing}
+                    onChange={(e) =>
+                      setCustomer({ ...customer, email: e.target.value })
+                    }
+                  />
                 </Form.Item>
                 <Form.Item label="Số fax">
-                  <Input value={mockCustomer.fax} readOnly={!isEditing} />
+                  <Input
+                    value={customer.fax}
+                    readOnly={!isEditing}
+                    onChange={(e) =>
+                      setCustomer({ ...customer, fax: e.target.value })
+                    }
+                  />
                 </Form.Item>
                 <Form.Item label="Địa chỉ">
-                  <Input value={mockCustomer.address} readOnly={!isEditing} />
+                  <Input
+                    value={customer.address}
+                    readOnly={!isEditing}
+                    onChange={(e) =>
+                      setCustomer({ ...customer, address: e.target.value })
+                    }
+                  />
                 </Form.Item>
                 <Form.Item label="Ngành">
-                  <Input value={mockCustomer.industry} readOnly={!isEditing} />
+                  <Input
+                    value={customer.industry}
+                    readOnly={!isEditing}
+                    onChange={(e) =>
+                      setCustomer({ ...customer, industry: e.target.value })
+                    }
+                  />
                 </Form.Item>
                 <Form.Item label="Thị trường chính">
-                  <Input value={mockCustomer.market} readOnly={!isEditing} />
+                  <Input
+                    value={customer.market}
+                    readOnly={!isEditing}
+                    onChange={(e) =>
+                      setCustomer({ ...customer, market: e.target.value })
+                    }
+                  />
                 </Form.Item>
               </Form>
             </Card>
@@ -116,29 +176,67 @@ export default function CustomerDetail() {
 
           {/* Right column */}
           <Col span={12}>
-            <Card
-              size="small"
-              title="Thông tin chung"
-              className="customer-extra-card"
-            >
+            <Card size="small" title="Thông tin chung" className="customer-extra-card">
               <Form layout="vertical">
                 <Form.Item label="Số lượng chi nhánh">
-                  <Input value={mockCustomer.branches} readOnly={!isEditing} />
+                  <Input
+                    value={customer.branches}
+                    readOnly={!isEditing}
+                    onChange={(e) =>
+                      setCustomer({ ...customer, branches: e.target.value })
+                    }
+                  />
                 </Form.Item>
                 <Form.Item label="Số nhân sự">
-                  <Input value={mockCustomer.employees} readOnly={!isEditing} />
+                  <Input
+                    value={customer.employees}
+                    readOnly={!isEditing}
+                    onChange={(e) =>
+                      setCustomer({ ...customer, employees: e.target.value })
+                    }
+                  />
                 </Form.Item>
                 <Form.Item label="Doanh thu TB/năm">
-                  <Input value={mockCustomer.revenue} readOnly={!isEditing} />
+                  <Input
+                    value={customer.revenue}
+                    readOnly={!isEditing}
+                    onChange={(e) =>
+                      setCustomer({ ...customer, revenue: e.target.value })
+                    }
+                  />
                 </Form.Item>
                 <Form.Item label="Văn bản TB/tháng">
-                  <Input value={mockCustomer.documentsPerMonth} readOnly={!isEditing} />
+                  <Input
+                    value={customer.documentsPerMonth}
+                    readOnly={!isEditing}
+                    onChange={(e) =>
+                      setCustomer({
+                        ...customer,
+                        documentsPerMonth: e.target.value,
+                      })
+                    }
+                  />
                 </Form.Item>
                 <Form.Item label="Trạng thái quyết toán thuế">
-                  <Input value={mockCustomer.taxStatus} readOnly={!isEditing} />
+                    <Select
+                        value={customer.taxStatus}
+                        disabled={!isEditing}
+                        onChange={(value) => setCustomer({ ...customer, taxStatus: value })}
+                    >
+                        <Option value="Đã quyết toán">Đã quyết toán</Option>
+                        <Option value="Chưa quyết toán">Chưa quyết toán</Option>
+                        <Option value="Đang xử lý">Đang xử lý</Option>
+                    </Select>
                 </Form.Item>
                 <Form.Item label="Ghi chú">
-                  <TextArea rows={3} value={mockCustomer.notes} readOnly={!isEditing} />
+                  <TextArea
+                    rows={3}
+                    value={customer.notes}
+                    readOnly={!isEditing}
+                    onChange={(e) =>
+                      setCustomer({ ...customer, notes: e.target.value })
+                    }
+                  />
                 </Form.Item>
               </Form>
             </Card>
@@ -173,7 +271,6 @@ export default function CustomerDetail() {
       }
     >
       <Tabs type="card" defaultActiveKey="1" items={tabs} />
-      {/* Delete confirmation modal */}
       <Modal
         open={deleteOpen}
         title="Xác nhận xóa"
