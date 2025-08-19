@@ -123,8 +123,7 @@ export default function CustomerDetail() {
           <Col span={12}>
             <Card
               size="small"
-              title="Người phụ trách"
-              extra={<Avatar icon={<UserOutlined />} />}
+              title="Thông tin bổ sung"
             >
               <Form layout="vertical">
                 <Form.Item label="Số lượng chi nhánh">
