@@ -11,7 +11,16 @@
   overflow-y: auto;  /* ✅ scroll vertical if content too tall */
   overflow-x: hidden; /* prevent horizontal overflow */
   padding-right: 8px; /* space for scrollbar */
+  padding-top:0!important;
 }
+
+.customer-detail-card .ant-tabs-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #fff;
+}
+
 
 .customer-detail-extra {
   display: flex;
@@ -27,3 +36,5 @@
   border-radius: 8px;
   min-width: 300px;
 }
+
+

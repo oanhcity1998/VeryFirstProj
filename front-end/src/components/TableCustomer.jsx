@@ -85,11 +85,11 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
 
   return (
     <Table
-      columns={columns}
-      dataSource={data}
-      pagination={false}
-      rowKey="key"
-      scroll={{ x: 2500 }} // ✅ enable horizontal scroll
+        columns={columns}
+        dataSource={data}
+        pagination={false}
+        rowKey="key"
+        scroll={{ x: 2500, y: 600 }} // ✅ enable horizontal scroll
     />
   );
 };
