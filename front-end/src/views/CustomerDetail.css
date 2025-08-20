@@ -14,6 +14,10 @@
   padding-top:0!important;
 }
 
+.ant-form{
+    padding-top: 24px;
+}
+
 .customer-detail-card .ant-tabs-nav {
   position: sticky;
   top: 0;

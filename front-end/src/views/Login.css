@@ -1,0 +1,95 @@
+/* Login.css */
+
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #f8fafc;
+  padding: 1rem; /* padding so card isn’t stuck on screen edges */
+}
+
+.login-card {
+  width: 420px;
+  max-width: 100%;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  background: #fff;
+}
+
+.login-logo img {
+  max-height: 60px;
+  margin-bottom: 1.5rem;
+}
+
+.login-title {
+  margin-bottom: 1.5rem !important;
+}
+
+.ant-form-item {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.login-options .ant-checkbox-wrapper {
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.login-options a {
+  color: #1677ff;
+  text-decoration: none;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.login-button {
+  font-weight: 600;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.signup-text {
+  display: block;
+  margin-top: 1.2rem;
+  font-size: 0.9rem;
+}
+
+.signup-text a {
+  color: #1677ff;
+  text-decoration: none;
+}
+
+/* 🔹 Responsive design */
+@media (max-width: 768px) {
+  .login-card {
+    width: 90%;
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  .login-options {
+    font-size: 13px;
+  }
+
+  .login-options a {
+    font-size: 13px;
+  }
+}
