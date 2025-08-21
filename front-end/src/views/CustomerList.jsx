@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Button, Space, Modal, message  } from "antd";
-import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Button, Space, Modal, message, Input, Popover,Upload  } from "antd";
+import { PlusOutlined, DeleteOutlined, SettingOutlined, FilterOutlined, InboxOutlined, } from "@ant-design/icons";
 import TableCustomer from "../components/TableCustomer";
 import CreateCustomerForm from "../components/CreateCustomerForm";
+import FilterDrawer from "../components/FilterDrawer";
+import "./CustomerList.css"
 
 const CustomerList = () => {
   const [data, setData] = useState([
@@ -23,12 +25,16 @@ const CustomerList = () => {
       address: "456 Đường B",
     },
   ]);
+    const [filterOpen, setFilterOpen] = useState(false);
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [deleting, setDeleting] = useState(false);
+
+    const [importOpen, setImportOpen] = useState(false);
+    const [importing, setImporting] = useState(false);
 
     // handle delete
     const handleDelete = async () => {
@@ -47,15 +53,80 @@ const CustomerList = () => {
     }
     };
 
+    // upload handler
+      const handleUpload = async (file) => {
+        setImporting(true);
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 1500)); // fake API call
+          message.success(`${file.name} đã được import thành công`);
+          setImportOpen(false);
+        } catch (err) {
+          message.error("Import thất bại");
+        } finally {
+          setImporting(false);
+        }
+        return false;
+      };
+
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+    <div className="customer-list-header">
         <h2>Danh sách khách hàng</h2>
-        <Space>
-            {/* Delete button  */}
-            <Button danger onClick={() => setDeleteOpen(true)}>
-                Xóa
+
+        <div className="customer-list-actions">
+            {/* Search bar */}
+            <Input.Search
+            placeholder="Tìm kiếm khách hàng..."
+            allowClear
+            className="customer-list-search"
+            />
+
+            {/* Bộ lọc */}
+            <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>
+                Bộ lọc
             </Button>
+
+            {/* Cài đặt */}
+            <Popover
+            content={
+                <Space direction="vertical">
+                    <Button type="text" onClick={() => setImportOpen(true)}>  {/* must have onClick to trigger */}
+                        Import
+                    </Button>
+                    <Button type="text" onClick={() => console.log("Export clicked")}>
+                        Export
+                    </Button>
+                </Space>
+            }
+            trigger="click"
+            placement="bottom"
+            >
+            <Button icon={<SettingOutlined />}>Cài đặt</Button>
+            </Popover>
+            <Modal
+              open={importOpen}
+              title="Import dữ liệu"
+              onCancel={() => setImportOpen(false)}
+              footer={null}
+              centered
+            >
+              <Upload.Dragger
+                name="file"
+                multiple={false}
+                beforeUpload={handleUpload}
+                showUploadList={false}
+                disabled={importing}
+              >
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">Click hoặc kéo thả file vào đây để Import</p>
+                <p className="ant-upload-hint">Chỉ chấp nhận 1 file mỗi lần</p>
+              </Upload.Dragger>
+            </Modal>
+
+            {/* Delete */}
+            <Button danger onClick={() => setDeleteOpen(true)}>Xóa</Button>
             <Modal
                 open={deleteOpen}
                 title="Xác nhận xóa"
@@ -69,12 +140,18 @@ const CustomerList = () => {
                 <p>Bạn có chắc muốn xóa khách hàng này? Hành động này không thể hoàn tác.</p>
             </Modal>
 
-            {/* Create button  */}
-            <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsModalOpen(true)}>
-                Tạo
+            {/* Create */}
+            <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setIsModalOpen(true)}
+            >
+            Tạo
             </Button>
-        </Space>
-      </div>
+        </div>
+    </div>
+
+
 
       <TableCustomer
         data={data}
@@ -86,6 +163,13 @@ const CustomerList = () => {
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         onOk={() => setIsModalOpen(false)}
+      />
+
+      {/* Drawer */}
+      <FilterDrawer
+        open={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        onConfirm={(values) => console.log("Apply filter:", values)}
       />
     </>
   );

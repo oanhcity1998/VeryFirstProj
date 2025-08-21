@@ -1,5 +1,6 @@
 import { Table, Checkbox } from "antd";
 import { Link } from "react-router-dom";
+import "./TableCustomer.css"
 
 const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) => {
   const allKeys = data.map((item) => item.key);
@@ -87,9 +88,9 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
     <Table
         columns={columns}
         dataSource={data}
-        pagination={false}
+        pagination={{position: ['bottomCenter'],}} // center positioning
         rowKey="key"
-        scroll={{ x: 2500, y: 600 }} // ✅ enable horizontal scroll
+        scroll={{ x: 2500, y: 600 }} // enable horizontal scroll
     />
   );
 };
