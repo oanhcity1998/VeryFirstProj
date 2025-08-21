@@ -1,5 +1,5 @@
 import { Menu } from "antd";
-import { HomeOutlined, UserOutlined, UploadOutlined } from "@ant-design/icons";
+import { HomeOutlined, UserOutlined, UploadOutlined, InboxOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import "./SidebarMenu.css";
 
@@ -8,17 +8,17 @@ const SidebarMenu = ({ collapsed }) => {
     {
       key: "1",
       icon: <HomeOutlined />,
-      label: <Link to="/">Home</Link>,
+      label: <Link to="/">Trang chủ</Link>,
     },
     {
       key: "2",
       icon: <UserOutlined />,
-      label: <Link to="/customerlist">Customer</Link>,
+      label: <Link to="/customerlist">Khách hàng</Link>,
     },
     {
       key: "3",
-      icon: <UploadOutlined />,
-      label: "Upload",
+      icon: <InboxOutlined />,
+      label: <Link to="/productlist">Sản phẩm</Link>,
     },
   ];
 
