@@ -105,16 +105,16 @@ const MainLayout = () => {
               onClick={() => setCollapsed(!collapsed)}
               className="trigger-btn"
             />
-            <Search placeholder="Search..." allowClear className="header-search" />
+            {/* <Search placeholder="Search..." allowClear className="header-search" /> */}
           </div>
 
           {/* Right */}
           <div className="header-actions">
-            <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>
+            {/* <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>
               Bộ lọc
-            </Button>
+            </Button> */}
 
-            <Popover content={settingsContent} trigger="click" placement="bottom">
+            {/* <Popover content={settingsContent} trigger="click" placement="bottom">
               <Button icon={<SettingOutlined />}>Cài đặt</Button>
             </Popover>
 
@@ -138,7 +138,7 @@ const MainLayout = () => {
                 <p className="ant-upload-text">Click hoặc kéo thả file vào đây để Import</p>
                 <p className="ant-upload-hint">Chỉ chấp nhận 1 file mỗi lần</p>
               </Upload.Dragger>
-            </Modal>
+            </Modal> */}
 
             <Badge count={3} offset={[0, 5]}>
               <BellOutlined className="bell-icon" />
