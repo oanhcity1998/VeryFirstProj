@@ -1,9 +1,22 @@
 import { Menu } from "antd";
 import { HomeOutlined, UserOutlined, UploadOutlined, InboxOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu.css";
 
 const SidebarMenu = ({ collapsed }) => {
+    const location = useLocation();
+
+    // Map paths to keys
+    let selectedKey = "1"; // default Trang chủ
+
+    if (location.pathname === "/") {
+    selectedKey = "1";
+    } else if (location.pathname.startsWith("/customerlist")) {
+    selectedKey = "2";
+    } else if (location.pathname.startsWith("/productlist")) {
+    selectedKey = "3";
+    }
+
   const items = [
     {
       key: "1",
@@ -32,7 +45,7 @@ const SidebarMenu = ({ collapsed }) => {
         theme="dark"
         mode="inline"
         inlineCollapsed={collapsed}
-        defaultSelectedKeys={["1"]}
+        defaultSelectedKeys={[selectedKey]}
         items={items}  
       />
     </div>
