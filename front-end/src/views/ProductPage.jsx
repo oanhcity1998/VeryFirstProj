@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./ProductPage.css"; // ✅ import CSS
+import "./ProductPage.css";   // ✅ Import CSS
 import ProductForm from "../components/ProductForm";
 import {
   Table,
@@ -15,112 +15,138 @@ import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
 const ProductPage = () => {
-  const [form] = Form.useForm();
-  const [data, setData] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
+  const [originalData] = useState([
+    {
+      key: "1",
+      name: "iPhone 15 Pro",
+      description: "Smartphone cao cấp",
+      type: "Theo gói",
+      price: 1200,
+      currency: "USD",
+      exchangeRate: 24000,
+      vat: 10,
+      createdAt: dayjs("2025-01-01"),
+      updatedAt: dayjs("2025-01-10"),
+    },
+    {
+      key: "2",
+      name: "MacBook Air M2",
+      description: "Laptop nhẹ và mạnh",
+      type: "Theo tháng",
+      price: 1500,
+      currency: "USD",
+      exchangeRate: 24000,
+      vat: 10,
+      createdAt: dayjs("2025-01-05"),
+      updatedAt: dayjs("2025-01-12"),
+    },
+  ]);
+  const [data, setData] = useState([...originalData]);
   const [priceFilter, setPriceFilter] = useState({ min: null, max: null });
 
-  // Table columns
-  const columns = [
-    {
-      title: "Tên sản phẩm",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Giá",
-      dataIndex: "price",
-      key: "price",
-      render: (price) => `${price.toLocaleString()} VND`,
-    },
-    {
-      title: "Ngày tạo",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (date) => dayjs(date).format("DD/MM/YYYY"),
-    },
-    {
-      title: "Hành động",
-      key: "action",
-      render: (_, record) => (
-        <Space>
-          <Button
-            type="default"
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          >
-            Sửa
-          </Button>
-          <Popconfirm
-            title="Bạn có muốn xóa sản phẩm này?"
-            onConfirm={() => handleDelete(record.key)}
-            okText="Có"
-            cancelText="Không"
-          >
-            <Button type="primary" danger icon={<DeleteOutlined />}>
-              Xóa
-            </Button>
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [form] = Form.useForm();
 
-  // Handlers
   const handleAdd = () => {
     setEditingProduct(null);
+    form.resetFields();
     setIsModalVisible(true);
   };
 
-  const handleEdit = (product) => {
-    setEditingProduct(product);
+  const handleEdit = (record) => {
+    setEditingProduct(record);
+    form.setFieldsValue(record);
     setIsModalVisible(true);
-    form.setFieldsValue(product);
-  };
-
-  const handleDelete = (key) => {
-    setData((prev) => prev.filter((item) => item.key !== key));
-    setSelectedRowKeys((prev) => prev.filter((id) => id !== key));
   };
 
   const handleSave = (values) => {
     if (editingProduct) {
-      // Update product
       setData((prev) =>
         prev.map((item) =>
-          item.key === editingProduct.key ? { ...item, ...values } : item
+          item.key === editingProduct.key
+            ? { ...item, ...values, updatedAt: dayjs() }
+            : item
         )
       );
     } else {
-      // Add new product
-      setData((prev) => [
-        ...prev,
-        {
-          key: Date.now(),
-          ...values,
-          createdAt: new Date(),
-        },
-      ]);
+      const newProduct = {
+        key: Date.now().toString(),
+        ...values,
+        createdAt: dayjs(),
+        updatedAt: dayjs(),
+      };
+      setData((prev) => [...prev, newProduct]);
     }
     setIsModalVisible(false);
-    form.resetFields();
+  };
+
+  const handleDelete = () => {
+    setData((prev) =>
+      prev.filter((item) => !selectedRowKeys.includes(item.key))
+    );
+    setSelectedRowKeys([]);
   };
 
   const handleFilterPrice = () => {
-    // later we can implement actual filter logic
-    console.log("Filter by price:", priceFilter);
+    const filtered = originalData.filter((item) => {
+      const minOk =
+        priceFilter.min !== null ? item.price >= priceFilter.min : true;
+      const maxOk =
+        priceFilter.max !== null ? item.price <= priceFilter.max : true;
+      return minOk && maxOk;
+    });
+    setData(filtered);
   };
+
+  const columns = [
+    { title: "Tên sản phẩm", dataIndex: "name", key: "name", fixed: "left", width: 200 },
+    { title: "Mô tả", dataIndex: "description", key: "description", width: 200 },
+    { title: "Loại sản phẩm", dataIndex: "type", key: "type", width: 150 },
+    { title: "Giá", dataIndex: "price", key: "price", width: 100 },
+    { title: "Loại tiền", dataIndex: "currency", key: "currency", width: 100 },
+    { title: "Tỉ giá VND", dataIndex: "exchangeRate", key: "exchangeRate", width: 100 },
+    { title: "VAT (%)", dataIndex: "vat", key: "vat", width: 100 },
+    {
+      title: "Ngày tạo",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      width: 120,
+      render: (date) => dayjs(date).format("YYYY-MM-DD"),
+    },
+    {
+      title: "Ngày cập nhật",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      width: 120,
+      render: (date) => dayjs(date).format("YYYY-MM-DD"),
+    },
+    {
+      title: "Hành động",
+      key: "action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Button
+          type="link"
+          icon={<EditOutlined />}
+          onClick={() => handleEdit(record)}
+        >
+          Sửa
+        </Button>
+      ),
+    },
+  ];
 
   const rowSelection = {
     selectedRowKeys,
-    onChange: (newSelectedKeys) => setSelectedRowKeys(newSelectedKeys),
+    onChange: setSelectedRowKeys,
   };
 
   return (
     <div className="product-page">
-      {/* Toolbar */}
+      {/* Thanh công cụ */}
       <div className="product-toolbar">
         <Space>
           <Input.Search
@@ -156,12 +182,8 @@ const ProductPage = () => {
             Thêm sản phẩm
           </Button>
           <Popconfirm
-            title="Bạn có muốn xóa các sản phẩm đã chọn?"
-            onConfirm={() =>
-              setData((prev) =>
-                prev.filter((item) => !selectedRowKeys.includes(item.key))
-              )
-            }
+            title="Bạn có muốn xóa sản phẩm này?"
+            onConfirm={handleDelete}
             okText="Có"
             cancelText="Không"
             disabled={selectedRowKeys.length === 0}
@@ -178,19 +200,20 @@ const ProductPage = () => {
         </Space>
       </div>
 
-      {/* Table */}
+      {/* Bảng sản phẩm */}
       <Table
-        className="product-table"
-        rowSelection={rowSelection}
+        rowSelection={{ type: "checkbox", ...rowSelection }}
         columns={columns}
         dataSource={data}
         scroll={{ x: 1200 }}
+        pagination={{position: ['bottomCenter'],}} // center positioning
+
       />
 
-      {/* Modal */}
+      {/* Modal Thêm / Sửa */}
       <Modal
         title={editingProduct ? "Sửa sản phẩm" : "Thêm sản phẩm"}
-        open={isModalVisible}
+        visible={isModalVisible}
         onOk={() => form.submit()}
         onCancel={() => setIsModalVisible(false)}
         okText="Lưu"
