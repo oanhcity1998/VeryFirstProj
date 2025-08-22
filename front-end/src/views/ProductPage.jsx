@@ -1,5 +1,5 @@
-// src/pages/ProductPage.js
 import React, { useState } from "react";
+import "./ProductPage.css"; // ✅ import CSS
 import ProductForm from "../components/ProductForm";
 import {
   Table,
@@ -15,176 +15,123 @@ import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
 const ProductPage = () => {
+  const [form] = Form.useForm();
+  const [data, setData] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [originalData] = useState([
-    {
-      key: "1",
-      name: "iPhone 15 Pro",
-      description: "Smartphone cao cấp",
-      type: "Theo gói",
-      price: 1200,
-      currency: "USD",
-      exchangeRate: 24000,
-      vat: 10,
-      createdAt: dayjs("2025-01-01"),
-      updatedAt: dayjs("2025-01-10"),
-    },
-    {
-      key: "2",
-      name: "MacBook Air M2",
-      description: "Laptop nhẹ và mạnh",
-      type: "Theo tháng",
-      price: 1500,
-      currency: "USD",
-      exchangeRate: 24000,
-      vat: 10,
-      createdAt: dayjs("2025-01-05"),
-      updatedAt: dayjs("2025-01-12"),
-    },
-  ]);
-  const [data, setData] = useState([...originalData]);
-  const [priceFilter, setPriceFilter] = useState({ min: null, max: null });
-
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [form] = Form.useForm();
+  const [priceFilter, setPriceFilter] = useState({ min: null, max: null });
 
-  // Thêm mới sản phẩm
-  const handleAdd = () => {
-    setEditingProduct(null);
-    form.resetFields();
-    setIsModalVisible(true);
-  };
-
-  // Chỉnh sửa sản phẩm
-  const handleEdit = (record) => {
-    setEditingProduct(record);
-    form.setFieldsValue(record);
-    setIsModalVisible(true);
-  };
-
-  // Lưu dữ liệu từ form
-  const handleSave = (values) => {
-    if (editingProduct) {
-      setData((prev) =>
-        prev.map((item) =>
-          item.key === editingProduct.key
-            ? { ...item, ...values, updatedAt: dayjs() }
-            : item
-        )
-      );
-    } else {
-      const newProduct = {
-        key: Date.now().toString(),
-        ...values,
-        createdAt: dayjs(),
-        updatedAt: dayjs(),
-      };
-      setData((prev) => [...prev, newProduct]);
-    }
-    setIsModalVisible(false);
-  };
-
-  // Xóa sản phẩm đã chọn
-  const handleDelete = () => {
-    setData((prev) =>
-      prev.filter((item) => !selectedRowKeys.includes(item.key))
-    );
-    setSelectedRowKeys([]);
-  };
-
-  // Lọc theo giá
-  const handleFilterPrice = () => {
-    const filtered = originalData.filter((item) => {
-      const minOk =
-        priceFilter.min !== null ? item.price >= priceFilter.min : true;
-      const maxOk =
-        priceFilter.max !== null ? item.price <= priceFilter.max : true;
-      return minOk && maxOk;
-    });
-    setData(filtered);
-  };
-
+  // Table columns
   const columns = [
     {
       title: "Tên sản phẩm",
       dataIndex: "name",
       key: "name",
-      fixed: "left",
-      width: 200,
     },
     {
-      title: "Mô tả",
-      dataIndex: "description",
-      key: "description",
-      width: 200,
+      title: "Giá",
+      dataIndex: "price",
+      key: "price",
+      render: (price) => `${price.toLocaleString()} VND`,
     },
-    { title: "Loại sản phẩm", dataIndex: "type", key: "type", width: 150 },
-    { title: "Giá", dataIndex: "price", key: "price", width: 100 },
-    { title: "Loại tiền", dataIndex: "currency", key: "currency", width: 100 },
-    {
-      title: "Tỉ giá VND",
-      dataIndex: "exchangeRate",
-      key: "exchangeRate",
-      width: 100,
-    },
-    { title: "VAT (%)", dataIndex: "vat", key: "vat", width: 100 },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
-      width: 120,
-      render: (date) => dayjs(date).format("YYYY-MM-DD"),
-    },
-    {
-      title: "Ngày cập nhật",
-      dataIndex: "updatedAt",
-      key: "updatedAt",
-      width: 120,
-      render: (date) => dayjs(date).format("YYYY-MM-DD"),
+      render: (date) => dayjs(date).format("DD/MM/YYYY"),
     },
     {
       title: "Hành động",
       key: "action",
-      fixed: "right",
-      width: 100,
       render: (_, record) => (
-        <Button
-          type="link"
-          icon={<EditOutlined />}
-          onClick={() => handleEdit(record)}
-        >
-          Sửa
-        </Button>
+        <Space>
+          <Button
+            type="default"
+            icon={<EditOutlined />}
+            onClick={() => handleEdit(record)}
+          >
+            Sửa
+          </Button>
+          <Popconfirm
+            title="Bạn có muốn xóa sản phẩm này?"
+            onConfirm={() => handleDelete(record.key)}
+            okText="Có"
+            cancelText="Không"
+          >
+            <Button type="primary" danger icon={<DeleteOutlined />}>
+              Xóa
+            </Button>
+          </Popconfirm>
+        </Space>
       ),
     },
   ];
 
+  // Handlers
+  const handleAdd = () => {
+    setEditingProduct(null);
+    setIsModalVisible(true);
+  };
+
+  const handleEdit = (product) => {
+    setEditingProduct(product);
+    setIsModalVisible(true);
+    form.setFieldsValue(product);
+  };
+
+  const handleDelete = (key) => {
+    setData((prev) => prev.filter((item) => item.key !== key));
+    setSelectedRowKeys((prev) => prev.filter((id) => id !== key));
+  };
+
+  const handleSave = (values) => {
+    if (editingProduct) {
+      // Update product
+      setData((prev) =>
+        prev.map((item) =>
+          item.key === editingProduct.key ? { ...item, ...values } : item
+        )
+      );
+    } else {
+      // Add new product
+      setData((prev) => [
+        ...prev,
+        {
+          key: Date.now(),
+          ...values,
+          createdAt: new Date(),
+        },
+      ]);
+    }
+    setIsModalVisible(false);
+    form.resetFields();
+  };
+
+  const handleFilterPrice = () => {
+    // later we can implement actual filter logic
+    console.log("Filter by price:", priceFilter);
+  };
+
   const rowSelection = {
     selectedRowKeys,
-    onChange: setSelectedRowKeys,
+    onChange: (newSelectedKeys) => setSelectedRowKeys(newSelectedKeys),
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      {/* Thanh công cụ */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: 16,
-        }}
-      >
+    <div className="product-page">
+      {/* Toolbar */}
+      <div className="product-toolbar">
         <Space>
           <Input.Search
             placeholder="Tìm kiếm sản phẩm..."
             allowClear
-            style={{ width: 200 }}
+            className="product-search"
           />
           <InputNumber
             placeholder="Giá từ"
             min={0}
-            style={{ width: 120 }}
+            className="product-input-number"
             value={priceFilter.min}
             onChange={(value) =>
               setPriceFilter((prev) => ({ ...prev, min: value }))
@@ -193,7 +140,7 @@ const ProductPage = () => {
           <InputNumber
             placeholder="Đến"
             min={0}
-            style={{ width: 120 }}
+            className="product-input-number"
             value={priceFilter.max}
             onChange={(value) =>
               setPriceFilter((prev) => ({ ...prev, max: value }))
@@ -208,10 +155,13 @@ const ProductPage = () => {
           <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
             Thêm sản phẩm
           </Button>
-
           <Popconfirm
-            title="Bạn có muốn xóa sản phẩm này?"
-            onConfirm={handleDelete}
+            title="Bạn có muốn xóa các sản phẩm đã chọn?"
+            onConfirm={() =>
+              setData((prev) =>
+                prev.filter((item) => !selectedRowKeys.includes(item.key))
+              )
+            }
             okText="Có"
             cancelText="Không"
             disabled={selectedRowKeys.length === 0}
@@ -228,18 +178,19 @@ const ProductPage = () => {
         </Space>
       </div>
 
-      {/* Bảng sản phẩm */}
+      {/* Table */}
       <Table
-        rowSelection={{ type: "checkbox", ...rowSelection }}
+        className="product-table"
+        rowSelection={rowSelection}
         columns={columns}
         dataSource={data}
         scroll={{ x: 1200 }}
       />
 
-      {/* Modal Thêm / Sửa */}
+      {/* Modal */}
       <Modal
         title={editingProduct ? "Sửa sản phẩm" : "Thêm sản phẩm"}
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={() => form.submit()}
         onCancel={() => setIsModalVisible(false)}
         okText="Lưu"

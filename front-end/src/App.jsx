@@ -8,6 +8,7 @@ import CustomerList from "./views/CustomerList";
 import CustomerDetail from "./views/CustomerDetail";
 import ProductPage from "./views/ProductPage";
 
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -17,9 +18,13 @@ export default function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/customerlist" element={<CustomerList />} />
-          <Route path="/productlist" element={<ProductPage />} />
+
+          {/* khách hàng */}
+          <Route path="/customerlist" element={<CustomerList/>} />
           <Route path="customerlist/:id" element={<CustomerDetail />} />
+
+          {/* sản phẩm */}
+          <Route path="/productlist" element={<ProductPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
