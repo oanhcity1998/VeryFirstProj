@@ -4,8 +4,7 @@ import { Link } from "react-router-dom";
 const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) => {
   const allKeys = data.map((item) => item.key);
   const isAllChecked = selectedRowKeys.length === data.length;
-  const isIndeterminate =
-    selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
+  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
 
   const columns = [
     {
@@ -32,9 +31,7 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
             if (e.target.checked) {
               setSelectedRowKeys([...selectedRowKeys, record.key]);
             } else {
-              setSelectedRowKeys(
-                selectedRowKeys.filter((key) => key !== record.key)
-              );
+              setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.key));
             }
           }}
         />
@@ -51,9 +48,7 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
       dataIndex: "customerName",
       width: 200,
       fixed: "left", // ✅ fixed
-      render: (text, record) => (
-        <Link to={`/customerlist/${record.id}`}>{text}</Link>
-      ),
+      render: (text, record) => <Link to={`/customerlist/${record.id}`}>{text}</Link>,
     },
     { title: "Tên DN ghi trên hợp đồng", dataIndex: "contractName", width: 200 },
     { title: "Tên DN bằng tiếng Anh", dataIndex: "englishName", width: 200 },
@@ -69,27 +64,27 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
     { title: "Doanh thu TB/năm", dataIndex: "revenue", width: 180 },
     { title: "Văn bản TB/tháng", dataIndex: "documentsPerMonth", width: 180 },
     {
-    title: "Tài liệu",
-    dataIndex: "documents",
-    width: 200,
-    render: (file) =>
+      title: "Tài liệu",
+      dataIndex: "documents",
+      width: 200,
+      render: (file) =>
         file ? (
-        <a href={file} download target="_blank" rel="noopener noreferrer">
+          <a href={file} download target="_blank" rel="noopener noreferrer">
             📂 Tải xuống
-        </a>
+          </a>
         ) : (
-        "—"
+          "—"
         ),
-    },    
+    },
   ];
 
   return (
     <Table
-        columns={columns}
-        dataSource={data}
-        pagination={false}
-        rowKey="key"
-        scroll={{ x: 2500, y: 600 }} // ✅ enable horizontal scroll
+      columns={columns}
+      dataSource={data}
+      pagination={false}
+      rowKey="key"
+      scroll={{ x: 2500, y: 600 }} // ✅ enable horizontal scroll
     />
   );
 };

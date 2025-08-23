@@ -1,5 +1,5 @@
 import { Menu } from "antd";
-import { HomeOutlined, UserOutlined, UploadOutlined } from "@ant-design/icons";
+import { HomeOutlined, UserOutlined, UploadOutlined, ContactsOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import "./SidebarMenu.css";
 
@@ -17,6 +17,11 @@ const SidebarMenu = ({ collapsed }) => {
     },
     {
       key: "3",
+      icon: <ContactsOutlined />,
+      label: <Link to="/contact-list">Contact</Link>,
+    },
+    {
+      key: "4",
       icon: <UploadOutlined />,
       label: "Upload",
     },
@@ -24,16 +29,14 @@ const SidebarMenu = ({ collapsed }) => {
 
   return (
     <div className="sidebar-container">
-      <div className="sidebar-logo">
-        {collapsed ? "L" : "Logo"}
-      </div>
+      <div className="sidebar-logo">{collapsed ? "L" : "Logo"}</div>
 
       <Menu
         theme="dark"
         mode="inline"
         inlineCollapsed={collapsed}
         defaultSelectedKeys={["1"]}
-        items={items}  
+        items={items}
       />
     </div>
   );
