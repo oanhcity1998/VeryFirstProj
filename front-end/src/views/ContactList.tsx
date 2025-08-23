@@ -3,7 +3,7 @@ import { Button, Space, Modal, message, Input, Dropdown, Select, Breadcrumb } fr
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import TableContact, { Contact } from "../components/TableContact";
 import ContactForm from "../components/ContactForm";
-import { Link } from "react-router-dom";
+import Search from "antd/es/input/Search";
 
 const ContactList = () => {
   const [data, setData] = useState([
@@ -144,11 +144,11 @@ const ContactList = () => {
       <div style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "center" }}>
         <h2 style={{ flex: 1, textAlign: "center" }}>Danh sách thông tin người liên hệ</h2>
 
-        <Input
-          placeholder="Tìm kiếm..."
-          value={searchText}
+        <Search
+          placeholder="Nhập tên người liên hệ..."
           onChange={(e) => setSearchText(e.target.value)}
-          style={{ width: 200 }}
+          allowClear
+          className="header-search"
         />
 
         <Select

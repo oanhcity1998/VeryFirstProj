@@ -59,6 +59,11 @@ const TableContact = ({
       dataIndex: "contactName",
       width: 200,
       fixed: "left",
+      render: (_, record) => (
+        <Link onClick={() => onRowClick && onRowClick(record)} to={"#"}>
+          {record.contactName}
+        </Link>
+      ),
     },
     {
       title: "Khách hàng",
@@ -125,12 +130,8 @@ const TableContact = ({
       columns={columns}
       dataSource={filteredData}
       rowKey="key"
-      onRow={(record) => ({
-        onClick: () => {
-          if (onRowClick) onRowClick(record); // 👈 khi click row thì gọi callback
-        },
-      })}
-      scroll={{ x: "max-content", y: "150px" }}
+      scroll={{ x: "max-content", y: "calc(100vh - 330px)" }}
+      pagination={{ position: ["bottomCenter"] }}
     />
   );
 };
