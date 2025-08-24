@@ -50,9 +50,9 @@ const ProductForm = ({ onSave, product }) => {
         <InputNumber style={{ width: "100%" }} />
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit" block>
+        {/* <Button type="primary" htmlType="submit" block>
           {product ? "Cập nhật" : "Thêm mới"}
-        </Button>
+        </Button> */}
       </Form.Item>
     </Form>
   );

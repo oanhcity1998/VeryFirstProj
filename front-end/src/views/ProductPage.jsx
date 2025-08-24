@@ -153,9 +153,7 @@ const ProductPage = () => {
           type="link"
           icon={<EditOutlined />}
           onClick={() => handleEdit(record)}
-        >
-          Sửa
-        </Button>
+        ></Button>
       ),
     },
   ];
@@ -180,7 +178,7 @@ const ProductPage = () => {
           <Input.Search
             placeholder="Tìm kiếm sản phẩm..."
             allowClear
-            style={{ width: 200 }}
+            style={{ width: 250 }}
           />
           <InputNumber
             placeholder="Giá từ"
@@ -200,9 +198,9 @@ const ProductPage = () => {
               setPriceFilter((prev) => ({ ...prev, max: value }))
             }
           />
-          <Button type="default" onClick={handleFilterPrice}>
+          {/* <Button type="default" onClick={handleFilterPrice}>
             Lọc
-          </Button>
+          </Button> */}
         </Space>
 
         <Space>
