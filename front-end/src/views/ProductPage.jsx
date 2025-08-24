@@ -1,18 +1,11 @@
 // src/pages/ProductPage.js
 import React, { useState } from "react";
 import ProductForm from "../components/ProductForm";
-import {
-  Table,
-  Button,
-  Input,
-  Space,
-  InputNumber,
-  Modal,
-  Form,
-  Popconfirm,
-} from "antd";
+import { Table, Button, Input, Space, InputNumber, Modal, Form } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
+
+const { confirm } = Modal;
 
 const ProductPage = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -85,12 +78,22 @@ const ProductPage = () => {
     setIsModalVisible(false);
   };
 
-  // Xóa sản phẩm đã chọn
-  const handleDelete = () => {
-    setData((prev) =>
-      prev.filter((item) => !selectedRowKeys.includes(item.key))
-    );
-    setSelectedRowKeys([]);
+  // Hiện modal xác nhận xóa
+  const showDeleteConfirm = () => {
+    confirm({
+      title: "Bạn có chắc muốn xóa sản phẩm đã chọn?",
+      content: "Thao tác này không thể hoàn tác.",
+      okText: "Xóa",
+      okType: "danger",
+      cancelText: "Hủy",
+      centered: true, // modal nằm giữa màn hình
+      onOk() {
+        setData((prev) =>
+          prev.filter((item) => !selectedRowKeys.includes(item.key))
+        );
+        setSelectedRowKeys([]);
+      },
+    });
   };
 
   // Lọc theo giá
@@ -204,26 +207,18 @@ const ProductPage = () => {
         </Space>
 
         <Space>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-            Thêm sản phẩm
-          </Button>
-
-          <Popconfirm
-            title="Bạn có muốn xóa sản phẩm này?"
-            onConfirm={handleDelete}
-            okText="Có"
-            cancelText="Không"
+          <Button
+            type="primary"
+            danger
+            icon={<DeleteOutlined />}
             disabled={selectedRowKeys.length === 0}
+            onClick={showDeleteConfirm}
           >
-            <Button
-              type="primary"
-              danger
-              icon={<DeleteOutlined />}
-              disabled={selectedRowKeys.length === 0}
-            >
-              Xóa
-            </Button>
-          </Popconfirm>
+            Xóa
+          </Button>
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+            Tạo
+          </Button>
         </Space>
       </div>
 
@@ -238,7 +233,7 @@ const ProductPage = () => {
       {/* Modal Thêm / Sửa */}
       <Modal
         title={editingProduct ? "Sửa sản phẩm" : "Thêm sản phẩm"}
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={() => form.submit()}
         onCancel={() => setIsModalVisible(false)}
         okText="Lưu"
