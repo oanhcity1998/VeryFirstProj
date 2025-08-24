@@ -176,6 +176,7 @@ const ProductPage = () => {
         }}
       >
         <Space>
+          <h2 style={{ margin: 0 }}>Danh sách sản phẩm</h2>
           <Input.Search
             placeholder="Tìm kiếm sản phẩm..."
             allowClear
