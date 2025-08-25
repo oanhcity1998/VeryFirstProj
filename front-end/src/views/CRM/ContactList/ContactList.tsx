@@ -116,27 +116,27 @@ const ContactList = () => {
     }
   };
 
-  // // ➕ handle create
-  // const handleCreate = (newContact: any) => {
-  //   const newData = {
-  //     key: Date.now().toString(),
-  //     id: Date.now().toString(),
-  //     ...newContact,
-  //   };
-  //   setData((prev) => [...prev, newData]);
-  //   setIsCreateModalOpen(false);
-  //   message.success("Đã thêm người liên hệ");
-  // };
+  // ➕ handle create
+  const handleCreate = (newContact: any) => {
+    const newData = {
+      key: Date.now().toString(),
+      id: Date.now().toString(),
+      ...newContact,
+    };
+    setData((prev) => [...prev, newData]);
+    setIsCreateModalOpen(false);
+    message.success("Đã thêm người liên hệ");
+  };
 
-  // // ✏️ handle edit
-  // const handleEdit = (updatedContact: any) => {
-  //   if (!selectedContact) return;
-  //   setData((prev) =>
-  //     prev.map((item) => (item.key === selectedContact.key ? { ...item, ...updatedContact } : item))
-  //   );
-  //   setIsEditModalOpen(false);
-  //   message.success("Đã cập nhật thông tin liên hệ");
-  // };
+  // ✏️ handle edit
+  const handleEdit = (updatedContact: any) => {
+    if (!selectedContact) return;
+    setData((prev) =>
+      prev.map((item) => (item.key === selectedContact.key ? { ...item, ...updatedContact } : item))
+    );
+    setIsEditModalOpen(false);
+    message.success("Đã cập nhật thông tin liên hệ");
+  };
 
   return (
     <>
@@ -169,8 +169,8 @@ const ContactList = () => {
           options={mainContactOptions.map((m) => ({ label: m, value: m }))}
         />
 
-        {/* <Space>
-          
+        <Space>
+          {/* Delete button */}
           <Button
             danger
             icon={<DeleteOutlined />}
@@ -192,11 +192,11 @@ const ContactList = () => {
             <p>Bạn có chắc muốn xóa {selectedRowKeys.length} người liên hệ đã chọn?</p>
           </Modal>
 
-         
+          {/* Create button */}
           <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsCreateModalOpen(true)}>
             Tạo
           </Button>
-        </Space> */}
+        </Space>
       </div>
 
       {/* table */}
@@ -218,20 +218,20 @@ const ContactList = () => {
       />
 
       {/* modals */}
-      {/* <ContactForm
+      <ContactForm
         mode="create"
         open={isCreateModalOpen}
         onCancel={() => setIsCreateModalOpen(false)}
         onOk={handleCreate}
-      /> */}
+      />
 
-      {/* <ContactForm
+      <ContactForm
         mode="edit"
         open={isEditModalOpen}
         onCancel={() => setIsEditModalOpen(false)}
         onOk={handleEdit}
         initialValues={selectedContact}
-      /> */}
+      />
 
       <ContactForm
         mode="detail"

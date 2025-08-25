@@ -7,6 +7,7 @@ import Login from "./views/Login";
 import CustomerList from "./views/CRM/CustomerList/CustomerList";
 import CustomerDetail from "./views/CRM/CustomerDetail/CustomerDetail";
 import ProductPage from "./views/CRM/ProductPage/ProductPage";
+import ContactList from "./views/CRM/ContactList/ContactList";
 
 
 export default function App() {
@@ -25,6 +26,9 @@ export default function App() {
 
           {/* sản phẩm */}
           <Route path="/productlist" element={<ProductPage />} />
+
+          {/* liên hệ */}
+          <Route path="/contactlist" element={<ContactList />} />
         </Route>
       </Routes>
     </BrowserRouter>

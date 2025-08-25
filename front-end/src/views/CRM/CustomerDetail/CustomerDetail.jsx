@@ -247,7 +247,7 @@ export default function CustomerDetail() {
       ),
     },
     { key: "2", label: "Liên Hệ", children: <p>
-        <ContactList />
+      Liên hệ
     </p> },
     { key: "3", label: "Báo giá", children: <p>Thông tin báo giá…</p> },
     { key: "4", label: "Hợp đồng", children: <p>Danh sách hợp đồng…</p> },
