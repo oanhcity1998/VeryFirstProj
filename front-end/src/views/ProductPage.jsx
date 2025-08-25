@@ -6,7 +6,6 @@ import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
 const { confirm } = Modal;
-
 const ProductPage = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [originalData] = useState([
@@ -122,16 +121,47 @@ const ProductPage = () => {
       key: "description",
       width: 200,
     },
-    { title: "Loại sản phẩm", dataIndex: "type", key: "type", width: 150 },
-    { title: "Giá", dataIndex: "price", key: "price", width: 100 },
-    { title: "Loại tiền", dataIndex: "currency", key: "currency", width: 100 },
     {
-      title: "Tỉ giá VND",
-      dataIndex: "exchangeRate",
-      key: "exchangeRate",
+      title: "Loại sản phẩm",
+      dataIndex: "type",
+      key: "type",
+      width: 150,
+      render: (value) => (value === "package" ? "Theo gói" : "Theo tháng"),
+    },
+    {
+      title: "Giá (VND)",
+      dataIndex: "priceVND",
+      key: "priceVND",
+      width: 120,
+      render: (value) => value?.toLocaleString("vi-VN"),
+    },
+    {
+      title: "Giá (USD)",
+      dataIndex: "priceUSD",
+      key: "priceUSD",
+      width: 120,
+      render: (value) => value?.toLocaleString("en-US"),
+    },
+    {
+      title: "VAT (%)",
+      dataIndex: "vat",
+      key: "vat",
       width: 100,
     },
-    { title: "VAT (%)", dataIndex: "vat", key: "vat", width: 100 },
+    {
+      title: "Giá sau VAT (VND)",
+      dataIndex: "priceAfterVatVND",
+      key: "priceAfterVatVND",
+      width: 150,
+      render: (value) => value?.toLocaleString("vi-VN"),
+    },
+    {
+      title: "Giá sau VAT (USD)",
+      dataIndex: "priceAfterVatUSD",
+      key: "priceAfterVatUSD",
+      width: 150,
+      render: (value) => value?.toLocaleString("en-US"),
+    },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
@@ -156,7 +186,7 @@ const ProductPage = () => {
           type="link"
           icon={<EditOutlined />}
           onClick={() => handleEdit(record)}
-        ></Button>
+        />
       ),
     },
   ];
