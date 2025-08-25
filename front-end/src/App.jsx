@@ -1,12 +1,12 @@
 // src/App.jsx
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MainLayout from "./layouts/mainLayout";
+import MainLayout from "./layouts/MainLayout/mainLayout";
 import Home from "./views/Home";
 import Profile from "./views/Profile";
 import Login from "./views/Login";
-import CustomerList from "./views/CustomerList";
-import CustomerDetail from "./views/CustomerDetail";
-import ProductPage from "./views/ProductPage";
+import CustomerList from "./views/CRM/CustomerList/CustomerList";
+import CustomerDetail from "./views/CRM/CustomerDetail/CustomerDetail";
+import ProductPage from "./views/CRM/ProductPage/ProductPage";
 
 
 export default function App() {

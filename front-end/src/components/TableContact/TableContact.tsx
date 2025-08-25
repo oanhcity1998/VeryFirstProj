@@ -96,27 +96,27 @@ const TableContact = ({
       dataIndex: "note",
       width: 200,
     },
-    {
-      title: "",
-      dataIndex: "",
-      width: 60,
-      fixed: "right",
-      render: (_, record) => (
-        <EditOutlined
-          style={{
-            fontSize: "20px",
-            display: "block",
-            cursor: "pointer",
-            color: "#1890ff",
-            padding: "8px",
-          }}
-          onClick={(e) => {
-            e.stopPropagation(); // ❌ chặn click row
-            onEditClick?.(record);
-          }}
-        />
-      ),
-    },
+    // {
+    //   title: "",
+    //   dataIndex: "",
+    //   width: 60,
+    //   fixed: "right",
+    //   render: (_, record) => (
+    //     <EditOutlined
+    //       style={{
+    //         fontSize: "20px",
+    //         display: "block",
+    //         cursor: "pointer",
+    //         color: "#1890ff",
+    //         padding: "8px",
+    //       }}
+    //       onClick={(e) => {
+    //         e.stopPropagation(); // ❌ chặn click row
+    //         onEditClick?.(record);
+    //       }}
+    //     />
+    //   ),
+    // },
   ];
 
   return (

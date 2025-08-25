@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Button, Space, Modal, message, Input, Popover,Upload  } from "antd";
 import { PlusOutlined, DeleteOutlined, SettingOutlined, FilterOutlined, InboxOutlined, } from "@ant-design/icons";
-import TableCustomer from "../components/TableCustomer";
-import CreateCustomerForm from "../components/CreateCustomerForm";
-import FilterDrawer from "../components/FilterDrawer";
+import TableCustomer from "../../../components/TableCustomer/TableCustomer";
+import CreateCustomerForm from "../../../components/CustomerForm/CreateCustomerForm";
+import FilterDrawer from "../../../components/Filter/FilterDrawer";
 import "./CustomerList.css"
 
 const CustomerList = () => {

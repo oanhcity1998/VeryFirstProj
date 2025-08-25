@@ -26,47 +26,47 @@ import {
   UserOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import SidebarMenu from "../components/SidebarMenu";
+import SidebarMenu from "../../components/SideBar/SidebarMenu";
 import "./mainLayout.css";
-import FilterDrawer from "../components/FilterDrawer";
+// import FilterDrawer from "../components/FilterDrawer";
 
 const { Header, Sider, Content } = Layout;
 const { Search } = Input;
 
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [importOpen, setImportOpen] = useState(false);
-  const [importing, setImporting] = useState(false);
+  // const [filterOpen, setFilterOpen] = useState(false);
+  // const [importOpen, setImportOpen] = useState(false);
+  // const [importing, setImporting] = useState(false);
 
   const navigate = useNavigate();
 
   // popover for settings
-  const settingsContent = (
-    <Space direction="vertical">
-      <Button type="text" icon={<UploadOutlined />} onClick={() => setImportOpen(true)}>
-        Import
-      </Button>
-      <Button type="text" icon={<DownloadOutlined />} onClick={() => console.log("Export clicked")}>
-        Export
-      </Button>
-    </Space>
-  );
+  // const settingsContent = (
+  //   <Space direction="vertical">
+  //     <Button type="text" icon={<UploadOutlined />} onClick={() => setImportOpen(true)}>
+  //       Import
+  //     </Button>
+  //     <Button type="text" icon={<DownloadOutlined />} onClick={() => console.log("Export clicked")}>
+  //       Export
+  //     </Button>
+  //   </Space>
+  // );
 
-  // upload handler
-  const handleUpload = async (file) => {
-    setImporting(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // fake API call
-      message.success(`${file.name} đã được import thành công`);
-      setImportOpen(false);
-    } catch (err) {
-      message.error("Import thất bại");
-    } finally {
-      setImporting(false);
-    }
-    return false;
-  };
+  // // upload handler
+  // const handleUpload = async (file) => {
+  //   setImporting(true);
+  //   try {
+  //     await new Promise((resolve) => setTimeout(resolve, 1500)); // fake API call
+  //     message.success(`${file.name} đã được import thành công`);
+  //     setImportOpen(false);
+  //   } catch (err) {
+  //     message.error("Import thất bại");
+  //   } finally {
+  //     setImporting(false);
+  //   }
+  //   return false;
+  // };
 
   // ✅ Dropdown menu for Avatar
   const avatarMenu = {
@@ -156,12 +156,12 @@ const MainLayout = () => {
         </Content>
       </Layout>
 
-      {/* Drawer */}
+      {/* Drawer
       <FilterDrawer
         open={filterOpen}
         onClose={() => setFilterOpen(false)}
         onConfirm={(values) => console.log("Apply filter:", values)}
-      />
+      /> */}
     </Layout>
   );
 };

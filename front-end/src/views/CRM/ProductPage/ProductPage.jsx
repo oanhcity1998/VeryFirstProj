@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./ProductPage.css";   // ✅ Import CSS
-import ProductForm from "../components/ProductForm";
+import ProductForm from "../../../components/ProductForm/ProductForm";
 import {
   Table,
   Button,
