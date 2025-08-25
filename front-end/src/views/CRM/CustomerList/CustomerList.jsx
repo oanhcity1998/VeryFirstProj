@@ -126,7 +126,13 @@ const CustomerList = () => {
             </Modal>
 
             {/* Delete */}
-            <Button danger onClick={() => setDeleteOpen(true)}>Xóa</Button>
+            <Button 
+              danger 
+              disabled={selectedRowKeys.length === 0}  
+              onClick={() => setDeleteOpen(true)}>
+                Xóa
+            </Button>
+            
             <Modal
                 open={deleteOpen}
                 title="Xác nhận xóa"
@@ -159,11 +165,11 @@ const CustomerList = () => {
         setSelectedRowKeys={setSelectedRowKeys}
       />
 
-      <CreateCustomerForm
+      {/* <CreateCustomerForm
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         onOk={() => setIsModalOpen(false)}
-      />
+      /> */}
 
       {/* Drawer */}
       <FilterDrawer

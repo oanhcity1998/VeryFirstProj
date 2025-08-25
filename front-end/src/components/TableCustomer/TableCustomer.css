@@ -2,3 +2,7 @@
   display: flex;
   justify-content: center;
 } */
+/* Highlight selected row */
+.ant-table-row.selected-row > td {
+  background-color: #bae0ff !important; /* blue like your screenshot */
+} 

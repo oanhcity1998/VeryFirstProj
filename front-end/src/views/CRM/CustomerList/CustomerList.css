@@ -22,3 +22,10 @@
 .customer-list-search {
   width: 250px;
 }
+
+/* Highlight the whole row when selected */
+.ant-table-row-selected > td {
+  background-color: #cce6ff !important;  /* light blue */
+}
+
+

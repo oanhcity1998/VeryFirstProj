@@ -1,5 +1,10 @@
-import { Table, Checkbox } from "antd";
+import {useState} from "react"
+import { Table, Form, Checkbox, Button, Modal } from "antd";
 import { Link } from "react-router-dom";
+import { EditOutlined } from "@ant-design/icons";
+import CreateCustomerForm from "../CustomerForm/CreateCustomerForm"
+import dayjs from "dayjs";
+
 import "./TableCustomer.css"
 
 const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) => {
@@ -7,6 +12,41 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
   const isAllChecked = selectedRowKeys.length === data.length;
   const isIndeterminate =
     selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
+
+  const [customerdata, setcustomerData] = useState([...data]);
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [form] = Form.useForm();
+
+  // Chỉnh sửa sản phẩm
+  const handleEdit = (record) => {
+    setEditingProduct(record);
+    form.setFieldsValue(record);
+    setIsModalVisible(true);
+  };
+
+  // Lưu dữ liệu từ form
+  const handleSave = (values) => {
+    if (editingProduct) {
+      setcustomerData((prev) =>
+        prev.map((item) =>
+          item.key === editingProduct.key
+            ? { ...item, ...values, updatedAt: dayjs() }
+            : item
+        )
+      );
+    } else {
+      const newProduct = {
+        key: Date.now().toString(),
+        ...values,
+        createdAt: dayjs(),
+        updatedAt: dayjs(),
+      };
+      setcustomerData((prev) => [...prev, newProduct]);
+    }
+    setIsModalVisible(false);
+  };
 
   const columns = [
     {
@@ -69,6 +109,8 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
     { title: "Số nhân sự", dataIndex: "employees", width: 180 },
     { title: "Doanh thu TB/năm", dataIndex: "revenue", width: 180 },
     { title: "Văn bản TB/tháng", dataIndex: "documentsPerMonth", width: 180 },
+    { title: "Trạng thái quyết toán thuế ", dataIndex: "taxSettlementStatus", width: 180 },
+    { title: "Năm quyết toán thuế ", dataIndex: "taxSettlementYear", width: 180 },
     {
     title: "Tài liệu",
     dataIndex: "documents",
@@ -81,18 +123,59 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
         ) : (
         "—"
         ),
+    },
+    {
+      title: "Hành động",
+      key: "action",
+      fixed: "right",
+      width: 100,
+      render: (_, record) => (
+        <Button
+          type="link"
+          icon={<EditOutlined />}
+          onClick={() => handleEdit(record)}
+        >
+          Sửa
+        </Button>
+      ),
     },    
   ];
 
   return (
-    <Table
-        columns={columns}
-        dataSource={data}
-        pagination={{position: ['bottomCenter'],}} // center positioning
-        rowKey="key"
-        scroll={{ x: 2500, y: 600 }} // enable horizontal scroll
+    <div>
+      <Table
+      columns={columns}
+      dataSource={data}
+      pagination={{position: ['bottomCenter'],}} // center positioning
+      rowKey="key"
+      scroll={{ x: 2500, y: 600 }} // enable horizontal scroll
+      rowClassName={(record) =>
+        selectedRowKeys.includes(record.key) ? "selected-row" : ""
+      }
     />
+    
+      <Modal
+        title={editingProduct ? "Sửa sản phẩm" : "Thêm sản phẩm"}
+        open={isModalVisible}
+        onOk={() => form.submit()}
+        onCancel={() => setIsModalVisible(false)}
+        okText="Lưu"
+        cancelText="Hủy"
+        afterClose={() => form.resetFields()}
+      >
+        {isModalVisible && (
+          <CreateCustomerForm
+            form={form}
+            product={editingProduct}
+            onSave={handleSave}
+          />
+        )}
+      </Modal>  
+
+    </div>
   );
+
+  
 };
 
 export default TableCustomer;

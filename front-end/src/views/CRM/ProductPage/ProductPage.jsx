@@ -213,7 +213,7 @@ const ProductPage = () => {
       {/* Modal Thêm / Sửa */}
       <Modal
         title={editingProduct ? "Sửa sản phẩm" : "Thêm sản phẩm"}
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={() => form.submit()}
         onCancel={() => setIsModalVisible(false)}
         okText="Lưu"
