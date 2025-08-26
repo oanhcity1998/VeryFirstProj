@@ -3,10 +3,10 @@ import { Button, Space, Modal, message } from "antd";
 import { PlusOutlined, DeleteOutlined, FilterOutlined } from "@ant-design/icons";
 // import CreateQuotationForm from "../components/CreateQuotationForm";
 import { useNavigate } from "react-router-dom";
-import TableQuotation, { Quotation } from "../components/TableQuotation";
+import TableQuotation, { Quotation } from "../../../components/TableQuotation/TableQuotation";
 import "./QuotationList.css";
-import FilterDrawer from "../components/Filter/FilterDrawer";
-import FilterQuotationDrawer from "../components//Filter/FilterQuotationDrawer";
+import FilterDrawer from "../../../components/Filter/FilterDrawer";
+import FilterQuotationDrawer from "../../../components/Filter/FilterQuotationDrawer";
 import Search from "antd/es/input/Search";
 
 // Mock data
