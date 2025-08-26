@@ -1,5 +1,5 @@
 import { Menu } from "antd";
-import { HomeOutlined, UserOutlined, ContactsOutlined, InboxOutlined } from "@ant-design/icons";
+import { HomeOutlined, UserOutlined, ContactsOutlined, InboxOutlined, SolutionOutlined } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu.css";
 
@@ -39,6 +39,11 @@ const SidebarMenu = ({ collapsed }) => {
       key: "4",
       icon: <ContactsOutlined />,
       label: <Link to="/contactlist">Liên hệ</Link>,
+    },
+    {
+      key: "5",
+      icon: <SolutionOutlined />,
+      label: <Link to="/quotationlist">Quotation</Link>,
     },
   ];
 

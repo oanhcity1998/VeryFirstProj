@@ -8,6 +8,7 @@ import CustomerList from "./views/CRM/CustomerList/CustomerList";
 import CustomerDetail from "./views/CRM/CustomerDetail/CustomerDetail";
 import ProductPage from "./views/CRM/ProductPage/ProductPage";
 import ContactList from "./views/CRM/ContactList/ContactList";
+import QuotationList from "./views/QuotationList"
 
 
 export default function App() {
@@ -29,6 +30,10 @@ export default function App() {
 
           {/* liên hệ */}
           <Route path="/contactlist" element={<ContactList />} />
+
+
+          <Route path="/quotationlist" element={<QuotationList />} />
+
         </Route>
       </Routes>
     </BrowserRouter>
