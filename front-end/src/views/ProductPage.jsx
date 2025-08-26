@@ -1,19 +1,11 @@
 // src/pages/ProductPage.js
 import React, { useState } from "react";
 import ProductForm from "../components/ProductForm";
-import {
-  Table,
-  Button,
-  Input,
-  Space,
-  InputNumber,
-  Modal,
-  Form,
-  Popconfirm,
-} from "antd";
+import { Table, Button, Input, Space, InputNumber, Modal, Form } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
+const { confirm } = Modal;
 const ProductPage = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [originalData] = useState([
@@ -85,12 +77,22 @@ const ProductPage = () => {
     setIsModalVisible(false);
   };
 
-  // Xóa sản phẩm đã chọn
-  const handleDelete = () => {
-    setData((prev) =>
-      prev.filter((item) => !selectedRowKeys.includes(item.key))
-    );
-    setSelectedRowKeys([]);
+  // Hiện modal xác nhận xóa
+  const showDeleteConfirm = () => {
+    confirm({
+      title: "Bạn có chắc muốn xóa sản phẩm đã chọn?",
+      content: "Thao tác này không thể hoàn tác.",
+      okText: "Xóa",
+      okType: "danger",
+      cancelText: "Hủy",
+      centered: true, // modal nằm giữa màn hình
+      onOk() {
+        setData((prev) =>
+          prev.filter((item) => !selectedRowKeys.includes(item.key))
+        );
+        setSelectedRowKeys([]);
+      },
+    });
   };
 
   // Lọc theo giá
@@ -119,16 +121,47 @@ const ProductPage = () => {
       key: "description",
       width: 200,
     },
-    { title: "Loại sản phẩm", dataIndex: "type", key: "type", width: 150 },
-    { title: "Giá", dataIndex: "price", key: "price", width: 100 },
-    { title: "Loại tiền", dataIndex: "currency", key: "currency", width: 100 },
     {
-      title: "Tỉ giá VND",
-      dataIndex: "exchangeRate",
-      key: "exchangeRate",
+      title: "Loại sản phẩm",
+      dataIndex: "type",
+      key: "type",
+      width: 150,
+      render: (value) => (value === "package" ? "Theo gói" : "Theo tháng"),
+    },
+    {
+      title: "Giá (VND)",
+      dataIndex: "priceVND",
+      key: "priceVND",
+      width: 120,
+      render: (value) => value?.toLocaleString("vi-VN"),
+    },
+    {
+      title: "Giá (USD)",
+      dataIndex: "priceUSD",
+      key: "priceUSD",
+      width: 120,
+      render: (value) => value?.toLocaleString("en-US"),
+    },
+    {
+      title: "VAT (%)",
+      dataIndex: "vat",
+      key: "vat",
       width: 100,
     },
-    { title: "VAT (%)", dataIndex: "vat", key: "vat", width: 100 },
+    {
+      title: "Giá sau VAT (VND)",
+      dataIndex: "priceAfterVatVND",
+      key: "priceAfterVatVND",
+      width: 150,
+      render: (value) => value?.toLocaleString("vi-VN"),
+    },
+    {
+      title: "Giá sau VAT (USD)",
+      dataIndex: "priceAfterVatUSD",
+      key: "priceAfterVatUSD",
+      width: 150,
+      render: (value) => value?.toLocaleString("en-US"),
+    },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
@@ -153,9 +186,7 @@ const ProductPage = () => {
           type="link"
           icon={<EditOutlined />}
           onClick={() => handleEdit(record)}
-        >
-          Sửa
-        </Button>
+        />
       ),
     },
   ];
@@ -176,10 +207,11 @@ const ProductPage = () => {
         }}
       >
         <Space>
+          <h2 style={{ margin: 0 }}>Danh sách sản phẩm</h2>
           <Input.Search
             placeholder="Tìm kiếm sản phẩm..."
             allowClear
-            style={{ width: 200 }}
+            style={{ width: 250 }}
           />
           <InputNumber
             placeholder="Giá từ"
@@ -199,32 +231,24 @@ const ProductPage = () => {
               setPriceFilter((prev) => ({ ...prev, max: value }))
             }
           />
-          <Button type="default" onClick={handleFilterPrice}>
+          {/* <Button type="default" onClick={handleFilterPrice}>
             Lọc
-          </Button>
+          </Button> */}
         </Space>
 
         <Space>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-            Thêm sản phẩm
-          </Button>
-
-          <Popconfirm
-            title="Bạn có muốn xóa sản phẩm này?"
-            onConfirm={handleDelete}
-            okText="Có"
-            cancelText="Không"
+          <Button
+            type="primary"
+            danger
+            icon={<DeleteOutlined />}
             disabled={selectedRowKeys.length === 0}
+            onClick={showDeleteConfirm}
           >
-            <Button
-              type="primary"
-              danger
-              icon={<DeleteOutlined />}
-              disabled={selectedRowKeys.length === 0}
-            >
-              Xóa
-            </Button>
-          </Popconfirm>
+            Xóa
+          </Button>
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+            Tạo
+          </Button>
         </Space>
       </div>
 
@@ -239,7 +263,7 @@ const ProductPage = () => {
       {/* Modal Thêm / Sửa */}
       <Modal
         title={editingProduct ? "Sửa sản phẩm" : "Thêm sản phẩm"}
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={() => form.submit()}
         onCancel={() => setIsModalVisible(false)}
         okText="Lưu"
