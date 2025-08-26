@@ -336,6 +336,18 @@ const [data, setData] = useState([
                     // }
                   />
                 </Form.Item>
+                <Form.Item label="Năm">
+                  <Input
+                    value="2025"
+                    // readOnly={!isEditing}
+                    // onChange={(e) =>
+                    //   setCustomer({
+                    //     ...customer,
+                    //     documentsPerMonth: e.target.value,
+                    //   })
+                    // }
+                  />
+                </Form.Item>
               </Form>
             </Card>
           </Col>
