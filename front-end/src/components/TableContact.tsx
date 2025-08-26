@@ -24,7 +24,7 @@ interface TableContactProps {
   filterMainContact: string | null;
   selectedRowKeys: string[];
   setSelectedRowKeys: (keys: string[]) => void;
-  onRowClick?: (record: Contact) => void; // 👈 thêm
+  onShowClick?: (record: Contact) => void; // 👈 thêm
   onEditClick?: (record: Contact) => void;
 }
 
@@ -35,7 +35,7 @@ const TableContact = ({
   filterMainContact,
   selectedRowKeys,
   setSelectedRowKeys,
-  onRowClick,
+  onShowClick,
   onEditClick,
 }: TableContactProps) => {
   // 🔎 lọc theo search + filter
@@ -60,7 +60,7 @@ const TableContact = ({
       width: 200,
       fixed: "left",
       render: (_, record) => (
-        <Link onClick={() => onRowClick && onRowClick(record)} to={"#"}>
+        <Link onClick={() => onShowClick && onShowClick(record)} to={"#"}>
           {record.contactName}
         </Link>
       ),

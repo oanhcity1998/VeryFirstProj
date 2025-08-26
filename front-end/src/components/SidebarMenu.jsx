@@ -1,5 +1,12 @@
 import { Menu } from "antd";
-import { HomeOutlined, UserOutlined, UploadOutlined, ContactsOutlined } from "@ant-design/icons";
+import {
+  HomeOutlined,
+  UserOutlined,
+  UploadOutlined,
+  ContactsOutlined,
+  FileTextOutlined,
+  SolutionOutlined,
+} from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import "./SidebarMenu.css";
 
@@ -22,6 +29,11 @@ const SidebarMenu = ({ collapsed }) => {
     },
     {
       key: "4",
+      icon: <SolutionOutlined />,
+      label: <Link to="/quotation-list">Quotation</Link>,
+    },
+    {
+      key: "10",
       icon: <UploadOutlined />,
       label: "Upload",
     },

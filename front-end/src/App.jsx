@@ -8,6 +8,7 @@ import CustomerList from "./views/CustomerList";
 import CustomerDetail from "./views/CustomerDetail";
 import ContactList from "./views/ContactList";
 import ProductPage from "./views/ProductPage";
+import QuotationList from "./views/QuotationList.tsx";
 
 export default function App() {
   return (
@@ -23,6 +24,8 @@ export default function App() {
 
           <Route path="/contact-list" element={<ContactList />} />
           <Route path="/productlist" element={<ProductPage />} />
+
+          <Route path="/quotation-list" element={<QuotationList />} />
         </Route>
       </Routes>
     </BrowserRouter>

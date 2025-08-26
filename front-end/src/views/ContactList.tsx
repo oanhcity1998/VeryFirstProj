@@ -4,6 +4,7 @@ import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import TableContact, { Contact } from "../components/TableContact";
 import ContactForm from "../components/ContactForm";
 import Search from "antd/es/input/Search";
+import "./ContactList.css";
 
 const ContactList = () => {
   const [data, setData] = useState([
@@ -176,6 +177,7 @@ const ContactList = () => {
             icon={<DeleteOutlined />}
             onClick={() => setDeleteOpen(true)}
             disabled={selectedRowKeys.length === 0}
+            className={`delete-button ${selectedRowKeys.length === 0 ? "disabled" : ""}`}
           >
             Xóa
           </Button>
@@ -207,7 +209,7 @@ const ContactList = () => {
         filterMainContact={filterMainContact}
         selectedRowKeys={selectedRowKeys}
         setSelectedRowKeys={setSelectedRowKeys}
-        onRowClick={(record) => {
+        onShowClick={(record) => {
           setSelectedContact(record);
           setIsDetailModalOpen(true);
         }}
