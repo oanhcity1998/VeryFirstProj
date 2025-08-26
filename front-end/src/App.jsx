@@ -8,7 +8,7 @@ import CustomerList from "./views/CRM/CustomerList/CustomerList";
 import CustomerDetail from "./views/CRM/CustomerDetail/CustomerDetail";
 import ProductPage from "./views/CRM/ProductPage/ProductPage";
 import ContactList from "./views/CRM/ContactList/ContactList";
-import QuotationList from "./views/QuotationList"
+import QuotationList from "./views/CRM/QuotationList/QuotationList"
 
 
 export default function App() {
