@@ -5,7 +5,7 @@ import "./CreateCustomerForm.css";
 
 const { Option } = Select;
 
-const CreateCustomerForm = ({ onSave, customer  }) => {
+const CreateCustomerForm = ({onCancel, onSave, customer, open  }) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -19,7 +19,8 @@ const CreateCustomerForm = ({ onSave, customer  }) => {
     const onFinish = (values) => {
       onSave(values);
     };
-
+  
+  
   // const handleOk = () => {
   //   form.validateFields().then(values => {
   //     console.log("Form values:", values);
@@ -29,20 +30,21 @@ const CreateCustomerForm = ({ onSave, customer  }) => {
   // };
 
   return (
-    // <Modal
-    //   title="Danh sách khách hàng / Tạo mới"
-    //   open={open}
-    //   onCancel={onCancel}
-    //   footer={[
-    //     <Button key="cancel" danger onClick={onCancel}>
-    //       Huỷ
-    //     </Button>,
-    //     <Button key="submit" type="primary" onClick={handleOk}>
-    //       Xác nhận
-    //     </Button>,
-    //   ]}
-    //   width={800}
-    // >
+    <Modal
+      title="Danh sách khách hàng / Tạo mới"
+      open={open}
+      onCancel={onCancel}
+      footer={[
+        <Button key="cancel" danger onClick={onCancel}>
+          Huỷ
+        </Button>,
+        <Button key="submit" type="primary" onClick={() => form.submit()}>
+          Xác nhận
+        </Button>,
+      ]}
+      width={800}
+      // destroyOnClose
+    >
       <Form form={form} layout="vertical" onFinish={onFinish}>
         {/* ✅ Thông tin khách hàng */}
         <div className="form-section">
@@ -124,7 +126,7 @@ const CreateCustomerForm = ({ onSave, customer  }) => {
           </Form.Item>
         </div>
       </Form>
-    // </Modal>
+    </Modal>
   );
 };
 

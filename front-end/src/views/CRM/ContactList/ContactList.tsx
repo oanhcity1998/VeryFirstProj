@@ -215,6 +215,8 @@ const ContactList = () => {
           setSelectedContact(record);
           setIsEditModalOpen(true);
         }}
+        selectable={true}
+        showEdit={true}
       />
 
       {/* modals */}

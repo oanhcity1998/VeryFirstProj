@@ -165,11 +165,14 @@ const CustomerList = () => {
         setSelectedRowKeys={setSelectedRowKeys}
       />
 
-      {/* <CreateCustomerForm
+      <CreateCustomerForm
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
-        onOk={() => setIsModalOpen(false)}
-      /> */}
+        onSave={(values) => {
+          console.log("New customer:", values);
+          setIsModalOpen(false);
+        }}
+      />
 
       {/* Drawer */}
       <FilterDrawer

@@ -12,14 +12,19 @@ import {
   Modal,
   Select,
   message,
+  Space
 } from "antd";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, SearchOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import ContactList from "../ContactList/ContactList";
+import TableContact from "../../../components/TableContact/TableContact";   
+import ContactForm from "../../../components/ContactForm/ContactForm";
 
 import "./CustomerDetail.css";
 
 const { TextArea } = Input;
 const { Option } = Select;
+const { Search } = Input;
+
 
 export default function CustomerDetail() {
   const { id } = useParams();
@@ -28,6 +33,91 @@ export default function CustomerDetail() {
   // const [isEditing, setIsEditing] = useState(false);
   // const [deleteOpen, setDeleteOpen] = useState(false);
   // const [deleting, setDeleting] = useState(false);
+
+  const [searchText, setSearchText] = useState("");
+const [filterCustomer, setFilterCustomer] = useState(null);
+const [filterMainContact, setFilterMainContact] = useState(null);
+const [customerOptions, setCustomerOptions] = useState(["Công ty ABC", "Công ty XYZ"]); 
+const [mainContactOptions, setMainContactOptions] = useState(["Nguyễn Văn A", "Trần Thị B"]);
+
+const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+const [selectedContact, setSelectedContact] = useState(null);
+
+const [deleteOpen, setDeleteOpen] = useState(false);
+const [deleting, setDeleting] = useState(false);
+
+const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
+const [data, setData] = useState([
+    {
+      key: "1",
+      id: "10",
+      contactName: "Nguyễn Văn A",
+      customerName: "Công ty TNHH ABC",
+      phone: "0901234567",
+      email: "vana@abc.com",
+      title: "Giám đốc",
+      mainContact: "Nguyễn Văn A",
+      note: "Khách hàng lâu năm",
+    },
+    {
+      key: "2",
+      id: "11",
+      contactName: "Trần Thị B",
+      customerName: "Công ty TNHH XYZ",
+      phone: "0912345678",
+      email: "tranb@xyz.com",
+      title: "Kế toán trưởng",
+      mainContact: "Nguyễn Văn C",
+      note: "Khách hàng mới",
+    },
+    {
+      key: "3",
+      id: "12",
+      contactName: "Lê Văn C",
+      customerName: "Công ty CP MNO",
+      phone: "0923456789",
+      email: "lec@mno.com",
+      title: "Trưởng phòng Kinh doanh",
+      mainContact: "Lê Văn C",
+      note: "Tiềm năng",
+    },
+    {
+      key: "4",
+      id: "13",
+      contactName: "Phạm Thị D",
+      customerName: "Công ty TNHH ABC",
+      phone: "0934567890",
+      email: "phamd@abc.com",
+      title: "Nhân viên",
+      mainContact: "Nguyễn Văn A",
+      note: "Liên hệ phụ",
+    },
+    {
+      key: "5",
+      id: "14",
+      contactName: "Hoàng Văn E",
+      customerName: "Công ty CP PQR",
+      phone: "0945678901",
+      email: "hoange@pqr.com",
+      title: "Phó Giám đốc",
+      mainContact: "Hoàng Văn E",
+      note: "Khách VIP",
+    },
+    {
+      key: "6",
+      id: "15",
+      contactName: "Đỗ Thị F",
+      customerName: "Công ty TNHH XYZ",
+      phone: "0956789012",
+      email: "dof@xyz.com",
+      title: "Trợ lý",
+      mainContact: "Nguyễn Văn C",
+      note: "Cần follow-up",
+    },
+  ]);; 
 
   // move mock data into state
   const [customer, setCustomer] = useState({
@@ -67,6 +157,12 @@ export default function CustomerDetail() {
   //     setDeleteOpen(false);
   //   }
   // };
+
+  const handleEdit = (values) => {
+    message.success("Đã cập nhật liên hệ");
+    setIsEditModalOpen(false);
+  };
+
 
   const breadcrumbItems = [
     { title: <Link to="/customerlist">Danh sách khách hàng</Link> },
@@ -246,9 +342,82 @@ export default function CustomerDetail() {
         </Row>
       ),
     },
-    { key: "2", label: "Liên Hệ", children: <p>
-      Liên hệ
-    </p> },
+    { key: "2", label: "Liên Hệ", children:
+      <div>
+          
+          <div style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "center" }}>
+            <h2 style={{ flex: 1, textAlign: "center" }}>Thông tin người liên hệ</h2>
+      
+              <Search
+                placeholder="Nhập tên người liên hệ..."
+                onChange={(e) => setSearchText(e.target.value)}
+                allowClear
+                className="header-search"
+              />
+      
+              <Select
+                allowClear
+                placeholder="Lọc theo Khách hàng"
+                style={{ width: 200 }}
+                value={filterCustomer}
+                onChange={(val) => setFilterCustomer(val)}
+                options={customerOptions.map((c) => ({ label: c, value: c }))}
+              />
+      
+              <Select
+                allowClear
+                placeholder="Lọc theo Liên hệ chính"
+                style={{ width: 200 }}
+                value={filterMainContact}
+                onChange={(val) => setFilterMainContact(val)}
+                options={mainContactOptions.map((m) => ({ label: m, value: m }))}
+              />
+            </div>
+      
+            
+            <TableContact
+              data={data}
+              searchText={searchText}
+              filterCustomer={filterCustomer}
+              filterMainContact={filterMainContact}
+              selectedRowKeys={selectedRowKeys}
+              setSelectedRowKeys={setSelectedRowKeys}
+              onRowClick={(record) => {
+                setSelectedContact(record);
+                setIsDetailModalOpen(true);
+              }}
+              // onEditClick={(record) => {
+              //   setSelectedContact(record);
+              //   setIsEditModalOpen(true);
+              // }}
+              selectable={false}
+              showEdit={false}
+            />
+      
+            
+            {/* <ContactForm
+              mode="create"
+              open={isCreateModalOpen}
+              onCancel={() => setIsCreateModalOpen(false)}
+              onOk={handleCreate}
+            /> */}
+      
+            <ContactForm
+              mode="edit"
+              open={isEditModalOpen}
+              onCancel={() => setIsEditModalOpen(false)}
+              onOk={handleEdit}
+              initialValues={selectedContact}
+            />
+      
+            <ContactForm
+              mode="detail"
+              open={isDetailModalOpen}
+              onCancel={() => setIsDetailModalOpen(false)}
+              initialValues={selectedContact}
+            />
+      </div>
+     },
     { key: "3", label: "Báo giá", children: <p>Thông tin báo giá…</p> },
     { key: "4", label: "Hợp đồng", children: <p>Danh sách hợp đồng…</p> },
     { key: "5", label: "Tài liệu", children: <p>File tài liệu…</p> },

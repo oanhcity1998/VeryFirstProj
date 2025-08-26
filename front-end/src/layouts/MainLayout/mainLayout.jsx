@@ -19,6 +19,7 @@ import {
   FilterOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
+  AppstoreOutlined,
   BellOutlined,
   UploadOutlined,
   DownloadOutlined,
@@ -40,6 +41,34 @@ const MainLayout = () => {
   // const [importing, setImporting] = useState(false);
 
   const navigate = useNavigate();
+
+  const appsMenu = {
+    items: [
+      {
+        key: "crm",
+        label: (
+          <div className="apps-item">
+            <img src="/images/crm.png" alt="CRM" className="apps-icon" />
+            <span className="apps-label">CRM</span>
+          </div>
+        ),
+        onClick: () => console.log("CRM clicked"),
+      },
+      {
+        key: "hrm",
+        label: (
+          <div className="apps-item">
+            <img src="/images/hrm.png" alt="HRM" className="apps-icon" />
+            <span className="apps-label">HRM</span>
+          </div>
+        ),
+        onClick: () => console.log("HRM clicked"),
+      },
+    ],
+  };
+
+
+
 
   // popover for settings
   // const settingsContent = (
@@ -139,7 +168,17 @@ const MainLayout = () => {
                 <p className="ant-upload-hint">Chỉ chấp nhận 1 file mỗi lần</p>
               </Upload.Dragger>
             </Modal> */}
+            {/* Apps button */}
+            {/* ✅ Apps button with Dropdown (new API) */}
+            <Dropdown menu={appsMenu} placement="bottomRight" trigger={["click"]}>
+              <Button
+                type="text"
+                icon={<AppstoreOutlined style={{ fontSize: "18px" }} />}
+              />
+            </Dropdown>
 
+
+            {/* Notification button  */}
             <Badge count={3} offset={[0, 5]}>
               <BellOutlined className="bell-icon" />
             </Badge>
