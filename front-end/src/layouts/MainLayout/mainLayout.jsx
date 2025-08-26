@@ -19,6 +19,7 @@ import {
   FilterOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
+  AppstoreOutlined,
   BellOutlined,
   UploadOutlined,
   DownloadOutlined,
@@ -26,47 +27,75 @@ import {
   UserOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import SidebarMenu from "../components/SidebarMenu";
+import SidebarMenu from "../../components/SideBar/SidebarMenu";
 import "./mainLayout.css";
-import FilterDrawer from "../components/FilterDrawer";
+// import FilterDrawer from "../components/FilterDrawer";
 
 const { Header, Sider, Content } = Layout;
 const { Search } = Input;
 
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [importOpen, setImportOpen] = useState(false);
-  const [importing, setImporting] = useState(false);
+  // const [filterOpen, setFilterOpen] = useState(false);
+  // const [importOpen, setImportOpen] = useState(false);
+  // const [importing, setImporting] = useState(false);
 
   const navigate = useNavigate();
 
-  // popover for settings
-  const settingsContent = (
-    <Space direction="vertical">
-      <Button type="text" icon={<UploadOutlined />} onClick={() => setImportOpen(true)}>
-        Import
-      </Button>
-      <Button type="text" icon={<DownloadOutlined />} onClick={() => console.log("Export clicked")}>
-        Export
-      </Button>
-    </Space>
-  );
-
-  // upload handler
-  const handleUpload = async (file) => {
-    setImporting(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // fake API call
-      message.success(`${file.name} đã được import thành công`);
-      setImportOpen(false);
-    } catch (err) {
-      message.error("Import thất bại");
-    } finally {
-      setImporting(false);
-    }
-    return false;
+  const appsMenu = {
+    items: [
+      {
+        key: "crm",
+        label: (
+          <div className="apps-item">
+            <img src="/images/crm.png" alt="CRM" className="apps-icon" />
+            <span className="apps-label">CRM</span>
+          </div>
+        ),
+        onClick: () => console.log("CRM clicked"),
+      },
+      {
+        key: "hrm",
+        label: (
+          <div className="apps-item">
+            <img src="/images/hrm.png" alt="HRM" className="apps-icon" />
+            <span className="apps-label">HRM</span>
+          </div>
+        ),
+        onClick: () => console.log("HRM clicked"),
+      },
+    ],
   };
+
+
+
+
+  // popover for settings
+  // const settingsContent = (
+  //   <Space direction="vertical">
+  //     <Button type="text" icon={<UploadOutlined />} onClick={() => setImportOpen(true)}>
+  //       Import
+  //     </Button>
+  //     <Button type="text" icon={<DownloadOutlined />} onClick={() => console.log("Export clicked")}>
+  //       Export
+  //     </Button>
+  //   </Space>
+  // );
+
+  // // upload handler
+  // const handleUpload = async (file) => {
+  //   setImporting(true);
+  //   try {
+  //     await new Promise((resolve) => setTimeout(resolve, 1500)); // fake API call
+  //     message.success(`${file.name} đã được import thành công`);
+  //     setImportOpen(false);
+  //   } catch (err) {
+  //     message.error("Import thất bại");
+  //   } finally {
+  //     setImporting(false);
+  //   }
+  //   return false;
+  // };
 
   // ✅ Dropdown menu for Avatar
   const avatarMenu = {
@@ -139,7 +168,17 @@ const MainLayout = () => {
                 <p className="ant-upload-hint">Chỉ chấp nhận 1 file mỗi lần</p>
               </Upload.Dragger>
             </Modal> */}
+            {/* Apps button */}
+            {/* ✅ Apps button with Dropdown (new API) */}
+            <Dropdown menu={appsMenu} placement="bottomRight" trigger={["click"]}>
+              <Button
+                type="text"
+                icon={<AppstoreOutlined style={{ fontSize: "18px" }} />}
+              />
+            </Dropdown>
 
+
+            {/* Notification button  */}
             <Badge count={3} offset={[0, 5]}>
               <BellOutlined className="bell-icon" />
             </Badge>
@@ -156,12 +195,12 @@ const MainLayout = () => {
         </Content>
       </Layout>
 
-      {/* Drawer */}
+      {/* Drawer
       <FilterDrawer
         open={filterOpen}
         onClose={() => setFilterOpen(false)}
         onConfirm={(values) => console.log("Apply filter:", values)}
-      />
+      /> */}
     </Layout>
   );
 };

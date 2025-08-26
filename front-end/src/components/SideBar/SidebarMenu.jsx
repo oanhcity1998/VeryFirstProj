@@ -1,5 +1,5 @@
 import { Menu } from "antd";
-import { HomeOutlined, UserOutlined, UploadOutlined, InboxOutlined } from "@ant-design/icons";
+import { HomeOutlined, UserOutlined, ContactsOutlined, InboxOutlined, SolutionOutlined } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu.css";
 
@@ -15,6 +15,8 @@ const SidebarMenu = ({ collapsed }) => {
     selectedKey = "2";
     } else if (location.pathname.startsWith("/productlist")) {
     selectedKey = "3";
+    } else if (location.pathname.startsWith("/contactlist")) {
+    selectedKey = "4";
     }
 
   const items = [
@@ -32,6 +34,16 @@ const SidebarMenu = ({ collapsed }) => {
       key: "3",
       icon: <InboxOutlined />,
       label: <Link to="/productlist">Sản phẩm</Link>,
+    },
+    {
+      key: "4",
+      icon: <ContactsOutlined />,
+      label: <Link to="/contactlist">Liên hệ</Link>,
+    },
+    {
+      key: "5",
+      icon: <SolutionOutlined />,
+      label: <Link to="/quotationlist">Quotation</Link>,
     },
   ];
 

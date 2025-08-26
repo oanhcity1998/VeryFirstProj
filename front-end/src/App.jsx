@@ -1,12 +1,15 @@
 // src/App.jsx
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MainLayout from "./layouts/mainLayout";
+import MainLayout from "./layouts/MainLayout/mainLayout";
 import Home from "./views/Home";
 import Profile from "./views/Profile";
 import Login from "./views/Login";
-import CustomerList from "./views/CustomerList";
-import CustomerDetail from "./views/CustomerDetail";
-import ProductPage from "./views/ProductPage";
+import CustomerList from "./views/CRM/CustomerList/CustomerList";
+import CustomerDetail from "./views/CRM/CustomerDetail/CustomerDetail";
+import ProductPage from "./views/CRM/ProductPage/ProductPage";
+import ContactList from "./views/CRM/ContactList/ContactList";
+import QuotationList from "./views/CRM/QuotationList/QuotationList"
+
 
 export default function App() {
   return (
@@ -17,9 +20,20 @@ export default function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/customerlist" element={<CustomerList />} />
-          <Route path="/productlist" element={<ProductPage />} />
+
+          {/* khách hàng */}
+          <Route path="/customerlist" element={<CustomerList/>} />
           <Route path="customerlist/:id" element={<CustomerDetail />} />
+
+          {/* sản phẩm */}
+          <Route path="/productlist" element={<ProductPage />} />
+
+          {/* liên hệ */}
+          <Route path="/contactlist" element={<ContactList />} />
+
+
+          <Route path="/quotationlist" element={<QuotationList />} />
+
         </Route>
       </Routes>
     </BrowserRouter>

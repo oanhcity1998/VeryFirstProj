@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Button, Space, Modal, message, Input, Popover,Upload  } from "antd";
 import { PlusOutlined, DeleteOutlined, SettingOutlined, FilterOutlined, InboxOutlined, } from "@ant-design/icons";
-import TableCustomer from "../components/TableCustomer";
-import CreateCustomerForm from "../components/CreateCustomerForm";
-import FilterDrawer from "../components/FilterDrawer";
+import TableCustomer from "../../../components/TableCustomer/TableCustomer";
+import CreateCustomerForm from "../../../components/CustomerForm/CreateCustomerForm";
+import FilterDrawer from "../../../components/Filter/FilterDrawer";
 import "./CustomerList.css"
 
 const CustomerList = () => {
@@ -126,7 +126,13 @@ const CustomerList = () => {
             </Modal>
 
             {/* Delete */}
-            <Button danger onClick={() => setDeleteOpen(true)}>Xóa</Button>
+            <Button 
+              danger 
+              disabled={selectedRowKeys.length === 0}  
+              onClick={() => setDeleteOpen(true)}>
+                Xóa
+            </Button>
+            
             <Modal
                 open={deleteOpen}
                 title="Xác nhận xóa"
@@ -162,7 +168,10 @@ const CustomerList = () => {
       <CreateCustomerForm
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
-        onOk={() => setIsModalOpen(false)}
+        onSave={(values) => {
+          console.log("New customer:", values);
+          setIsModalOpen(false);
+        }}
       />
 
       {/* Drawer */}

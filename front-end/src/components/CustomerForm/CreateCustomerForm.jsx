@@ -1,19 +1,33 @@
+import {useEffect} from "react"
 import { Modal, Form, Input, Button, Upload, Select } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import "./CreateCustomerForm.css";
 
 const { Option } = Select;
 
-const CreateCustomerForm = ({ open, onCancel, onOk }) => {
+const CreateCustomerForm = ({onCancel, onSave, customer, open  }) => {
   const [form] = Form.useForm();
 
-  const handleOk = () => {
-    form.validateFields().then(values => {
-      console.log("Form values:", values);
-      onOk(values);
-      form.resetFields();
-    });
-  };
+  useEffect(() => {
+      if (customer) {
+        form.setFieldsValue(customer);
+      } else {
+        form.resetFields();
+      }
+    }, [customer, form]);
+  
+    const onFinish = (values) => {
+      onSave(values);
+    };
+  
+  
+  // const handleOk = () => {
+  //   form.validateFields().then(values => {
+  //     console.log("Form values:", values);
+  //     onOk(values);
+  //     form.resetFields();
+  //   });
+  // };
 
   return (
     <Modal
@@ -24,13 +38,14 @@ const CreateCustomerForm = ({ open, onCancel, onOk }) => {
         <Button key="cancel" danger onClick={onCancel}>
           Huỷ
         </Button>,
-        <Button key="submit" type="primary" onClick={handleOk}>
+        <Button key="submit" type="primary" onClick={() => form.submit()}>
           Xác nhận
         </Button>,
       ]}
       width={800}
+      // destroyOnClose
     >
-      <Form form={form} layout="vertical">
+      <Form form={form} layout="vertical" onFinish={onFinish}>
         {/* ✅ Thông tin khách hàng */}
         <div className="form-section">
           <h3>Thông tin khách hàng</h3>
