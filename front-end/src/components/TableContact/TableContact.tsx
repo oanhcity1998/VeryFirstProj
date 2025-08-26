@@ -26,6 +26,8 @@ interface TableContactProps {
   setSelectedRowKeys: (keys: string[]) => void;
   onShowClick?: (record: Contact) => void; // 👈 thêm
   onEditClick?: (record: Contact) => void;
+  selectable?: boolean;
+  showEdit?: boolean;
 }
 
 const TableContact = ({
@@ -37,6 +39,8 @@ const TableContact = ({
   setSelectedRowKeys,
   onShowClick,
   onEditClick,
+  selectable = true,
+  showEdit = true,
 }: TableContactProps) => {
   // 🔎 lọc theo search + filter
   const filteredData = useMemo(() => {
@@ -96,7 +100,10 @@ const TableContact = ({
       dataIndex: "note",
       width: 200,
     },
-    {
+  ];
+
+  if (showEdit) {
+    columns.push({
       title: "",
       dataIndex: "",
       width: 60,
@@ -116,17 +123,21 @@ const TableContact = ({
           }}
         />
       ),
-    },
-  ];
+    });
+  }
 
   return (
     <Table<Contact>
-      rowSelection={{
-        selectedRowKeys,
-        onChange: (keys) => {
-          setSelectedRowKeys(keys as string[]); // 👈 ép kiểu vì React.Key có thể là string | number
-        },
-      }}
+      rowSelection={
+        selectable
+          ? {
+              selectedRowKeys,
+              onChange: (keys) => {
+                setSelectedRowKeys(keys as string[]); // 👈 ép kiểu vì React.Key có thể là string | number
+        },            }
+          : undefined
+      }
+
       columns={columns}
       dataSource={filteredData}
       rowKey="key"
