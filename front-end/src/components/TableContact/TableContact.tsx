@@ -1,4 +1,4 @@
-import { Table, Checkbox, Button } from "antd";
+import { Table, Checkbox } from "antd";
 import { Link } from "react-router-dom";
 import { useMemo } from "react";
 import { EditOutlined } from "@ant-design/icons";
@@ -24,10 +24,8 @@ interface TableContactProps {
   filterMainContact: string | null;
   selectedRowKeys: string[];
   setSelectedRowKeys: (keys: string[]) => void;
-  onRowClick?: (record: Contact) => void; // 👈 thêm
+  onShowClick?: (record: Contact) => void; // 👈 thêm
   onEditClick?: (record: Contact) => void;
-  selectable?: boolean;
-  showEdit?: boolean;
 }
 
 const TableContact = ({
@@ -37,10 +35,8 @@ const TableContact = ({
   filterMainContact,
   selectedRowKeys,
   setSelectedRowKeys,
-  onRowClick,
+  onShowClick,
   onEditClick,
-  selectable = true,
-  showEdit = true,
 }: TableContactProps) => {
   // 🔎 lọc theo search + filter
   const filteredData = useMemo(() => {
@@ -64,7 +60,7 @@ const TableContact = ({
       width: 200,
       fixed: "left",
       render: (_, record) => (
-        <Link onClick={() => onRowClick && onRowClick(record)} to={"#"}>
+        <Link onClick={() => onShowClick && onShowClick(record)} to={"#"}>
           {record.contactName}
         </Link>
       ),
@@ -101,12 +97,6 @@ const TableContact = ({
       width: 200,
     },
     {
-      
-    },
-  ];
-
-  if (showEdit) {
-    columns.push({
       title: "",
       dataIndex: "",
       width: 60,
@@ -126,21 +116,17 @@ const TableContact = ({
           }}
         />
       ),
-    });
-  }
+    },
+  ];
 
   return (
     <Table<Contact>
-      rowSelection={
-        selectable
-          ? {
-              selectedRowKeys,
-              onChange: (keys) => {
+      rowSelection={{
+        selectedRowKeys,
+        onChange: (keys) => {
           setSelectedRowKeys(keys as string[]); // 👈 ép kiểu vì React.Key có thể là string | number
         },
-            }
-          : undefined
-      }
+      }}
       columns={columns}
       dataSource={filteredData}
       rowKey="key"
