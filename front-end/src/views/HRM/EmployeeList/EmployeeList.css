@@ -1,0 +1,31 @@
+.h2 {
+    margin-bottom: 16px;
+}
+
+.customer-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.customer-list-header h2 {
+  margin: 0;
+}
+
+.customer-list-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.customer-list-search {
+  width: 250px;
+}
+
+/* Highlight the whole row when selected */
+.ant-table-row-selected > td {
+  background-color: #cce6ff !important;  /* light blue */
+}
+
+

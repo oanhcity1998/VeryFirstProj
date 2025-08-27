@@ -9,13 +9,13 @@ const SidebarMenu = ({ collapsed }) => {
     // Map paths to keys
     let selectedKey = "1"; // default Trang chủ
 
-    if (location.pathname === "/") {
+    if (location.pathname === "/crm") {
     selectedKey = "1";
-    } else if (location.pathname.startsWith("/customerlist")) {
+    } else if (location.pathname.startsWith("/crm/customerlist")) {
     selectedKey = "2";
-    } else if (location.pathname.startsWith("/productlist")) {
+    } else if (location.pathname.startsWith("/crm/productlist")) {
     selectedKey = "3";
-    } else if (location.pathname.startsWith("/contactlist")) {
+    } else if (location.pathname.startsWith("/crm/contactlist")) {
     selectedKey = "4";
     }
 
@@ -23,27 +23,27 @@ const SidebarMenu = ({ collapsed }) => {
     {
       key: "1",
       icon: <HomeOutlined />,
-      label: <Link to="/">Trang chủ</Link>,
+      label: <Link to="/crm">Trang chủ</Link>,
     },
     {
       key: "2",
       icon: <UserOutlined />,
-      label: <Link to="/customerlist">Khách hàng</Link>,
+      label: <Link to="/crm/customerlist">Khách hàng</Link>,
     },
     {
       key: "3",
       icon: <InboxOutlined />,
-      label: <Link to="/productlist">Sản phẩm</Link>,
+      label: <Link to="/crm/productlist">Sản phẩm</Link>,
     },
     {
       key: "4",
       icon: <ContactsOutlined />,
-      label: <Link to="/contactlist">Liên hệ</Link>,
+      label: <Link to="/crm/contactlist">Liên hệ</Link>,
     },
     {
       key: "5",
       icon: <SolutionOutlined />,
-      label: <Link to="/quotationlist">Quotation</Link>,
+      label: <Link to="/crm/quotationlist">Quotation</Link>,
     },
   ];
 

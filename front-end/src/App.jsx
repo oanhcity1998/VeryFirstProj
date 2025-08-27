@@ -8,8 +8,9 @@ import CustomerList from "./views/CRM/CustomerList/CustomerList";
 import CustomerDetail from "./views/CRM/CustomerDetail/CustomerDetail";
 import ProductPage from "./views/CRM/ProductPage/ProductPage";
 import ContactList from "./views/CRM/ContactList/ContactList";
-import QuotationList from "./views/CRM/QuotationList/QuotationList"
-
+import QuotationList from "./views/CRM/QuotationList/QuotationList";
+import EmployeeList from "./views/HRM/EmployeeList/EmployeeList";
+import EmployeeDetail from "./views/HRM/EmployeeDetail/EmployeeDetail";
 
 export default function App() {
   return (
@@ -18,22 +19,30 @@ export default function App() {
         <Route path="/login" element={<Login />} />
 
         <Route element={<MainLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/crm" element={<Home />} />
+          <Route path="/hrm/profile" element={<Profile />} />
 
           {/* khách hàng */}
-          <Route path="/customerlist" element={<CustomerList/>} />
-          <Route path="customerlist/:id" element={<CustomerDetail />} />
+          <Route path="/crm/customerlist" element={<CustomerList />} />
+          <Route path="crm/customerlist/:id" element={<CustomerDetail />} />
 
           {/* sản phẩm */}
-          <Route path="/productlist" element={<ProductPage />} />
+          <Route path="/crm/productlist" element={<ProductPage />} />
 
           {/* liên hệ */}
-          <Route path="/contactlist" element={<ContactList />} />
+          <Route path="/crm/contactlist" element={<ContactList />} />
 
+          <Route path="/crm/quotationlist" element={<QuotationList />} />
+        </Route>
+        <Route element={<MainLayout />}>
+          {/* khách hàng */}
+          <Route path="/hrm" element={<Home />} />
+          <Route path="/hrm/profile" element={<Profile />} />
 
-          <Route path="/quotationlist" element={<QuotationList />} />
+          <Route path="/hrm/employee-list" element={<EmployeeList />} />
+          <Route path="/hrm/employee-list/:id" element={<EmployeeDetail />} />
 
+          {/* tải lên */}
         </Route>
       </Routes>
     </BrowserRouter>
