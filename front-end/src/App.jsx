@@ -14,12 +14,12 @@ import EmployeeDetail from "./views/HRM/EmployeeDetail/EmployeeDetail";
 
 export default function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
 
         <Route element={<MainLayout />}>
-          <Route path="/crm" element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/hrm/profile" element={<Profile />} />
 
           {/* khách hàng */}
@@ -36,7 +36,7 @@ export default function App() {
         </Route>
         <Route element={<MainLayout />}>
           {/* khách hàng */}
-          <Route path="/hrm" element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/hrm/profile" element={<Profile />} />
 
           <Route path="/hrm/employee-list" element={<EmployeeList />} />
@@ -45,6 +45,6 @@ export default function App() {
           {/* tải lên */}
         </Route>
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   );
 }

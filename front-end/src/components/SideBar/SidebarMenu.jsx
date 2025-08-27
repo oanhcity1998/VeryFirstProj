@@ -9,7 +9,7 @@ const SidebarMenu = ({ collapsed }) => {
     // Map paths to keys
     let selectedKey = "1"; // default Trang chủ
 
-    if (location.pathname === "/crm") {
+    if (location.pathname === "/") {
     selectedKey = "1";
     } else if (location.pathname.startsWith("/crm/customerlist")) {
     selectedKey = "2";
@@ -23,7 +23,7 @@ const SidebarMenu = ({ collapsed }) => {
     {
       key: "1",
       icon: <HomeOutlined />,
-      label: <Link to="/crm">Trang chủ</Link>,
+      label: <Link to="/">Trang chủ</Link>,
     },
     {
       key: "2",

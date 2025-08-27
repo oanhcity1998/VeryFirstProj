@@ -9,7 +9,7 @@ const SidebarMenuHRM = ({ collapsed }) => {
     // Map paths to keys
     let selectedKey = "1"; // default Trang chủ
 
-    if (location.pathname === "/hrm") {
+    if (location.pathname === "/") {
         selectedKey = "1";
     } else if (location.pathname.startsWith("/hrm/employee-list")) {
         selectedKey = "2";
@@ -21,7 +21,7 @@ const SidebarMenuHRM = ({ collapsed }) => {
     {
       key: "1",
       icon: <HomeOutlined />,
-      label: <Link to="/hrm">Trang chủ</Link>,
+      label: <Link to="/">Trang chủ</Link>,
     },
     {
       key: "2",
