@@ -1,5 +1,5 @@
 import React from "react";
-import { Descriptions, Breadcrumb, Button } from "antd";
+import { Descriptions, Breadcrumb, Button, Card } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import "./LeadDetail.css";
@@ -39,11 +39,11 @@ const LeadDetail: React.FC = () => {
             <Breadcrumb.Item>{lead.leadName}</Breadcrumb.Item>
             </Breadcrumb>
         </div>
-
-      <div className="lead-detail-content">
-        <div className="lead-detail-title">
-                Chi tiết {lead.leadName}
-        </div>
+            
+        <div className="lead-detail-content">
+            <div className="lead-detail-title">
+                    Chi tiết {lead.leadName}
+            </div>
         <Descriptions bordered column={1} size="middle" >
             
           <Descriptions.Item label="Tên lead">{lead.leadName}</Descriptions.Item>
@@ -59,7 +59,8 @@ const LeadDetail: React.FC = () => {
           <Descriptions.Item label="Nhân viên phụ trách">{lead.owner}</Descriptions.Item>
           <Descriptions.Item label="Trạng thái">{lead.status}</Descriptions.Item>
         </Descriptions>
-      </div>
+      
+        </div>
     </div>
   );
 };
