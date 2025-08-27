@@ -1,5 +1,5 @@
 // src/App.jsx
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout/mainLayout";
 import Home from "./views/Home";
 import Profile from "./views/Profile";
@@ -14,7 +14,7 @@ import EmployeeDetail from "./views/HRM/EmployeeDetail/EmployeeDetail";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
 
@@ -45,6 +45,6 @@ export default function App() {
           {/* tải lên */}
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
