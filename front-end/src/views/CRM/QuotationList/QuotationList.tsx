@@ -1,13 +1,35 @@
 import { useMemo, useState } from "react";
 import { Button, Space, Modal, message } from "antd";
 import { PlusOutlined, DeleteOutlined, FilterOutlined } from "@ant-design/icons";
-// import CreateQuotationForm from "../components/CreateQuotationForm";
-import { useNavigate } from "react-router-dom";
-import TableQuotation, { Quotation } from "../../../components/TableQuotation/TableQuotation";
+import { Link, useNavigate } from "react-router-dom";
 import "./QuotationList.css";
-import FilterDrawer from "../../../components/Filter/FilterDrawer";
 import FilterQuotationDrawer from "../../../components/Filter/FilterQuotationDrawer";
 import Search from "antd/es/input/Search";
+import { QuotationForm } from "../../../components/QuotationForm/QuotationForm";
+import { TableQuotation } from "../../../components/TableQuotation/TableQuotation";
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+export interface Product {
+  id: number;
+  productName: string;
+  productType: string;
+  priceVND: number;
+  priceUSD: number;
+  vat: number;
+  afterVatVND: number;
+  afterVatUSD: number;
+}
+
+// Interface Quotation
+export interface Quotation {
+  id: number;
+  quotationName: string;
+  validityPeriod: string;
+  paymentTerms: string;
+  products: Product[];
+  opportunity?: string;
+  status: "Draft" | "Sent" | "Approved" | "Rejected";
+}
 
 // Mock data
 const dataSource: Quotation[] = [
@@ -16,53 +38,30 @@ const dataSource: Quotation[] = [
     quotationName: "Báo giá thiết bị văn phòng",
     validityPeriod: "30 ngày",
     paymentTerms: "Thanh toán 50% trước, 50% sau giao hàng",
-    Products: [
-      { id: 1, name: "Máy in HP 107w" },
-      { id: 2, name: "Giấy A4 Double A" },
+    opportunity: "Dự án văn phòng A",
+    products: [
+      {
+        id: 1,
+        productName: "Máy in HP 107w",
+        productType: "Thiết bị văn phòng",
+        priceVND: 5000000,
+        priceUSD: 210,
+        vat: 10,
+        afterVatVND: 5500000,
+        afterVatUSD: 231,
+      },
+      {
+        id: 2,
+        productName: "Giấy A4 Double A",
+        productType: "Vật tư tiêu hao",
+        priceVND: 250000,
+        priceUSD: 11,
+        vat: 5,
+        afterVatVND: 262500,
+        afterVatUSD: 11.55,
+      },
     ],
-    priceVND: 12500000,
-    priceUSD: 520,
-    vat: 10,
     status: "Draft",
-  },
-  {
-    id: 2,
-    quotationName: "Báo giá phần mềm quản lý bán hàng",
-    validityPeriod: "15 ngày",
-    paymentTerms: "Thanh toán 100% sau nghiệm thu",
-    Products: [{ id: 3, name: "Phần mềm ERP Cloud" }],
-    priceVND: 45000000,
-    priceUSD: 1900,
-    vat: 8,
-    status: "Sent",
-  },
-  {
-    id: 3,
-    quotationName: "Báo giá dịch vụ bảo trì hệ thống",
-    validityPeriod: "1 năm",
-    paymentTerms: "Thanh toán theo quý",
-    Products: [
-      { id: 4, name: "Dịch vụ bảo trì server" },
-      { id: 5, name: "Giám sát an ninh mạng" },
-    ],
-    priceVND: 72000000,
-    priceUSD: 3000,
-    vat: 10,
-    status: "Approved",
-  },
-  {
-    id: 4,
-    quotationName: "Báo giá thi công nội thất văn phòng",
-    validityPeriod: "45 ngày",
-    paymentTerms: "30% đặt cọc, 70% khi bàn giao",
-    Products: [
-      { id: 6, name: "Bàn làm việc gỗ công nghiệp" },
-      { id: 7, name: "Ghế xoay văn phòng" },
-    ],
-    priceVND: 98000000,
-    priceUSD: 4100,
-    vat: 10,
-    status: "Rejected",
   },
 ];
 
@@ -77,9 +76,12 @@ const QuotationList = () => {
   const [filterProduct, setFilterProduct] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState<Quotation["status"] | null>(null);
 
-  const VATOptions = useMemo(() => Array.from(new Set(data.map((d) => d.vat))), [data]);
+  const VATOptions = useMemo(
+    () => Array.from(new Set(data.flatMap((d) => d.products.map((p) => p.vat)))),
+    [data]
+  );
   const ProductOptions = useMemo(
-    () => Array.from(new Set(data.map((d) => d.Products.map((p) => p.name)))).flat(),
+    () => Array.from(new Set(data.flatMap((d) => d.products.map((p) => p.productName)))),
     [data]
   );
   const StatusOptions = useMemo(() => Array.from(new Set(data.map((d) => d.status))), [data]);
@@ -94,18 +96,60 @@ const QuotationList = () => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
 
+  // 👉 Hàm tính tổng + VAT từ danh sách sản phẩm
+  const getSummary = (products: Product[]) => {
+    const totalBeforeVat = products.reduce((sum, p) => sum + p.priceVND, 0);
+    const vat5 = products
+      .filter((p) => p.vat === 5)
+      .reduce((sum, p) => sum + (p.afterVatVND - p.priceVND), 0);
+    const vat10 = products
+      .filter((p) => p.vat === 10)
+      .reduce((sum, p) => sum + (p.afterVatVND - p.priceVND), 0);
+
+    return { totalBeforeVat, vat5, vat10 };
+  };
+
+  // tạo báo giá mới
+  const handleCreate = (values: any) => {
+    const newQuotation: Quotation = {
+      id: data.length + 1,
+      quotationName: values.quotationName,
+      validityPeriod: values.validityPeriod,
+      paymentTerms: values.paymentTerms,
+      products: values.products || [],
+      status: "Draft",
+      opportunity: values.opportunity,
+    };
+    setData((prev) => [...prev, newQuotation]);
+    setIsCreateModalOpen(false);
+    message.success("Tạo mới báo giá thành công!");
+  };
+
+  // chỉnh sửa báo giá
+  const handleEdit = (values: any) => {
+    if (!selectedQuotation) return;
+    const updated: Quotation = {
+      ...selectedQuotation,
+      quotationName: values.quotationName,
+      validityPeriod: values.validityPeriod,
+      paymentTerms: values.paymentTerms,
+      products: values.products || [],
+      status: values.status,
+      opportunity: values.opportunity,
+    };
+    setData((prev) => prev.map((q) => (q.id === updated.id ? updated : q)));
+    setIsEditModalOpen(false);
+    message.success("Cập nhật báo giá thành công!");
+  };
+
   // handle delete
   const handleDelete = async () => {
     try {
       setDeleting(true);
-      // TODO: replace with your real API delete call
-      // await api.delete(`/Quotations/${Quotation.id}`);
-
       setData((prev) => prev.filter((item) => !selectedRowKeys.includes(item.id)));
       setSelectedRowKeys([]);
-
       message.success("Đã xóa mẫu báo giá");
-      navigate("/quotation-list");
+      navigate("/quotationlist");
     } catch (err) {
       message.error("Không thể xóa mẫu báo giá");
     } finally {
@@ -134,7 +178,6 @@ const QuotationList = () => {
           >
             Bộ lọc
           </Button>
-          {/* Drawer */}
           <FilterQuotationDrawer
             open={filterOpen}
             onClose={() => setFilterOpen(false)}
@@ -150,7 +193,7 @@ const QuotationList = () => {
             StatusOptions={StatusOptions}
           />
 
-          {/* Delete button  */}
+          {/* Delete button */}
           <Button
             danger
             icon={<DeleteOutlined />}
@@ -173,7 +216,7 @@ const QuotationList = () => {
             <p>Bạn có chắc muốn xóa mẫu báo giá này? Hành động này không thể hoàn tác.</p>
           </Modal>
 
-          {/* Create button  */}
+          {/* Create button */}
           <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsCreateModalOpen(true)}>
             Tạo
           </Button>
@@ -188,6 +231,7 @@ const QuotationList = () => {
         filterProduct={filterProduct}
         filterVat={filterVAT}
         filterStatus={filterStatus}
+        getSummary={getSummary} // 👉 truyền xuống bảng để render cột tổng
         onShowClick={(record) => {
           setSelectedQuotation(record);
           setIsDetailModalOpen(true);
@@ -199,7 +243,7 @@ const QuotationList = () => {
       />
 
       {/* modals */}
-      {/* <QuotationForm
+      <QuotationForm
         mode="create"
         open={isCreateModalOpen}
         onCancel={() => setIsCreateModalOpen(false)}
@@ -219,7 +263,7 @@ const QuotationList = () => {
         open={isDetailModalOpen}
         onCancel={() => setIsDetailModalOpen(false)}
         initialValues={selectedQuotation}
-      /> */}
+      />
     </>
   );
 };

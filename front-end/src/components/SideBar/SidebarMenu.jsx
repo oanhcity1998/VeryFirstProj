@@ -1,23 +1,31 @@
 import { Menu } from "antd";
-import { HomeOutlined, UserOutlined, ContactsOutlined, InboxOutlined, SolutionOutlined } from "@ant-design/icons";
+import {
+  HomeOutlined,
+  UserOutlined,
+  ContactsOutlined,
+  InboxOutlined,
+  SolutionOutlined,
+} from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu.css";
 
 const SidebarMenu = ({ collapsed }) => {
-    const location = useLocation();
+  const location = useLocation();
 
-    // Map paths to keys
-    let selectedKey = "1"; // default Trang chủ
+  // Map paths to keys
+  let selectedKey = "1"; // default Trang chủ
 
-    if (location.pathname === "/") {
+  if (location.pathname === "/") {
     selectedKey = "1";
-    } else if (location.pathname.startsWith("/customerlist")) {
+  } else if (location.pathname.startsWith("/customerlist")) {
     selectedKey = "2";
-    } else if (location.pathname.startsWith("/productlist")) {
+  } else if (location.pathname.startsWith("/productlist")) {
     selectedKey = "3";
-    } else if (location.pathname.startsWith("/contactlist")) {
+  } else if (location.pathname.startsWith("/contactlist")) {
     selectedKey = "4";
-    }
+  } else if (location.pathname.startsWith("/quotationlist")) {
+    selectedKey = "5";
+  }
 
   const items = [
     {
@@ -49,16 +57,14 @@ const SidebarMenu = ({ collapsed }) => {
 
   return (
     <div className="sidebar-container">
-      <div className="sidebar-logo">
-        {collapsed ? "L" : "Logo"}
-      </div>
+      <div className="sidebar-logo">{collapsed ? "L" : "Logo"}</div>
 
       <Menu
         theme="dark"
         mode="inline"
         inlineCollapsed={collapsed}
         defaultSelectedKeys={[selectedKey]}
-        items={items}  
+        items={items}
       />
     </div>
   );

@@ -1,20 +1,24 @@
-import { Modal, Form, Input, Button, Breadcrumb } from "antd";
+import { Button, Modal, Table, Form, Input, Breadcrumb, Select } from "antd";
 import { useEffect } from "react";
-import "./ContactForm.css";
-import { Link } from "react-router-dom";
+import { Product } from "../../views/CRM/QuotationList/QuotationList";
 
-interface ContactFormProps {
+interface QuotationFormProps {
   mode: "create" | "edit" | "detail";
   open: boolean;
   onCancel: () => void;
-  onOk?: (values: any) => void; // không bắt buộc trong chế độ detail
+  onOk?: (values: any) => void;
   initialValues?: any;
 }
 
-const ContactForm = ({ mode, open, onCancel, onOk, initialValues }: ContactFormProps) => {
+export const QuotationForm = ({
+  mode,
+  open,
+  onCancel,
+  onOk,
+  initialValues,
+}: QuotationFormProps) => {
   const [form] = Form.useForm();
 
-  // set giá trị ban đầu khi edit / detail
   useEffect(() => {
     if (open && initialValues) {
       form.setFieldsValue(initialValues);
@@ -35,19 +39,67 @@ const ContactForm = ({ mode, open, onCancel, onOk, initialValues }: ContactFormP
   };
 
   const isDetail = mode === "detail";
+
   const breadcrumbItems = [
-    { title: "Danh sách liên hệ" },
+    { title: "Danh sách mẫu báo giá" },
     {
       title:
         mode === "create"
-          ? "Tạo mới liên hệ"
+          ? "Tạo mới mẫu báo giá"
           : mode === "edit"
-          ? "Chỉnh sửa liên hệ"
-          : "Chi tiết liên hệ",
+          ? "Chỉnh sửa mẫu báo giá"
+          : "Chi tiết mẫu báo giá",
     },
-    { title: initialValues?.contactName ?? "Tạo thêm" },
+    { title: initialValues?.quotationName ?? "Tạo thêm" },
   ];
 
+  const productColumns = [
+    {
+      title: "Sản phẩm",
+      dataIndex: "productName",
+      // render: () => <Input disabled={isDetail} />
+    },
+    {
+      title: "Loại sản phẩm",
+      dataIndex: "productType",
+      // render: () => <Input disabled={isDetail} />,
+    },
+    {
+      title: "Giá (VND)",
+      dataIndex: "priceVND",
+      // render: () => <InputNumber disabled={isDetail} style={{ width: "100%" }} />,
+    },
+    {
+      title: "Giá (USD)",
+      dataIndex: "priceUSD",
+      // render: () => <InputNumber disabled={isDetail} style={{ width: "100%" }} />,
+    },
+    {
+      title: "VAT (%)",
+      dataIndex: "vat",
+      // render: () => <InputNumber disabled={isDetail} style={{ width: "100%" }} />,
+    },
+    {
+      title: "Giá sau VAT (VND)",
+      dataIndex: "afterVatVND",
+      // render: () => <InputNumber disabled={isDetail} style={{ width: "100%" }} />,
+    },
+    {
+      title: "Giá sau VAT (USD)",
+      dataIndex: "afterVatUSD",
+      // render: () => <InputNumber disabled={isDetail} style={{ width: "100%" }} />,
+    },
+  ];
+  const getSummary = (products: Product[]) => {
+    const totalBeforeVat = products.reduce((s, p) => s + p.priceVND, 0);
+    const vat5 = products
+      .filter((p) => p.vat === 5)
+      .reduce((s, p) => s + (p.afterVatVND - p.priceVND), 0);
+    const vat10 = products
+      .filter((p) => p.vat === 10)
+      .reduce((s, p) => s + (p.afterVatVND - p.priceVND), 0);
+    return { totalBeforeVat, vat5, vat10 };
+  };
   return (
     <Modal
       title={<Breadcrumb items={breadcrumbItems} separator=">" />}
@@ -63,79 +115,98 @@ const ContactForm = ({ mode, open, onCancel, onOk, initialValues }: ContactFormP
           </Button>
         ),
       ]}
-      width={800}
+      width={1000}
     >
       <Form
         form={form}
         layout="horizontal"
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 18 }}
-        disabled={isDetail} // 👈 tự động disable input nếu là detail
+        disabled={isDetail}
       >
         <div className="form-section">
-          <h3>Thông tin liên hệ</h3>
+          <h3>Thông tin mẫu báo giá</h3>
 
           <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Tên liên hệ"
-            name="contactName"
+            style={{ fontWeight: "bold" }}
+            label="Tên mẫu báo giá"
+            name="quotationName"
             rules={[{ required: !isDetail }]}
           >
-            <Input placeholder="Nhập họ và tên người liên hệ" />
-          </Form.Item>
-
-          <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Khách hàng"
-            name="customerName"
-            rules={[{ required: !isDetail }]}
-          >
-            <Input placeholder="Nhập tên công ty hoặc khách hàng" />
+            <Input />
           </Form.Item>
 
           <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Số điện thoại"
-            name="phone"
+            style={{ fontWeight: "bold" }}
+            label="Thời hạn hiệu lực"
+            name="validityPeriod"
             rules={[{ required: !isDetail }]}
           >
-            <Input placeholder="Nhập số điện thoại (ví dụ: 0901234567)" />
+            <Input />
           </Form.Item>
 
           <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Email"
-            name="email"
+            style={{ fontWeight: "bold" }}
+            label="Điều khoản thanh toán"
+            name="paymentTerms"
             rules={[{ required: !isDetail }]}
           >
-            <Input placeholder="Nhập địa chỉ email (ví dụ: abc@gmail.com)" />
+            <Input />
           </Form.Item>
 
           <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Chức danh"
-            name="title"
+            style={{ fontWeight: "bold" }}
+            label="Trạng thái"
+            name="status"
+            initialValue={initialValues?.status ?? "Draft"}
             rules={[{ required: !isDetail }]}
           >
-            <Input placeholder="Nhập chức danh (ví dụ: Giám đốc, Trưởng phòng...)" />
+            <Select disabled={isDetail || !initialValues?.status}>
+              <Select.Option value="Draft">Draft</Select.Option>
+              <Select.Option value="Sent">Sent</Select.Option>
+              <Select.Option value="Accepted">Accepted</Select.Option>
+              <Select.Option value="Declined">Declined</Select.Option>
+            </Select>
           </Form.Item>
 
           <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Liên hệ chính"
-            name="mainContact"
+            style={{ fontWeight: "bold" }}
+            label="Cơ hội"
+            name="opportunity"
             rules={[{ required: !isDetail }]}
           >
-            <Input placeholder="Nhập tên người liên hệ chính" />
+            <Input />
           </Form.Item>
+        </div>
 
-          <Form.Item style={{ fontWeight: "500" }} label="Ghi chú" name="note">
-            <Input.TextArea rows={3} placeholder="Nhập ghi chú thêm (nếu có)" />
-          </Form.Item>
+        <div className="form-section">
+          <h3>Danh sách sản phẩm</h3>
+          <Table
+            columns={productColumns}
+            dataSource={initialValues?.products ?? []}
+            pagination={false}
+            bordered
+          />
+
+          {/* Trong QuotationForm phần cuối */}
+          <div style={{ marginTop: 16, marginRight: "25%", textAlign: "right" }}>
+            {initialValues?.products && (
+              <>
+                <p>
+                  <b>Tổng chưa VAT:</b>{" "}
+                  {getSummary(initialValues.products).totalBeforeVat.toLocaleString()} VND
+                </p>
+                <p>
+                  <b>VAT 5%:</b> {getSummary(initialValues.products).vat5.toLocaleString()} VND
+                </p>
+                <p>
+                  <b>VAT 10%:</b> {getSummary(initialValues.products).vat10.toLocaleString()} VND
+                </p>
+              </>
+            )}
+          </div>
         </div>
       </Form>
     </Modal>
   );
 };
-
-export default ContactForm;

@@ -1,22 +1,9 @@
-import { Table } from "antd";
-import { Link } from "react-router-dom";
 import { useMemo } from "react";
-import { ColumnsType } from "antd/es/table";
+import { Table, Tooltip } from "antd";
 import { EditOutlined, FileTextOutlined } from "@ant-design/icons";
-import { Tooltip } from "antd";
-
-// Interface Quotation
-export interface Quotation {
-  id: number;
-  quotationName: string;
-  validityPeriod: string;
-  paymentTerms: string;
-  Products: { id: number; name: string }[];
-  priceVND: number;
-  priceUSD: number;
-  vat: number;
-  status: "Draft" | "Sent" | "Approved" | "Rejected";
-}
+import { Link } from "react-router-dom";
+import { ColumnsType } from "antd/es/table";
+import { Product, Quotation } from "../../views/CRM/QuotationList/QuotationList";
 
 interface TableQuotationProps {
   data: Quotation[];
@@ -28,9 +15,14 @@ interface TableQuotationProps {
   setSelectedRowKeys: (keys: number[]) => void;
   onShowClick?: (record: Quotation) => void;
   onEditClick?: (record: Quotation) => void;
+  getSummary: (products: Product[]) => {
+    totalBeforeVat: number;
+    vat5: number;
+    vat10: number;
+  };
 }
 
-const TableQuotation = ({
+export const TableQuotation = ({
   data,
   searchText,
   filterProduct,
@@ -40,6 +32,7 @@ const TableQuotation = ({
   setSelectedRowKeys,
   onShowClick,
   onEditClick,
+  getSummary,
 }: TableQuotationProps) => {
   // 🔎 lọc theo search + filter
   const filteredData = useMemo(() => {
@@ -47,10 +40,12 @@ const TableQuotation = ({
       const matchSearch = item.quotationName.toLowerCase().includes(searchText.toLowerCase());
 
       const matchProduct = filterProduct
-        ? item.Products.some((p) => p.name.toLowerCase().includes(filterProduct.toLowerCase()))
+        ? item.products.some((p) =>
+            p.productName.toLowerCase().includes(filterProduct.toLowerCase())
+          )
         : true;
 
-      const matchVat = filterVat !== null ? item.vat === filterVat : true;
+      const matchVat = filterVat !== null ? item.products.some((p) => p.vat === filterVat) : true;
 
       const matchStatus = filterStatus ? item.status === filterStatus : true;
 
@@ -87,29 +82,32 @@ const TableQuotation = ({
     },
     {
       title: "Sản phẩm",
-      dataIndex: "Products",
-      key: "Products",
+      dataIndex: "products",
+      key: "products",
       width: 220,
-      render: (products) =>
-        Array.isArray(products) ? products.map((p: any) => p.name).join(", ") : products,
+      render: (products: Product[]) =>
+        Array.isArray(products) ? products.map((p) => p.productName).join(", ") : "",
     },
     {
-      title: "Giá (VND)",
-      dataIndex: "priceVND",
-      key: "priceVND",
+      title: "Tổng chưa VAT (VND)",
+      dataIndex: "products",
+      key: "totalBeforeVat",
+      width: 180,
+      render: (products: Product[]) => getSummary(products).totalBeforeVat.toLocaleString(),
+    },
+    {
+      title: "VAT 5% (VND)",
+      dataIndex: "products",
+      key: "vat5",
       width: 150,
+      render: (products: Product[]) => getSummary(products).vat5.toLocaleString(),
     },
     {
-      title: "Giá (USD)",
-      dataIndex: "priceUSD",
-      key: "priceUSD",
+      title: "VAT 10% (VND)",
+      dataIndex: "products",
+      key: "vat10",
       width: 150,
-    },
-    {
-      title: "VAT",
-      dataIndex: "vat",
-      key: "vat",
-      width: 100,
+      render: (products: Product[]) => getSummary(products).vat10.toLocaleString(),
     },
     {
       title: "Trạng thái",
@@ -133,7 +131,7 @@ const TableQuotation = ({
               padding: 8,
             }}
             onClick={(e) => {
-              e.stopPropagation(); // chặn click row
+              e.stopPropagation();
               onEditClick?.(record);
             }}
           />
@@ -152,11 +150,9 @@ const TableQuotation = ({
       }}
       columns={columns}
       dataSource={filteredData}
-      rowKey="id" // 👈 sửa đúng
+      rowKey="id"
       scroll={{ x: "max-content", y: "calc(100vh - 330px)" }}
       pagination={{ position: ["bottomCenter"] }}
     />
   );
 };
-
-export default TableQuotation;
