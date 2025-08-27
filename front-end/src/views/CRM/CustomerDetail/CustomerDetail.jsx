@@ -326,17 +326,8 @@ const [data, setData] = useState([
                         <Option value="Đang xử lý">Đang xử lý</Option>
                     </Select>
                 </Form.Item>
-                <Form.Item label="Ghi chú">
-                  <TextArea
-                    rows={3}
-                    value={customer.notes}
-                    // readOnly={!isEditing}
-                    // onChange={(e) =>
-                    //   setCustomer({ ...customer, notes: e.target.value })
-                    // }
-                  />
-                </Form.Item>
-                <Form.Item label="Năm">
+
+                <Form.Item label="Năm quyết toán">
                   <Input
                     value="2025"
                     // readOnly={!isEditing}
@@ -348,6 +339,18 @@ const [data, setData] = useState([
                     // }
                   />
                 </Form.Item>
+
+                <Form.Item label="Ghi chú">
+                  <TextArea
+                    rows={3}
+                    value={customer.notes}
+                    // readOnly={!isEditing}
+                    // onChange={(e) =>
+                    //   setCustomer({ ...customer, notes: e.target.value })
+                    // }
+                  />
+                </Form.Item>
+                
               </Form>
             </Card>
           </Col>

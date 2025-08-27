@@ -36,6 +36,19 @@ const CustomerList = () => {
     const [importOpen, setImportOpen] = useState(false);
     const [importing, setImporting] = useState(false);
 
+    const [editingCustomer, setEditingCustomer] = useState(null);
+
+
+    const handleEdit = (record) => {
+      setEditingCustomer(record);   // pass selected row
+      setIsModalOpen(true);
+    };
+
+    const handleCreate = () => {
+      setEditingCustomer(null);     // reset form
+      setIsModalOpen(true);
+    };
+
     // handle delete
     const handleDelete = async () => {
     try {
