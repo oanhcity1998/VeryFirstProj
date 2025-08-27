@@ -41,7 +41,11 @@ const LeadDetail: React.FC = () => {
         </div>
 
       <div className="lead-detail-content">
-        <Descriptions bordered column={1} size="middle">
+        <div className="lead-detail-title">
+                Chi tiết {lead.leadName}
+        </div>
+        <Descriptions bordered column={1} size="middle" >
+            
           <Descriptions.Item label="Tên lead">{lead.leadName}</Descriptions.Item>
           <Descriptions.Item label="Tên liên hệ">{lead.contactName}</Descriptions.Item>
           <Descriptions.Item label="Chức vụ">{lead.position}</Descriptions.Item>

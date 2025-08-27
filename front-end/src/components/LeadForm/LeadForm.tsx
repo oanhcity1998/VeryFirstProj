@@ -4,13 +4,14 @@ import { Modal, Form, Input, Select, Button } from "antd";
 const { Option } = Select;
 
 interface LeadFormProps {
-  onCancel: () => void;
-  onSubmit: (values: any) => void;
-  initialValues?: any;
+    open: boolean; 
+    onCancel: () => void;
+    onSubmit: (values: any) => void;
+    initialValues?: any;
 }
 
 
-const LeadForm: React.FC<LeadFormProps> = ({ onCancel, onSubmit, initialValues }) => {
+const LeadForm: React.FC<LeadFormProps> = ({ open, onCancel, onSubmit, initialValues }) => {
   const [form] = Form.useForm();
 
   React.useEffect(() => {

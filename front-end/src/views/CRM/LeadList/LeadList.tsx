@@ -28,6 +28,7 @@ const LeadList = () => {
   const [deleting, setDeleting] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [editData, setEditData] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleDelete = () => {
     setDeleting(true);
@@ -114,6 +115,7 @@ const LeadList = () => {
         destroyOnClose
         >
         <LeadForm
+            open={openForm}
             initialValues={editData}
             onCancel={() => setOpenForm(false)}
             onSubmit={handleSubmit}
