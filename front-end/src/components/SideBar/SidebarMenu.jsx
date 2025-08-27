@@ -5,13 +5,6 @@ import {
   ContactsOutlined,
   InboxOutlined,
   SolutionOutlined,
-} from "@ant-design/icons";
-import {
-  HomeOutlined,
-  UserOutlined,
-  ContactsOutlined,
-  InboxOutlined,
-  SolutionOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
