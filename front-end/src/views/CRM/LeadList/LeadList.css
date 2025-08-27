@@ -1,0 +1,12 @@
+.leadlist-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.leadlist-search {
+  max-width: 300px;
+  margin-right: auto;
+  margin-left: 8px;
+}

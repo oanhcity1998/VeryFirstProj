@@ -1,0 +1,11 @@
+/* Style for the edit icon */
+.lead-edit-icon {
+  font-size: 18px;
+  cursor: pointer;
+  color: #1890ff;
+  transition: color 0.2s ease;
+}
+
+.lead-edit-icon:hover {
+  color: #40a9ff;
+}

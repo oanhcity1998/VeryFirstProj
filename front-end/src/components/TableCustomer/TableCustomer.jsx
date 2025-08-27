@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 
 import "./TableCustomer.css"
 
-const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) => {
+const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, onEdit }) => {
   const allKeys = data.map((item) => item.key);
   const isAllChecked = selectedRowKeys.length === data.length;
   const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
@@ -122,20 +122,18 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
         ),
     },
     {
-      title: "Hành động",
-      key: "action",
-      fixed: "right",
-      width: 100,
+      title: "",
+      key: "actions",
+      fixed: "right",   // 👈 always stick on the right
+      width: 80,
       render: (_, record) => (
         <Button
-          type="link"
           icon={<EditOutlined />}
-          onClick={() => handleEdit(record)}
-        >
-          Sửa
-        </Button>
+          type="link"
+          onClick={() => onEdit(record)}
+        />
       ),
-    },    
+    }, 
   ];
 
   return (
