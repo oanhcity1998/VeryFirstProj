@@ -9,6 +9,9 @@ import CustomerDetail from "./views/CRM/CustomerDetail/CustomerDetail";
 import ProductPage from "./views/CRM/ProductPage/ProductPage";
 import ContactList from "./views/CRM/ContactList/ContactList";
 import QuotationList from "./views/CRM/QuotationList/QuotationList"
+import LeadList from "./views/CRM/LeadList/LeadList";
+import LeadDetail from "./views/CRM/LeadDetail/LeadDetail";
+
 
 
 export default function App() {
@@ -31,8 +34,12 @@ export default function App() {
           {/* liên hệ */}
           <Route path="/contactlist" element={<ContactList />} />
 
-
+          {/* Mẫu báo giá  */}
           <Route path="/quotationlist" element={<QuotationList />} />
+
+          {/* Lead  */}
+          <Route path="/leadlist" element={<LeadList />} />
+          <Route path="/leads/:id" element={<LeadDetail />} />
 
         </Route>
       </Routes>

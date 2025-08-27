@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 
 import "./TableCustomer.css"
 
-const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) => {
+const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, onEdit }) => {
   const allKeys = data.map((item) => item.key);
   const isAllChecked = selectedRowKeys.length === data.length;
   const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
@@ -16,12 +16,14 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [editingCustomer, setEditingCustomer] = useState(null);
+
   const [form] = Form.useForm();
 
   // Chỉnh sửa sản phẩm
   const handleEdit = (record) => {
-    setEditingProduct(record);
-    form.setFieldsValue(record);
+    setEditingCustomer(record);
+    form.setFieldsValue(record); // ✅ preload values
     setIsModalVisible(true);
   };
 
@@ -120,20 +122,18 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
         ),
     },
     {
-      title: "Hành động",
-      key: "action",
-      fixed: "right",
-      width: 100,
+      title: "",
+      key: "actions",
+      fixed: "right",   // 👈 always stick on the right
+      width: 80,
       render: (_, record) => (
         <Button
-          type="link"
           icon={<EditOutlined />}
-          onClick={() => handleEdit(record)}
-        >
-          Sửa
-        </Button>
+          type="link"
+          onClick={() => onEdit(record)}
+        />
       ),
-    },    
+    }, 
   ];
 
   return (
@@ -150,22 +150,34 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
     />
     
       <Modal
-        title={editingProduct ? "Sửa sản phẩm" : "Thêm sản phẩm"}
+        title={editingCustomer ? "Sửa khách hàng" : "Thêm khách hàng"}
         open={isModalVisible}
         onOk={() => form.submit()}
         onCancel={() => setIsModalVisible(false)}
         okText="Lưu"
         cancelText="Hủy"
-        afterClose={() => form.resetFields()}
       >
-        {isModalVisible && (
-          <CreateCustomerForm
-            form={form}
-            product={editingProduct}
-            onSave={handleSave}
-          />
-        )}
-      </Modal>  
+        <CreateCustomerForm form={form} onFinish={handleSave} />
+      </Modal>
+
+      {/* <Modal
+        title={editingProduct ? "Sửa khách hàng" : "Thêm khách hàng"}
+        open={isModalVisible}
+        onOk={() => form.submit()}
+        onCancel={() => setIsModalVisible(false)}
+        okText="Lưu"
+        cancelText="Hủy"
+        afterClose={() => {
+          setEditingProduct(null); // reset
+          form.resetFields();
+        }}
+      >
+        <EditCustomerForm
+          form={form}
+          initialValues={editingProduct || {}} // ✅ if editing, pre-fill data
+        />
+      </Modal> */}
+
 
     </div>
   );

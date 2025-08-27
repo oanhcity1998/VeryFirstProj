@@ -32,12 +32,7 @@ const ProductForm = ({ onSave, product }) => {
   };
 
   return (
-    <Form
-      layout="vertical"
-      form={form}
-      onFinish={onFinish}
-      onValuesChange={handleValuesChange}
-    >
+    <Form layout="vertical" form={form} onFinish={onFinish} onValuesChange={handleValuesChange}>
       <Form.Item
         name="name"
         label="Tên sản phẩm"
@@ -79,11 +74,7 @@ const ProductForm = ({ onSave, product }) => {
         <InputNumber style={{ width: "100%" }} />
       </Form.Item>
 
-      <Form.Item
-        name="vat"
-        label="VAT (%)"
-        rules={[{ required: true, message: "Chọn VAT" }]}
-      >
+      <Form.Item name="vat" label="VAT (%)" rules={[{ required: true, message: "Chọn VAT" }]}>
         <Select
           options={[
             { value: 0, label: "0%" },
@@ -101,11 +92,11 @@ const ProductForm = ({ onSave, product }) => {
         <InputNumber style={{ width: "100%" }} disabled />
       </Form.Item>
 
-      <Form.Item>
+      {/* 
         <Button type="primary" htmlType="submit" block>
           {product ? "Cập nhật" : "Thêm mới"}
         </Button>
-      </Form.Item>
+      </Form.Item> */}
     </Form>
   );
 };

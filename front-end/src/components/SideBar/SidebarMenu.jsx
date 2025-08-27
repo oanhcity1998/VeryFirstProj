@@ -6,6 +6,14 @@ import {
   InboxOutlined,
   SolutionOutlined,
 } from "@ant-design/icons";
+import {
+  HomeOutlined,
+  UserOutlined,
+  ContactsOutlined,
+  InboxOutlined,
+  SolutionOutlined,
+  TeamOutlined,
+} from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu.css";
 
@@ -51,7 +59,12 @@ const SidebarMenu = ({ collapsed }) => {
     {
       key: "5",
       icon: <SolutionOutlined />,
-      label: <Link to="/quotationlist">Quotation</Link>,
+      label: <Link to="/quotationlist">Mẫu báo giá</Link>,
+    },
+    {
+      key: "6",
+      icon: <TeamOutlined />,
+      label: <Link to="/leadlist">Lead</Link>,
     },
   ];
 

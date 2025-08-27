@@ -4,6 +4,8 @@ import { PlusOutlined, DeleteOutlined, SettingOutlined, FilterOutlined, InboxOut
 import TableCustomer from "../../../components/TableCustomer/TableCustomer";
 import CreateCustomerForm from "../../../components/CustomerForm/CreateCustomerForm";
 import FilterDrawer from "../../../components/Filter/FilterDrawer";
+import EditCustomerForm from "../../../components/CustomerForm/EditCustomerForm";
+
 import "./CustomerList.css"
 
 const CustomerList = () => {
@@ -35,6 +37,19 @@ const CustomerList = () => {
 
     const [importOpen, setImportOpen] = useState(false);
     const [importing, setImporting] = useState(false);
+
+    const [editingCustomer, setEditingCustomer] = useState(null);
+
+
+    const handleEdit = (record) => {
+      setEditingCustomer(record); // set current row
+      setIsModalOpen(true);
+    };
+
+    const handleCreate = () => {
+      setEditingCustomer(null);   // reset
+      setIsModalOpen(true);
+    };
 
     // handle delete
     const handleDelete = async () => {
@@ -163,13 +178,15 @@ const CustomerList = () => {
         data={data}
         selectedRowKeys={selectedRowKeys}
         setSelectedRowKeys={setSelectedRowKeys}
+        onEdit={handleEdit}
       />
 
       <CreateCustomerForm
         open={isModalOpen}
+        customer={editingCustomer}   // 👈 pass the record when editing
         onCancel={() => setIsModalOpen(false)}
         onSave={(values) => {
-          console.log("New customer:", values);
+          console.log("Saved customer:", values);
           setIsModalOpen(false);
         }}
       />

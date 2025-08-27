@@ -1,0 +1,36 @@
+.lead-detail-container {
+  padding: 24px;
+  background: #fff;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.lead-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.back-button {
+  padding: 0;
+}
+
+.lead-detail-breadcrumb {
+  font-size: 20px;       /* 👈 make bigger */
+  font-weight: 600;      /* bold */
+  color: #000;           /* darker color */
+}
+
+.lead-detail-breadcrumb .ant-breadcrumb-separator {
+  font-size: 18px;       /* adjust separator size */
+}
+
+.lead-detail-content {
+  max-height: 65vh;
+  overflow-y: auto;
+  padding-right: 8px;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+}
