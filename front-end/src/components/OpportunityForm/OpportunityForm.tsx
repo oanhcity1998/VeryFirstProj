@@ -90,6 +90,7 @@ export const OpportunityForm = ({
         disabled={isDetail}
       >
         <Form.Item
+          style={{ fontWeight: "500" }}
           label="Tên cơ hội"
           name="name"
           rules={[{ required: true, message: "Vui lòng nhập tên cơ hội" }]}
@@ -98,6 +99,7 @@ export const OpportunityForm = ({
         </Form.Item>
 
         <Form.Item
+          style={{ fontWeight: "500" }}
           label="Tên liên hệ"
           name="contactName"
           rules={[{ required: true, message: "Vui lòng nhập tên liên hệ" }]}
@@ -106,6 +108,7 @@ export const OpportunityForm = ({
         </Form.Item>
 
         <Form.Item
+          style={{ fontWeight: "500" }}
           label="Công ty"
           name="company"
           rules={[{ required: true, message: "Vui lòng nhập công ty" }]}
@@ -114,6 +117,7 @@ export const OpportunityForm = ({
         </Form.Item>
 
         <Form.Item
+          style={{ fontWeight: "500" }}
           label="Giá trị dự kiến (VND)"
           name="expectedValue"
           rules={[{ required: true, message: "Vui lòng nhập giá trị dự kiến" }]}
@@ -122,6 +126,7 @@ export const OpportunityForm = ({
         </Form.Item>
 
         <Form.Item
+          style={{ fontWeight: "500" }}
           label="Ngày dự kiến chốt"
           name="expectedCloseDate"
           rules={[{ required: true, message: "Vui lòng chọn ngày dự kiến chốt" }]}
@@ -130,6 +135,7 @@ export const OpportunityForm = ({
         </Form.Item>
 
         <Form.Item
+          style={{ fontWeight: "500" }}
           label="Dịch vụ dự kiến"
           name="service"
           rules={[{ required: true, message: "Vui lòng nhập dịch vụ dự kiến" }]}
@@ -138,6 +144,7 @@ export const OpportunityForm = ({
         </Form.Item>
 
         <Form.Item
+          style={{ fontWeight: "500" }}
           label="Xác suất (%)"
           name="probability"
           rules={[{ required: true, type: "number", min: 0, max: 100 }]}
@@ -145,7 +152,12 @@ export const OpportunityForm = ({
           <InputNumber style={{ width: "100%" }} min={0} max={100} />
         </Form.Item>
 
-        <Form.Item label="Ưu tiên" name="priority" rules={[{ required: true }]}>
+        <Form.Item
+          style={{ fontWeight: "500" }}
+          label="Ưu tiên"
+          name="priority"
+          rules={[{ required: true }]}
+        >
           <Select>
             <Select.Option value="High">High</Select.Option>
             <Select.Option value="Medium">Medium</Select.Option>
@@ -153,11 +165,21 @@ export const OpportunityForm = ({
           </Select>
         </Form.Item>
 
-        <Form.Item label="Nhân viên phụ trách" name="owner" rules={[{ required: true }]}>
+        <Form.Item
+          style={{ fontWeight: "500" }}
+          label="Nhân viên phụ trách"
+          name="owner"
+          rules={[{ required: true }]}
+        >
           <Input />
         </Form.Item>
 
-        <Form.Item label="Giai đoạn" name="stage" rules={[{ required: true }]}>
+        <Form.Item
+          style={{ fontWeight: "500" }}
+          label="Giai đoạn"
+          name="stage"
+          rules={[{ required: true }]}
+        >
           <Select>
             <Select.Option value="Qualification">Qualification</Select.Option>
             <Select.Option value="Proposal">Proposal</Select.Option>
@@ -167,7 +189,7 @@ export const OpportunityForm = ({
           </Select>
         </Form.Item>
 
-        <Form.Item label="Hành động tiếp theo" name="nextAction">
+        <Form.Item style={{ fontWeight: "500" }} label="Hành động tiếp theo" name="nextAction">
           <Input.TextArea rows={3} />
         </Form.Item>
       </Form>

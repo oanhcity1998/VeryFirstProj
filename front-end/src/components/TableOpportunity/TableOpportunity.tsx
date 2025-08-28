@@ -12,6 +12,9 @@ interface TableOpportunityProps {
   setSelectedRowKeys: (keys: number[]) => void;
   onShowClick?: (record: Opportunity) => void;
   onEditClick?: (record: Opportunity) => void;
+  filterPriority: string | null;
+  filterStage: string | null;
+  filterDate: [string, string] | null;
 }
 
 export const TableOpportunity = ({
@@ -21,18 +24,29 @@ export const TableOpportunity = ({
   setSelectedRowKeys,
   onShowClick,
   onEditClick,
+  filterPriority,
+  filterStage,
+  filterDate,
 }: TableOpportunityProps) => {
-  // 🔎 lọc theo search (tên cơ hội, công ty, liên hệ)
+  // 🔎 lọc theo search
   const filteredData = useMemo(() => {
     return data.filter((item) => {
       const text = searchText.toLowerCase();
-      return (
+      const matchSearch =
         item.name.toLowerCase().includes(text) ||
         item.company.toLowerCase().includes(text) ||
-        item.contactName.toLowerCase().includes(text)
-      );
+        item.contactName.toLowerCase().includes(text);
+
+      const matchPriority = filterPriority ? item.priority === filterPriority : true;
+      const matchStage = filterStage ? item.stage === filterStage : true;
+
+      const matchDate = filterDate
+        ? item.expectedCloseDate >= filterDate[0] && item.expectedCloseDate <= filterDate[1]
+        : true;
+
+      return matchSearch && matchPriority && matchStage && matchDate;
     });
-  }, [data, searchText]);
+  }, [data, searchText, filterPriority, filterStage, filterDate]);
 
   const columns: ColumnsType<Opportunity> = [
     {

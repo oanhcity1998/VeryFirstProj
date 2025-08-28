@@ -1,87 +1,77 @@
-import React from "react";
-import { Drawer, Form, Button, Select } from "antd";
-// import "./FilterOpportunityDrawer.css";
+import { Drawer, Form, Select, DatePicker, Button } from "antd";
+import dayjs from "dayjs";
 
-const { Option } = Select;
+interface FilterOpportunityDrawerProps {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: (values: React.MouseEvent<HTMLButtonElement>) => void;
+  filterPriority: string | null;
+  setFilterPriority: (v: string | null) => void;
+  filterStage: string | null;
+  setFilterStage: (v: string | null) => void;
+  filterDate: [string, string] | null;
+  setFilterDate: (v: [string, string] | null) => void;
+}
 
-const FilterOpportunityDrawer = ({
+const { RangePicker } = DatePicker;
+
+export const FilterOpportunityDrawer = ({
   open,
   onClose,
   onConfirm,
-  filterVAT,
-  setFilterVAT,
-  filterProduct,
-  setFilterProduct,
-  filterStatus,
-  setFilterStatus,
-  VATOptions,
-  ProductOptions,
-  StatusOptions,
-}) => {
-  const [form] = Form.useForm();
-
-  const handleConfirm = () => {
-    form.validateFields().then((values) => {
-      console.log("Filter values:", values);
-      onConfirm(values);
-      onClose();
-    });
-  };
-
+  filterPriority,
+  setFilterPriority,
+  filterStage,
+  setFilterStage,
+  filterDate,
+  setFilterDate,
+}: FilterOpportunityDrawerProps) => {
   return (
-    <Drawer
-      title="Bộ lọc"
-      placement="right"
-      open={open}
-      onClose={onClose}
-      width={350}
-      footer={
-        <div className="filter-footer">
-          <Button danger onClick={onClose}>
-            Huỷ
-          </Button>
-          <Button type="primary" onClick={handleConfirm}>
-            Xác nhận
-          </Button>
-        </div>
-      }
-    >
-      <Form layout="vertical" form={form}>
-        {/* VAT */}
-        <Form.Item label="VAT" name="VAT">
+    <Drawer title="Bộ lọc cơ hội" placement="right" onClose={onClose} open={open} width={320}>
+      <Form layout="vertical">
+        <Form.Item label="Ưu tiên">
           <Select
             allowClear
-            style={{ width: 200 }}
-            value={filterVAT}
-            onChange={(val) => setFilterVAT(val)}
-            options={VATOptions.map((c) => ({ label: c, value: c }))}
+            value={filterPriority ?? undefined}
+            onChange={(val) => setFilterPriority(val || null)}
+          >
+            <Select.Option value="High">High</Select.Option>
+            <Select.Option value="Medium">Medium</Select.Option>
+            <Select.Option value="Low">Low</Select.Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item label="Giai đoạn">
+          <Select
+            allowClear
+            value={filterStage ?? undefined}
+            onChange={(val) => setFilterStage(val || null)}
+          >
+            <Select.Option value="Qualification">Qualification</Select.Option>
+            <Select.Option value="Proposal">Proposal</Select.Option>
+            <Select.Option value="Negotiation">Negotiation</Select.Option>
+            <Select.Option value="Closed Won">Closed Won</Select.Option>
+            <Select.Option value="Closed Lost">Closed Lost</Select.Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item label="Ngày dự kiến chốt">
+          <RangePicker
+            style={{ width: "100%" }}
+            format="YYYY-MM-DD"
+            value={filterDate ? [dayjs(filterDate[0]), dayjs(filterDate[1])] : undefined}
+            onChange={(dates) =>
+              setFilterDate(
+                dates ? [dates[0]!.format("YYYY-MM-DD"), dates[1]!.format("YYYY-MM-DD")] : null
+              )
+            }
           />
         </Form.Item>
 
-        {/* Sản phẩm */}
-        <Form.Item label="Sản phẩm" name="productCode">
-          <Select
-            allowClear
-            style={{ width: 200 }}
-            value={filterProduct}
-            onChange={(val) => setFilterProduct(val)}
-            options={ProductOptions.map((c) => ({ label: c, value: c }))}
-          />
-        </Form.Item>
-
-        {/* Trạng thái */}
-        <Form.Item label="Trạng thái" name="status">
-          <Select
-            allowClear
-            style={{ width: 200 }}
-            value={filterStatus}
-            onChange={(val) => setFilterStatus(val)}
-            options={StatusOptions.map((c) => ({ label: c, value: c }))}
-          />
-        </Form.Item>
+        <Button type="primary" onClick={onConfirm} block>
+          Lọc
+        </Button>
       </Form>
     </Drawer>
   );
 };
-
-export default FilterOpportunityDrawer;

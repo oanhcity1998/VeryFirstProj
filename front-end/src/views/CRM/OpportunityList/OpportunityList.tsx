@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button, Space, Modal, message } from "antd";
 import { PlusOutlined, DeleteOutlined, FilterOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import Search from "antd/es/input/Search";
 import { OpportunityForm } from "../../../components/OpportunityForm/OpportunityForm";
 import { TableOpportunity } from "../../../components/TableOpportunity/TableOpportunity";
 import { ROUTES_APP } from "../../../routes";
+import { FilterOpportunityDrawer } from "../../../components/Filter/FilterOpportunityDrawer";
 
 // Interface CRM Opportunity
 export interface Opportunity {
@@ -57,7 +58,14 @@ const dataSource: Opportunity[] = [
 const OpportunityList = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<Opportunity[]>(dataSource);
+
+  // 🔎 search + filter
   const [searchText, setSearchText] = useState("");
+  const [filterPriority, setFilterPriority] = useState<string | null>(null);
+  const [filterStage, setFilterStage] = useState<string | null>(null);
+  const [filterDate, setFilterDate] = useState<[string, string] | null>(null);
+  const [filterOpen, setFilterOpen] = useState(false);
+  // [start, end] cho khoảng ngày
 
   // Modal
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -115,6 +123,28 @@ const OpportunityList = () => {
         />
 
         <Space>
+          {/* Filter button */}
+          <Button
+            icon={<FilterOutlined />}
+            onClick={() => setFilterOpen(true)}
+            style={{ marginLeft: 8 }}
+          >
+            Bộ lọc
+          </Button>
+          <FilterOpportunityDrawer
+            open={filterOpen}
+            onClose={() => setFilterOpen(false)}
+            onConfirm={(e) => {
+              setFilterOpen(false);
+            }}
+            filterPriority={filterPriority}
+            setFilterPriority={setFilterPriority}
+            filterStage={filterStage}
+            setFilterStage={setFilterStage}
+            filterDate={filterDate}
+            setFilterDate={setFilterDate}
+          />
+
           {/* Delete button */}
           <Button
             danger
@@ -158,6 +188,9 @@ const OpportunityList = () => {
           setSelectedOpportunity(record);
           setIsEditModalOpen(true);
         }}
+        filterPriority={filterPriority}
+        filterStage={filterStage}
+        filterDate={filterDate}
       />
 
       {/* Modal create */}
