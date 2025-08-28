@@ -1,5 +1,5 @@
 import { Menu } from "antd";
-import { HomeOutlined, UserOutlined, UploadOutlined, SolutionOutlined } from "@ant-design/icons";
+import { HomeOutlined, UserOutlined, SolutionOutlined } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu-HRM.css";
 
@@ -13,7 +13,7 @@ const SidebarMenuHRM = ({ collapsed }) => {
         selectedKey = "1";
     } else if (location.pathname.startsWith("/hrm/employee-list")) {
         selectedKey = "2";
-    } else if (location.pathname.startsWith("/hrm/uploadlist")) {
+    } else if (location.pathname.startsWith("/hrm/position")) {
         selectedKey = "3";
     }
 
@@ -26,12 +26,12 @@ const SidebarMenuHRM = ({ collapsed }) => {
     {
       key: "2",
       icon: <UserOutlined />,
-      label: <Link to="/hrm/employee-list">Khách hàng</Link>,
+      label: <Link to="/hrm/employee-list">Nhân sự</Link>,
     },
     {
       key: "3",
-      icon: <UploadOutlined />,
-      label: <Link to="/hrm/uploadlist">Tải lên</Link>,
+      icon: <SolutionOutlined />,
+      label: <Link to="/hrm/position">Chức vụ</Link>,
     },
   ];
 

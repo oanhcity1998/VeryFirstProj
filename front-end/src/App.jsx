@@ -11,6 +11,7 @@ import ContactList from "./views/CRM/ContactList/ContactList";
 import QuotationList from "./views/CRM/QuotationList/QuotationList";
 import EmployeeList from "./views/HRM/EmployeeList/EmployeeList";
 import EmployeeDetail from "./views/HRM/EmployeeDetail/EmployeeDetail";
+import PositionList from "./views/HRM/PositionList/PositionList";
 
 export default function App() {
   return (
@@ -41,6 +42,7 @@ export default function App() {
 
           <Route path="/hrm/employee-list" element={<EmployeeList />} />
           <Route path="/hrm/employee-list/:id" element={<EmployeeDetail />} />
+          <Route path="/hrm/position" element={<PositionList />} />
 
           {/* tải lên */}
         </Route>

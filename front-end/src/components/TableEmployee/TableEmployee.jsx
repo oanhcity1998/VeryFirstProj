@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Table, Form, Checkbox, Button, Modal } from "antd";
+import { Table, Form, Checkbox, Button } from "antd";
 import { Link } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -157,8 +157,8 @@ const TableEmployee = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
     { title: "Thời hạn hợp đồng", dataIndex: "contractTerm", key: "contractTerm", width: 150, align: "center" },
     { title: "Ngày bắt đầu", dataIndex: "startDate", key: "startDate", width: 150, align: "center" },
     { title: "Ngày kết thúc", dataIndex: "endDate", key: "endDate", width: 150, align: "center" },
-    { title: "Mức lương", dataIndex: "salary", key: "salary", width: 150, align: "center" },
-    { title: "Tiền thưởng", dataIndex: "bonus", key: "bonus", width: 150, align: "center" },
+    { title: "Mức lương", dataIndex: "salary", key: "salary", width: 150, align: "center", render: (value) => Number(value).toLocaleString("vi-VN") },
+    { title: "Tiền thưởng", dataIndex: "bonus", key: "bonus", width: 150, align: "center", render: (value) => Number(value).toLocaleString("vi-VN") },
     {
       title: "Hành động",
       key: "action",
@@ -191,6 +191,7 @@ const TableEmployee = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
         }}
         rowKey="key"
         scroll={{ x: 2500 }}
+        sticky={{offsetHeader: 64}}
         rowClassName={(record) =>
           selectedRowKeys.includes(record.key) ? "selected-row" : ""
         }
