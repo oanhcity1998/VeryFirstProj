@@ -7,6 +7,7 @@ import FilterQuotationDrawer from "../../../components/Filter/FilterQuotationDra
 import Search from "antd/es/input/Search";
 import { QuotationForm } from "../../../components/QuotationForm/QuotationForm";
 import { TableQuotation } from "../../../components/TableQuotation/TableQuotation";
+import { ROUTES_APP } from "../../../routes";
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 export interface Product {
@@ -149,7 +150,7 @@ const QuotationList = () => {
       setData((prev) => prev.filter((item) => !selectedRowKeys.includes(item.id)));
       setSelectedRowKeys([]);
       message.success("Đã xóa mẫu báo giá");
-      navigate("/quotationlist");
+      navigate(ROUTES_APP.quotationList);
     } catch (err) {
       message.error("Không thể xóa mẫu báo giá");
     } finally {

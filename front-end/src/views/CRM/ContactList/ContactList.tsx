@@ -207,7 +207,7 @@ const ContactList = () => {
         filterMainContact={filterMainContact}
         selectedRowKeys={selectedRowKeys}
         setSelectedRowKeys={setSelectedRowKeys}
-        onRowClick={(record) => {
+        onShowClick={(record) => {
           setSelectedContact(record);
           setIsDetailModalOpen(true);
         }}

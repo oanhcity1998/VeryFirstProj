@@ -12,11 +12,11 @@ import {
   Modal,
   Select,
   message,
-  Space
+  Space,
 } from "antd";
 import { ArrowLeftOutlined, SearchOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import ContactList from "../ContactList/ContactList";
-import TableContact from "../../../components/TableContact/TableContact";   
+import TableContact from "../../../components/TableContact/TableContact";
 import ContactForm from "../../../components/ContactForm/ContactForm";
 
 import "./CustomerDetail.css";
@@ -24,7 +24,6 @@ import "./CustomerDetail.css";
 const { TextArea } = Input;
 const { Option } = Select;
 const { Search } = Input;
-
 
 export default function CustomerDetail() {
   const { id } = useParams();
@@ -35,22 +34,22 @@ export default function CustomerDetail() {
   // const [deleting, setDeleting] = useState(false);
 
   const [searchText, setSearchText] = useState("");
-const [filterCustomer, setFilterCustomer] = useState(null);
-const [filterMainContact, setFilterMainContact] = useState(null);
-const [customerOptions, setCustomerOptions] = useState(["Công ty ABC", "Công ty XYZ"]); 
-const [mainContactOptions, setMainContactOptions] = useState(["Nguyễn Văn A", "Trần Thị B"]);
+  const [filterCustomer, setFilterCustomer] = useState(null);
+  const [filterMainContact, setFilterMainContact] = useState(null);
+  const [customerOptions, setCustomerOptions] = useState(["Công ty ABC", "Công ty XYZ"]);
+  const [mainContactOptions, setMainContactOptions] = useState(["Nguyễn Văn A", "Trần Thị B"]);
 
-const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-const [selectedContact, setSelectedContact] = useState(null);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedContact, setSelectedContact] = useState(null);
 
-const [deleteOpen, setDeleteOpen] = useState(false);
-const [deleting, setDeleting] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
-const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
-const [data, setData] = useState([
+  const [data, setData] = useState([
     {
       key: "1",
       id: "10",
@@ -117,7 +116,7 @@ const [data, setData] = useState([
       mainContact: "Nguyễn Văn C",
       note: "Cần follow-up",
     },
-  ]);; 
+  ]);
 
   // move mock data into state
   const [customer, setCustomer] = useState({
@@ -151,7 +150,7 @@ const [data, setData] = useState([
   //   try {
   //     setDeleting(true);
   //     message.success("Đã xóa khách hàng");
-  //     navigate("/customerlist");
+  //     navigate(ROUTES_APP.customerList);
   //   } finally {
   //     setDeleting(false);
   //     setDeleteOpen(false);
@@ -162,7 +161,6 @@ const [data, setData] = useState([
     message.success("Đã cập nhật liên hệ");
     setIsEditModalOpen(false);
   };
-
 
   const breadcrumbItems = [
     { title: <Link to="/customerlist">Danh sách khách hàng</Link> },
@@ -316,15 +314,15 @@ const [data, setData] = useState([
                   />
                 </Form.Item>
                 <Form.Item label="Trạng thái quyết toán thuế">
-                    <Select
-                        value={customer.taxStatus}
-                        // disabled={!isEditing}
-                        // onChange={(value) => setCustomer({ ...customer, taxStatus: value })}
-                    >
-                        <Option value="Đã quyết toán">Đã quyết toán</Option>
-                        <Option value="Chưa quyết toán">Chưa quyết toán</Option>
-                        <Option value="Đang xử lý">Đang xử lý</Option>
-                    </Select>
+                  <Select
+                    value={customer.taxStatus}
+                    // disabled={!isEditing}
+                    // onChange={(value) => setCustomer({ ...customer, taxStatus: value })}
+                  >
+                    <Option value="Đã quyết toán">Đã quyết toán</Option>
+                    <Option value="Chưa quyết toán">Chưa quyết toán</Option>
+                    <Option value="Đang xử lý">Đang xử lý</Option>
+                  </Select>
                 </Form.Item>
 
                 <Form.Item label="Năm quyết toán">
@@ -350,89 +348,89 @@ const [data, setData] = useState([
                     // }
                   />
                 </Form.Item>
-                
               </Form>
             </Card>
           </Col>
         </Row>
       ),
     },
-    { key: "2", label: "Liên Hệ", children:
-      <div>
-          
+    {
+      key: "2",
+      label: "Liên Hệ",
+      children: (
+        <div>
           <div style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "center" }}>
             <h2 style={{ flex: 1, textAlign: "center" }}>Thông tin người liên hệ</h2>
-      
-              <Search
-                placeholder="Nhập tên người liên hệ..."
-                onChange={(e) => setSearchText(e.target.value)}
-                allowClear
-                className="header-search"
-              />
-      
-              <Select
-                allowClear
-                placeholder="Lọc theo Khách hàng"
-                style={{ width: 200 }}
-                value={filterCustomer}
-                onChange={(val) => setFilterCustomer(val)}
-                options={customerOptions.map((c) => ({ label: c, value: c }))}
-              />
-      
-              <Select
-                allowClear
-                placeholder="Lọc theo Liên hệ chính"
-                style={{ width: 200 }}
-                value={filterMainContact}
-                onChange={(val) => setFilterMainContact(val)}
-                options={mainContactOptions.map((m) => ({ label: m, value: m }))}
-              />
-            </div>
-      
-            
-            <TableContact
-              data={data}
-              searchText={searchText}
-              filterCustomer={filterCustomer}
-              filterMainContact={filterMainContact}
-              selectedRowKeys={selectedRowKeys}
-              setSelectedRowKeys={setSelectedRowKeys}
-              onRowClick={(record) => {
-                setSelectedContact(record);
-                setIsDetailModalOpen(true);
-              }}
-              // onEditClick={(record) => {
-              //   setSelectedContact(record);
-              //   setIsEditModalOpen(true);
-              // }}
-              selectable={false}
-              showEdit={false}
+
+            <Search
+              placeholder="Nhập tên người liên hệ..."
+              onChange={(e) => setSearchText(e.target.value)}
+              allowClear
+              className="header-search"
             />
-      
-            
-            {/* <ContactForm
+
+            <Select
+              allowClear
+              placeholder="Lọc theo Khách hàng"
+              style={{ width: 200 }}
+              value={filterCustomer}
+              onChange={(val) => setFilterCustomer(val)}
+              options={customerOptions.map((c) => ({ label: c, value: c }))}
+            />
+
+            <Select
+              allowClear
+              placeholder="Lọc theo Liên hệ chính"
+              style={{ width: 200 }}
+              value={filterMainContact}
+              onChange={(val) => setFilterMainContact(val)}
+              options={mainContactOptions.map((m) => ({ label: m, value: m }))}
+            />
+          </div>
+
+          <TableContact
+            data={data}
+            searchText={searchText}
+            filterCustomer={filterCustomer}
+            filterMainContact={filterMainContact}
+            selectedRowKeys={selectedRowKeys}
+            setSelectedRowKeys={setSelectedRowKeys as (keys: string[]) => void}
+            onRowClick={(record) => {
+              setSelectedContact(record as any);
+              setIsDetailModalOpen(true);
+            }}
+            // onEditClick={(record) => {
+            //   setSelectedContact(record);
+            //   setIsEditModalOpen(true);
+            // }}
+            selectable={false}
+            showEdit={false}
+          />
+
+          {/* <ContactForm
               mode="create"
               open={isCreateModalOpen}
               onCancel={() => setIsCreateModalOpen(false)}
               onOk={handleCreate}
             /> */}
-      
-            <ContactForm
-              mode="edit"
-              open={isEditModalOpen}
-              onCancel={() => setIsEditModalOpen(false)}
-              onOk={handleEdit}
-              initialValues={selectedContact}
-            />
-      
-            <ContactForm
-              mode="detail"
-              open={isDetailModalOpen}
-              onCancel={() => setIsDetailModalOpen(false)}
-              initialValues={selectedContact}
-            />
-      </div>
-     },
+
+          <ContactForm
+            mode="edit"
+            open={isEditModalOpen}
+            onCancel={() => setIsEditModalOpen(false)}
+            onOk={handleEdit}
+            initialValues={selectedContact}
+          />
+
+          <ContactForm
+            mode="detail"
+            open={isDetailModalOpen}
+            onCancel={() => setIsDetailModalOpen(false)}
+            initialValues={selectedContact}
+          />
+        </div>
+      ),
+    },
     { key: "3", label: "Báo giá", children: <p>Thông tin báo giá…</p> },
     { key: "4", label: "Hợp đồng", children: <p>Danh sách hợp đồng…</p> },
     { key: "5", label: "Tài liệu", children: <p>File tài liệu…</p> },
@@ -443,11 +441,7 @@ const [data, setData] = useState([
       className="customer-detail-card"
       title={
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <Button
-            type="text"
-            icon={<ArrowLeftOutlined />}
-            onClick={() => navigate(-1)}
-          />
+          <Button type="text" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)} />
           <Breadcrumb items={breadcrumbItems} separator=">" />
         </div>
       }

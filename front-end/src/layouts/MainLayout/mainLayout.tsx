@@ -30,6 +30,7 @@ import {
 import SidebarMenu from "../../components/SideBar/SidebarMenu";
 import "./mainLayout.css";
 // import FilterDrawer from "../components/FilterDrawer";
+import { ROUTES_APP } from "../../routes";
 
 const { Header, Sider, Content } = Layout;
 const { Search } = Input;
@@ -67,9 +68,6 @@ const MainLayout = () => {
     ],
   };
 
-
-
-
   // popover for settings
   // const settingsContent = (
   //   <Space direction="vertical">
@@ -104,7 +102,7 @@ const MainLayout = () => {
         key: "profile",
         label: "Hồ sơ",
         icon: <UserOutlined />,
-        onClick: () => navigate("/profile"),
+        onClick: () => navigate(ROUTES_APP.profile),
       },
       {
         key: "logout",
@@ -112,7 +110,7 @@ const MainLayout = () => {
         icon: <LogoutOutlined />,
         onClick: () => {
           message.success("Đã đăng xuất");
-          navigate("/login");
+          navigate(ROUTES_APP.login);
         },
       },
     ],
@@ -171,12 +169,8 @@ const MainLayout = () => {
             {/* Apps button */}
             {/* ✅ Apps button with Dropdown (new API) */}
             <Dropdown menu={appsMenu} placement="bottomRight" trigger={["click"]}>
-              <Button
-                type="text"
-                icon={<AppstoreOutlined style={{ fontSize: "18px" }} />}
-              />
+              <Button type="text" icon={<AppstoreOutlined style={{ fontSize: "18px" }} />} />
             </Dropdown>
-
 
             {/* Notification button  */}
             <Badge count={3} offset={[0, 5]}>

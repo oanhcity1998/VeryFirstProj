@@ -72,7 +72,6 @@ export const TableQuotation = ({
       dataIndex: "validityPeriod",
       key: "validityPeriod",
       width: 180,
-      fixed: "left",
     },
     {
       title: "Điều khoản thanh toán",

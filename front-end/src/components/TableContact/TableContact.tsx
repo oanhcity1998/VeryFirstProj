@@ -134,10 +134,10 @@ const TableContact = ({
               selectedRowKeys,
               onChange: (keys) => {
                 setSelectedRowKeys(keys as string[]); // 👈 ép kiểu vì React.Key có thể là string | number
-        },            }
+              },
+            }
           : undefined
       }
-
       columns={columns}
       dataSource={filteredData}
       rowKey="key"

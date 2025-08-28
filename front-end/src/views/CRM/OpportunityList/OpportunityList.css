@@ -1,0 +1,4 @@
+.delete-button:not(.disabled):hover {
+  color: white !important;
+  background-color: #ff4d4f !important;
+}

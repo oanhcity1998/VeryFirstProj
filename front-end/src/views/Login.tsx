@@ -3,6 +3,7 @@ import { Card, Input, Button, Checkbox, Form, Typography, message } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
+import { ROUTES_APP } from "../routes";
 
 const { Title, Text } = Typography;
 
@@ -18,7 +19,7 @@ export default function Login() {
       message.success("Login successful!");
       setTimeout(() => {
         setLoading(false);
-        navigate("/"); // redirect to homepage
+        navigate(ROUTES_APP.login); // redirect to homepage
       }, 1000);
     } else {
       message.error("Invalid email or password");
@@ -37,10 +38,7 @@ export default function Login() {
         </Title>
 
         <Form name="login" onFinish={onFinish} layout="vertical">
-          <Form.Item
-            name="email"
-            rules={[{ required: true, message: "Please input your Email!" }]}
-          >
+          <Form.Item name="email" rules={[{ required: true, message: "Please input your Email!" }]}>
             <Input prefix={<UserOutlined />} placeholder="Email" size="large" />
           </Form.Item>
 
@@ -48,11 +46,7 @@ export default function Login() {
             name="password"
             rules={[{ required: true, message: "Please input your Password!" }]}
           >
-            <Input.Password
-              prefix={<LockOutlined />}
-              placeholder="Password"
-              size="large"
-            />
+            <Input.Password prefix={<LockOutlined />} placeholder="Password" size="large" />
           </Form.Item>
 
           <Form.Item>
