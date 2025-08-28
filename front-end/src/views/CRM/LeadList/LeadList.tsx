@@ -1,7 +1,7 @@
 // src/views/LeadList/LeadList.tsx
 import { useState } from "react";
-import { Button, Space, Modal, message } from "antd";
-import { PlusOutlined, DeleteOutlined, FilterOutlined } from "@ant-design/icons";
+import { Button, Space, Modal, message, Popover, Checkbox } from "antd";
+import { PlusOutlined, DeleteOutlined, FilterOutlined, DownOutlined } from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 import TableLead, { Lead } from "../../../components/TableLead/TableLead";
 import "./LeadList.css";
@@ -31,6 +31,10 @@ const LeadList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [opportunityOpen, setOpportunityOpen] = useState(false);
   const [converting, setConverting] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string[]>([]);  
+  const [priorityFilter, setPriorityFilter] = useState<string[]>([]);
+
+
 
   const handleDelete = () => {
     setDeleting(true);
@@ -69,6 +73,62 @@ const LeadList = () => {
   setConverting(false);
 };
 
+const statusOptions = ["Khách hàng mới", "Đang chăm sóc", "Chưa quan tâm"];
+const priorityOptions = ["Có", "Không"];
+
+// Status popover content
+const StatusContent = (
+  <div className="filter-popover">
+    {statusOptions.map(opt => (
+      <Checkbox
+        key={opt}
+        checked={statusFilter.includes(opt)}
+        onChange={(e) => {
+          setStatusFilter(prev =>
+            e.target.checked ? [...prev, opt] : prev.filter(v => v !== opt)
+          );
+        }}
+      >
+        {opt}
+      </Checkbox>
+    ))}
+    <div className="filter-actions">
+      <Button size="small" type="link" onClick={() => setStatusFilter([])}>Xoá chọn</Button>
+    </div>
+  </div>
+);
+
+// Priority popover content
+const PriorityContent = (
+  <div className="filter-popover">
+    {priorityOptions.map(opt => (
+      <Checkbox
+        key={opt}
+        checked={priorityFilter.includes(opt)}
+        onChange={(e) => {
+          setPriorityFilter(prev =>
+            e.target.checked ? [...prev, opt] : prev.filter(v => v !== opt)
+          );
+        }}
+      >
+        {opt}
+      </Checkbox>
+    ))}
+    <div className="filter-actions">
+      <Button size="small" type="link" onClick={() => setPriorityFilter([])}>Xoá chọn</Button>
+    </div>
+  </div>
+);
+
+const priorityContent = (
+  <div style={{ padding: "8px 12px" }}>
+    <Checkbox.Group
+      options={priorityOptions}
+      value={priorityFilter}
+      onChange={(checked) => setPriorityFilter(checked as string[])}
+    />
+  </div>
+);
 
 
   return (
@@ -83,6 +143,15 @@ const LeadList = () => {
         />
 
         <Space>
+             <Popover placement="bottomLeft" trigger="click" content={StatusContent}>
+                <Button>Trạng thái <DownOutlined /></Button>
+            </Popover>
+
+            <Popover placement="bottomLeft" trigger="click" content={PriorityContent}>
+                <Button>Ưu tiên <DownOutlined /></Button>
+            </Popover>
+
+
             {/* Opportunity button  */}
           <Button
                 onClick={() => setOpportunityOpen(true)}
