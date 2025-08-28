@@ -5,7 +5,7 @@ import "./CreateCustomerForm.css";
 
 const { Option } = Select;
 
-const CreateCustomerForm = ({onCancel, onSave, customer, open  }) => {
+const CreateCustomerForm = ({onCancel, onSave, customer, open, mode  }) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -31,7 +31,11 @@ const CreateCustomerForm = ({onCancel, onSave, customer, open  }) => {
 
   return (
     <Modal
-      title="Danh sách khách hàng / Tạo mới"
+      title={
+        mode === "edit"
+          ? "Chỉnh sửa khách hàng"
+          : "Thêm khách hàng"
+      }
       open={open}
       onCancel={onCancel}
       footer={[

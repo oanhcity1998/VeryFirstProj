@@ -131,6 +131,7 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, on
           icon={<EditOutlined />}
           type="link"
           onClick={() => onEdit(record)}
+          className="customer-edit-icon"
         />
       ),
     }, 
@@ -150,7 +151,6 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, on
     />
     
       <Modal
-        title={editingCustomer ? "Sửa khách hàng" : "Thêm khách hàng"}
         open={isModalVisible}
         onOk={() => form.submit()}
         onCancel={() => setIsModalVisible(false)}

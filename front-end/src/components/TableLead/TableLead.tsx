@@ -1,5 +1,5 @@
 // src/components/TableLead/TableLead.tsx
-import { Table, Tooltip, Button } from "antd";
+import { Table, Tooltip, Button, Typography } from "antd";
 import {Link} from "react-router-dom"
 import { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
@@ -54,7 +54,7 @@ const TableLead = ({
       title: "Hành động",
       key: "action",
       render: (_: any, record: any) => (
-        <Button type="link" icon={<EditOutlined />} onClick={() => onEdit(record)}>
+        <Button type="link" icon={<EditOutlined />} onClick={() => onEdit(record)} className="lead-edit-icon">
         </Button>
       ),
     },
