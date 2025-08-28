@@ -29,6 +29,8 @@ const LeadList = () => {
   const [openForm, setOpenForm] = useState(false);
   const [editData, setEditData] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [opportunityOpen, setOpportunityOpen] = useState(false);
+  const [converting, setConverting] = useState(false);
 
   const handleDelete = () => {
     setDeleting(true);
@@ -58,6 +60,15 @@ const LeadList = () => {
     setOpenForm(false);
   };
 
+  const handleConvertToOpportunity = () => {
+  setConverting(true);
+  // Example: convert logic here
+  message.success("Lead đã được chuyển thành cơ hội");
+  setSelectedRowKeys([]);
+  setOpportunityOpen(false);
+  setConverting(false);
+};
+
 
 
   return (
@@ -72,7 +83,28 @@ const LeadList = () => {
         />
 
         <Space>
-          <Button>Cơ hội</Button>
+            {/* Opportunity button  */}
+          <Button
+                onClick={() => setOpportunityOpen(true)}
+                disabled={selectedRowKeys.length === 0}
+            >
+                Cơ hội
+          </Button>
+          {/* Opportunity Modal */}
+          <Modal
+                open={opportunityOpen}
+                title="Chuyển thành cơ hội"
+                onOk={handleConvertToOpportunity}
+                onCancel={() => setOpportunityOpen(false)}
+                okText="Xác nhận"
+                cancelText="Hủy"
+                okButtonProps={{ loading: converting }}
+                centered
+            >
+                <p>Bạn có muốn chuyển Lead này thành cơ hội?</p>
+          </Modal>
+
+          {/* Delete button  */}
           <Button
             danger
             icon={<DeleteOutlined />}
@@ -81,6 +113,7 @@ const LeadList = () => {
           >
             Xóa
           </Button>
+          {/* Delete Modal  */}
           <Modal
             open={deleteOpen}
             title="Xác nhận xóa"

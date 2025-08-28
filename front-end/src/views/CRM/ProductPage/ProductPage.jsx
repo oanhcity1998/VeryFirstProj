@@ -3,6 +3,7 @@ import ProductForm from "../../../components/ProductForm/ProductForm";
 import { Table, Button, Input, Space, InputNumber, Modal, Form } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
+import "./ProductPage.css"
 
 const { confirm } = Modal;
 const ProductPage = () => {
@@ -185,6 +186,7 @@ const ProductPage = () => {
           type="link"
           icon={<EditOutlined />}
           onClick={() => handleEdit(record)}
+          className="product-edit-icon"
         />
       ),
     },

@@ -86,15 +86,21 @@ const CustomerList = () => {
   return (
     <>
     <div className="customer-list-header">
-        <h2>Danh sách khách hàng</h2>
+        <div className="customer-list-right">
+          <h2>Danh sách khách hàng</h2>
 
-        <div className="customer-list-actions">
-            {/* Search bar */}
+          {/* Search bar */}
             <Input.Search
             placeholder="Tìm kiếm khách hàng..."
             allowClear
             className="customer-list-search"
             />
+
+        </div>
+        
+
+        <div className="customer-list-actions">
+            
 
             {/* Bộ lọc */}
             <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>
@@ -143,8 +149,10 @@ const CustomerList = () => {
             {/* Delete */}
             <Button 
               danger 
+              icon={<DeleteOutlined />}
               disabled={selectedRowKeys.length === 0}  
-              onClick={() => setDeleteOpen(true)}>
+              onClick={() => setDeleteOpen(true)}
+              >
                 Xóa
             </Button>
             
@@ -165,7 +173,7 @@ const CustomerList = () => {
             <Button
             type="primary"
             icon={<PlusOutlined />}
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => handleCreate()}
             >
             Tạo
             </Button>
@@ -182,6 +190,7 @@ const CustomerList = () => {
       />
 
       <CreateCustomerForm
+        mode={editingCustomer ? "edit" : "create"}
         open={isModalOpen}
         customer={editingCustomer}   // 👈 pass the record when editing
         onCancel={() => setIsModalOpen(false)}

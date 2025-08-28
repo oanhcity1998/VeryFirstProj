@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Form, Input, Select, Button } from "antd";
+import "./LeadForm.css"
 
 const { Option } = Select;
 

@@ -54,7 +54,7 @@ const TableLead = ({
       title: "Hành động",
       key: "action",
       render: (_: any, record: any) => (
-        <Button type="link" icon={<EditOutlined />} onClick={() => onEdit(record)}>
+        <Button type="link" icon={<EditOutlined />} onClick={() => onEdit(record)} className="lead-edit-icon">
         </Button>
       ),
     },
