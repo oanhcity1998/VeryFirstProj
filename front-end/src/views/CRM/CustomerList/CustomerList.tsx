@@ -10,7 +10,6 @@ import {
 import TableCustomer from "../../../components/TableCustomer/TableCustomer";
 import CreateCustomerForm from "../../../components/CustomerForm/CreateCustomerForm";
 import FilterDrawer from "../../../components/Filter/FilterDrawer";
-import EditCustomerForm from "../../../components/CustomerForm/EditCustomerForm";
 
 import "./CustomerList.css";
 import { ROUTES_APP } from "../../../routes";
@@ -153,6 +152,7 @@ const CustomerList = () => {
           {/* Delete */}
           <Button
             danger
+            icon={<DeleteOutlined />}
             disabled={selectedRowKeys.length === 0}
             onClick={() => setDeleteOpen(true)}
           >
@@ -188,6 +188,7 @@ const CustomerList = () => {
 
       <CreateCustomerForm
         open={isModalOpen}
+        mode={editingCustomer ? "edit" : "add"}
         customer={editingCustomer} // 👈 pass the record when editing
         onCancel={() => setIsModalOpen(false)}
         onSave={(values) => {

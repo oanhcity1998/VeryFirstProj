@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ProductForm from "../../../components/ProductForm/ProductForm";
-import { Table, Button, Input, Space, InputNumber, Modal, Form } from "antd";
+import { Table, Button, Input, Space, InputNumber, Modal, Form, Select } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import "./ProductPage.css";
@@ -35,7 +35,11 @@ const ProductPage = () => {
     },
   ]);
   const [data, setData] = useState([...originalData]);
-  const [priceFilter, setPriceFilter] = useState({ min: null, max: null });
+  // const [priceFilter, setPriceFilter] = useState({ min: null, max: null });
+  const [filters, setFilters] = useState({
+  productType: null,
+  vat: null,
+});
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -91,15 +95,22 @@ const ProductPage = () => {
     });
   };
 
-  // Lọc theo giá
-  const handleFilterPrice = () => {
-    const filtered = originalData.filter((item) => {
-      const minOk = priceFilter.min !== null ? item.price >= priceFilter.min : true;
-      const maxOk = priceFilter.max !== null ? item.price <= priceFilter.max : true;
-      return minOk && maxOk;
-    });
-    setData(filtered);
-  };
+  // // Lọc theo giá
+  // const handleFilterPrice = () => {
+  //   const filtered = originalData.filter((item) => {
+  //     const minOk = priceFilter.min !== null ? item.price >= priceFilter.min : true;
+  //     const maxOk = priceFilter.max !== null ? item.price <= priceFilter.max : true;
+  //     return minOk && maxOk;
+  //   });
+  //   setData(filtered);
+  // };
+
+  const filteredData = data.filter((item) => {
+  const matchType = filters.productType ? item.type === filters.productType : true;
+  const matchVAT = filters.vat ? item.vat == filters.vat : true;
+  return matchType && matchVAT;
+});
+
 
   const columns = [
     {
@@ -120,7 +131,7 @@ const ProductPage = () => {
       dataIndex: "type",
       key: "type",
       width: 150,
-      render: (value) => (value === "package" ? "Theo gói" : "Theo tháng"),
+      render: (value) => value?.toLocaleString("vi-VN"),
     },
     {
       title: "Giá (VND)",
@@ -203,29 +214,41 @@ const ProductPage = () => {
       >
         <Space>
           <h2 style={{ margin: 0 }}>Danh sách sản phẩm</h2>
-          <Input.Search placeholder="Tìm kiếm sản phẩm..." allowClear style={{ width: 250 }} />
-          <InputNumber
-            placeholder="Giá từ"
-            min={0}
-            style={{ width: 120 }}
-            value={priceFilter.min}
-            onChange={(value) => setPriceFilter((prev) => ({ ...prev, min: value }))}
-          />
-          <InputNumber
-            placeholder="Đến"
-            min={0}
-            style={{ width: 120 }}
-            value={priceFilter.max}
-            onChange={(value) => setPriceFilter((prev) => ({ ...prev, max: value }))}
-          />
+          
+
           {/* <Button type="default" onClick={handleFilterPrice}>
             Lọc
           </Button> */}
         </Space>
 
         <Space>
-          <Button
-            type="primary"
+          {/* Bộ lọc  */}
+          <Select
+            allowClear
+            placeholder="Loại sản phẩm"
+            style={{ width: 180 }}
+            value={filters.productType}
+            onChange={(val) => setFilters((prev) => ({ ...prev, productType: val }))}
+            options={[
+              { label: "Theo tháng", value: "Theo tháng" },
+              { label: "Theo gói", value: "Theo gói" },
+            ]}
+          />
+
+          <Select
+            allowClear
+            placeholder="VAT"
+            style={{ width: 150 }}
+            value={filters.vat}
+            onChange={(val) => setFilters((prev) => ({ ...prev, vat: val }))}
+            options={[
+              { label: "5", value: "5" },
+              { label: "10", value: "10" },
+              { label: "15", value: "15" },
+            ]}
+          />
+
+          <Button 
             danger
             icon={<DeleteOutlined />}
             disabled={selectedRowKeys.length === 0}
@@ -243,7 +266,7 @@ const ProductPage = () => {
       <Table
         rowSelection={{ type: "checkbox", ...rowSelection }}
         columns={columns}
-        dataSource={data}
+        dataSource={filteredData}
         scroll={{ x: 1200 }}
       />
 

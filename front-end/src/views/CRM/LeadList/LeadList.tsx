@@ -1,6 +1,6 @@
 // src/views/LeadList/LeadList.tsx
 import { useState } from "react";
-import { Button, Space, Modal, message, Popover, Checkbox } from "antd";
+import { Button, Space, Modal, message, Select, Checkbox } from "antd";
 import { PlusOutlined, DeleteOutlined, FilterOutlined, DownOutlined } from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 import TableLead, { Lead } from "../../../components/TableLead/TableLead";
@@ -33,6 +33,11 @@ const LeadList = () => {
   const [converting, setConverting] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string[]>([]);  
   const [priorityFilter, setPriorityFilter] = useState<string[]>([]);
+  const [filters, setFilters] = useState({
+  status: null,
+  priority: null,
+});
+
 
 
 
@@ -98,37 +103,12 @@ const StatusContent = (
   </div>
 );
 
-// Priority popover content
-const PriorityContent = (
-  <div className="filter-popover">
-    {priorityOptions.map(opt => (
-      <Checkbox
-        key={opt}
-        checked={priorityFilter.includes(opt)}
-        onChange={(e) => {
-          setPriorityFilter(prev =>
-            e.target.checked ? [...prev, opt] : prev.filter(v => v !== opt)
-          );
-        }}
-      >
-        {opt}
-      </Checkbox>
-    ))}
-    <div className="filter-actions">
-      <Button size="small" type="link" onClick={() => setPriorityFilter([])}>Xoá chọn</Button>
-    </div>
-  </div>
-);
+const filteredData = data.filter((item) => {
+  const matchStatus = filters.status ? item.status === filters.status : true;
+  const matchPriority = filters.priority ? item.priority === filters.priority : true;
+  return matchStatus && matchPriority;
+});
 
-const priorityContent = (
-  <div style={{ padding: "8px 12px" }}>
-    <Checkbox.Group
-      options={priorityOptions}
-      value={priorityFilter}
-      onChange={(checked) => setPriorityFilter(checked as string[])}
-    />
-  </div>
-);
 
 
   return (
@@ -143,13 +123,31 @@ const priorityContent = (
         />
 
         <Space>
-             <Popover placement="bottomLeft" trigger="click" content={StatusContent}>
-                <Button>Trạng thái <DownOutlined /></Button>
-            </Popover>
+             <Select
+                allowClear
+                placeholder="Trạng thái"
+                style={{ width: 180 }}
+                value={filters.status}
+                onChange={(val) => setFilters((prev) => ({ ...prev, status: val }))}
+                options={[
+                    { label: "Khách hàng mới", value: "Khách hàng mới" },
+                    { label: "Đang chăm sóc", value: "Đang chăm sóc" },
+                    { label: "Chưa quan tâm", value: "Chưa quan tâm" },
+                ]}
+                />
 
-            <Popover placement="bottomLeft" trigger="click" content={PriorityContent}>
-                <Button>Ưu tiên <DownOutlined /></Button>
-            </Popover>
+            <Select
+                allowClear
+                placeholder="Ưu tiên"
+                style={{ width: 150 }}
+                value={filters.priority}
+                onChange={(val) => setFilters((prev) => ({ ...prev, priority: val }))}
+                options={[
+                    { label: "Cao", value: "Cao" },
+                    { label: "Thấp", value: "Thấp" },
+                ]}
+            />
+
 
 
             {/* Opportunity button  */}
@@ -202,7 +200,7 @@ const priorityContent = (
       </div>
 
       <TableLead
-        data={data}
+        data={filteredData}
         searchText={searchText}
         selectedRowKeys={selectedRowKeys}
         setSelectedRowKeys={setSelectedRowKeys}

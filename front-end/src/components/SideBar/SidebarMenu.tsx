@@ -43,7 +43,7 @@ const SidebarMenu = ({ collapsed }) => {
     {
       key: "2",
       icon: <UserOutlined />,
-      label: <Link to={ROUTES_APP.contactList}>Khách hàng</Link>,
+      label: <Link to={ROUTES_APP.customerList}>Khách hàng</Link>,
     },
     {
       key: "3",
@@ -68,7 +68,7 @@ const SidebarMenu = ({ collapsed }) => {
     {
       key: "7",
       icon: <DollarOutlined />,
-      label: <Link to={ROUTES_APP.opportunityList}>Opportunity</Link>,
+      label: <Link to={ROUTES_APP.opportunityList}>Cơ hội</Link>,
     },
   ];
 
