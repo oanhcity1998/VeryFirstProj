@@ -44,21 +44,57 @@ const LeadDetail: React.FC = () => {
             <div className="lead-detail-title">
                     Chi tiết {lead.leadName}
             </div>
-        <Descriptions bordered column={1} size="middle" >
-            
-          <Descriptions.Item label="Tên lead">{lead.leadName}</Descriptions.Item>
-          <Descriptions.Item label="Tên liên hệ">{lead.contactName}</Descriptions.Item>
-          <Descriptions.Item label="Chức vụ">{lead.position}</Descriptions.Item>
-          <Descriptions.Item label="Công ty">{lead.company}</Descriptions.Item>
-          <Descriptions.Item label="Email">{lead.email}</Descriptions.Item>
-          <Descriptions.Item label="Số điện thoại">{lead.phone}</Descriptions.Item>
-          <Descriptions.Item label="Địa chỉ">{lead.address}</Descriptions.Item>
-          <Descriptions.Item label="Website">{lead.website}</Descriptions.Item>
-          <Descriptions.Item label="Nguồn">{lead.source}</Descriptions.Item>
-          <Descriptions.Item label="Ưu tiên">{lead.priority}</Descriptions.Item>
-          <Descriptions.Item label="Nhân viên phụ trách">{lead.owner}</Descriptions.Item>
-          <Descriptions.Item label="Trạng thái">{lead.status}</Descriptions.Item>
-        </Descriptions>
+        <div className="lead-detail-form">
+            <div className="form-row first-row">
+                <label>Tên lead:</label>
+                <input value={lead.leadName} disabled />
+            </div>
+            <div className="form-row">
+                <label>Tên liên hệ:</label>
+                <input value={lead.contactName} disabled />
+            </div>
+            <div className="form-row">
+                <label>Chức vụ:</label>
+                <input value={lead.position} disabled />
+            </div>
+            <div className="form-row">
+                <label>Công ty:</label>
+                <input value={lead.company} disabled />
+            </div>
+            <div className="form-row">
+                <label>Email:</label>
+                <input value={lead.email} disabled />
+            </div>
+            <div className="form-row">
+                <label>Số điện thoại:</label>
+                <input value={lead.phone} disabled />
+            </div>
+            <div className="form-row">
+                <label>Địa chỉ:</label>
+                <input value={lead.address} disabled />
+            </div>
+            <div className="form-row">
+                <label>Website:</label>
+                <input value={lead.website} disabled />
+            </div>
+            <div className="form-row">
+                <label>Nguồn:</label>
+                <input value={lead.source} disabled />
+            </div>
+            <div className="form-row">
+                <label>Ưu tiên:</label>
+                <input value={lead.priority} disabled />
+            </div>
+            <div className="form-row">
+                <label>Nhân viên phụ trách:</label>
+                <input value={lead.owner} disabled />
+            </div>
+            <div className="form-row last-row">
+                <label>Trạng thái:</label>
+                <input value={lead.status} disabled />
+            </div>
+            </div>
+
       
         </div>
     </div>
