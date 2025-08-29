@@ -1,9 +1,14 @@
 import React, { useEffect } from "react";
-import { Form, Input, InputNumber, Button, Select } from "antd";
+import { Form, Input, InputNumber, Button, Select, FormInstance } from "antd";
+import { Product } from "../../views/CRM/ProductPage/ProductPage";
 
-const ProductForm = ({ onSave, product }) => {
-  const [form] = Form.useForm();
+type ProductFormProps = {
+  product: Product | null;
+  onSave: (values: Partial<Product>) => void;
+  form: FormInstance;
+};
 
+const ProductForm: React.FC<ProductFormProps> = ({ onSave, product, form }) => {
   useEffect(() => {
     if (product) {
       form.setFieldsValue(product);
@@ -13,21 +18,16 @@ const ProductForm = ({ onSave, product }) => {
   }, [product, form]);
 
   // Tính giá sau VAT
-  const handleValuesChange = (changedValues, allValues) => {
-    const { priceVND, priceUSD, vat } = allValues;
-    if (priceVND && vat !== undefined) {
+  const handleValuesChange = (_: any, allValues: any) => {
+    const { price, vat } = allValues;
+    if (price && vat !== undefined) {
       form.setFieldsValue({
-        priceAfterVatVND: priceVND * (1 + vat / 100),
-      });
-    }
-    if (priceUSD && vat !== undefined) {
-      form.setFieldsValue({
-        priceAfterVatUSD: priceUSD * (1 + vat / 100),
+        priceAfterVat: price * (1 + vat / 100),
       });
     }
   };
 
-  const onFinish = (values) => {
+  const onFinish = (values: any) => {
     onSave(values);
   };
 
@@ -52,24 +52,39 @@ const ProductForm = ({ onSave, product }) => {
       >
         <Select
           options={[
-            { value: "package", label: "Theo gói" },
-            { value: "monthly", label: "Theo tháng" },
+            { value: "Theo gói", label: "Theo gói" },
+            { value: "Theo tháng", label: "Theo tháng" },
           ]}
         />
       </Form.Item>
 
       <Form.Item
-        name="priceVND"
-        label="Giá (VND)"
-        rules={[{ required: true, message: "Nhập giá VND" }]}
+        name="price"
+        label="Giá (USD)"
+        rules={[{ required: true, message: "Nhập giá USD" }]}
       >
         <InputNumber style={{ width: "100%" }} />
       </Form.Item>
 
       <Form.Item
-        name="priceUSD"
-        label="Giá (USD)"
-        rules={[{ required: true, message: "Nhập giá USD" }]}
+        name="currency"
+        label="Tiền tệ"
+        initialValue="USD"
+        rules={[{ required: true, message: "Chọn loại tiền tệ" }]}
+      >
+        <Select
+          options={[
+            { value: "USD", label: "USD" },
+            { value: "VND", label: "VND" },
+          ]}
+        />
+      </Form.Item>
+
+      <Form.Item
+        name="exchangeRate"
+        label="Tỉ giá (VND/USD)"
+        initialValue={24000}
+        rules={[{ required: true, message: "Nhập tỉ giá" }]}
       >
         <InputNumber style={{ width: "100%" }} />
       </Form.Item>
@@ -84,15 +99,11 @@ const ProductForm = ({ onSave, product }) => {
         />
       </Form.Item>
 
-      <Form.Item name="priceAfterVatVND" label="Giá sau VAT (VND)">
+      <Form.Item name="priceAfterVat" label="Giá sau VAT (USD)">
         <InputNumber style={{ width: "100%" }} disabled />
       </Form.Item>
 
-      <Form.Item name="priceAfterVatUSD" label="Giá sau VAT (USD)">
-        <InputNumber style={{ width: "100%" }} disabled />
-      </Form.Item>
-
-      {/* 
+      {/* <Form.Item>
         <Button type="primary" htmlType="submit" block>
           {product ? "Cập nhật" : "Thêm mới"}
         </Button>

@@ -14,6 +14,7 @@ import FilterDrawer from "../../../components/Filter/FilterDrawer";
 import "./CustomerList.css";
 import { ROUTES_APP } from "../../../routes";
 import { useNavigate } from "react-router-dom";
+import Search from "antd/es/input/Search";
 
 const CustomerList = () => {
   const navigate = useNavigate();
@@ -97,10 +98,11 @@ const CustomerList = () => {
 
         <div className="customer-list-actions">
           {/* Search bar */}
-          <Input.Search
+          <Search
             placeholder="Tìm kiếm khách hàng..."
             allowClear
             className="customer-list-search"
+            name="search"
           />
 
           {/* Bộ lọc */}

@@ -17,6 +17,8 @@ import EmployeeList from "./views/HRM/EmployeeList/EmployeeList";
 import EmployeeDetail from "./views/HRM/EmployeeDetail/EmployeeDetail";
 import PositionList from "./views/HRM/PositionList/PositionList";
 
+import "./App.css";
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -45,12 +47,10 @@ export default function App() {
           <Route path={ROUTES_APP.crm.leadList} element={<LeadList />} />
           <Route path={ROUTES_APP.crm.leadDetail} element={<LeadDetail />} />
 
-
           {/* HRM */}
           <Route path={ROUTES_APP.hrm.employeeDetail} element={<EmployeeDetail />} />
           <Route path={ROUTES_APP.hrm.employeeList} element={<EmployeeList />} />
           <Route path={ROUTES_APP.hrm.positionList} element={<PositionList />} />
-
         </Route>
       </Routes>
     </BrowserRouter>

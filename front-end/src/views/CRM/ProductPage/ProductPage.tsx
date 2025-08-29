@@ -1,16 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import ProductForm from "../../../components/ProductForm/ProductForm";
-import { Table, Button, Input, Space, InputNumber, Modal, Form, Select } from "antd";
+import { Table, Button, Space, Modal, Form, Select } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import "./ProductPage.css";
+import Search from "antd/es/input/Search";
+import type { ColumnsType, TableRowSelection } from "antd/es/table/interface";
+import type { Key } from "react";
+
+// Định nghĩa kiểu Product
+export type Product = {
+  key: number;
+  name: string;
+  description: string;
+  type: string;
+  price: number;
+  currency: string;
+  exchangeRate: number;
+  vat: number;
+  createdAt: Dayjs;
+  updatedAt: Dayjs;
+};
 
 const { confirm } = Modal;
+
 const ProductPage = () => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [originalData] = useState([
+  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
+  const [originalData, setOriginalData] = useState<Product[]>([
     {
-      key: "1",
+      key: 1,
       name: "iPhone 15 Pro",
       description: "Smartphone cao cấp",
       type: "Theo gói",
@@ -22,7 +40,7 @@ const ProductPage = () => {
       updatedAt: dayjs("2025-01-10"),
     },
     {
-      key: "2",
+      key: 2,
       name: "MacBook Air M2",
       description: "Laptop nhẹ và mạnh",
       type: "Theo tháng",
@@ -34,15 +52,14 @@ const ProductPage = () => {
       updatedAt: dayjs("2025-01-12"),
     },
   ]);
-  const [data, setData] = useState([...originalData]);
-  // const [priceFilter, setPriceFilter] = useState({ min: null, max: null });
-  const [filters, setFilters] = useState({
-  productType: null,
-  vat: null,
-});
 
+  const [filters, setFilters] = useState<{ productType: string | null; vat: number | null }>({
+    productType: null,
+    vat: null,
+  });
+  const [searchValue, setSearchValue] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [form] = Form.useForm();
 
   // Thêm mới sản phẩm
@@ -53,28 +70,28 @@ const ProductPage = () => {
   };
 
   // Chỉnh sửa sản phẩm
-  const handleEdit = (record) => {
+  const handleEdit = (record: Product) => {
     setEditingProduct(record);
     form.setFieldsValue(record);
     setIsModalVisible(true);
   };
 
   // Lưu dữ liệu từ form
-  const handleSave = (values) => {
+  const handleSave = (values: Partial<Product>) => {
     if (editingProduct) {
-      setData((prev) =>
+      setOriginalData((prev) =>
         prev.map((item) =>
           item.key === editingProduct.key ? { ...item, ...values, updatedAt: dayjs() } : item
         )
       );
     } else {
-      const newProduct = {
-        key: Date.now().toString(),
+      const newProduct: Product = {
+        key: Date.now(),
         ...values,
         createdAt: dayjs(),
         updatedAt: dayjs(),
-      };
-      setData((prev) => [...prev, newProduct]);
+      } as Product;
+      setOriginalData((prev) => [...prev, newProduct]);
     }
     setIsModalVisible(false);
   };
@@ -87,32 +104,29 @@ const ProductPage = () => {
       okText: "Xóa",
       okType: "danger",
       cancelText: "Hủy",
-      centered: true, // modal nằm giữa màn hình
+      centered: true,
       onOk() {
-        setData((prev) => prev.filter((item) => !selectedRowKeys.includes(item.key)));
+        setOriginalData((prev) => prev.filter((item) => !selectedRowKeys.includes(item.key)));
         setSelectedRowKeys([]);
       },
     });
   };
 
-  // // Lọc theo giá
-  // const handleFilterPrice = () => {
-  //   const filtered = originalData.filter((item) => {
-  //     const minOk = priceFilter.min !== null ? item.price >= priceFilter.min : true;
-  //     const maxOk = priceFilter.max !== null ? item.price <= priceFilter.max : true;
-  //     return minOk && maxOk;
-  //   });
-  //   setData(filtered);
-  // };
+  // ✅ Dữ liệu cuối cùng sau Search + Filter
+  const filteredData = useMemo(() => {
+    return originalData.filter((item) => {
+      const matchSearch =
+        item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchValue.toLowerCase());
 
-  const filteredData = data.filter((item) => {
-  const matchType = filters.productType ? item.type === filters.productType : true;
-  const matchVAT = filters.vat ? item.vat == filters.vat : true;
-  return matchType && matchVAT;
-});
+      const matchType = filters.productType ? item.type === filters.productType : true;
+      const matchVAT = filters.vat !== null ? item.vat === filters.vat : true;
 
+      return matchSearch && matchType && matchVAT;
+    });
+  }, [originalData, searchValue, filters]);
 
-  const columns = [
+  const columns: ColumnsType<Product> = [
     {
       title: "Tên sản phẩm",
       dataIndex: "name",
@@ -131,21 +145,13 @@ const ProductPage = () => {
       dataIndex: "type",
       key: "type",
       width: 150,
-      render: (value) => value?.toLocaleString("vi-VN"),
-    },
-    {
-      title: "Giá (VND)",
-      dataIndex: "priceVND",
-      key: "priceVND",
-      width: 120,
-      render: (value) => value?.toLocaleString("vi-VN"),
     },
     {
       title: "Giá (USD)",
-      dataIndex: "priceUSD",
-      key: "priceUSD",
+      dataIndex: "price",
+      key: "price",
       width: 120,
-      render: (value) => value?.toLocaleString("en-US"),
+      render: (value: number) => value?.toLocaleString("en-US"),
     },
     {
       title: "VAT (%)",
@@ -154,39 +160,25 @@ const ProductPage = () => {
       width: 100,
     },
     {
-      title: "Giá sau VAT (VND)",
-      dataIndex: "priceAfterVatVND",
-      key: "priceAfterVatVND",
-      width: 150,
-      render: (value) => value?.toLocaleString("vi-VN"),
+      title: "Ngày tạo",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      width: 120,
+      render: (date: Dayjs) => dayjs(date).format("YYYY-MM-DD"),
     },
     {
-      title: "Giá sau VAT (USD)",
-      dataIndex: "priceAfterVatUSD",
-      key: "priceAfterVatUSD",
-      width: 150,
-      render: (value) => value?.toLocaleString("en-US"),
+      title: "Ngày cập nhật",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      width: 120,
+      render: (date: Dayjs) => dayjs(date).format("YYYY-MM-DD"),
     },
-    // {
-    //   title: "Ngày tạo",
-    //   dataIndex: "createdAt",
-    //   key: "createdAt",
-    //   width: 120,
-    //   render: (date) => dayjs(date).format("YYYY-MM-DD"),
-    // },
-    // {
-    //   title: "Ngày cập nhật",
-    //   dataIndex: "updatedAt",
-    //   key: "updatedAt",
-    //   width: 120,
-    //   render: (date) => dayjs(date).format("YYYY-MM-DD"),
-    // },
     {
       title: "",
       key: "action",
       fixed: "right",
       width: 100,
-      render: (_, record) => (
+      render: (_: any, record: Product) => (
         <Button
           type="link"
           icon={<EditOutlined />}
@@ -197,9 +189,16 @@ const ProductPage = () => {
     },
   ];
 
-  const rowSelection = {
+  // ✅ RowSelection chuẩn TS
+  const rowSelection: TableRowSelection<Product> = {
     selectedRowKeys,
-    onChange: setSelectedRowKeys,
+    onChange: (keys) => setSelectedRowKeys(keys),
+    type: "checkbox",
+  };
+
+  // Search handler
+  const handleSearch = (value: string) => {
+    setSearchValue(value);
   };
 
   return (
@@ -214,15 +213,18 @@ const ProductPage = () => {
       >
         <Space>
           <h2 style={{ margin: 0 }}>Danh sách sản phẩm</h2>
-          
-
-          {/* <Button type="default" onClick={handleFilterPrice}>
-            Lọc
-          </Button> */}
+          <Search
+            placeholder="Tìm kiếm"
+            allowClear
+            name="search"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            style={{ width: 300 }}
+          />
         </Space>
 
         <Space>
-          {/* Bộ lọc  */}
+          {/* Bộ lọc */}
           <Select
             allowClear
             placeholder="Loại sản phẩm"
@@ -235,20 +237,20 @@ const ProductPage = () => {
             ]}
           />
 
-          <Select
+          <Select<number>
             allowClear
             placeholder="VAT"
             style={{ width: 150 }}
             value={filters.vat}
             onChange={(val) => setFilters((prev) => ({ ...prev, vat: val }))}
             options={[
-              { label: "5", value: "5" },
-              { label: "10", value: "10" },
-              { label: "15", value: "15" },
+              { label: "5", value: 5 },
+              { label: "10", value: 10 },
+              { label: "15", value: 15 },
             ]}
           />
 
-          <Button 
+          <Button
             danger
             icon={<DeleteOutlined />}
             disabled={selectedRowKeys.length === 0}
@@ -264,10 +266,11 @@ const ProductPage = () => {
 
       {/* Bảng sản phẩm */}
       <Table
-        rowSelection={{ type: "checkbox", ...rowSelection }}
+        rowSelection={rowSelection}
         columns={columns}
         dataSource={filteredData}
         scroll={{ x: 1200 }}
+        rowKey="key"
       />
 
       {/* Modal Thêm / Sửa */}

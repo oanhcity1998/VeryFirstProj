@@ -1,5 +1,5 @@
 .h2 {
-    margin-bottom: 16px;
+  margin-bottom: 16px;
 }
 
 .customer-list-header {
@@ -21,7 +21,7 @@
 
 /* Highlight the whole row when selected */
 .ant-table-row-selected > td {
-  background-color: #cce6ff !important;  /* light blue */
+  background-color: #cce6ff !important; /* light blue */
 }
 
 .customer-list-header {
@@ -40,6 +40,3 @@
 .customer-list-search {
   width: 300px; /* adjust length of search bar */
 }
-
-
-
