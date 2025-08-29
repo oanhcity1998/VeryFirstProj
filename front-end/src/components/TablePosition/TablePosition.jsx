@@ -105,7 +105,7 @@ const TablePosition = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, on
         showSizeChanger: false,
       }}
       rowKey="key"
-      scroll={{ x: 800 }}
+      scroll={{ x: 800, y: 600 }}
       rowClassName={(record) =>
         selectedRowKeys.includes(record.key) ? "selected-row" : ""
       }

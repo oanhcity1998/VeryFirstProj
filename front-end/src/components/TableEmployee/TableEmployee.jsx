@@ -190,7 +190,7 @@ const TableEmployee = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
           showSizeChanger: false,
         }}
         rowKey="key"
-        scroll={{ x: 2500 }}
+        scroll={{ x: 2500, y: 600 }}
         sticky={{offsetHeader: 64}}
         rowClassName={(record) =>
           selectedRowKeys.includes(record.key) ? "selected-row" : ""
