@@ -1,10 +1,6 @@
 import { useState } from "react";
-import { Button, Space, Modal, message, Dropdown, Menu, Upload } from "antd";
-import {
-  PlusOutlined,
-  DeleteFilled,
-  InboxOutlined,
-} from "@ant-design/icons";
+import { Button, Space, Modal, message, Dropdown, Menu, Upload, Select } from "antd";
+import { PlusOutlined, DeleteFilled, InboxOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import dayjs from "dayjs";
 import "./PositionList.css";
@@ -100,7 +96,9 @@ const PositionList = () => {
     try {
       setDeleting(true);
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      const newData = data.filter((item) => !selectedRowKeys.includes(item.key));
+      const newData = data.filter(
+        (item) => !selectedRowKeys.includes(item.key)
+      );
       setData(newData);
       setFilteredData(newData); // Update filtered data after deletion
       message.success("Đã xóa chức vụ");
@@ -117,7 +115,9 @@ const PositionList = () => {
   const handleUpload = async (file) => {
     const fileType = file.name.split(".").pop().toLowerCase();
     if (fileType !== "xlsx" && fileType !== "csv") {
-      message.error("File không hợp lệ. Vui lòng tải lên file .xlsx hoặc .csv.");
+      message.error(
+        "File không hợp lệ. Vui lòng tải lên file .xlsx hoặc .csv."
+      );
       return Upload.LIST_IGNORE;
     }
 
@@ -238,27 +238,13 @@ const PositionList = () => {
 
   // Handle dropdown filter by ID
   const handleFilterById = (id) => {
-    if (id === "all") {
-      setFilteredData(data);
-      message.info("Đang hiển thị tất cả chức vụ.");
-    } else {
       const filtered = data.filter((item) => item.id === id);
       setFilteredData(filtered);
       message.info(`Đang hiển thị chức vụ với mã: ${id}`);
-    }
   };
 
   // Generate dropdown menu items from unique IDs
-  const idOptions = ["all", ...new Set(data.map((item) => item.id))];
-  const menu = (
-    <Menu
-      onClick={(e) => handleFilterById(e.key)}
-      items={idOptions.map((id) => ({
-        key: id,
-        label: id === "all" ? "Tất cả" : `Mã: ${id}`,
-      }))}
-    />
-  );
+  const idOptions = [ ...new Set(data.map((item) => item.id))];
 
   return (
     <>
@@ -272,9 +258,14 @@ const PositionList = () => {
               style={{ width: 250 }}
             />
           </Space>
-          <Dropdown overlay={menu} placement="bottomLeft">
-            <Button>Lọc theo mã chức vụ</Button>
-          </Dropdown>
+          <Select
+            placeholder="Lọc theo mã chức vụ"
+            style={{ width: 250 }}
+            onChange={handleFilterById}
+            options={idOptions.map((id) => ({
+              value: id,
+            }))}
+          />
           <Modal
             open={importOpen}
             title="Import dữ liệu"
@@ -321,7 +312,10 @@ const PositionList = () => {
             okButtonProps={{ danger: true, loading: deleting }}
             centered
           >
-            <p>Bạn có chắc muốn xóa chức vụ này? Hành động này không thể hoàn tác.</p>
+            <p>
+              Bạn có chắc muốn xóa chức vụ này? Hành động này không thể hoàn
+              tác.
+            </p>
           </Modal>
           <Button
             type="primary"
