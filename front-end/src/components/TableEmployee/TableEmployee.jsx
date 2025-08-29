@@ -157,8 +157,8 @@ const TableEmployee = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
     { title: "Thời hạn hợp đồng", dataIndex: "contractTerm", key: "contractTerm", width: 150, align: "center" },
     { title: "Ngày bắt đầu", dataIndex: "startDate", key: "startDate", width: 150, align: "center" },
     { title: "Ngày kết thúc", dataIndex: "endDate", key: "endDate", width: 150, align: "center" },
-    { title: "Mức lương", dataIndex: "salary", key: "salary", width: 150, align: "center", render: (value) => Number(value).toLocaleString("vi-VN") },
-    { title: "Tiền thưởng", dataIndex: "bonus", key: "bonus", width: 150, align: "center", render: (value) => Number(value).toLocaleString("vi-VN") },
+    { title: "Mức lương", dataIndex: "salary", key: "salary", width: 150, align: "center",   render: (value) => Number(value).toLocaleString("en-US"), },
+    { title: "Tiền thưởng", dataIndex: "bonus", key: "bonus", width: 150, align: "center",   render: (value) => Number(value).toLocaleString("en-US"), },
     {
       title: "Hành động",
       key: "action",
