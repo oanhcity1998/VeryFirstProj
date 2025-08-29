@@ -2,12 +2,19 @@ export const ROUTES_APP = {
   login: "/login",
   home: "/",
   profile: "/profile",
-  customerList: "/customerlist",
-  customerDetail: "/customerlist/:id",
-  productPage: "/productlist",
-  contactList: "/contactlist",
-  quotationList: "/quotationlist",
-  opportunityList: "/opportunitylist",
-  leadList: "/leadlist",
-  leadDetail: "/leads/:id",
+ crm:{
+   customerList: "/crm/customerlist",
+  customerDetail: "/crm/customerlist/:id",
+  productPage: "/crm/productlist",
+  contactList: "/crm/contactlist",
+  quotationList: "/crm/quotationlist",
+  opportunityList: "/crm/opportunitylist",
+  leadList: "/crm/leadlist",
+  leadDetail: "/crm/leads/:id",
+ },
+ hrm:{
+employeeList: "/hrm/employee-list",
+employeeDetail: "/hrm/employee-list/:id",
+positionList:"/hrm/position"
+ }
 };

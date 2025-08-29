@@ -1,34 +1,25 @@
-import React, { useState } from "react";
-import { useNavigate, Outlet } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import {
   Layout,
   Button,
   Input,
   Avatar,
   Badge,
-  Drawer,
-  Popover,
-  Space,
-  Modal,
   message,
-  Upload,
   Dropdown,
 } from "antd";
 import {
-  SettingOutlined,
-  FilterOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   AppstoreOutlined,
   BellOutlined,
-  UploadOutlined,
-  DownloadOutlined,
-  InboxOutlined,
   UserOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
 import SidebarMenu from "../../components/SideBar/SidebarMenu";
 import "./mainLayout.css";
+import SidebarMenuHRM from "../../components/SiderBar-HRM/SidebarMenu-HRM";
 // import FilterDrawer from "../components/FilterDrawer";
 import { ROUTES_APP } from "../../routes";
 
@@ -37,11 +28,17 @@ const { Search } = Input;
 
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [isHRM, setIsHRM] = useState(false);
   // const [filterOpen, setFilterOpen] = useState(false);
   // const [importOpen, setImportOpen] = useState(false);
   // const [importing, setImporting] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    setIsHRM(location.pathname.startsWith("/hrm"));
+  }, [location.pathname]);
 
   const appsMenu = {
     items: [
@@ -53,7 +50,11 @@ const MainLayout = () => {
             <span className="apps-label">CRM</span>
           </div>
         ),
-        onClick: () => console.log("CRM clicked"),
+        onClick: () => {
+          setIsHRM(false);
+          navigate("/");
+          console.log("CRM clicked");
+        },
       },
       {
         key: "hrm",
@@ -63,7 +64,11 @@ const MainLayout = () => {
             <span className="apps-label">HRM</span>
           </div>
         ),
-        onClick: () => console.log("HRM clicked"),
+        onClick: () => {
+          setIsHRM(true);
+          navigate("/");
+          console.log("HRM clicked");
+        },
       },
     ],
   };
@@ -117,9 +122,19 @@ const MainLayout = () => {
   };
 
   return (
-    <Layout className="main-layout">
-      <Sider theme="dark" collapsible collapsed={collapsed} trigger={null} width={200}>
-        <SidebarMenu collapsed={collapsed} />
+    <Layout className="main-layout" style={{ minHeight: "150vh" }}>
+      <Sider
+        theme="dark"
+        collapsible
+        collapsed={collapsed}
+        trigger={null}
+        width={200}
+      >
+        {isHRM ? (
+          <SidebarMenuHRM collapsed={collapsed} />
+        ) : (
+          <SidebarMenu collapsed={collapsed} />
+        )}
       </Sider>
 
       <Layout>
@@ -168,8 +183,15 @@ const MainLayout = () => {
             </Modal> */}
             {/* Apps button */}
             {/* ✅ Apps button with Dropdown (new API) */}
-            <Dropdown menu={appsMenu} placement="bottomRight" trigger={["click"]}>
-              <Button type="text" icon={<AppstoreOutlined style={{ fontSize: "18px" }} />} />
+            <Dropdown
+              menu={appsMenu}
+              placement="bottomRight"
+              trigger={["click"]}
+            >
+              <Button
+                type="text"
+                icon={<AppstoreOutlined style={{ fontSize: "18px" }} />}
+              />
             </Dropdown>
 
             {/* Notification button  */}
@@ -178,7 +200,11 @@ const MainLayout = () => {
             </Badge>
 
             {/* ✅ Avatar dropdown */}
-            <Dropdown menu={avatarMenu} placement="bottomRight" trigger={["click"]}>
+            <Dropdown
+              menu={avatarMenu}
+              placement="bottomRight"
+              trigger={["click"]}
+            >
               <Avatar style={{ cursor: "pointer" }}>U</Avatar>
             </Dropdown>
           </div>
