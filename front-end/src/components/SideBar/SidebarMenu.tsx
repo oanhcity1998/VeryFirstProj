@@ -7,6 +7,8 @@ import {
   SolutionOutlined,
   TeamOutlined,
   DollarOutlined,
+  IdcardOutlined,
+  UserSwitchOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu.css";
@@ -20,17 +22,17 @@ const SidebarMenu = ({ collapsed }) => {
 
   if (location.pathname === ROUTES_APP.home) {
     selectedKey = "1";
-  } else if (location.pathname.startsWith(ROUTES_APP.customerList)) {
+  } else if (location.pathname.startsWith(ROUTES_APP.crm.customerList)) {
     selectedKey = "2";
-  } else if (location.pathname.startsWith(ROUTES_APP.productPage)) {
+  } else if (location.pathname.startsWith(ROUTES_APP.crm.productPage)) {
     selectedKey = "3";
-  } else if (location.pathname.startsWith(ROUTES_APP.contactList)) {
+  } else if (location.pathname.startsWith(ROUTES_APP.crm.contactList)) {
     selectedKey = "4";
-  } else if (location.pathname.startsWith(ROUTES_APP.quotationList)) {
+  } else if (location.pathname.startsWith(ROUTES_APP.crm.quotationList)) {
     selectedKey = "5";
-  } else if (location.pathname.startsWith(ROUTES_APP.leadList)) {
+  } else if (location.pathname.startsWith(ROUTES_APP.crm.leadList)) {
     selectedKey = "6";
-  } else if (location.pathname.startsWith(ROUTES_APP.opportunityList)) {
+  } else if (location.pathname.startsWith(ROUTES_APP.crm.opportunityList)) {
     selectedKey = "7";
   }
 
@@ -43,33 +45,44 @@ const SidebarMenu = ({ collapsed }) => {
     {
       key: "2",
       icon: <UserOutlined />,
-      label: <Link to={ROUTES_APP.customerList}>Khách hàng</Link>,
+      label: <Link to={ROUTES_APP.crm.customerList}>Khách hàng</Link>,
     },
     {
       key: "3",
       icon: <InboxOutlined />,
-      label: <Link to={ROUTES_APP.productPage}>Sản phẩm</Link>,
+      label: <Link to={ROUTES_APP.crm.productPage}>Sản phẩm</Link>,
     },
     {
       key: "4",
       icon: <ContactsOutlined />,
-      label: <Link to={ROUTES_APP.contactList}>Liên hệ</Link>,
+      label: <Link to={ROUTES_APP.crm.contactList}>Liên hệ</Link>,
     },
     {
       key: "5",
       icon: <SolutionOutlined />,
-      label: <Link to={ROUTES_APP.quotationList}>Mẫu báo giá</Link>,
+      label: <Link to={ROUTES_APP.crm.quotationList}>Mẫu báo giá</Link>,
     },
     {
       key: "6",
-      icon: <TeamOutlined />,
-      label: <Link to={ROUTES_APP.leadList}>Lead</Link>,
+      icon: <UserSwitchOutlined />,
+      label: <Link to={ROUTES_APP.crm.leadList}>Khách tiềm năng</Link>,
     },
     {
       key: "7",
       icon: <DollarOutlined />,
-      label: <Link to={ROUTES_APP.opportunityList}>Cơ hội</Link>,
+      label: <Link to={ROUTES_APP.crm.opportunityList}>Cơ hội</Link>,
     },
+    {
+      key: "8",
+      icon: <TeamOutlined />,
+      label: <Link to={ROUTES_APP.hrm.employeeList}>Nhân viên</Link>,
+    },
+    {
+      key: "9",
+      icon: <IdcardOutlined />,
+      label: <Link to={ROUTES_APP.hrm.positionList}>Chức vụ</Link>,
+    },
+
   ];
 
   return (

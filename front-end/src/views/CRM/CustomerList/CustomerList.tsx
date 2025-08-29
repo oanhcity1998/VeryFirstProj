@@ -66,7 +66,7 @@ const CustomerList = () => {
       // await api.delete(`/customers/${customer.id}`);
 
       message.success("Đã xóa khách hàng");
-      navigate(ROUTES_APP.customerList);
+      navigate(ROUTES_APP.crm.customerList);
     } catch (err) {
       message.error("Không thể xóa khách hàng");
     } finally {

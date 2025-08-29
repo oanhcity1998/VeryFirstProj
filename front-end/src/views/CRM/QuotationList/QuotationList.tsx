@@ -150,7 +150,7 @@ const QuotationList = () => {
       setData((prev) => prev.filter((item) => !selectedRowKeys.includes(item.id)));
       setSelectedRowKeys([]);
       message.success("Đã xóa mẫu báo giá");
-      navigate(ROUTES_APP.quotationList);
+      navigate(ROUTES_APP.crm.quotationList);
     } catch (err) {
       message.error("Không thể xóa mẫu báo giá");
     } finally {

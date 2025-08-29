@@ -102,7 +102,7 @@ const OpportunityList = () => {
       setData((prev) => prev.filter((item) => !selectedRowKeys.includes(item.id)));
       setSelectedRowKeys([]);
       message.success("Đã xóa cơ hội");
-      navigate(ROUTES_APP.opportunityList);
+      navigate(ROUTES_APP.crm.opportunityList);
     } catch (err) {
       message.error("Không thể xóa cơ hội");
     } finally {

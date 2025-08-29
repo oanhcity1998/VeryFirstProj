@@ -52,7 +52,7 @@ const MainLayout = () => {
         ),
         onClick: () => {
           setIsHRM(false);
-          navigate("/");
+          navigate(ROUTES_APP.home);
           console.log("CRM clicked");
         },
       },
@@ -66,7 +66,7 @@ const MainLayout = () => {
         ),
         onClick: () => {
           setIsHRM(true);
-          navigate("/");
+          navigate(ROUTES_APP.home);
           console.log("HRM clicked");
         },
       },
