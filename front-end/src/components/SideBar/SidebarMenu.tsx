@@ -72,17 +72,16 @@ const SidebarMenu = ({ collapsed }) => {
       icon: <DollarOutlined />,
       label: <Link to={ROUTES_APP.crm.opportunityList}>Cơ hội</Link>,
     },
-    {
-      key: "8",
-      icon: <TeamOutlined />,
-      label: <Link to={ROUTES_APP.hrm.employeeList}>Nhân viên</Link>,
-    },
-    {
-      key: "9",
-      icon: <IdcardOutlined />,
-      label: <Link to={ROUTES_APP.hrm.positionList}>Chức vụ</Link>,
-    },
-
+    // {
+    //   key: "8",
+    //   icon: <TeamOutlined />,
+    //   label: <Link to={ROUTES_APP.hrm.employeeList}>Nhân viên</Link>,
+    // },
+    // {
+    //   key: "9",
+    //   icon: <IdcardOutlined />,
+    //   label: <Link to={ROUTES_APP.hrm.positionList}>Chức vụ</Link>,
+    // },
   ];
 
   return (
