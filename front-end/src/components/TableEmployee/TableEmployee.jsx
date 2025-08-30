@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Table, Form, Checkbox, Button } from "antd";
-import { Link } from "react-router-dom";
+import { generatePath, Link } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import "./TableEmployee.css";
 import EmployeeForm from "../EmployeeForm/EmployeeForm";
+import { ROUTES_APP } from "../../routes";
 
 const TableEmployee = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) => {
   const allKeys = data.map((item) => item.key);
@@ -137,28 +138,104 @@ const TableEmployee = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
       fixed: "left",
       width: 150,
       align: "center",
-      render: (text, record) => <Link to={`/hrm/employee-list/${record.id}`}>{text}</Link>,
+      render: (text, record) => (
+        <Link to={generatePath(ROUTES_APP.hrm.employeeDetail, { id: record.id })}>{text}</Link>
+      ),
     },
     { title: "Giới tính", dataIndex: "gender", key: "gender", width: 100, align: "center" },
     { title: "Ngày sinh", dataIndex: "birthDate", key: "birthDate", width: 120, align: "center" },
     { title: "Số CCCD", dataIndex: "idNumber", key: "idNumber", width: 150, align: "center" },
-    { title: "Ngày cấp CCCD", dataIndex: "issueDate", key: "issueDate", width: 150, align: "center" },
-    { title: "Nơi cấp CCCD", dataIndex: "issuePlace", key: "issuePlace", width: 200, align: "center" },
+    {
+      title: "Ngày cấp CCCD",
+      dataIndex: "issueDate",
+      key: "issueDate",
+      width: 150,
+      align: "center",
+    },
+    {
+      title: "Nơi cấp CCCD",
+      dataIndex: "issuePlace",
+      key: "issuePlace",
+      width: 200,
+      align: "center",
+    },
     { title: "Số điện thoại", dataIndex: "phone", key: "phone", width: 150, align: "center" },
     { title: "Địa chỉ email", dataIndex: "email", key: "email", width: 200, align: "center" },
-    { title: "Địa chỉ thường trú", dataIndex: "permanentAddress", key: "permanentAddress", width: 200, align: "center" },
-    { title: "Địa chỉ tạm trú", dataIndex: "temporaryAddress", key: "temporaryAddress", width: 200, align: "center" },
-    { title: "Mã số thuế TNCN", dataIndex: "personalTaxCode", key: "personalTaxCode", width: 150, align: "center" },
-    { title: "Mã số BHXH", dataIndex: "socialInsuranceNumber", key: "socialInsuranceNumber", width: 150, align: "center" },
-    { title: "Tài khoản ngân hàng", dataIndex: "bankAccount", key: "bankAccount", width: 150, align: "center" },
+    {
+      title: "Địa chỉ thường trú",
+      dataIndex: "permanentAddress",
+      key: "permanentAddress",
+      width: 200,
+      align: "center",
+    },
+    {
+      title: "Địa chỉ tạm trú",
+      dataIndex: "temporaryAddress",
+      key: "temporaryAddress",
+      width: 200,
+      align: "center",
+    },
+    {
+      title: "Mã số thuế TNCN",
+      dataIndex: "personalTaxCode",
+      key: "personalTaxCode",
+      width: 150,
+      align: "center",
+    },
+    {
+      title: "Mã số BHXH",
+      dataIndex: "socialInsuranceNumber",
+      key: "socialInsuranceNumber",
+      width: 150,
+      align: "center",
+    },
+    {
+      title: "Tài khoản ngân hàng",
+      dataIndex: "bankAccount",
+      key: "bankAccount",
+      width: 150,
+      align: "center",
+    },
     { title: "Phòng ban", dataIndex: "department", key: "department", width: 120, align: "center" },
     { title: "Vị trí", dataIndex: "position", key: "position", width: 150, align: "center" },
-    { title: "Loại hợp đồng", dataIndex: "contractType", key: "contractType", width: 150, align: "center" },
-    { title: "Thời hạn hợp đồng", dataIndex: "contractTerm", key: "contractTerm", width: 150, align: "center" },
-    { title: "Ngày bắt đầu", dataIndex: "startDate", key: "startDate", width: 150, align: "center" },
+    {
+      title: "Loại hợp đồng",
+      dataIndex: "contractType",
+      key: "contractType",
+      width: 150,
+      align: "center",
+    },
+    {
+      title: "Thời hạn hợp đồng",
+      dataIndex: "contractTerm",
+      key: "contractTerm",
+      width: 150,
+      align: "center",
+    },
+    {
+      title: "Ngày bắt đầu",
+      dataIndex: "startDate",
+      key: "startDate",
+      width: 150,
+      align: "center",
+    },
     { title: "Ngày kết thúc", dataIndex: "endDate", key: "endDate", width: 150, align: "center" },
-    { title: "Mức lương", dataIndex: "salary", key: "salary", width: 150, align: "center",   render: (value) => Number(value).toLocaleString("en-US"), },
-    { title: "Tiền thưởng", dataIndex: "bonus", key: "bonus", width: 150, align: "center",   render: (value) => Number(value).toLocaleString("en-US"), },
+    {
+      title: "Mức lương",
+      dataIndex: "salary",
+      key: "salary",
+      width: 150,
+      align: "center",
+      render: (value) => Number(value).toLocaleString("en-US"),
+    },
+    {
+      title: "Tiền thưởng",
+      dataIndex: "bonus",
+      key: "bonus",
+      width: 150,
+      align: "center",
+      render: (value) => Number(value).toLocaleString("en-US"),
+    },
     {
       title: "Hành động",
       key: "action",
@@ -167,11 +244,7 @@ const TableEmployee = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
       align: "center",
       render: (_, record) => (
         <div style={{ textAlign: "center" }}>
-          <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          >
+          <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
             Sửa
           </Button>
         </div>
@@ -181,7 +254,7 @@ const TableEmployee = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
 
   return (
     <div>
-        <Table
+      <Table
         columns={columns}
         dataSource={employeeData}
         pagination={{
@@ -191,30 +264,27 @@ const TableEmployee = ({ data = [], selectedRowKeys = [], setSelectedRowKeys }) 
         }}
         rowKey="key"
         scroll={{ x: 2500, y: 600 }}
-        sticky={{offsetHeader: 64}}
-        rowClassName={(record) =>
-          selectedRowKeys.includes(record.key) ? "selected-row" : ""
-        }
+        sticky={{ offsetHeader: 64 }}
+        rowClassName={(record) => (selectedRowKeys.includes(record.key) ? "selected-row" : "")}
       />
 
-        {isModalVisible && (
-          <EmployeeForm
-            form={form}
-            employee={editingEmployee}
-            onSave={handleSave}
-            onCancel={() => {
-              console.log("abcd"),
-              setIsModalVisible(false)
-            }}
-            open={isModalVisible}
-            modalTitle={editingEmployee ? "Chỉnh sửa nhân sự" : "Thêm nhân viên"}
-            infoTitle="Thông tin nhân sự"
-            extraInfoTitle="Thông tin bổ sung"
-            contractTitle="Thông tin hợp đồng"
-            cancelText="Hủy"
-            saveText="Lưu"
-          />
-        )}
+      {isModalVisible && (
+        <EmployeeForm
+          form={form}
+          employee={editingEmployee}
+          onSave={handleSave}
+          onCancel={() => {
+            console.log("abcd"), setIsModalVisible(false);
+          }}
+          open={isModalVisible}
+          modalTitle={editingEmployee ? "Chỉnh sửa nhân sự" : "Thêm nhân viên"}
+          infoTitle="Thông tin nhân sự"
+          extraInfoTitle="Thông tin bổ sung"
+          contractTitle="Thông tin hợp đồng"
+          cancelText="Hủy"
+          saveText="Lưu"
+        />
+      )}
     </div>
   );
 };

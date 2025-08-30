@@ -1,11 +1,12 @@
-import {useState} from "react"
+import { useState } from "react";
 import { Table, Form, Checkbox, Button, Modal } from "antd";
-import { Link } from "react-router-dom";
+import { generatePath, Link } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
-import CreateCustomerForm from "../CustomerForm/CreateCustomerForm"
+import CreateCustomerForm from "../CustomerForm/CreateCustomerForm";
 import dayjs from "dayjs";
 
-import "./TableCustomer.css"
+import "./TableCustomer.css";
+import { ROUTES_APP } from "../../routes";
 
 const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, onEdit }) => {
   const allKeys = data.map((item) => item.key);
@@ -32,9 +33,7 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, on
     if (editingProduct) {
       setcustomerData((prev) =>
         prev.map((item) =>
-          item.key === editingProduct.key
-            ? { ...item, ...values, updatedAt: dayjs() }
-            : item
+          item.key === editingProduct.key ? { ...item, ...values, updatedAt: dayjs() } : item
         )
       );
     } else {
@@ -91,7 +90,9 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, on
       dataIndex: "customerName",
       width: 200,
       fixed: "left", // ✅ fixed
-      render: (text, record) => <Link to={`/customerlist/${record.id}`}>{text}</Link>,
+      render: (text, record) => (
+        <Link to={generatePath(ROUTES_APP.crm.customerDetail, { id: record.id })}>{text}</Link>
+      ),
     },
     { title: "Tên DN ghi trên hợp đồng", dataIndex: "contractName", width: 200 },
     { title: "Tên DN bằng tiếng Anh", dataIndex: "englishName", width: 200 },
@@ -124,7 +125,7 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, on
     {
       title: "",
       key: "actions",
-      fixed: "right",   // 👈 always stick on the right
+      fixed: "right", // 👈 always stick on the right
       width: 80,
       render: (_, record) => (
         <Button
@@ -134,22 +135,20 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, on
           className="customer-edit-icon"
         />
       ),
-    }, 
+    },
   ];
 
   return (
     <div>
       <Table
-      columns={columns}
-      dataSource={data}
-      pagination={{position: ['bottomCenter'],}} // center positioning
-      rowKey="key"
-      scroll={{ x: 2500, y: 600 }} // enable horizontal scroll
-      rowClassName={(record) =>
-        selectedRowKeys.includes(record.key) ? "selected-row" : ""
-      }
-    />
-    
+        columns={columns}
+        dataSource={data}
+        pagination={{ position: ["bottomCenter"] }} // center positioning
+        rowKey="key"
+        scroll={{ x: 2500, y: 600 }} // enable horizontal scroll
+        rowClassName={(record) => (selectedRowKeys.includes(record.key) ? "selected-row" : "")}
+      />
+
       <Modal
         open={isModalVisible}
         onOk={() => form.submit()}
@@ -177,12 +176,8 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, on
           initialValues={editingProduct || {}} // ✅ if editing, pre-fill data
         />
       </Modal> */}
-
-
     </div>
   );
-
-  
 };
 
 export default TableCustomer;

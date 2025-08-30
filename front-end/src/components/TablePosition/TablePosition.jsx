@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Table, Checkbox, Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { generatePath, Link } from "react-router-dom";
+import { ROUTES_APP } from "../../routes";
 
 const TablePosition = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, onEdit }) => {
   const allKeys = data.map((item) => item.key);
@@ -60,7 +61,9 @@ const TablePosition = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, on
       key: "positionName",
       width: 200,
       align: "center",
-    //   render: (text, record) => <Link to={`/position/${record.id}`}>{text}</Link>,
+      // render: (text, record) => (
+      //   <Link to={generatePath(ROUTES_APP.hrm.positionDetail, { id: record.id })}>{text}</Link>
+      // ),
     },
     {
       title: "Độ ưu tiên",
@@ -83,11 +86,7 @@ const TablePosition = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, on
       width: 100,
       align: "center",
       render: (_, record) => (
-        <Button
-          type="link"
-          icon={<EditOutlined />}
-          onClick={() => handleEdit(record)}
-        >
+        <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
           Sửa
         </Button>
       ),
@@ -106,9 +105,7 @@ const TablePosition = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, on
       }}
       rowKey="key"
       scroll={{ x: 800, y: 600 }}
-      rowClassName={(record) =>
-        selectedRowKeys.includes(record.key) ? "selected-row" : ""
-      }
+      rowClassName={(record) => (selectedRowKeys.includes(record.key) ? "selected-row" : "")}
     />
   );
 };
