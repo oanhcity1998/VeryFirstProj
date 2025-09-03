@@ -1,9 +1,11 @@
 import React from "react";
-import { Breadcrumb, Button, Card, Descriptions, Table, Tag, Divider } from "antd";
+import { Breadcrumb, Button, Card, Descriptions, Table, Tag, Divider, Form, Select } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import "./QuotationDetail.css";
 import { ROUTES_APP } from "../../../routes";
+import Input from "antd/es/input/Input";
+import TextArea from "antd/es/input/TextArea";
 
 const QuotationDetail: React.FC = () => {
   const { id } = useParams();
@@ -64,17 +66,39 @@ const QuotationDetail: React.FC = () => {
 
       {/* Thông tin chung */}
       <h3>Thông tin báo giá</h3>
-      <Descriptions column={2} bordered size="middle" style={{ marginBottom: 24 }}>
-        <Descriptions.Item label="Tên báo giá">{quotation.quotationName}</Descriptions.Item>
-        <Descriptions.Item label="Hiệu lực">{quotation.validityPeriod}</Descriptions.Item>
-        <Descriptions.Item label="Điều khoản thanh toán" span={2}>
-          {quotation.paymentTerms}
-        </Descriptions.Item>
-        <Descriptions.Item label="Cơ hội">{quotation.opportunity}</Descriptions.Item>
-        <Descriptions.Item label="Trạng thái">
-          <Tag color={statusColors[quotation.status]}>{quotation.status}</Tag>
-        </Descriptions.Item>
-      </Descriptions>
+      <Form
+        layout="horizontal"
+        initialValues={quotation}
+        style={{ marginBottom: 24 }}
+        labelCol={{ span: 6 }}
+        labelAlign="left"
+      >
+        <Form.Item label="Tên báo giá" name="quotationName">
+          <Input readOnly />
+        </Form.Item>
+
+        <Form.Item label="Hiệu lực" name="validityPeriod">
+          <Input readOnly />
+        </Form.Item>
+
+        <Form.Item label="Điều khoản thanh toán" name="paymentTerms">
+          <TextArea readOnly rows={3} />
+        </Form.Item>
+
+        <Form.Item label="Cơ hội" name="opportunity">
+          <Input readOnly />
+        </Form.Item>
+
+        <Form.Item label="Trạng thái" name="status">
+          <Select disabled>
+            {Object.keys(statusColors).map((status) => (
+              <Select.Option key={status} value={status}>
+                <Tag color={statusColors[status]}>{status}</Tag>
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+      </Form>
 
       <Divider />
 

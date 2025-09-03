@@ -1,7 +1,6 @@
 .employee-detail-container {
   padding: 20px;
   background: #f0f2f5;
-  min-height: 100vh;
 }
 
 .employee-detail-container .ant-card {

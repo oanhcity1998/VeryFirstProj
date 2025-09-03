@@ -1,7 +1,6 @@
 import { Button, Modal, Table, Form, Input, Breadcrumb, Select } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { Product } from "../../views/CRM/QuotationList/QuotationList";
-
 export const fmt = (n?: number) => (typeof n === "number" ? n.toLocaleString() : "0");
 
 interface QuotationFormProps {
@@ -12,8 +11,7 @@ interface QuotationFormProps {
   initialValues?: any;
 }
 
-type ProductWithKey = Product & { __rowKey: string };
-
+type ProductWithKey = Product & { __rowKey?: string };
 const productOptions: Product[] = [
   {
     id: 1,
@@ -47,40 +45,19 @@ export const QuotationForm = ({
   const [form] = Form.useForm();
   const isDetail = mode === "detail";
 
-  // ---- State cho rows
-  const [rows, setRows] = useState<ProductWithKey[]>([]);
-
-  // reset rows khi mở modal
-  useEffect(() => {
-    if (open) {
-      // set rows
-      if (initialValues?.products) {
-        setRows(
-          initialValues.products.map((p: Product) => ({
-            ...p,
-            __rowKey: String(p.id ?? Date.now()),
-          }))
-        );
-      } else {
-        setRows([]);
-      }
-
-      // set form values
-      form.setFieldsValue({
-        quotationName: initialValues?.quotationName,
-        validityPeriod: initialValues?.validityPeriod,
-        paymentTerms: initialValues?.paymentTerms,
-        status: initialValues?.status ?? "Draft",
-        opportunity: initialValues?.opportunity,
-      });
-    }
-  }, [open, initialValues, form]);
+  // ---- helpers
+  const [rows, setRows] = useState<ProductWithKey[]>(() =>
+    (initialValues?.products ?? []).map((p) => ({
+      ...p,
+      __rowKey: p.id?.toString() ?? hash(signature(p)),
+    }))
+  );
 
   const addRow = () => {
     setRows((prev) => [
       ...prev,
       {
-        id: -Date.now(),
+        id: -Date.now(), // id tạm (âm để phân biệt)
         productName: "",
         productType: "",
         priceVND: 0,
@@ -93,10 +70,6 @@ export const QuotationForm = ({
     ]);
   };
 
-  const handleDeleteRow = (rowKey: string) => {
-    setRows((prev) => prev.filter((row) => row.__rowKey !== rowKey));
-  };
-
   const handleSelectProduct = (rowKey: string, id: number) => {
     const selected = productOptions.find((p) => p.id === id);
     if (!selected) return;
@@ -105,12 +78,56 @@ export const QuotationForm = ({
     );
   };
 
+  // hash đơn giản để tạo khoá ổn định khi không có id
+  const hash = (s: string) => {
+    let h = 0;
+    for (let i = 0; i < s.length; i++) {
+      h = (h << 5) - h + s.charCodeAt(i);
+      h |= 0;
+    }
+    return `k_${Math.abs(h)}`;
+  };
+
+  // Tạo signature ổn định từ thuộc tính sản phẩm (tránh dùng index)
+  const signature = (p: Product) =>
+    [
+      // ưu tiên các trường có tính duy nhất nếu có
+      (p as any).productId,
+      (p as any).id,
+      p.productName,
+      p.productType,
+      p.priceVND,
+      p.priceUSD,
+      p.vat,
+    ]
+      .filter((v) => v !== undefined && v !== null)
+      .join("|");
+
+  // Gắn __rowKey ổn định cho từng product (ưu tiên id/productId, fallback = hash)
+  const productsWithKey: ProductWithKey[] = useMemo(() => {
+    const products: Product[] = initialValues?.products ?? [];
+    return products.map((p) => {
+      const stableId =
+        (p as any).id ?? (p as any).productId ?? (p as any).key ?? hash(signature(p));
+      return { ...p, __rowKey: String(stableId) };
+    });
+    // chỉ phụ thuộc vào danh sách sản phẩm được truyền vào
+  }, [initialValues?.products]);
+
+  // Set hoặc reset form khi mở modal
+  useEffect(() => {
+    if (open && initialValues) {
+      form.setFieldsValue(initialValues);
+    } else if (open && mode === "create") {
+      form.resetFields();
+    }
+  }, [open, initialValues, form, mode]);
+
   const handleOk = () => {
     if (isDetail) {
       onCancel();
       return;
     }
-
     form.validateFields().then((values) => {
       onOk?.({ ...values, products: rows });
       if (mode === "create") form.resetFields();
@@ -138,9 +155,8 @@ export const QuotationForm = ({
         <Select
           placeholder="Chọn sản phẩm"
           style={{ width: "100%" }}
-          value={record.id > 0 ? record.id : undefined}
-          onChange={(value) => handleSelectProduct(record.__rowKey, value)}
-          disabled={isDetail}
+          value={record.id}
+          onChange={(value) => handleSelectProduct(record.__rowKey!, value)}
         >
           {productOptions.map((p) => (
             <Select.Option key={p.id} value={p.id}>
@@ -172,22 +188,13 @@ export const QuotationForm = ({
       dataIndex: "afterVatUSD",
       render: (value: number) => fmt(value),
     },
-    // 👉 Cột mới thêm
-    {
-      title: "Thao tác",
-      dataIndex: "action",
-      render: (_: any, record: ProductWithKey) =>
-        !isDetail && (
-          <Button danger size="small" onClick={() => handleDeleteRow(record.__rowKey)}>
-            Xoá
-          </Button>
-        ),
-    },
   ];
 
   const summary = useMemo(() => {
     if (!rows.length) return null;
+
     const safeNum = (n?: number) => (typeof n === "number" ? n : 0);
+
     const totalBeforeVat = rows.reduce((s, p) => s + safeNum(p.priceVND), 0);
     const vat5 = rows
       .filter((p) => p.vat === 5)
@@ -195,6 +202,7 @@ export const QuotationForm = ({
     const vat10 = rows
       .filter((p) => p.vat === 10)
       .reduce((s, p) => s + (safeNum(p.afterVatVND) - safeNum(p.priceVND)), 0);
+
     return { totalBeforeVat, vat5, vat10 };
   }, [rows]);
 
@@ -224,6 +232,7 @@ export const QuotationForm = ({
       >
         <div className="form-section">
           <h3>Thông tin mẫu báo giá</h3>
+
           <Form.Item
             label="Tên mẫu báo giá"
             name="quotationName"
@@ -231,6 +240,7 @@ export const QuotationForm = ({
           >
             <Input />
           </Form.Item>
+
           <Form.Item
             label="Thời hạn hiệu lực"
             name="validityPeriod"
@@ -238,6 +248,7 @@ export const QuotationForm = ({
           >
             <Input />
           </Form.Item>
+
           <Form.Item
             label="Điều khoản thanh toán"
             name="paymentTerms"
@@ -245,6 +256,7 @@ export const QuotationForm = ({
           >
             <Input />
           </Form.Item>
+
           <Form.Item
             label="Trạng thái"
             name="status"
@@ -258,6 +270,7 @@ export const QuotationForm = ({
               <Select.Option value="Declined">Declined</Select.Option>
             </Select>
           </Form.Item>
+
           <Form.Item
             label="Cơ hội"
             name="opportunity"
@@ -268,21 +281,11 @@ export const QuotationForm = ({
         </div>
 
         <div className="form-section">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 16,
-            }}
-          >
-            <h3 style={{ margin: 0 }}>Danh sách sản phẩm</h3>
-            {!isDetail && (
-              <Button type="primary" onClick={addRow}>
-                + Thêm sản phẩm
-              </Button>
-            )}
-          </div>
+          <h3>Danh sách sản phẩm</h3>
+
+          <Button type="dashed" onClick={addRow} style={{ marginBottom: 12 }}>
+            + Thêm sản phẩm
+          </Button>
 
           <Table
             columns={productColumns}
