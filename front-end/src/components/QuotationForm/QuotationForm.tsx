@@ -1,6 +1,7 @@
 import { Button, Modal, Table, Form, Input, Breadcrumb, Select } from "antd";
 import { useEffect, useMemo } from "react";
 import { Product } from "../../views/CRM/QuotationList/QuotationList";
+export const fmt = (n?: number) => (typeof n === "number" ? n.toLocaleString() : "0");
 
 interface QuotationFormProps {
   mode: "create" | "edit" | "detail";
@@ -23,7 +24,6 @@ export const QuotationForm = ({
   const isDetail = mode === "detail";
 
   // ---- helpers
-  const fmt = (n?: number) => (typeof n === "number" ? n.toLocaleString() : "0");
 
   // hash đơn giản để tạo khoá ổn định khi không có id
   const hash = (s: string) => {

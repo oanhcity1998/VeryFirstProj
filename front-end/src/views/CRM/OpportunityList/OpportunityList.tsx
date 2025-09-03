@@ -7,6 +7,8 @@ import { OpportunityForm } from "../../../components/OpportunityForm/Opportunity
 import { TableOpportunity } from "../../../components/TableOpportunity/TableOpportunity";
 import { ROUTES_APP } from "../../../routes";
 import { FilterOpportunityDrawer } from "../../../components/Filter/FilterOpportunityDrawer";
+import dayjs from "dayjs";
+import { Product } from "../QuotationList/QuotationList";
 
 // Interface CRM Opportunity
 export interface Opportunity {
@@ -16,11 +18,12 @@ export interface Opportunity {
   company: string; // Công ty
   expectedValue: number; // Giá trị dự kiến
   expectedCloseDate: string; // Ngày dự kiến chốt
-  service: string; // Dịch vụ dự kiến
+  service: Product[]; // Dịch vụ dự kiến
   probability: number; // Xác suất %
   priority: "Low" | "Medium" | "High"; // Ưu tiên
   owner: string; // Nhân viên phụ trách
-  stage: "Qualification" | "Proposal" | "Negotiation" | "Closed Won" | "Closed Lost"; // Giai đoạn
+  // stage: "Qualification" | "Proposal" | "Negotiation" | "Closed Won" | "Closed Lost"; // Giai đoạn
+  stage: "Mới" | "Đạt yêu cầu" | "Đàm phán" | "Đóng"; // Giai đoạn
   nextAction?: string; // Hành động tiếp theo
 }
 
@@ -32,26 +35,33 @@ const dataSource: Opportunity[] = [
     company: "Công ty ABC",
     expectedValue: 500_000_000,
     expectedCloseDate: "2025-09-15",
-    service: "Tư vấn & triển khai ERP",
+    service: [
+      {
+        id: 1,
+        productName: "Máy in HP 107w",
+        productType: "Thiết bị văn phòng",
+        priceVND: 5000000,
+        priceUSD: 210,
+        vat: 10,
+        afterVatVND: 5500000,
+        afterVatUSD: 231,
+      },
+      {
+        id: 2,
+        productName: "Giấy A4 Double A",
+        productType: "Vật tư tiêu hao",
+        priceVND: 250000,
+        priceUSD: 11,
+        vat: 5,
+        afterVatVND: 262500,
+        afterVatUSD: 11.55,
+      },
+    ],
     probability: 70,
     priority: "High",
     owner: "Phạm Văn Quyết",
-    stage: "Proposal",
+    stage: "Mới",
     nextAction: "Chuẩn bị demo cho khách hàng",
-  },
-  {
-    id: 2,
-    name: "Cung cấp thiết bị văn phòng cho XYZ",
-    contactName: "Trần Thị B",
-    company: "Công ty XYZ",
-    expectedValue: 120_000_000,
-    expectedCloseDate: "2025-10-01",
-    service: "Máy in & Vật tư",
-    probability: 50,
-    priority: "Medium",
-    owner: "Nguyễn Văn C",
-    stage: "Qualification",
-    nextAction: "Hẹn lịch khảo sát",
   },
 ];
 
@@ -70,7 +80,6 @@ const OpportunityList = () => {
   // Modal
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null);
 
   // Delete state
@@ -180,10 +189,6 @@ const OpportunityList = () => {
         selectedRowKeys={selectedRowKeys}
         setSelectedRowKeys={setSelectedRowKeys}
         searchText={searchText}
-        onShowClick={(record) => {
-          setSelectedOpportunity(record);
-          setIsDetailModalOpen(true);
-        }}
         onEditClick={(record) => {
           setSelectedOpportunity(record);
           setIsEditModalOpen(true);
@@ -207,14 +212,6 @@ const OpportunityList = () => {
         open={isEditModalOpen}
         onCancel={() => setIsEditModalOpen(false)}
         onOk={handleEdit}
-        initialValues={selectedOpportunity}
-      />
-
-      {/* Modal detail */}
-      <OpportunityForm
-        mode="detail"
-        open={isDetailModalOpen}
-        onCancel={() => setIsDetailModalOpen(false)}
         initialValues={selectedOpportunity}
       />
     </>

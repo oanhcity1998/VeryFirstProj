@@ -1,21 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import {
-  Card,
-  Input,
-  Tabs,
-  Button,
-  Form,
-  Row,
-  Col,
-  Breadcrumb,
-  Modal,
-  Select,
-  message,
-  Space,
-} from "antd";
-import { ArrowLeftOutlined, SearchOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import ContactList from "../ContactList/ContactList";
+import { Card, Input, Tabs, Button, Form, Row, Col, Breadcrumb, Select, message } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import TableContact from "../../../components/TableContact/TableContact";
 import ContactForm from "../../../components/ContactForm/ContactForm";
 

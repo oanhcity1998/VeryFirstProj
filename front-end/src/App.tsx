@@ -20,6 +20,7 @@ import PositionList from "./views/HRM/PositionList/PositionList";
 import "./App.css";
 import ContactDetail from "./views/CRM/ContactDetail/ContactDetail";
 import QuotationDetail from "./views/CRM/QuotationDetail/QuotationDetail";
+import OpportunityDetail from "./views/CRM/OpportunityDetail/OpportunityDetail";
 
 export default function App() {
   return (
@@ -48,6 +49,7 @@ export default function App() {
 
           {/* Cơ hội */}
           <Route path={ROUTES_APP.crm.opportunityList} element={<OpportunityList />} />
+          <Route path={ROUTES_APP.crm.opportunityDetail} element={<OpportunityDetail />} />
 
           {/* Khách tiềm năng  */}
           <Route path={ROUTES_APP.crm.leadList} element={<LeadList />} />

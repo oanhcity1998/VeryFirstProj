@@ -11,6 +11,7 @@ export const ROUTES_APP = {
     quotationList: "/crm/quotationlist",
     quotationDetail: "/crm/quotationlist/:id",
     opportunityList: "/crm/opportunitylist",
+    opportunityDetail: "/crm/opportunitylist/:id",
     leadList: "/crm/leadlist",
     leadDetail: "/crm/leads/:id",
   },

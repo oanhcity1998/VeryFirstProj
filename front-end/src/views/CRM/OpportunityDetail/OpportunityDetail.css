@@ -1,0 +1,59 @@
+.opportunity-detail-container {
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.opportunity-detail-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.opportunity-detail-stage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.detail-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 600px;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.form-row label {
+  width: 160px;
+  font-weight: 500;
+}
+
+.form-row input {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fafafa;
+}
+
+/* segment */
+/* text mặc định */
+.ant-segmented-item-label {
+  color: #595959;
+}
+
+/* active stage */
+.ant-segmented-item-selected * {
+  color: #fff !important;
+}
+.ant-segmented-item-selected {
+  background-color: #1890ff !important;
+  font-weight: 500;
+}
