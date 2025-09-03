@@ -271,6 +271,7 @@ const ProductPage = () => {
         dataSource={filteredData}
         scroll={{ x: 1200 }}
         rowKey="key"
+        pagination={{ position: ["bottomCenter"] }}
       />
 
       {/* Modal Thêm / Sửa */}

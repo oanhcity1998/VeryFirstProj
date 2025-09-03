@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import {
-  Form,
-  Button,
-  Row,
-  Col,
-  Card,
-  Typography,
-  Input,
-  DatePicker,
-} from "antd";
+import { useParams, useNavigate, generatePath } from "react-router-dom";
+import { Form, Button, Row, Col, Card, Typography, Input, DatePicker } from "antd";
 import dayjs from "dayjs";
 import "./EmployeeDetail.css";
 import { ROUTES_APP } from "../../../routes";
@@ -57,18 +48,10 @@ const EmployeeDetail = () => {
       setEmployee(foundEmployee);
       form.setFieldsValue({
         ...foundEmployee,
-        birthDate: foundEmployee.birthDate
-          ? dayjs(foundEmployee.birthDate, "DD/MM/YYYY")
-          : null,
-        issueDate: foundEmployee.issueDate
-          ? dayjs(foundEmployee.issueDate, "DD/MM/YYYY")
-          : null,
-        startDate: foundEmployee.startDate
-          ? dayjs(foundEmployee.startDate, "DD/MM/YYYY")
-          : null,
-        endDate: foundEmployee.endDate
-          ? dayjs(foundEmployee.endDate, "DD/MM/YYYY")
-          : null,
+        birthDate: foundEmployee.birthDate ? dayjs(foundEmployee.birthDate, "DD/MM/YYYY") : null,
+        issueDate: foundEmployee.issueDate ? dayjs(foundEmployee.issueDate, "DD/MM/YYYY") : null,
+        startDate: foundEmployee.startDate ? dayjs(foundEmployee.startDate, "DD/MM/YYYY") : null,
+        endDate: foundEmployee.endDate ? dayjs(foundEmployee.endDate, "DD/MM/YYYY") : null,
       });
     } else {
       navigate(ROUTES_APP.hrm.employeeList); // Quay lại nếu không tìm thấy
@@ -79,28 +62,21 @@ const EmployeeDetail = () => {
 
   return (
     <div className="employee-detail-container">
-      <Row
-        justify="space-between"
-        align="middle"
-        style={{ marginBottom: "20px" }}
-      >
+      <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
         <Col>
           <Title level={2}>Chi tiết nhân sự</Title>
         </Col>
         <Col>
-          <Button
-            type="primary"
-            onClick={() => navigate(ROUTES_APP.hrm.employeeList)}
-          >
+          <Button type="primary" onClick={() => navigate(ROUTES_APP.hrm.employeeList)}>
             Quay lại
           </Button>
-          {/* <Button
+          <Button
             type="default"
             style={{ marginLeft: "10px" }}
-            onClick={() => navigate(`/employeelist/edit/${id}`)}
+            onClick={() => navigate(generatePath(ROUTES_APP.crm.employeeEdit, { id: id }))}
           >
             Sửa
-          </Button> */}
+          </Button>
         </Col>
       </Row>
 
@@ -156,10 +132,7 @@ const EmployeeDetail = () => {
                         placeholder="Chọn ngày cấp"
                       />
                     </Form.Item>
-                    <Form.Item
-                      label="Địa chỉ thường trú"
-                      name="permanentAddress"
-                    >
+                    <Form.Item label="Địa chỉ thường trú" name="permanentAddress">
                       <Input placeholder="Nhập địa chỉ thường trú" />
                     </Form.Item>
                     <Form.Item label="Địa chỉ tạm trú" name="temporaryAddress">
@@ -180,16 +153,10 @@ const EmployeeDetail = () => {
                 {/* Cột thông tin hợp đồng */}
                 <Col span={8}>
                   <Card title="Thông tin hợp đồng" variant="outlined">
-                    <Form.Item
-                      label="Loại hợp đồng lao động"
-                      name="contractType"
-                    >
+                    <Form.Item label="Loại hợp đồng lao động" name="contractType">
                       <Input placeholder="VD: Hợp đồng xác định thời hạn" />
                     </Form.Item>
-                    <Form.Item
-                      label="Thời hạn hợp đồng lao động"
-                      name="contractTerm"
-                    >
+                    <Form.Item label="Thời hạn hợp đồng lao động" name="contractTerm">
                       <Input placeholder="VD: 12 tháng" />
                     </Form.Item>
                     <Form.Item label="Ngày bắt đầu" name="startDate">

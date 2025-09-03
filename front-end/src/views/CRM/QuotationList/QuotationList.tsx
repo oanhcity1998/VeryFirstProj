@@ -33,7 +33,7 @@ export interface Quotation {
 }
 
 // Mock data
-const dataSource: Quotation[] = [
+export const quotationMockData: Quotation[] = [
   {
     id: 1,
     quotationName: "Báo giá thiết bị văn phòng",
@@ -68,7 +68,7 @@ const dataSource: Quotation[] = [
 
 const QuotationList = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState(dataSource);
+  const [data, setData] = useState(quotationMockData);
 
   // 🔎 search + filter
   const [filterOpen, setFilterOpen] = useState(false);
@@ -233,10 +233,6 @@ const QuotationList = () => {
         filterVat={filterVAT}
         filterStatus={filterStatus}
         getSummary={getSummary} // 👉 truyền xuống bảng để render cột tổng
-        onShowClick={(record) => {
-          setSelectedQuotation(record);
-          setIsDetailModalOpen(true);
-        }}
         onEditClick={(record) => {
           setSelectedQuotation(record);
           setIsEditModalOpen(true);
@@ -256,13 +252,6 @@ const QuotationList = () => {
         open={isEditModalOpen}
         onCancel={() => setIsEditModalOpen(false)}
         onOk={handleEdit}
-        initialValues={selectedQuotation}
-      />
-
-      <QuotationForm
-        mode="detail"
-        open={isDetailModalOpen}
-        onCancel={() => setIsDetailModalOpen(false)}
         initialValues={selectedQuotation}
       />
     </>

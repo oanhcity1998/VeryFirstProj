@@ -4,76 +4,26 @@ import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import TableContact, { Contact } from "../../../components/TableContact/TableContact";
 import ContactForm from "../../../components/ContactForm/ContactForm";
 import Search from "antd/es/input/Search";
+import { generatePath, useNavigate } from "react-router-dom";
+import { ROUTES_APP } from "../../../routes";
+
+export const mockContactDatas: Contact[] = [
+  {
+    key: "1",
+    id: "1",
+    contactName: "Nguyễn Văn A",
+    customerName: "Công ty TNHH ABC",
+    phone: "0901234567",
+    email: "vana@abc.com",
+    title: "Giám đốc",
+    mainContact: "Nguyễn Văn A",
+    note: "Khách hàng lâu năm",
+  },
+];
 
 const ContactList = () => {
-  const [data, setData] = useState([
-    {
-      key: "1",
-      id: "10",
-      contactName: "Nguyễn Văn A",
-      customerName: "Công ty TNHH ABC",
-      phone: "0901234567",
-      email: "vana@abc.com",
-      title: "Giám đốc",
-      mainContact: "Nguyễn Văn A",
-      note: "Khách hàng lâu năm",
-    },
-    {
-      key: "2",
-      id: "11",
-      contactName: "Trần Thị B",
-      customerName: "Công ty TNHH XYZ",
-      phone: "0912345678",
-      email: "tranb@xyz.com",
-      title: "Kế toán trưởng",
-      mainContact: "Nguyễn Văn C",
-      note: "Khách hàng mới",
-    },
-    {
-      key: "3",
-      id: "12",
-      contactName: "Lê Văn C",
-      customerName: "Công ty CP MNO",
-      phone: "0923456789",
-      email: "lec@mno.com",
-      title: "Trưởng phòng Kinh doanh",
-      mainContact: "Lê Văn C",
-      note: "Tiềm năng",
-    },
-    {
-      key: "4",
-      id: "13",
-      contactName: "Phạm Thị D",
-      customerName: "Công ty TNHH ABC",
-      phone: "0934567890",
-      email: "phamd@abc.com",
-      title: "Nhân viên",
-      mainContact: "Nguyễn Văn A",
-      note: "Liên hệ phụ",
-    },
-    {
-      key: "5",
-      id: "14",
-      contactName: "Hoàng Văn E",
-      customerName: "Công ty CP PQR",
-      phone: "0945678901",
-      email: "hoange@pqr.com",
-      title: "Phó Giám đốc",
-      mainContact: "Hoàng Văn E",
-      note: "Khách VIP",
-    },
-    {
-      key: "6",
-      id: "15",
-      contactName: "Đỗ Thị F",
-      customerName: "Công ty TNHH XYZ",
-      phone: "0956789012",
-      email: "dof@xyz.com",
-      title: "Trợ lý",
-      mainContact: "Nguyễn Văn C",
-      note: "Cần follow-up",
-    },
-  ]);
+  const navigate = useNavigate();
+  const [data, setData] = useState(mockContactDatas);
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
 
@@ -207,10 +157,6 @@ const ContactList = () => {
         filterMainContact={filterMainContact}
         selectedRowKeys={selectedRowKeys}
         setSelectedRowKeys={setSelectedRowKeys}
-        onShowClick={(record) => {
-          setSelectedContact(record);
-          setIsDetailModalOpen(true);
-        }}
         onEditClick={(record) => {
           setSelectedContact(record);
           setIsEditModalOpen(true);
@@ -232,13 +178,6 @@ const ContactList = () => {
         open={isEditModalOpen}
         onCancel={() => setIsEditModalOpen(false)}
         onOk={handleEdit}
-        initialValues={selectedContact}
-      />
-
-      <ContactForm
-        mode="detail"
-        open={isDetailModalOpen}
-        onCancel={() => setIsDetailModalOpen(false)}
         initialValues={selectedContact}
       />
     </>

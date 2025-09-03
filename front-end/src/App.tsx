@@ -18,6 +18,8 @@ import EmployeeDetail from "./views/HRM/EmployeeDetail/EmployeeDetail";
 import PositionList from "./views/HRM/PositionList/PositionList";
 
 import "./App.css";
+import ContactDetail from "./views/CRM/ContactDetail/ContactDetail";
+import QuotationDetail from "./views/CRM/QuotationDetail/QuotationDetail";
 
 export default function App() {
   return (
@@ -38,12 +40,16 @@ export default function App() {
 
           {/* liên hệ */}
           <Route path={ROUTES_APP.crm.contactList} element={<ContactList />} />
+          <Route path={ROUTES_APP.crm.contactDetail} element={<ContactDetail />} />
 
           {/* Mẫu báo giá  */}
           <Route path={ROUTES_APP.crm.quotationList} element={<QuotationList />} />
+          <Route path={ROUTES_APP.crm.quotationDetail} element={<QuotationDetail />} />
+
+          {/* Cơ hội */}
           <Route path={ROUTES_APP.crm.opportunityList} element={<OpportunityList />} />
 
-          {/* Lead  */}
+          {/* Khách tiềm năng  */}
           <Route path={ROUTES_APP.crm.leadList} element={<LeadList />} />
           <Route path={ROUTES_APP.crm.leadDetail} element={<LeadDetail />} />
 

@@ -1,0 +1,49 @@
+.contact-detail-container {
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.contact-detail-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.back-button {
+  margin-right: 12px;
+}
+
+.contact-detail-breadcrumb {
+  flex: 1;
+}
+
+.contact-detail-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.contact-detail-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.form-row label {
+  width: 160px;
+  font-weight: 500;
+}
+
+.form-row input {
+  flex: 1;
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { Table, Tooltip, Tag, Progress } from "antd";
 import { EditOutlined, FileTextOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
@@ -175,7 +175,19 @@ export const TableOpportunity = ({
       dataSource={filteredData}
       rowKey="id"
       scroll={{ x: "max-content", y: "calc(100vh - 330px)" }}
-      pagination={{ position: ["bottomCenter"] }}
+      pagination={{
+        pageSize: 10,
+        position: ["bottomCenter"],
+        // itemRender: (page, type, originalElement) => {
+        //   if (type === "prev") {
+        //     return <button className="ant-pagination-item-link">Previous</button>;
+        //   }
+        //   if (type === "next") {
+        //     return <button className="ant-pagination-item-link">Next</button>;
+        //   }
+        //   return originalElement;
+        // },
+      }}
     />
   );
 };
