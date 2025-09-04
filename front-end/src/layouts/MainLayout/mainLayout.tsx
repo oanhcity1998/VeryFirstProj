@@ -18,7 +18,7 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 import SidebarMenu from "../../components/SideBar/SidebarMenu";
-import "./MainLayout.css";
+import "./mainLayout.css";
 import SidebarMenuHRM from "../../components/SiderBar-HRM/SidebarMenu-HRM";
 // import FilterDrawer from "../components/FilterDrawer";
 import { ROUTES_APP } from "../../routes";
