@@ -1,0 +1,60 @@
+.contract-detail {
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.form-grid {
+  margin-bottom: 20px;
+}
+
+.form-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.form-item label {
+  flex: 0 0 160px; /* fixed width so inputs align */
+  font-weight: 500;
+}
+
+.form-item input {
+  flex: 1;
+}
+
+.product-table {
+  margin-top: 16px;
+}
+
+.totals {
+  margin-top: 16px;
+  text-align: right;
+  font-weight: 500;
+  line-height: 1.8;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.contract-detail-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 8px;
+}
+
+.back-button {
+  margin-right: 8px;
+}
+
+.contract-detail-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+

@@ -1,0 +1,33 @@
+.contract-list-container {
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.contract-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.contract-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.contract-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.contract-link {
+  color: #1677ff;
+  cursor: pointer;
+}
+
+.contract-link:hover {
+  text-decoration: underline;
+}
