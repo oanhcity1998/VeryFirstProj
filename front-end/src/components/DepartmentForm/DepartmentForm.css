@@ -1,0 +1,12 @@
+.form-section .ant-card {
+    background: #fff;
+}
+
+.form-section .ant-card-head {
+    background: #fafafa;
+    font-weight: 600;
+}
+
+.form-section .ant-form-item-label>label {
+    font-weight: 500;
+}

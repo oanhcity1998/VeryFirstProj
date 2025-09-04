@@ -3,6 +3,7 @@ import {
   HomeOutlined,
   UserOutlined,
   SolutionOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu-HRM.css";
@@ -22,8 +23,10 @@ const SidebarMenuHRM: React.FC<SidebarMenuHRMProps> = ({ collapsed }) => {
     selectedKey = "1";
   } else if (location.pathname.startsWith("/hrm/employee-list")) {
     selectedKey = "2";
-  } else if (location.pathname.startsWith("/hrm/position")) {
+  } else if (location.pathname.startsWith("/hrm/position-list")) {
     selectedKey = "3";
+  } else if (location.pathname.startsWith("/hrm/department-list")) {
+    selectedKey = "4";
   }
 
   const items = [
@@ -41,6 +44,11 @@ const SidebarMenuHRM: React.FC<SidebarMenuHRMProps> = ({ collapsed }) => {
       key: "3",
       icon: <SolutionOutlined />,
       label: <Link to={ROUTES_APP.hrm.positionList}>Chức vụ</Link>,
+    },
+    {
+      key: "4",
+      icon: <TeamOutlined />,
+      label: <Link to={ROUTES_APP.hrm.departmentList}>Phòng ban</Link>,
     },
   ];
 

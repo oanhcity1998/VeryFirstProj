@@ -17,8 +17,8 @@ export const ROUTES_APP = {
   },
   hrm: {
     employeeList: "/hrm/employee-list",
-    employeeEdit: "/hrm/employeelist/edit/:id",
     employeeDetail: "/hrm/employee-list/:id",
-    positionList: "/hrm/position",
+    positionList: "/hrm/position-list",
+    departmentList: "/hrm/department-list",
   },
 };

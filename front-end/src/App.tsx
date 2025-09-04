@@ -2,7 +2,6 @@
 import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout/mainLayout";
 import Home from "./views/Home";
-import Profile from "./views/Profile";
 import Login from "./views/Login";
 import CustomerList from "./views/CRM/CustomerList/CustomerList";
 import CustomerDetail from "./views/CRM/CustomerDetail/CustomerDetail";
@@ -21,6 +20,8 @@ import "./App.css";
 import ContactDetail from "./views/CRM/ContactDetail/ContactDetail";
 import QuotationDetail from "./views/CRM/QuotationDetail/QuotationDetail";
 import OpportunityDetail from "./views/CRM/OpportunityDetail/OpportunityDetail";
+import DepartmentList from "./views/HRM/DepartmentList/DepartmentList";
+import Profile from "./views/Profile";
 
 export default function App() {
   return (
@@ -56,9 +57,16 @@ export default function App() {
           <Route path={ROUTES_APP.crm.leadDetail} element={<LeadDetail />} />
 
           {/* HRM */}
+          {/* Nhân sự */}
           <Route path={ROUTES_APP.hrm.employeeDetail} element={<EmployeeDetail />} />
           <Route path={ROUTES_APP.hrm.employeeList} element={<EmployeeList />} />
+
+          {/* Chức vụ */}
           <Route path={ROUTES_APP.hrm.positionList} element={<PositionList />} />
+
+          {/* Phòng ban */}
+          <Route path={ROUTES_APP.hrm.departmentList} element={<DepartmentList />} />
+
         </Route>
       </Routes>
     </BrowserRouter>
