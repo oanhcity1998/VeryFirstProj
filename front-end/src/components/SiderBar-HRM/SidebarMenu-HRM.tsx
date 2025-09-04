@@ -33,7 +33,7 @@ const SidebarMenuHRM: React.FC<SidebarMenuHRMProps> = ({ collapsed }) => {
     {
       key: "1",
       icon: <HomeOutlined />,
-      label: <Link to={ROUTES_APP.home}>Trang chủ</Link>,
+      label: <Link to={ROUTES_APP.hrm.homeHRM}>Trang chủ</Link>,
     },
     {
       key: "2",

@@ -40,7 +40,7 @@ const SidebarMenu = ({ collapsed }) => {
     {
       key: "1",
       icon: <HomeOutlined />,
-      label: <Link to={ROUTES_APP.home}>Trang chủ</Link>,
+      label: <Link to={ROUTES_APP.crm.homeCRM}>Trang chủ</Link>,
     },
     {
       key: "2",
