@@ -1,8 +1,9 @@
 export const ROUTES_APP = {
   login: "/login",
-  home: "/",
   profile: "/profile",
+  home: "/",
   crm: {
+    homeCRM: "/crm/home",
     customerList: "/crm/customerlist",
     customerDetail: "/crm/customerlist/:id",
     productPage: "/crm/productlist",
@@ -16,6 +17,7 @@ export const ROUTES_APP = {
     leadDetail: "/crm/leads/:id",
   },
   hrm: {
+    homeHRM: "hrm/home",
     employeeList: "/hrm/employee-list",
     employeeDetail: "/hrm/employee-list/:id",
     positionList: "/hrm/position-list",

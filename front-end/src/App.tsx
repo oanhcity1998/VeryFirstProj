@@ -1,6 +1,6 @@
 // src/App.jsx
 import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom";
-import MainLayout from "./layouts/MainLayout/mainLayout";
+import MainLayout from "./layouts/MainLayout/MainLayout";
 import Home from "./views/Home";
 import Login from "./views/Login";
 import CustomerList from "./views/CRM/CustomerList/CustomerList";
@@ -22,16 +22,21 @@ import QuotationDetail from "./views/CRM/QuotationDetail/QuotationDetail";
 import OpportunityDetail from "./views/CRM/OpportunityDetail/OpportunityDetail";
 import DepartmentList from "./views/HRM/DepartmentList/DepartmentList";
 import Profile from "./views/Profile";
+import HomeCRM from "./views/CRM/HomeCRM/HomeCRM";
+import HomeHRM from "./views/HRM/HomeHRM/HomeHRM";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path={ROUTES_APP.login} element={<Login />} />
+        <Route path={ROUTES_APP.home} element={<Home />} />
 
         <Route element={<MainLayout />}>
-          <Route path={ROUTES_APP.home} element={<Home />} />
           <Route path={ROUTES_APP.profile} element={<Profile />} />
+
+          {/* home crm */}
+          <Route path={ROUTES_APP.crm.homeCRM} element={<HomeCRM />} />
 
           {/* khách hàng */}
           <Route path={ROUTES_APP.crm.customerList} element={<CustomerList />} />
@@ -57,6 +62,10 @@ export default function App() {
           <Route path={ROUTES_APP.crm.leadDetail} element={<LeadDetail />} />
 
           {/* HRM */}
+
+          {/* home crm */}
+          <Route path={ROUTES_APP.hrm.homeHRM} element={<HomeHRM />} />
+
           {/* Nhân sự */}
           <Route path={ROUTES_APP.hrm.employeeDetail} element={<EmployeeDetail />} />
           <Route path={ROUTES_APP.hrm.employeeList} element={<EmployeeList />} />

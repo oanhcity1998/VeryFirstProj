@@ -18,7 +18,7 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 import SidebarMenu from "../../components/SideBar/SidebarMenu";
-import "./mainLayout.css";
+import "./MainLayout.css";
 import SidebarMenuHRM from "../../components/SiderBar-HRM/SidebarMenu-HRM";
 // import FilterDrawer from "../components/FilterDrawer";
 import { ROUTES_APP } from "../../routes";
@@ -52,7 +52,7 @@ const MainLayout = () => {
         ),
         onClick: () => {
           setIsHRM(false);
-          navigate(ROUTES_APP.home);
+          navigate(ROUTES_APP.crm.homeCRM);
           console.log("CRM clicked");
         },
       },
@@ -66,7 +66,7 @@ const MainLayout = () => {
         ),
         onClick: () => {
           setIsHRM(true);
-          navigate(ROUTES_APP.home);
+          navigate(ROUTES_APP.hrm.homeHRM);
           console.log("HRM clicked");
         },
       },

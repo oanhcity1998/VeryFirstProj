@@ -258,21 +258,21 @@ const DepartmentList: React.FC = () => {
                         />
                     </Space>
                     <Select
-                        placeholder="Lọc theo trưởng phòng"
-                        style={{ width: 250 }}
-                        onChange={handleFilterByHead}
-                        options={headOptions.map((head) => ({
-                            value: head,
-                            label: head,
-                        }))}
-                    />
-                    <Select
                         placeholder="Lọc theo tên phòng ban"
                         style={{ width: 250 }}
                         onChange={handleFilterByDepartmentName}
                         options={departmentNameOptions.map((name) => ({
                             value: name,
                             label: name,
+                        }))}
+                    />
+                    <Select
+                        placeholder="Lọc theo trưởng phòng"
+                        style={{ width: 250 }}
+                        onChange={handleFilterByHead}
+                        options={headOptions.map((head) => ({
+                            value: head,
+                            label: head,
                         }))}
                     />
                     <Modal
