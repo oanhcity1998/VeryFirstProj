@@ -11,15 +11,38 @@ import "./EmployeeList.css";
 import TableEmployee from "../../../components/TableEmployee/TableEmployee";
 import EmployeeForm from "../../../components/EmployeeForm/EmployeeForm";
 import FilterDrawerHRM from "../../../components/Filter-HRM/FilterDrawer-HRM";
-
-// Import thư viện xlsx đã cài đặt
 import * as XLSX from "xlsx";
-import dayjs from "dayjs"; // Sử dụng dayjs để log thời gian
+import dayjs, { Dayjs } from "dayjs";
 import Search from "antd/es/input/Search";
 
-const EmployeeList = () => {
-  const [data, setData] = useState([
-    // Dữ liệu ban đầu
+interface Employee {
+  key: string;
+  id: string;
+  fullName: string;
+  gender: string;
+  birthDate: string;
+  idNumber: string;
+  issueDate: string;
+  issuePlace: string;
+  phone: string;
+  email: string;
+  permanentAddress: string;
+  temporaryAddress: string;
+  personalTaxCode: string;
+  socialInsuranceNumber: string;
+  bankAccount: string;
+  department: string;
+  position: string;
+  contractType: string;
+  contractTerm: string;
+  startDate: string;
+  endDate: string;
+  salary: string;
+  bonus: string;
+}
+
+const EmployeeList: React.FC = () => {
+  const [data, setData] = useState<Employee[]>([
     {
       key: "1",
       id: "82334",
@@ -272,15 +295,14 @@ const EmployeeList = () => {
     },
   ]);
 
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState(false);
-  const [importOpen, setImportOpen] = useState(false);
-  const [importing, setImporting] = useState(false);
+  const [filterOpen, setFilterOpen] = useState<boolean>(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
+  const [importOpen, setImportOpen] = useState<boolean>(false);
+  const [importing, setImporting] = useState<boolean>(false);
 
-  // Handle delete
   const handleDelete = async () => {
     try {
       setDeleting(true);
@@ -299,23 +321,21 @@ const EmployeeList = () => {
     }
   };
 
-  // Cập nhật hàm xử lý upload
-  const handleUpload = async (file) => {
-    const fileType = file.name.split(".").pop().toLowerCase();
+  const handleUpload = async (file: File) => {
+    const fileType = file.name.split(".").pop()?.toLowerCase();
 
-    // AC01: Chỉ nhận file đúng định dạng
     if (fileType !== "xlsx" && fileType !== "csv") {
       message.error(
         "File không hợp lệ. Vui lòng tải lên file .xlsx hoặc .csv."
       );
-      return Upload.LIST_IGNORE; // Ngăn không cho file được thêm vào danh sách
+      return Upload.LIST_IGNORE;
     }
 
     setImporting(true);
     const reader = new FileReader();
 
     reader.onload = (e) => {
-      const bstr = e.target.result;
+      const bstr = e.target?.result as string;
       const workbook = XLSX.read(bstr, { type: "binary" });
       const worksheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[worksheetName];
@@ -346,11 +366,10 @@ const EmployeeList = () => {
         "bonus",
       ];
 
-      const headerRow = json[0] || [];
-      const newEmployees = [];
-      const errors = [];
+      const headerRow = json[0] as string[] || [];
+      const newEmployees: Employee[] = [];
+      const errors: string[] = [];
 
-      // Kiểm tra tiêu đề (header)
       const missingHeaders = requiredFields.filter(
         (field) => !headerRow.includes(field)
       );
@@ -363,17 +382,15 @@ const EmployeeList = () => {
         return;
       }
 
-      // Duyệt qua từng hàng dữ liệu để kiểm tra và xử lý
       for (let i = 1; i < json.length; i++) {
-        const row = json[i];
-        const newEmployee = {};
+        const row = json[i] as any[];
+        const newEmployee: Partial<Employee> = {};
         let rowHasError = false;
 
         for (let j = 0; j < headerRow.length; j++) {
           const key = headerRow[j];
           const value = row[j];
 
-          // Kiểm tra lỗi (AC02) - Bạn có thể thêm các rule kiểm tra cụ thể hơn ở đây
           if (!value && requiredFields.includes(key)) {
             errors.push(
               `Lỗi tại hàng ${i + 1}, cột "${key}": Dữ liệu bị trống.`
@@ -387,9 +404,8 @@ const EmployeeList = () => {
           continue;
         }
 
-        // Thêm key duy nhất
         newEmployee.key = `imported-${Date.now()}-${i}`;
-        newEmployees.push(newEmployee);
+        newEmployees.push(newEmployee as Employee);
       }
 
       if (errors.length > 0) {
@@ -401,16 +417,14 @@ const EmployeeList = () => {
               {errorMessages}
             </pre>
           </div>,
-          5 // Tăng thời gian hiển thị message lỗi
+          5
         );
         setImporting(false);
       } else {
-        // AC03: Nếu thành công, thêm toàn bộ nhân viên mới vào danh sách
         setData((prevData) => [...prevData, ...newEmployees]);
 
-        // AC04: Log lại thời gian và người thực hiện
         const timestamp = dayjs().format("HH:mm:ss DD/MM/YYYY");
-        const currentUser = "admin"; // Giả định người dùng hiện tại
+        const currentUser = "admin";
         console.log(
           `[Import Log] Tải lên thành công ${newEmployees.length} nhân viên lúc ${timestamp} bởi ${currentUser}`
         );
@@ -424,7 +438,7 @@ const EmployeeList = () => {
     };
 
     reader.readAsBinaryString(file);
-    return false; // Quan trọng: return false để ngăn Ant Design tự động upload
+    return false;
   };
 
   return (
@@ -432,11 +446,11 @@ const EmployeeList = () => {
       <div className="customer-list-header">
         <h2>Danh sách nhân sự</h2>
         <div className="customer-list-actions">
-            <Space direction="vertical">
-            <Search 
+          <Space direction="vertical">
+            <Search
               className="custom-search-bar"
-              placeholder="Tìm kiếm theo họ và tên" 
-              style={{ width: 250 }} 
+              placeholder="Tìm kiếm theo họ và tên"
+              style={{ width: 250 }}
             />
           </Space>
           <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>
@@ -531,8 +545,8 @@ const EmployeeList = () => {
       <EmployeeForm
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
-        onSave={(values) => {
-          const newEmployee = {
+        onSave={(values: Employee) => {
+          const newEmployee: Employee = {
             key: `10${data.length + 1}`,
             id: `10${data.length + 1}`,
             fullName: values.fullName,

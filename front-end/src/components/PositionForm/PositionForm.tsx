@@ -1,9 +1,27 @@
 import { useEffect } from "react";
 import { Modal, Form, Input, Button, Card, InputNumber } from "antd";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import "./PositionForm.css";
 
-const PositionForm = ({
+interface Position {
+  id?: string;
+  positionName?: string;
+  priority?: number;
+  note?: string;
+  expiration?: string;
+}
+
+interface PositionFormProps {
+  onCancel: () => void;
+  onSave: (values: Position) => void;
+  position?: Position | null;
+  open: boolean;
+  modalTitle?: string;
+  cancelText?: string;
+  saveText?: string;
+}
+
+const PositionForm: React.FC<PositionFormProps> = ({
   onCancel,
   onSave,
   position,
@@ -27,7 +45,7 @@ const PositionForm = ({
     }
   }, [position, form]);
 
-  const onFinish = (values) => {
+  const onFinish = (values: any) => {
     onSave({
       ...values,
       expiration: values.expiration
@@ -50,11 +68,7 @@ const PositionForm = ({
         >
           {cancelText}
         </Button>,
-        <Button
-          key="submit"
-          type="primary"
-          onClick={() => form.submit()}
-        >
+        <Button key="submit" type="primary" onClick={() => form.submit()}>
           {saveText}
         </Button>,
       ]}

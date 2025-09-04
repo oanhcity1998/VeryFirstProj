@@ -1,14 +1,22 @@
 import { Menu } from "antd";
-import { HomeOutlined, UserOutlined, SolutionOutlined } from "@ant-design/icons";
+import {
+  HomeOutlined,
+  UserOutlined,
+  SolutionOutlined,
+} from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu-HRM.css";
 import { ROUTES_APP } from "../../routes";
 
-const SidebarMenuHRM = ({ collapsed }) => {
+interface SidebarMenuHRMProps {
+  collapsed: boolean;
+}
+
+const SidebarMenuHRM: React.FC<SidebarMenuHRMProps> = ({ collapsed }) => {
   const location = useLocation();
 
   // Map paths to keys
-  let selectedKey = "1"; // default Trang chủ
+  let selectedKey: string = "1"; // default Trang chủ
 
   if (location.pathname === "/") {
     selectedKey = "1";
@@ -32,7 +40,7 @@ const SidebarMenuHRM = ({ collapsed }) => {
     {
       key: "3",
       icon: <SolutionOutlined />,
-      label: <Link to={ROUTES_APP.hrm.position}>Chức vụ</Link>,
+      label: <Link to={ROUTES_APP.hrm.positionList}>Chức vụ</Link>,
     },
   ];
 

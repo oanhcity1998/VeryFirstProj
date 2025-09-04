@@ -1,19 +1,27 @@
-import React from "react";
 import { Drawer, Form, Button, Select } from "antd";
 import "./FilterDrawer-HRM.css";
 
 const { Option } = Select;
 
-const FilterDrawerHRM = ({ open, onClose, onConfirm }) => {
+interface FilterDrawerHRMProps {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: (values: any) => void;
+}
+
+const FilterDrawerHRM: React.FC<FilterDrawerHRMProps> = ({ open, onClose, onConfirm }) => {
   const [form] = Form.useForm();
 
   const handleConfirm = () => {
-    form.validateFields().then((values) => {
-      onConfirm(values);
-      onClose();
-    }).catch((error) => {
-      console.log("Validation failed:", error);
-    });
+    form
+      .validateFields()
+      .then((values) => {
+        onConfirm(values);
+        onClose();
+      })
+      .catch((error) => {
+        console.log("Validation failed:", error);
+      });
   };
 
   return (
@@ -38,9 +46,7 @@ const FilterDrawerHRM = ({ open, onClose, onConfirm }) => {
         <Form.Item
           label="Mã nhân viên"
           name="employeeCode"
-          rules={[
-            { required: true, message: "Vui lòng chọn mã nhân viên!" },
-          ]}
+          rules={[{ required: true, message: "Vui lòng chọn mã nhân viên!" }]}
         >
           <Select placeholder="Chọn mã nhân viên">
             <Option value="nv01">NV01</Option>
@@ -51,9 +57,7 @@ const FilterDrawerHRM = ({ open, onClose, onConfirm }) => {
         <Form.Item
           label="Vị trí"
           name="position"
-          rules={[
-            { required: true, message: "Vui lòng chọn vị trí!" },
-          ]}
+          rules={[{ required: true, message: "Vui lòng chọn vị trí!" }]}
         >
           <Select placeholder="Chọn vị trí">
             <Option value="dev">Developer</Option>
@@ -64,9 +68,7 @@ const FilterDrawerHRM = ({ open, onClose, onConfirm }) => {
         <Form.Item
           label="Phòng ban"
           name="department"
-          rules={[
-            { required: true, message: "Vui lòng chọn phòng ban!" },
-          ]}
+          rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
         >
           <Select placeholder="Chọn phòng ban">
             <Option value="it">IT</Option>
@@ -77,9 +79,7 @@ const FilterDrawerHRM = ({ open, onClose, onConfirm }) => {
         <Form.Item
           label="Giới tính"
           name="gender"
-          rules={[
-            { required: true, message: "Vui lòng chọn giới tính!" },
-          ]}
+          rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]}
         >
           <Select placeholder="Chọn giới tính">
             <Option value="male">Nam</Option>

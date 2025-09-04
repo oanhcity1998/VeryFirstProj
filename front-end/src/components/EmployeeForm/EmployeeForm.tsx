@@ -1,9 +1,46 @@
 import { useEffect } from "react";
 import { Modal, Form, Input, Button, DatePicker, Row, Col, Card } from "antd";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import "./EmployeeForm.css";
 
-const EmployeeForm = ({
+interface Employee {
+  fullName?: string;
+  birthDate?: string;
+  phone?: string;
+  position?: string;
+  gender?: string;
+  email?: string;
+  department?: string;
+  idNumber?: string;
+  issuePlace?: string;
+  issueDate?: string;
+  permanentAddress?: string;
+  temporaryAddress?: string;
+  personalTaxCode?: string;
+  socialInsuranceNumber?: string;
+  bankAccount?: string;
+  contractType?: string;
+  contractTerm?: string;
+  startDate?: string;
+  endDate?: string;
+  salary?: string;
+  bonus?: string;
+}
+
+interface EmployeeFormProps {
+  onCancel: () => void;
+  onSave: (values: Employee) => void;
+  employee?: Employee | null;
+  open: boolean;
+  modalTitle?: string;
+  infoTitle?: string;
+  extraInfoTitle?: string;
+  contractTitle?: string;
+  cancelText?: string;
+  saveText?: string;
+}
+
+const EmployeeForm: React.FC<EmployeeFormProps> = ({
   onCancel,
   onSave,
   employee,
@@ -21,32 +58,46 @@ const EmployeeForm = ({
     if (employee) {
       form.setFieldsValue({
         ...employee,
-        birthDate: employee.birthDate ? dayjs(employee.birthDate, "DD/MM/YYYY") : null,
-        issueDate: employee.issueDate ? dayjs(employee.issueDate, "DD/MM/YYYY") : null,
-        startDate: employee.startDate ? dayjs(employee.startDate, "DD/MM/YYYY") : null,
-        endDate: employee.endDate ? dayjs(employee.endDate, "DD/MM/YYYY") : null,
+        birthDate: employee.birthDate
+          ? dayjs(employee.birthDate, "DD/MM/YYYY")
+          : null,
+        issueDate: employee.issueDate
+          ? dayjs(employee.issueDate, "DD/MM/YYYY")
+          : null,
+        startDate: employee.startDate
+          ? dayjs(employee.startDate, "DD/MM/YYYY")
+          : null,
+        endDate: employee.endDate
+          ? dayjs(employee.endDate, "DD/MM/YYYY")
+          : null,
       });
     } else {
       form.resetFields();
     }
   }, [employee, form]);
 
-  const onFinish = (values) => {
+  const onFinish = (values: any) => {
     onSave({
       ...values,
-      birthDate: values.birthDate ? values.birthDate.format("DD/MM/YYYY") : null,
-      issueDate: values.issueDate ? values.issueDate.format("DD/MM/YYYY") : null,
-      startDate: values.startDate ? values.startDate.format("DD/MM/YYYY") : null,
+      birthDate: values.birthDate
+        ? values.birthDate.format("DD/MM/YYYY")
+        : null,
+      issueDate: values.issueDate
+        ? values.issueDate.format("DD/MM/YYYY")
+        : null,
+      startDate: values.startDate
+        ? values.startDate.format("DD/MM/YYYY")
+        : null,
       endDate: values.endDate ? values.endDate.format("DD/MM/YYYY") : null,
     });
-    onCancel(); // Đảm bảo form đóng sau khi lưu
+    onCancel();
   };
 
   return (
     <Modal
       title={modalTitle}
       open={open}
-      onCancel={onCancel} // Đảm bảo onCancel được gọi khi nhấn X
+      onCancel={onCancel}
       footer={[
         <Button
           key="cancel"
@@ -64,20 +115,23 @@ const EmployeeForm = ({
     >
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Row gutter={16}>
-          {/* Cột thông tin nhân sự */}
           <Col span={8}>
             <Card title={infoTitle} bordered>
               <Form.Item
                 label="Họ và tên"
                 name="fullName"
-                rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
+                rules={[
+                  { required: true, message: "Vui lòng nhập họ và tên!" },
+                ]}
               >
                 <Input placeholder="Nhập họ và tên" />
               </Form.Item>
               <Form.Item
                 label="Ngày sinh"
                 name="birthDate"
-                rules={[{ required: true, message: "Vui lòng chọn ngày sinh!" }]}
+                rules={[
+                  { required: true, message: "Vui lòng chọn ngày sinh!" },
+                ]}
               >
                 <DatePicker
                   format="DD/MM/YYYY"
@@ -90,7 +144,10 @@ const EmployeeForm = ({
                 name="phone"
                 rules={[
                   { required: true, message: "Vui lòng nhập số điện thoại!" },
-                  { pattern: /^[0-9]{9,11}$/, message: "Số điện thoại không hợp lệ!" },
+                  {
+                    pattern: /^[0-9]{9,11}$/,
+                    message: "Số điện thoại không hợp lệ!",
+                  },
                 ]}
               >
                 <Input placeholder="Nhập số điện thoại" />
@@ -105,7 +162,9 @@ const EmployeeForm = ({
               <Form.Item
                 label="Giới tính"
                 name="gender"
-                rules={[{ required: true, message: "Vui lòng nhập giới tính!" }]}
+                rules={[
+                  { required: true, message: "Vui lòng nhập giới tính!" },
+                ]}
               >
                 <Input placeholder="Nam / Nữ" />
               </Form.Item>
@@ -122,14 +181,15 @@ const EmployeeForm = ({
               <Form.Item
                 label="Phòng ban"
                 name="department"
-                rules={[{ required: true, message: "Vui lòng nhập phòng ban!" }]}
+                rules={[
+                  { required: true, message: "Vui lòng nhập phòng ban!" },
+                ]}
               >
                 <Input placeholder="Nhập tên phòng ban" />
               </Form.Item>
             </Card>
           </Col>
 
-          {/* Cột thông tin bổ sung */}
           <Col span={8}>
             <Card title={extraInfoTitle} bordered>
               <Form.Item
@@ -160,7 +220,12 @@ const EmployeeForm = ({
               <Form.Item
                 label="Địa chỉ thường trú"
                 name="permanentAddress"
-                rules={[{ required: true, message: "Vui lòng nhập địa chỉ thường trú!" }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập địa chỉ thường trú!",
+                  },
+                ]}
               >
                 <Input placeholder="Nhập địa chỉ thường trú" />
               </Form.Item>
@@ -179,26 +244,26 @@ const EmployeeForm = ({
             </Card>
           </Col>
 
-          {/* Cột thông tin hợp đồng */}
           <Col span={8}>
             <Card title={contractTitle} bordered>
               <Form.Item
                 label="Loại hợp đồng lao động"
                 name="contractType"
-                rules={[{ required: true, message: "Vui lòng nhập loại hợp đồng!" }]}
+                rules={[
+                  { required: true, message: "Vui lòng nhập loại hợp đồng!" },
+                ]}
               >
                 <Input placeholder="VD: Hợp đồng xác định thời hạn" />
               </Form.Item>
-              <Form.Item
-                label="Thời hạn hợp đồng lao động"
-                name="contractTerm"
-              >
+              <Form.Item label="Thời hạn hợp đồng lao động" name="contractTerm">
                 <Input placeholder="VD: 12 tháng" />
               </Form.Item>
               <Form.Item
                 label="Ngày bắt đầu"
                 name="startDate"
-                rules={[{ required: true, message: "Vui lòng chọn ngày bắt đầu!" }]}
+                rules={[
+                  { required: true, message: "Vui lòng chọn ngày bắt đầu!" },
+                ]}
               >
                 <DatePicker
                   format="DD/MM/YYYY"
@@ -209,7 +274,9 @@ const EmployeeForm = ({
               <Form.Item
                 label="Ngày kết thúc"
                 name="endDate"
-                rules={[{ required: true, message: "Vui lòng chọn ngày kết thúc!" }]}
+                rules={[
+                  { required: true, message: "Vui lòng chọn ngày kết thúc!" },
+                ]}
               >
                 <DatePicker
                   format="DD/MM/YYYY"
