@@ -64,6 +64,7 @@ export default function App() {
           <Route path={ROUTES_APP.crm.leadList} element={<LeadList />} />
           <Route path={ROUTES_APP.crm.leadDetail} element={<LeadDetail />} />
 
+          {/* Hợp đồng  */}
           <Route path={ROUTES_APP.crm.contractList} element={<ContractList />} />
           <Route path="/contracts/:id" element={<ContractDetailWrapper />} />
 
