@@ -6,6 +6,7 @@ import {
   FilterOutlined,
   InboxOutlined,
   DeleteFilled,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import "./EmployeeList.css";
 import TableEmployee from "../../../components/TableEmployee/TableEmployee";
@@ -500,14 +501,9 @@ const EmployeeList: React.FC = () => {
           </Modal>
           <Button
             danger
-            style={
-              selectedRowKeys.length === 0
-                ? {}
-                : { backgroundColor: "red", color: "white" }
-            }
+            icon={<DeleteOutlined />}
             disabled={selectedRowKeys.length === 0}
             onClick={() => setDeleteOpen(true)}
-            icon={<DeleteFilled />}
           >
             Xóa
           </Button>

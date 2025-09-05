@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Space, Modal, message, Upload, Select } from "antd";
-import { PlusOutlined, DeleteFilled, InboxOutlined } from "@ant-design/icons";
+import { PlusOutlined, DeleteFilled, InboxOutlined, DeleteOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import dayjs from "dayjs";
 import "./DepartmentList.css";
@@ -300,14 +300,9 @@ const DepartmentList: React.FC = () => {
                     </Modal>
                     <Button
                         danger
-                        style={
-                            selectedRowKeys.length === 0
-                                ? {}
-                                : { backgroundColor: "red", color: "white" }
-                        }
+                        icon={<DeleteOutlined />}
                         disabled={selectedRowKeys.length === 0}
                         onClick={() => setDeleteOpen(true)}
-                        icon={<DeleteFilled />}
                     >
                         Xóa
                     </Button>
