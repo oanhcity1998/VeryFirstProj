@@ -1,8 +1,9 @@
 export const ROUTES_APP = {
   login: "/login",
-  home: "/",
   profile: "/profile",
+  home: "/",
   crm: {
+    homeCRM: "/crm/home",
     customerList: "/crm/customerlist",
     customerDetail: "/crm/customerlist/:id",
     productPage: "/crm/productlist",
@@ -14,11 +15,14 @@ export const ROUTES_APP = {
     opportunityDetail: "/crm/opportunitylist/:id",
     leadList: "/crm/leadlist",
     leadDetail: "/crm/leadlist/:id",
+    contractList: "/contracts",
+    contractDetail: "/contracts/:id",
   },
   hrm: {
+    homeHRM: "hrm/home",
     employeeList: "/hrm/employee-list",
-    employeeEdit: "/hrm/employeelist/edit/:id",
     employeeDetail: "/hrm/employee-list/:id",
-    positionList: "/hrm/position",
+    positionList: "/hrm/position-list",
+    departmentList: "/hrm/department-list",
   },
 };

@@ -1,19 +1,45 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, generatePath } from "react-router-dom";
-import { Form, Button, Row, Col, Card, Typography, Input, DatePicker } from "antd";
-import dayjs from "dayjs";
+import { useParams, useNavigate, generatePath, Link } from "react-router-dom";
+import { Form, Button, Row, Col, Card, Typography, Input, DatePicker, Breadcrumb } from "antd";
+import dayjs, { Dayjs } from "dayjs";
 import "./EmployeeDetail.css";
 import { ROUTES_APP } from "../../../routes";
 
 const { Title } = Typography;
 
-const EmployeeDetail = () => {
-  const { id } = useParams(); // Lấy id từ URL
-  const navigate = useNavigate();
-  const [employee, setEmployee] = useState(null);
-  const [form] = Form.useForm(); // Sử dụng Form.useForm() từ Ant Design
+interface Employee {
+  key: string;
+  id: string;
+  fullName: string;
+  gender: string;
+  birthDate: string;
+  idNumber: string;
+  issueDate: string;
+  issuePlace: string;
+  phone: string;
+  email: string;
+  permanentAddress: string;
+  temporaryAddress: string;
+  personalTaxCode: string;
+  socialInsuranceNumber: string;
+  bankAccount: string;
+  department: string;
+  position: string;
+  contractType: string;
+  contractTerm: string;
+  startDate: string;
+  endDate: string;
+  salary: string;
+  bonus: string;
+}
 
-  const employees = [
+const EmployeeDetail: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [employee, setEmployee] = useState<Employee | null>(null);
+  const [form] = Form.useForm();
+
+  const employees: Employee[] = [
     {
       key: "1",
       id: "82334",
@@ -42,7 +68,7 @@ const EmployeeDetail = () => {
   ];
 
   useEffect(() => {
-    console.log("ID from URL:", id); // Debug
+    console.log("ID from URL:", id);
     const foundEmployee = employees.find((emp) => emp.id === id);
     if (foundEmployee) {
       setEmployee(foundEmployee);
@@ -54,7 +80,7 @@ const EmployeeDetail = () => {
         endDate: foundEmployee.endDate ? dayjs(foundEmployee.endDate, "DD/MM/YYYY") : null,
       });
     } else {
-      navigate(ROUTES_APP.hrm.employeeList); // Quay lại nếu không tìm thấy
+      navigate(ROUTES_APP.hrm.employeeList);
     }
   }, [id, form, navigate]);
 
@@ -62,30 +88,25 @@ const EmployeeDetail = () => {
 
   return (
     <div className="employee-detail-container">
-      <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
-        <Col>
-          <Title level={2}>Chi tiết nhân sự</Title>
-        </Col>
-        <Col>
-          <Button type="primary" onClick={() => navigate(ROUTES_APP.hrm.employeeList)}>
-            Quay lại
-          </Button>
-          <Button
-            type="default"
-            style={{ marginLeft: "10px" }}
-            onClick={() => navigate(generatePath(ROUTES_APP.crm.employeeEdit, { id: id }))}
-          >
-            Sửa
-          </Button>
-        </Col>
-      </Row>
+      <Breadcrumb style={{ marginBottom: "16px" }}>
+        <Breadcrumb.Item>
+          <Link to={ROUTES_APP.hrm.employeeList}>Danh sách nhân sự</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Chi tiết nhân sự</Breadcrumb.Item>
+        <Breadcrumb.Item>{employee.fullName}</Breadcrumb.Item>
+      </Breadcrumb>
+
+
 
       <Row gutter={16}>
         <Col span={24}>
-          <Card title="Thông tin nhân sự" variant="outlined">
+          <Card title={
+            <h2 style={{ margin: 0 }}>
+              Chi tiết nhân sự {employee.fullName}
+            </h2>
+          } variant="outlined">
             <Form form={form} layout="vertical" disabled={true}>
               <Row gutter={16}>
-                {/* Cột thông tin nhân sự */}
                 <Col span={8}>
                   <Card title="Thông tin nhân sự" variant="outlined">
                     <Form.Item label="Họ và tên" name="fullName">
@@ -116,7 +137,6 @@ const EmployeeDetail = () => {
                   </Card>
                 </Col>
 
-                {/* Cột thông tin bổ sung */}
                 <Col span={8}>
                   <Card title="Thông tin bổ sung" variant="outlined">
                     <Form.Item label="Số CCCD" name="idNumber">
@@ -150,7 +170,6 @@ const EmployeeDetail = () => {
                   </Card>
                 </Col>
 
-                {/* Cột thông tin hợp đồng */}
                 <Col span={8}>
                   <Card title="Thông tin hợp đồng" variant="outlined">
                     <Form.Item label="Loại hợp đồng lao động" name="contractType">

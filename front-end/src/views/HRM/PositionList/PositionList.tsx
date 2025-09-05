@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Button, Space, Modal, message, Dropdown, Menu, Upload, Select } from "antd";
-import { PlusOutlined, DeleteFilled, InboxOutlined } from "@ant-design/icons";
+import { Button, Space, Modal, message, Upload, Select } from "antd";
+import { PlusOutlined, DeleteFilled, InboxOutlined, DeleteOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import dayjs from "dayjs";
 import "./PositionList.css";
@@ -8,8 +8,16 @@ import TablePosition from "../../../components/TablePosition/TablePosition";
 import PositionForm from "../../../components/PositionForm/PositionForm";
 import Search from "antd/es/input/Search";
 
-const PositionList = () => {
-  const [data, setData] = useState([
+interface Position {
+  key: string;
+  id: string;
+  positionName: string;
+  priority: number;
+  note?: string;
+}
+
+const PositionList: React.FC = () => {
+  const [data, setData] = useState<Position[]>([
     {
       key: "GD82334",
       id: "GD82334",
@@ -82,16 +90,15 @@ const PositionList = () => {
     },
   ]);
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState(false);
-  const [importOpen, setImportOpen] = useState(false);
-  const [importing, setImporting] = useState(false);
-  const [selectedPosition, setSelectedPosition] = useState(null);
-  const [filteredData, setFilteredData] = useState(data);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
+  const [importOpen, setImportOpen] = useState<boolean>(false);
+  const [importing, setImporting] = useState<boolean>(false);
+  const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
+  const [filteredData, setFilteredData] = useState<Position[]>(data);
 
-  // Handle delete
   const handleDelete = async () => {
     try {
       setDeleting(true);
@@ -100,7 +107,7 @@ const PositionList = () => {
         (item) => !selectedRowKeys.includes(item.key)
       );
       setData(newData);
-      setFilteredData(newData); // Update filtered data after deletion
+      setFilteredData(newData);
       message.success("Đã xóa chức vụ");
     } catch (err) {
       message.error("Không thể xóa chức vụ");
@@ -111,9 +118,8 @@ const PositionList = () => {
     }
   };
 
-  // Handle upload for positions
-  const handleUpload = async (file) => {
-    const fileType = file.name.split(".").pop().toLowerCase();
+  const handleUpload = async (file: File) => {
+    const fileType = file.name.split(".").pop()?.toLowerCase();
     if (fileType !== "xlsx" && fileType !== "csv") {
       message.error(
         "File không hợp lệ. Vui lòng tải lên file .xlsx hoặc .csv."
@@ -125,16 +131,16 @@ const PositionList = () => {
     const reader = new FileReader();
 
     reader.onload = (e) => {
-      const bstr = e.target.result;
+      const bstr = e.target?.result as string;
       const workbook = XLSX.read(bstr, { type: "binary" });
       const worksheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[worksheetName];
       const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
       const requiredFields = ["id", "positionName", "priority", "note"];
-      const headerRow = json[0] || [];
-      const newPositions = [];
-      const errors = [];
+      const headerRow = json[0] as string[] || [];
+      const newPositions: Position[] = [];
+      const errors: string[] = [];
 
       const missingHeaders = requiredFields.filter(
         (field) => !headerRow.includes(field)
@@ -149,8 +155,8 @@ const PositionList = () => {
       }
 
       for (let i = 1; i < json.length; i++) {
-        const row = json[i];
-        const newPosition = {};
+        const row = json[i] as any[];
+        const newPosition: Partial<Position> = {};
         let rowHasError = false;
 
         for (let j = 0; j < headerRow.length; j++) {
@@ -170,7 +176,7 @@ const PositionList = () => {
         }
 
         newPosition.key = `GD-imported-${Date.now()}-${i}`;
-        newPositions.push(newPosition);
+        newPositions.push(newPosition as Position);
       }
 
       if (errors.length > 0) {
@@ -187,7 +193,7 @@ const PositionList = () => {
         setImporting(false);
       } else {
         setData((prevData) => [...prevData, ...newPositions]);
-        setFilteredData((prevData) => [...prevData, ...newPositions]); // Update filtered data after import
+        setFilteredData((prevData) => [...prevData, ...newPositions]);
         const timestamp = dayjs().format("HH:mm:ss DD/MM/YYYY");
         const currentUser = "admin";
         console.log(
@@ -205,19 +211,16 @@ const PositionList = () => {
     return false;
   };
 
-  // Handle form save
-  const handleSave = (values) => {
+  const handleSave = (values: Position) => {
     if (selectedPosition) {
-      // Update existing position
       const updatedData = data.map((item) =>
         item.key === selectedPosition.key ? { ...item, ...values } : item
       );
       setData(updatedData);
-      setFilteredData(updatedData); // Update filtered data after update
+      setFilteredData(updatedData);
       message.success("Cập nhật chức vụ thành công");
     } else {
-      // Create new position
-      const newPosition = {
+      const newPosition: Position = {
         key: `GD${Date.now()}`,
         id: values.id,
         positionName: values.positionName,
@@ -225,45 +228,42 @@ const PositionList = () => {
         note: values.note,
       };
       setData([...data, newPosition]);
-      setFilteredData([...filteredData, newPosition]); // Update filtered data after creation
+      setFilteredData([...filteredData, newPosition]);
       message.success("Thêm chức vụ thành công");
     }
   };
 
-  // Handle edit
-  const handleEdit = (record) => {
+  const handleEdit = (record: Position) => {
     setSelectedPosition(record);
     setIsModalOpen(true);
   };
 
-  // Handle dropdown filter by ID
-  const handleFilterById = (id) => {
-      const filtered = data.filter((item) => item.id === id);
-      setFilteredData(filtered);
-      message.info(`Đang hiển thị chức vụ với mã: ${id}`);
+  const handleFilterById = (id: string) => {
+    const filtered = data.filter((item) => item.id === id);
+    setFilteredData(filtered);
+    message.info(`Đang hiển thị chức vụ với mã: ${id}`);
   };
 
-  // Generate dropdown menu items from unique IDs
-  const idOptions = [ ...new Set(data.map((item) => item.id))];
+  const idOptions = [...new Set(data.map((item) => item.id))];
 
   return (
     <>
-      <div className="customer-list-header">
+      <div className="position-list-header">
         <h2>Danh sách chức vụ</h2>
-        <div className="customer-list-actions">
-          <Space direction="vertical">
-            <Search
-              className="position-search-bar"
-              placeholder="Tìm kiếm theo tên chức vụ"
-              style={{ width: 250 }}
-            />
-          </Space>
+        <div className="position-list-actions">
+          <Search
+            className="position-search-bar"
+            placeholder="Tìm kiếm theo tên chức vụ"
+            allowClear
+            name="search"
+          />
           <Select
             placeholder="Lọc theo mã chức vụ"
             style={{ width: 250 }}
             onChange={handleFilterById}
             options={idOptions.map((id) => ({
               value: id,
+              label: id,
             }))}
           />
           <Modal
@@ -291,14 +291,9 @@ const PositionList = () => {
           </Modal>
           <Button
             danger
-            style={
-              selectedRowKeys.length === 0
-                ? {}
-                : { backgroundColor: "red", color: "white" }
-            }
+            icon={<DeleteOutlined />}
             disabled={selectedRowKeys.length === 0}
             onClick={() => setDeleteOpen(true)}
-            icon={<DeleteFilled />}
           >
             Xóa
           </Button>
@@ -328,10 +323,10 @@ const PositionList = () => {
             Tạo
           </Button>
         </div>
-      </div>
+      </div >
 
       <TablePosition
-        data={filteredData} // Use filtered data for the table
+        data={filteredData}
         selectedRowKeys={selectedRowKeys}
         setSelectedRowKeys={setSelectedRowKeys}
         onEdit={handleEdit}
@@ -346,8 +341,6 @@ const PositionList = () => {
         onSave={handleSave}
         position={selectedPosition}
         modalTitle={selectedPosition ? "Cập nhật chức vụ" : "Thêm chức vụ"}
-        infoTitle="Thông tin chức vụ"
-        extraInfoTitle="Thông tin bổ sung"
         cancelText="Hủy"
         saveText="Lưu"
       />

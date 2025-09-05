@@ -1,28 +1,39 @@
 import { Menu } from "antd";
-import { HomeOutlined, UserOutlined, SolutionOutlined } from "@ant-design/icons";
+import {
+  HomeOutlined,
+  UserOutlined,
+  SolutionOutlined,
+  TeamOutlined,
+} from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu-HRM.css";
 import { ROUTES_APP } from "../../routes";
 
-const SidebarMenuHRM = ({ collapsed }) => {
+interface SidebarMenuHRMProps {
+  collapsed: boolean;
+}
+
+const SidebarMenuHRM: React.FC<SidebarMenuHRMProps> = ({ collapsed }) => {
   const location = useLocation();
 
   // Map paths to keys
-  let selectedKey = "1"; // default Trang chủ
+  let selectedKey: string = "1"; // default Trang chủ
 
   if (location.pathname === "/") {
     selectedKey = "1";
   } else if (location.pathname.startsWith("/hrm/employee-list")) {
     selectedKey = "2";
-  } else if (location.pathname.startsWith("/hrm/position")) {
+  } else if (location.pathname.startsWith("/hrm/position-list")) {
     selectedKey = "3";
+  } else if (location.pathname.startsWith("/hrm/department-list")) {
+    selectedKey = "4";
   }
 
   const items = [
     {
       key: "1",
       icon: <HomeOutlined />,
-      label: <Link to={ROUTES_APP.home}>Trang chủ</Link>,
+      label: <Link to={ROUTES_APP.hrm.homeHRM}>Trang chủ</Link>,
     },
     {
       key: "2",
@@ -32,7 +43,12 @@ const SidebarMenuHRM = ({ collapsed }) => {
     {
       key: "3",
       icon: <SolutionOutlined />,
-      label: <Link to={ROUTES_APP.hrm.position}>Chức vụ</Link>,
+      label: <Link to={ROUTES_APP.hrm.positionList}>Chức vụ</Link>,
+    },
+    {
+      key: "4",
+      icon: <TeamOutlined />,
+      label: <Link to={ROUTES_APP.hrm.departmentList}>Phòng ban</Link>,
     },
   ];
 
