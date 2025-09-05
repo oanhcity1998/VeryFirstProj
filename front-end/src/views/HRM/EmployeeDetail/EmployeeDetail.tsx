@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, generatePath } from "react-router-dom";
-import { Form, Button, Row, Col, Card, Typography, Input, DatePicker } from "antd";
+import { useParams, useNavigate, generatePath, Link } from "react-router-dom";
+import { Form, Button, Row, Col, Card, Typography, Input, DatePicker, Breadcrumb } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import "./EmployeeDetail.css";
 import { ROUTES_APP } from "../../../routes";
@@ -90,21 +90,22 @@ const EmployeeDetail: React.FC = () => {
     <div className="employee-detail-container">
       <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
         <Col>
-          <Title level={2}>Chi tiết nhân sự</Title>
+          <h2>Chi tiết nhân sự</h2>
         </Col>
         <Col>
           <Button type="primary" onClick={() => navigate(ROUTES_APP.hrm.employeeList)}>
             Quay lại
           </Button>
-          <Button
-            type="default"
-            style={{ marginLeft: "10px" }}
-            onClick={() => navigate(generatePath(ROUTES_APP.crm.employeeEdit, { id }))}
-          >
-            Sửa
-          </Button>
         </Col>
       </Row>
+
+      <Breadcrumb style={{ marginBottom: "16px" }}>
+        <Breadcrumb.Item>
+          Danh sách nhân sự
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Chi tiết nhân sự</Breadcrumb.Item>
+        <Breadcrumb.Item>{employee.fullName}</Breadcrumb.Item>
+      </Breadcrumb>
 
       <Row gutter={16}>
         <Col span={24}>

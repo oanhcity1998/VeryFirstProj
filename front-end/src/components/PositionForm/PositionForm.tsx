@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { Modal, Form, Input, Button, Card, InputNumber } from "antd";
-import dayjs, { Dayjs } from "dayjs";
+import { Modal, Form, Input, Button, InputNumber } from "antd";
+import dayjs from "dayjs";
 import "./PositionForm.css";
 
 interface Position {
@@ -61,11 +61,7 @@ const PositionForm: React.FC<PositionFormProps> = ({
       open={open}
       onCancel={onCancel}
       footer={[
-        <Button
-          key="cancel"
-          style={{ backgroundColor: "#f5f5f5", color: "#333" }}
-          onClick={onCancel}
-        >
+        <Button key="cancel" danger onClick={onCancel}>
           {cancelText}
         </Button>,
         <Button key="submit" type="primary" onClick={() => form.submit()}>
@@ -73,22 +69,11 @@ const PositionForm: React.FC<PositionFormProps> = ({
         </Button>,
       ]}
       width={800}
-      bodyStyle={{
-        background: "#fff",
-        borderRadius: 12,
-        padding: 24,
-      }}
     >
       <Form form={form} layout="vertical" onFinish={onFinish}>
-        <Card
-          bordered
-          className="form-section"
-          style={{
-            borderRadius: 12,
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-            padding: 16,
-          }}
-        >
+        <div className="form-section">
+          <h3>Thông tin chức vụ</h3>
+
           <Form.Item
             label="Mã chức vụ"
             name="id"
@@ -124,7 +109,7 @@ const PositionForm: React.FC<PositionFormProps> = ({
               autoSize={{ minRows: 3, maxRows: 5 }}
             />
           </Form.Item>
-        </Card>
+        </div>
       </Form>
     </Modal>
   );
