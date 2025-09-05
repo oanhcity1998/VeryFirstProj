@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Breadcrumb, Button, Card, Descriptions, Table, Tag, Divider, Form, Select } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -48,6 +48,19 @@ const QuotationDetail: React.FC = () => {
     Approved: "green",
     Rejected: "red",
   };
+
+  const summary = useMemo(() => {
+    if (!quotation.products?.length) return null;
+    const safeNum = (n?: number) => (typeof n === "number" ? n : 0);
+    const totalBeforeVat = quotation.products.reduce((s, p) => s + safeNum(p.priceVND), 0);
+    const vat5 = quotation.products
+      .filter((p) => p.vat === 5)
+      .reduce((s, p) => s + (safeNum(p.afterVatVND) - safeNum(p.priceVND)), 0);
+    const vat10 = quotation.products
+      .filter((p) => p.vat === 10)
+      .reduce((s, p) => s + (safeNum(p.afterVatVND) - safeNum(p.priceVND)), 0);
+    return { totalBeforeVat, vat5, vat10 };
+  }, [quotation.products]);
 
   return (
     <Card className="quotation-detail-container" bordered={false}>
@@ -99,6 +112,7 @@ const QuotationDetail: React.FC = () => {
         <h3>Danh sách sản phẩm</h3>
         <Table
           rowKey="id"
+          bordered
           pagination={false}
           dataSource={quotation.products}
           columns={[
@@ -130,23 +144,21 @@ const QuotationDetail: React.FC = () => {
               render: (val) => val.toLocaleString(),
             },
           ]}
-          summary={(pageData) => {
-            let total = 0;
-            pageData.forEach((p) => {
-              total += p.afterVatVND;
-            });
-            return (
-              <Table.Summary.Row>
-                <Table.Summary.Cell index={0} colSpan={5}>
-                  <b>Tổng cộng</b>
-                </Table.Summary.Cell>
-                <Table.Summary.Cell index={5}>
-                  <b>{total.toLocaleString()} VND</b>
-                </Table.Summary.Cell>
-              </Table.Summary.Row>
-            );
-          }}
         />
+
+        {summary && (
+          <div style={{ marginTop: 16, marginRight: "25%", textAlign: "right" }}>
+            <p>
+              <b>Tổng chưa VAT:</b> {summary.totalBeforeVat.toLocaleString()} VND
+            </p>
+            <p>
+              <b>VAT 5%:</b> {summary.vat5.toLocaleString()} VND
+            </p>
+            <p>
+              <b>VAT 10%:</b> {summary.vat10.toLocaleString()} VND
+            </p>
+          </div>
+        )}
       </Card>
     </Card>
   );
