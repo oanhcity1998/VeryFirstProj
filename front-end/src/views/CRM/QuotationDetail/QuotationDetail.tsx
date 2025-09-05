@@ -17,7 +17,6 @@ const QuotationDetail: React.FC = () => {
     quotationName: "Báo giá thiết bị văn phòng",
     validityPeriod: "30 ngày",
     paymentTerms: "Thanh toán 50% trước, 50% sau giao hàng",
-    opportunity: "Dự án văn phòng A",
     status: "Draft" as "Draft" | "Sent" | "Approved" | "Rejected",
     products: [
       {
@@ -25,16 +24,20 @@ const QuotationDetail: React.FC = () => {
         productName: "Máy in HP 107w",
         productType: "Thiết bị văn phòng",
         priceVND: 5000000,
+        priceUSD: 210,
         vat: 10,
         afterVatVND: 5500000,
+        afterVatUSD: 231,
       },
       {
         id: 2,
         productName: "Giấy A4 Double A",
         productType: "Vật tư tiêu hao",
         priceVND: 250000,
+        priceUSD: 11,
         vat: 5,
         afterVatVND: 262500,
+        afterVatUSD: 11.55,
       },
     ],
   };
@@ -50,98 +53,101 @@ const QuotationDetail: React.FC = () => {
     <Card className="quotation-detail-container" bordered={false}>
       {/* Header */}
       <div className="quotation-detail-header">
-        <Button
-          icon={<ArrowLeftOutlined />}
-          type="text"
-          onClick={() => navigate(-1)}
-          className="back-button"
-        />
         <Breadcrumb className="quotation-detail-breadcrumb" separator=">">
           <Breadcrumb.Item>
-            <Link to={ROUTES_APP.crm.quotationList}>Danh sách báo giá</Link>
+            <Link to={ROUTES_APP.crm.quotationList}>Danh sách mẫu báo giá</Link>
           </Breadcrumb.Item>
           <Breadcrumb.Item>{quotation.quotationName}</Breadcrumb.Item>
         </Breadcrumb>
       </div>
 
-      {/* Thông tin chung */}
-      <h3>Thông tin báo giá</h3>
-      <Form
-        layout="horizontal"
-        initialValues={quotation}
-        style={{ marginBottom: 24 }}
-        labelCol={{ span: 6 }}
-        labelAlign="left"
-      >
-        <Form.Item label="Tên báo giá" name="quotationName">
-          <Input readOnly />
-        </Form.Item>
+      <Card style={{ margin: "24px 0" }}>
+        {/* Thông tin chung */}
+        <h3>Thông tin báo giá</h3>
+        <Form
+          layout="horizontal"
+          initialValues={quotation}
+          style={{ marginBottom: 24 }}
+          labelCol={{ span: 6 }}
+          labelAlign="left"
+        >
+          <Form.Item label="Tên báo giá" name="quotationName">
+            <Input readOnly />
+          </Form.Item>
 
-        <Form.Item label="Hiệu lực" name="validityPeriod">
-          <Input readOnly />
-        </Form.Item>
+          <Form.Item label="Hiệu lực" name="validityPeriod">
+            <Input readOnly />
+          </Form.Item>
 
-        <Form.Item label="Điều khoản thanh toán" name="paymentTerms">
-          <TextArea readOnly rows={3} />
-        </Form.Item>
+          <Form.Item label="Điều khoản thanh toán" name="paymentTerms">
+            <TextArea readOnly rows={3} />
+          </Form.Item>
 
-        <Form.Item label="Cơ hội" name="opportunity">
-          <Input readOnly />
-        </Form.Item>
+          <Form.Item label="Trạng thái" name="status">
+            <Select disabled>
+              {Object.keys(statusColors).map((status) => (
+                <Select.Option key={status} value={status}>
+                  <Tag color={statusColors[status]}>{status}</Tag>
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Form>
 
-        <Form.Item label="Trạng thái" name="status">
-          <Select disabled>
-            {Object.keys(statusColors).map((status) => (
-              <Select.Option key={status} value={status}>
-                <Tag color={statusColors[status]}>{status}</Tag>
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-      </Form>
-
-      <Divider />
-
-      {/* Danh sách sản phẩm */}
-      <h3>Danh sách sản phẩm</h3>
-      <Table
-        rowKey="id"
-        pagination={false}
-        dataSource={quotation.products}
-        columns={[
-          { title: "Tên sản phẩm", dataIndex: "productName", key: "productName" },
-          { title: "Loại", dataIndex: "productType", key: "productType" },
-          {
-            title: "Giá (VND)",
-            dataIndex: "priceVND",
-            key: "priceVND",
-            render: (val) => val.toLocaleString(),
-          },
-          { title: "VAT (%)", dataIndex: "vat", key: "vat" },
-          {
-            title: "Sau VAT (VND)",
-            dataIndex: "afterVatVND",
-            key: "afterVatVND",
-            render: (val) => val.toLocaleString(),
-          },
-        ]}
-        summary={(pageData) => {
-          let total = 0;
-          pageData.forEach((p) => {
-            total += p.afterVatVND;
-          });
-          return (
-            <Table.Summary.Row>
-              <Table.Summary.Cell index={0} colSpan={4}>
-                <b>Tổng cộng</b>
-              </Table.Summary.Cell>
-              <Table.Summary.Cell index={4}>
-                <b>{total.toLocaleString()} VND</b>
-              </Table.Summary.Cell>
-            </Table.Summary.Row>
-          );
-        }}
-      />
+        <Divider />
+        {/* Danh sách sản phẩm */}
+        <h3>Danh sách sản phẩm</h3>
+        <Table
+          rowKey="id"
+          pagination={false}
+          dataSource={quotation.products}
+          columns={[
+            { title: "Tên sản phẩm", dataIndex: "productName", key: "productName" },
+            { title: "Loại", dataIndex: "productType", key: "productType" },
+            {
+              title: "Giá (USD)",
+              dataIndex: "priceUSD",
+              key: "priceUSD",
+              render: (val) => val.toLocaleString(),
+            },
+            {
+              title: "Giá (VND)",
+              dataIndex: "priceVND",
+              key: "priceVND",
+              render: (val) => val.toLocaleString(),
+            },
+            { title: "VAT (%)", dataIndex: "vat", key: "vat" },
+            {
+              title: "Sau VAT (VND)",
+              dataIndex: "afterVatVND",
+              key: "afterVatVND",
+              render: (val) => val.toLocaleString(),
+            },
+            {
+              title: "Sau VAT (USD)",
+              dataIndex: "afterVatUSD",
+              key: "afterVatUSD",
+              render: (val) => val.toLocaleString(),
+            },
+          ]}
+          summary={(pageData) => {
+            let total = 0;
+            pageData.forEach((p) => {
+              total += p.afterVatVND;
+            });
+            return (
+              <Table.Summary.Row>
+                <Table.Summary.Cell index={0} colSpan={5}>
+                  <b>Tổng cộng</b>
+                </Table.Summary.Cell>
+                <Table.Summary.Cell index={5}>
+                  <b>{total.toLocaleString()} VND</b>
+                </Table.Summary.Cell>
+              </Table.Summary.Row>
+            );
+          }}
+        />
+      </Card>
     </Card>
   );
 };

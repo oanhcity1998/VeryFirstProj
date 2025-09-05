@@ -1,8 +1,9 @@
 import React from "react";
 import { Descriptions, Breadcrumb, Button, Card } from "antd";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import "./LeadDetail.css";
+import { ROUTES_APP } from "../../../routes";
 
 const LeadDetail: React.FC = () => {
   const { id } = useParams(); // 👈 get lead id from URL
@@ -35,7 +36,9 @@ const LeadDetail: React.FC = () => {
           className="back-button"
         />
         <Breadcrumb className="lead-detail-breadcrumb" separator=">">
-          <Breadcrumb.Item>Danh sách lead</Breadcrumb.Item>
+          <Breadcrumb.Item>
+            <Link to={ROUTES_APP.crm.leadList}>Danh sách lead</Link>
+          </Breadcrumb.Item>
           <Breadcrumb.Item>{lead.leadName}</Breadcrumb.Item>
         </Breadcrumb>
       </div>

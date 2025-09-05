@@ -51,7 +51,6 @@ const fakeData = [
     priority: "Cao",
     owner: "Phạm Văn Quyết",
     stage: "Đàm phán",
-    nextAction: "Chuẩn bị demo cho khách hàng",
   },
 ];
 
@@ -113,7 +112,6 @@ const OpportunityDetail = () => {
     <div className="opportunity-detail-container">
       {/* Header */}
       <div className="opportunity-detail-header">
-        <Button icon={<ArrowLeftOutlined />} type="text" onClick={() => navigate(-1)} />
         <Breadcrumb separator=">">
           <Breadcrumb.Item>
             <Link to={ROUTES_APP.crm.opportunityList}>Danh sách cơ hội</Link>
@@ -149,7 +147,7 @@ const OpportunityDetail = () => {
         <Segmented
           value={stage}
           onChange={(val) => setStage(val as StageType)}
-          options={stages.map((s) => ({ label: s, value: s }))}
+          options={stages.map((s) => ({ label: s, value: s, disabled: s === "Đóng" }))}
           size="middle"
           style={{
             background: "#fff",
@@ -195,10 +193,6 @@ const OpportunityDetail = () => {
                 <div className="form-row">
                   <label>Người phụ trách:</label>
                   <input value={opportunity.owner} disabled />
-                </div>
-                <div className="form-row last-row">
-                  <label>Next Action:</label>
-                  <input value={opportunity.nextAction} disabled />
                 </div>
               </div>
             ),

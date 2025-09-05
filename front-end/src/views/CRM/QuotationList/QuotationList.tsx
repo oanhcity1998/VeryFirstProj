@@ -39,7 +39,6 @@ export const quotationMockData: Quotation[] = [
     quotationName: "Báo giá thiết bị văn phòng",
     validityPeriod: "30 ngày",
     paymentTerms: "Thanh toán 50% trước, 50% sau giao hàng",
-    opportunity: "Dự án văn phòng A",
     products: [
       {
         id: 1,
@@ -163,14 +162,14 @@ const QuotationList = () => {
     <>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
         <h2>Danh sách mẫu báo giá</h2>
-        <Search
-          placeholder="Nhập tên mẫu báo giá..."
-          onChange={(e) => setSearchText(e.target.value)}
-          allowClear
-          style={{ maxWidth: 300, marginRight: "auto", marginLeft: 8 }}
-        />
 
         <Space>
+          <Search
+            placeholder="Nhập tên mẫu báo giá..."
+            onChange={(e) => setSearchText(e.target.value)}
+            allowClear
+            style={{ maxWidth: 300, marginRight: "auto", marginLeft: 8 }}
+          />
           {/* Filter button */}
           <Button
             icon={<FilterOutlined />}

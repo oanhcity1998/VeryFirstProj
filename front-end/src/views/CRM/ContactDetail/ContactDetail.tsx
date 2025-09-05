@@ -24,12 +24,6 @@ const ContactDetail: React.FC = () => {
   return (
     <div className="contact-detail-container">
       <div className="contact-detail-header">
-        <Button
-          icon={<ArrowLeftOutlined />}
-          type="text"
-          onClick={() => navigate(-1)}
-          className="back-button"
-        />
         <Breadcrumb className="contact-detail-breadcrumb" separator=">">
           <Breadcrumb.Item>
             <Link to={ROUTES_APP.crm.contactList}>Danh sách liên hệ</Link>

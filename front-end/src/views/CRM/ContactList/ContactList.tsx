@@ -92,19 +92,19 @@ const ContactList = () => {
     <>
       {/* header actions */}
       <div style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "center" }}>
-        <h2 style={{ flex: 1, textAlign: "center" }}>Danh sách thông tin người liên hệ</h2>
+        <h2 style={{ flex: 1 }}>Danh sách thông tin liên hệ</h2>
 
         <Search
           placeholder="Nhập tên người liên hệ..."
           onChange={(e) => setSearchText(e.target.value)}
           allowClear
-          className="header-search"
+          style={{ width: 250 }}
         />
 
         <Select
           allowClear
-          placeholder="Lọc theo Khách hàng"
-          style={{ width: 200 }}
+          placeholder="Lọc Khách hàng"
+          style={{ width: 150 }}
           value={filterCustomer}
           onChange={(val) => setFilterCustomer(val)}
           options={customerOptions.map((c) => ({ label: c, value: c }))}
@@ -112,8 +112,8 @@ const ContactList = () => {
 
         <Select
           allowClear
-          placeholder="Lọc theo Liên hệ chính"
-          style={{ width: 200 }}
+          placeholder="Lọc Liên hệ chính"
+          style={{ width: 150 }}
           value={filterMainContact}
           onChange={(val) => setFilterMainContact(val)}
           options={mainContactOptions.map((m) => ({ label: m, value: m }))}

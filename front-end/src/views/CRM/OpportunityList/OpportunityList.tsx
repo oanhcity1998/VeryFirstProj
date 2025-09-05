@@ -124,14 +124,14 @@ const OpportunityList = () => {
     <>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
         <h2>Danh sách cơ hội</h2>
-        <Search
-          placeholder="Nhập tên cơ hội..."
-          onChange={(e) => setSearchText(e.target.value)}
-          allowClear
-          style={{ maxWidth: 300, marginRight: "auto", marginLeft: 8 }}
-        />
 
         <Space>
+          <Search
+            placeholder="Nhập tên cơ hội..."
+            onChange={(e) => setSearchText(e.target.value)}
+            allowClear
+            style={{ maxWidth: 300, marginRight: "auto", marginLeft: 8 }}
+          />
           {/* Filter button */}
           <Button
             icon={<FilterOutlined />}

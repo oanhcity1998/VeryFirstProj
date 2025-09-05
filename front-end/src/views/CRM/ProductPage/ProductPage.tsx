@@ -213,17 +213,18 @@ const ProductPage = () => {
       >
         <Space>
           <h2 style={{ margin: 0 }}>Danh sách sản phẩm</h2>
+        </Space>
+
+        <Space>
           <Search
             placeholder="Tìm kiếm"
             allowClear
             name="search"
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            style={{ width: 300 }}
+            style={{ width: 250 }}
           />
-        </Space>
 
-        <Space>
           {/* Bộ lọc */}
           <Select
             allowClear

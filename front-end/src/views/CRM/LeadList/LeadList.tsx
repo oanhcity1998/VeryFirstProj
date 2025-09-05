@@ -38,9 +38,6 @@ const LeadList = () => {
     priority: null,
   });
 
-
-
-
   const handleDelete = () => {
     setDeleting(true);
     setData((prev) => prev.filter((item) => !selectedRowKeys.includes(item.id)));
@@ -84,13 +81,13 @@ const LeadList = () => {
   // Status popover content
   const StatusContent = (
     <div className="filter-popover">
-      {statusOptions.map(opt => (
+      {statusOptions.map((opt) => (
         <Checkbox
           key={opt}
           checked={statusFilter.includes(opt)}
           onChange={(e) => {
-            setStatusFilter(prev =>
-              e.target.checked ? [...prev, opt] : prev.filter(v => v !== opt)
+            setStatusFilter((prev) =>
+              e.target.checked ? [...prev, opt] : prev.filter((v) => v !== opt)
             );
           }}
         >
@@ -98,7 +95,9 @@ const LeadList = () => {
         </Checkbox>
       ))}
       <div className="filter-actions">
-        <Button size="small" type="link" onClick={() => setStatusFilter([])}>Xoá chọn</Button>
+        <Button size="small" type="link" onClick={() => setStatusFilter([])}>
+          Xoá chọn
+        </Button>
       </div>
     </div>
   );
@@ -109,24 +108,21 @@ const LeadList = () => {
     return matchStatus && matchPriority;
   });
 
-
-
   return (
     <>
       <div className="leadlist-header">
-        <h2>Danh sách lead</h2>
-        <Search
-          placeholder="Tìm kiếm Khách tiềm năng..."
-          onChange={(e) => setSearchText(e.target.value)}
-          allowClear
-          className="leadlist-search"
-        />
+        <h2>Danh sách Khách tiềm năng</h2>
 
         <Space>
+          <Search
+            placeholder="Tìm kiếm Khách tiềm năng..."
+            onChange={(e) => setSearchText(e.target.value)}
+            allowClear
+          />
           <Select
             allowClear
             placeholder="Trạng thái"
-            style={{ width: 180 }}
+            style={{ width: 110 }}
             value={filters.status}
             onChange={(val) => setFilters((prev) => ({ ...prev, status: val }))}
             options={[
@@ -139,7 +135,7 @@ const LeadList = () => {
           <Select
             allowClear
             placeholder="Ưu tiên"
-            style={{ width: 150 }}
+            style={{ width: 110 }}
             value={filters.priority}
             onChange={(val) => setFilters((prev) => ({ ...prev, priority: val }))}
             options={[
@@ -148,13 +144,8 @@ const LeadList = () => {
             ]}
           />
 
-
-
           {/* Opportunity button  */}
-          <Button
-            onClick={() => setOpportunityOpen(true)}
-            disabled={selectedRowKeys.length === 0}
-          >
+          <Button onClick={() => setOpportunityOpen(true)} disabled={selectedRowKeys.length === 0}>
             Cơ hội
           </Button>
           {/* Opportunity Modal */}
@@ -221,7 +212,6 @@ const LeadList = () => {
           onSubmit={handleSubmit}
         />
       </Modal>
-
     </>
   );
 };

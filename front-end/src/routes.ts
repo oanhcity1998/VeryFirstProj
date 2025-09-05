@@ -13,7 +13,7 @@ export const ROUTES_APP = {
     opportunityList: "/crm/opportunitylist",
     opportunityDetail: "/crm/opportunitylist/:id",
     leadList: "/crm/leadlist",
-    leadDetail: "/crm/leads/:id",
+    leadDetail: "/crm/leadlist/:id",
   },
   hrm: {
     employeeList: "/hrm/employee-list",

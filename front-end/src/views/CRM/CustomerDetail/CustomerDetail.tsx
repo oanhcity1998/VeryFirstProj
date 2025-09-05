@@ -428,7 +428,6 @@ export default function CustomerDetail() {
       className="customer-detail-card"
       title={
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <Button type="text" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)} />
           <Breadcrumb items={breadcrumbItems} separator=">" />
         </div>
       }

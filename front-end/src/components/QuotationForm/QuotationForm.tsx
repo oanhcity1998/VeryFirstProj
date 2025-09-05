@@ -71,7 +71,6 @@ export const QuotationForm = ({
         validityPeriod: initialValues?.validityPeriod,
         paymentTerms: initialValues?.paymentTerms,
         status: initialValues?.status ?? "Draft",
-        opportunity: initialValues?.opportunity,
       });
     }
   }, [open, initialValues, form]);
@@ -257,13 +256,6 @@ export const QuotationForm = ({
               <Select.Option value="Accepted">Accepted</Select.Option>
               <Select.Option value="Declined">Declined</Select.Option>
             </Select>
-          </Form.Item>
-          <Form.Item
-            label="Cơ hội"
-            name="opportunity"
-            rules={[{ required: !isDetail, message: "Vui lòng nhập cơ hội" }]}
-          >
-            <Input />
           </Form.Item>
         </div>
 
