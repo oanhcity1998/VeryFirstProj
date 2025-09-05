@@ -116,19 +116,6 @@ export const QuotationForm = ({
     });
   };
 
-  const breadcrumbItems = [
-    { title: "Danh sách mẫu báo giá" },
-    {
-      title:
-        mode === "create"
-          ? "Tạo mới mẫu báo giá"
-          : mode === "edit"
-          ? "Chỉnh sửa mẫu báo giá"
-          : "Chi tiết mẫu báo giá",
-    },
-    { title: initialValues?.quotationName ?? "Tạo thêm" },
-  ];
-
   const productColumns = [
     {
       title: "Sản phẩm",
@@ -199,7 +186,9 @@ export const QuotationForm = ({
 
   return (
     <Modal
-      title={<Breadcrumb items={breadcrumbItems} separator=">" />}
+      title={`${
+        mode === "create" ? "Tạo" : mode === "edit" ? "Chỉnh sửa" : "Chi tiết"
+      } mẫu báo giá`}
       open={open}
       onCancel={onCancel}
       footer={[

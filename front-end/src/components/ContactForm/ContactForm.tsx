@@ -35,22 +35,10 @@ const ContactForm = ({ mode, open, onCancel, onOk, initialValues }: ContactFormP
   };
 
   const isDetail = mode === "detail";
-  const breadcrumbItems = [
-    { title: "Danh sách liên hệ" },
-    {
-      title:
-        mode === "create"
-          ? "Tạo mới liên hệ"
-          : mode === "edit"
-          ? "Chỉnh sửa liên hệ"
-          : "Chi tiết liên hệ",
-    },
-    { title: initialValues?.contactName ?? "Tạo thêm" },
-  ];
 
   return (
     <Modal
-      title={<Breadcrumb items={breadcrumbItems} separator=">" />}
+      title={`${mode === "create" ? "Tạo" : mode === "edit" ? "Chỉnh sửa" : "Chi tiết"} liên hệ`}
       open={open}
       onCancel={onCancel}
       footer={[

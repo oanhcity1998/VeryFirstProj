@@ -1,5 +1,5 @@
 import React from "react";
-import { Breadcrumb, Button } from "antd";
+import { Breadcrumb, Button, Card } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import "./ContactDetail.css";
@@ -32,7 +32,7 @@ const ContactDetail: React.FC = () => {
         </Breadcrumb>
       </div>
 
-      <div className="contact-detail-content">
+      <Card>
         <div className="contact-detail-title">Chi tiết {contact.contactName}</div>
 
         <div className="contact-detail-form">
@@ -65,7 +65,7 @@ const ContactDetail: React.FC = () => {
             <input value={contact.note} disabled />
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

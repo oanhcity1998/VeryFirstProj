@@ -11,13 +11,12 @@ import QuotationList from "./views/CRM/QuotationList/QuotationList";
 import LeadList from "./views/CRM/LeadList/LeadList";
 import LeadDetail from "./views/CRM/LeadDetail/LeadDetail";
 import OpportunityList from "./views/CRM/OpportunityList/OpportunityList";
-import ContractList from "./views/CRM/ContractList/ContractList"
+import ContractList from "./views/CRM/ContractList/ContractList";
 import ContractDetailWrapper from "./views/CRM/ContractDetail/ContractDetailWrapper";
 import { ROUTES_APP } from "./routes";
 import EmployeeList from "./views/HRM/EmployeeList/EmployeeList";
 import EmployeeDetail from "./views/HRM/EmployeeDetail/EmployeeDetail";
 import PositionList from "./views/HRM/PositionList/PositionList";
-
 
 import "./App.css";
 import ContactDetail from "./views/CRM/ContactDetail/ContactDetail";
@@ -66,12 +65,10 @@ export default function App() {
 
           {/* Hợp đồng  */}
           <Route path={ROUTES_APP.crm.contractList} element={<ContractList />} />
-          <Route path="/contracts/:id" element={<ContractDetailWrapper />} />
-
+          <Route path={ROUTES_APP.crm.contractDetail} element={<ContractDetailWrapper />} />
 
           {/* HRM */}
-
-          {/* home crm */}
+          {/* home hrm */}
           <Route path={ROUTES_APP.hrm.homeHRM} element={<HomeHRM />} />
 
           {/* Nhân sự */}
@@ -83,7 +80,6 @@ export default function App() {
 
           {/* Phòng ban */}
           <Route path={ROUTES_APP.hrm.departmentList} element={<DepartmentList />} />
-
         </Route>
       </Routes>
     </BrowserRouter>

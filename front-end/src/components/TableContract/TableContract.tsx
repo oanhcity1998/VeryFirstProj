@@ -1,7 +1,8 @@
 import React from "react";
 import { Table, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { useNavigate } from "react-router-dom";
+import { generatePath, useNavigate } from "react-router-dom";
+import { ROUTES_APP } from "../../routes";
 
 const { Link } = Typography;
 
@@ -23,14 +24,14 @@ interface TableContractProps {
   data: Contract[];
   selectedRowKeys: React.Key[];
   onSelectChange: (keys: React.Key[]) => void;
-  onRow?: (record: Contract) => React.HTMLAttributes<HTMLElement>; 
+  onRow?: (record: Contract) => React.HTMLAttributes<HTMLElement>;
 }
 
 const TableContract: React.FC<TableContractProps> = ({
   data,
   selectedRowKeys,
   onSelectChange,
-  onRow
+  onRow,
 }) => {
   const navigate = useNavigate();
 
@@ -43,7 +44,7 @@ const TableContract: React.FC<TableContractProps> = ({
       render: (text, record) => (
         <Link
           className="contract-link"
-          onClick={() => navigate(`/contracts/${record.id}`)}
+          onClick={() => navigate(generatePath(ROUTES_APP.crm.contractDetail, { id: record.id }))}
         >
           {text}
         </Link>
@@ -77,8 +78,8 @@ const TableContract: React.FC<TableContractProps> = ({
       rowKey="id"
       pagination={{ pageSize: 5 }}
       className="contract-table"
-      onRow={onRow}   
-     />
+      onRow={onRow}
+    />
   );
 };
 

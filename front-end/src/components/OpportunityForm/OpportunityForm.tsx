@@ -52,22 +52,9 @@ export const OpportunityForm = ({
     });
   };
 
-  const breadcrumbItems = [
-    { title: "Danh sách cơ hội" },
-    {
-      title:
-        mode === "create"
-          ? "Tạo mới cơ hội"
-          : mode === "edit"
-          ? "Chỉnh sửa cơ hội"
-          : "Chi tiết cơ hội",
-    },
-    { title: initialValues?.name ?? "Tạo thêm" },
-  ];
-
   return (
     <Modal
-      title={<Breadcrumb items={breadcrumbItems} separator=">" />}
+      title={`${mode === "create" ? "Tạo" : mode === "edit" ? "Chỉnh sửa" : "Chi tiết"} cơ hội`}
       open={open}
       onCancel={onCancel}
       footer={[

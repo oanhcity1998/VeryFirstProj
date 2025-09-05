@@ -2,21 +2,18 @@ import React, { useState } from "react";
 import { Button, Space, Typography, Input, Select } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import "./ContractList.css";
-import { useNavigate } from "react-router-dom";
+import { generatePath, useNavigate } from "react-router-dom";
 import ContractTable, { Contract } from "../../../components/TableContract/TableContract";
 import CreateContractForm from "../../../components/ContractForm/CreateContractForm";
-import ContractDetail from "../ContractDetail/ContractDetail"
+import ContractDetail from "../ContractDetail/ContractDetail";
+import { ROUTES_APP } from "../../../routes";
 
 const { Search } = Input;
 const { Option } = Select;
-type ViewDetail =
-  | {
-      loai: "baogia" | "hopdong";
-      record: Contract;
-    }
-  | null;
-
-
+type ViewDetail = {
+  loai: "baogia" | "hopdong";
+  record: Contract;
+} | null;
 
 const ContractList: React.FC = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -28,21 +25,18 @@ const ContractList: React.FC = () => {
 
   const navigate = useNavigate();
 
-
   // ContractList.tsx
-    const handleRowClick = (record: Contract) => {
-    navigate(`/contracts/${record.id}?loai=${record.type === "Báo giá" ? "baogia" : "hopdong"}`);
-    };
+  const handleRowClick = (record: Contract) => {
+    navigate(
+      `${generatePath(ROUTES_APP.crm.contractDetail, { id: record.id })}?loai=${
+        record.type === "Báo giá" ? "baogia" : "hopdong"
+      }`
+    );
+  };
 
-    if (viewDetail) {
-        return (
-            <ContractDetail
-            loai={viewDetail.loai}
-            onBack={() => setViewDetail(null)}
-            />
-        );
-        }
-
+  if (viewDetail) {
+    return <ContractDetail loai={viewDetail.loai} onBack={() => setViewDetail(null)} />;
+  }
 
   const handleSave = (data: any) => {
     console.log("Dữ liệu hợp đồng mới:", data);
@@ -121,14 +115,10 @@ const ContractList: React.FC = () => {
             <Option value="Báo giá">Báo giá</Option>
             <Option value="Hợp đồng">Hợp đồng</Option>
           </Select>
-          <Button
-            danger
-            disabled={selectedRowKeys.length === 0}
-            icon={<DeleteOutlined />}
-          >
+          <Button danger disabled={selectedRowKeys.length === 0} icon={<DeleteOutlined />}>
             Xoá
           </Button>
-          <Button type="primary" icon={<PlusOutlined />}  onClick={() => setOpenForm(true)}>
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpenForm(true)}>
             Tạo
           </Button>
         </div>
@@ -140,17 +130,12 @@ const ContractList: React.FC = () => {
         selectedRowKeys={selectedRowKeys}
         onSelectChange={setSelectedRowKeys}
         onRow={(record) => ({
-            onClick: () => handleRowClick(record),
+          onClick: () => handleRowClick(record),
         })}
       />
 
-
       {/* Form modal */}
-      <CreateContractForm
-        open={openForm}
-        onCancel={() => setOpenForm(false)}
-        onSave={handleSave}
-      />
+      <CreateContractForm open={openForm} onCancel={() => setOpenForm(false)} onSave={handleSave} />
     </div>
   );
 };
