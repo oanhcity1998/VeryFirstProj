@@ -444,16 +444,15 @@ const EmployeeList: React.FC = () => {
 
   return (
     <>
-      <div className="customer-list-header">
+      <div className="employee-list-header">
         <h2>Danh sách nhân sự</h2>
-        <div className="customer-list-actions">
-          <Space direction="vertical">
-            <Search
-              className="custom-search-bar"
-              placeholder="Tìm kiếm theo họ và tên"
-              style={{ width: 250 }}
-            />
-          </Space>
+        <div className="employee-list-actions">
+          <Search
+            className="employee-search-bar"
+            placeholder="Tìm kiếm theo họ và tên"
+            allowClear
+            name="search"
+          />
           <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>
             Bộ lọc
           </Button>
@@ -530,7 +529,7 @@ const EmployeeList: React.FC = () => {
             Tạo
           </Button>
         </div>
-      </div>
+      </div >
 
       <TableEmployee
         data={data}

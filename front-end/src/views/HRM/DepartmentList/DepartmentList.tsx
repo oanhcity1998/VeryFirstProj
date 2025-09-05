@@ -247,16 +247,15 @@ const DepartmentList: React.FC = () => {
 
     return (
         <>
-            <div className="customer-list-header">
+            <div className="department-list-header">
                 <h2>Danh sách phòng ban</h2>
-                <div className="customer-list-actions">
-                    <Space direction="vertical">
-                        <Search
-                            className="department-search-bar"
-                            placeholder="Tìm kiếm theo tên phòng ban"
-                            style={{ width: 250 }}
-                        />
-                    </Space>
+                <div className="department-list-actions">
+                    <Search
+                        className="department-search-bar"
+                        placeholder="Tìm kiếm theo tên phòng ban"
+                        allowClear
+                        name="search"
+                    />
                     <Select
                         placeholder="Lọc theo tên phòng ban"
                         style={{ width: 250 }}

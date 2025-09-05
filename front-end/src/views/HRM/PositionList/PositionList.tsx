@@ -248,16 +248,15 @@ const PositionList: React.FC = () => {
 
   return (
     <>
-      <div className="customer-list-header">
+      <div className="position-list-header">
         <h2>Danh sách chức vụ</h2>
-        <div className="customer-list-actions">
-          <Space direction="vertical">
-            <Search
-              className="position-search-bar"
-              placeholder="Tìm kiếm theo tên chức vụ"
-              style={{ width: 250 }}
-            />
-          </Space>
+        <div className="position-list-actions">
+          <Search
+            className="position-search-bar"
+            placeholder="Tìm kiếm theo tên chức vụ"
+            allowClear
+            name="search"
+          />
           <Select
             placeholder="Lọc theo mã chức vụ"
             style={{ width: 250 }}
@@ -324,7 +323,7 @@ const PositionList: React.FC = () => {
             Tạo
           </Button>
         </div>
-      </div>
+      </div >
 
       <TablePosition
         data={filteredData}

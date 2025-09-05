@@ -1,11 +1,11 @@
-.customer-list-header {
+.department-list-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
 }
 
-.customer-list-actions {
+.department-list-actions {
     display: flex;
     gap: 10px;
     align-items: center;
