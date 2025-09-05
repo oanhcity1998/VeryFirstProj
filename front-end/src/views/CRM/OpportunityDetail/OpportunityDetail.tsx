@@ -1,5 +1,16 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { Tabs, Table, Segmented, Breadcrumb, Space, Button, Timeline, Modal, message } from "antd";
+import {
+  Tabs,
+  Table,
+  Segmented,
+  Breadcrumb,
+  Space,
+  Button,
+  Timeline,
+  Modal,
+  message,
+  Card,
+} from "antd";
 import { useState } from "react";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { ROUTES_APP } from "../../../routes";
@@ -120,145 +131,147 @@ const OpportunityDetail = () => {
         </Breadcrumb>
       </div>
 
-      {/* Stage + buttons */}
-      <div className="opportunity-detail-stage">
-        <Space>
-          <Button type="primary" onClick={() => setIsLoseModalOpen(true)} danger>
-            Mất
-          </Button>
-          <Button type="primary" style={{ backgroundColor: "#60A917", borderColor: "#60A917" }}>
-            Đạt
-          </Button>
+      <Card>
+        {/* Stage + buttons */}
+        <div className="opportunity-detail-stage">
+          <Space>
+            <Button type="primary" onClick={() => setIsLoseModalOpen(true)} danger>
+              Mất
+            </Button>
+            <Button type="primary" style={{ backgroundColor: "#60A917", borderColor: "#60A917" }}>
+              Đạt
+            </Button>
 
-          <Modal
-            open={isLoseModalOpen}
-            title="Xác nhận Xóa"
-            onOk={handelLose}
-            onCancel={() => setIsLoseModalOpen(false)}
-            okText="Xóa"
-            cancelText="Hủy"
-            okButtonProps={{ danger: true, loading: losing }}
-            centered
-          >
-            <p>Bạn có muốn xoá thông tin cơ hội này?</p>
-          </Modal>
-        </Space>
+            <Modal
+              open={isLoseModalOpen}
+              title="Xác nhận Xóa"
+              onOk={handelLose}
+              onCancel={() => setIsLoseModalOpen(false)}
+              okText="Xóa"
+              cancelText="Hủy"
+              okButtonProps={{ danger: true, loading: losing }}
+              centered
+            >
+              <p>Bạn có muốn xoá thông tin cơ hội này?</p>
+            </Modal>
+          </Space>
 
-        <Segmented
-          value={stage}
-          onChange={(val) => setStage(val as StageType)}
-          options={stages.map((s) => ({ label: s, value: s, disabled: s === "Đóng" }))}
-          size="middle"
-          style={{
-            background: "#fff",
-            border: "1px solid #d9d9d9",
-            borderRadius: 8,
-          }}
+          <Segmented
+            value={stage}
+            onChange={(val) => setStage(val as StageType)}
+            options={stages.map((s) => ({ label: s, value: s, disabled: s === "Đóng" }))}
+            size="middle"
+            style={{
+              background: "#fff",
+              border: "1px solid #d9d9d9",
+              borderRadius: 8,
+            }}
+          />
+        </div>
+
+        {/* Tabs */}
+        <Tabs
+          defaultActiveKey="general"
+          items={[
+            {
+              key: "general",
+              label: "Thông tin chung",
+              children: (
+                <div className="detail-form">
+                  <div className="form-row">
+                    <label>Tên cơ hội:</label>
+                    <input value={opportunity.name} disabled />
+                  </div>
+                  <div className="form-row">
+                    <label>Giá trị dự kiến:</label>
+                    <input value={opportunity.expectedValue.toLocaleString() + " VND"} disabled />
+                  </div>
+                  <div className="form-row">
+                    <label>Ngày chốt dự kiến:</label>
+                    <input value={opportunity.expectedCloseDate} disabled />
+                  </div>
+                  <div className="form-row">
+                    <label>Xác suất:</label>
+                    <input value={`${opportunity.probability}%`} disabled />
+                  </div>
+                  <div className="form-row">
+                    <label>Ưu tiên:</label>
+                    <input value={opportunity.priority} disabled />
+                  </div>
+                  <div className="form-row">
+                    <label>Giai đoạn:</label>
+                    <input value={opportunity.stage} disabled />
+                  </div>
+                  <div className="form-row">
+                    <label>Người phụ trách:</label>
+                    <input value={opportunity.owner} disabled />
+                  </div>
+                </div>
+              ),
+            },
+            {
+              key: "contact",
+              label: "Liên hệ",
+              children: (
+                <div className="detail-form">
+                  <div className="form-row">
+                    <label>Tên liên hệ:</label>
+                    <input value={opportunity.contact.contactName} disabled />
+                  </div>
+                  <div className="form-row">
+                    <label>Chức vụ:</label>
+                    <input value={opportunity.contact.title} disabled />
+                  </div>
+                  <div className="form-row">
+                    <label>Công ty:</label>
+                    <input value={opportunity.contact.customerName} disabled />
+                  </div>
+                  <div className="form-row">
+                    <label>Email:</label>
+                    <input value={opportunity.contact.email} disabled />
+                  </div>
+                  <div className="form-row">
+                    <label>Điện thoại:</label>
+                    <input value={opportunity.contact.phone} disabled />
+                  </div>
+                  <div className="form-row">
+                    <label>Người liên hệ chính:</label>
+                    <input value={opportunity.contact.mainContact} disabled />
+                  </div>
+                  <div className="form-row last-row">
+                    <label>Ghi chú:</label>
+                    <input value={opportunity.contact.note} disabled />
+                  </div>
+                </div>
+              ),
+            },
+            {
+              key: "products",
+              label: "Sản phẩm dự kiến",
+              children: (
+                <Table
+                  columns={productColumns}
+                  dataSource={opportunity.service}
+                  rowKey="id"
+                  pagination={false}
+                  bordered
+                />
+              ),
+            },
+            {
+              key: "activities",
+              label: "Hoạt động",
+              children: (
+                <Timeline>
+                  <Timeline.Item color="blue">01/09: Gọi điện cho khách hàng</Timeline.Item>
+                  <Timeline.Item color="green">02/09: Gửi proposal</Timeline.Item>
+                  <Timeline.Item color="red">05/09: Khách yêu cầu demo</Timeline.Item>
+                </Timeline>
+              ),
+            },
+          ]}
         />
-      </div>
-
-      {/* Tabs */}
-      <Tabs
-        defaultActiveKey="general"
-        items={[
-          {
-            key: "general",
-            label: "Thông tin chung",
-            children: (
-              <div className="detail-form">
-                <div className="form-row">
-                  <label>Tên cơ hội:</label>
-                  <input value={opportunity.name} disabled />
-                </div>
-                <div className="form-row">
-                  <label>Giá trị dự kiến:</label>
-                  <input value={opportunity.expectedValue.toLocaleString() + " VND"} disabled />
-                </div>
-                <div className="form-row">
-                  <label>Ngày chốt dự kiến:</label>
-                  <input value={opportunity.expectedCloseDate} disabled />
-                </div>
-                <div className="form-row">
-                  <label>Xác suất:</label>
-                  <input value={`${opportunity.probability}%`} disabled />
-                </div>
-                <div className="form-row">
-                  <label>Ưu tiên:</label>
-                  <input value={opportunity.priority} disabled />
-                </div>
-                <div className="form-row">
-                  <label>Giai đoạn:</label>
-                  <input value={opportunity.stage} disabled />
-                </div>
-                <div className="form-row">
-                  <label>Người phụ trách:</label>
-                  <input value={opportunity.owner} disabled />
-                </div>
-              </div>
-            ),
-          },
-          {
-            key: "contact",
-            label: "Liên hệ",
-            children: (
-              <div className="detail-form">
-                <div className="form-row">
-                  <label>Tên liên hệ:</label>
-                  <input value={opportunity.contact.contactName} disabled />
-                </div>
-                <div className="form-row">
-                  <label>Chức vụ:</label>
-                  <input value={opportunity.contact.title} disabled />
-                </div>
-                <div className="form-row">
-                  <label>Công ty:</label>
-                  <input value={opportunity.contact.customerName} disabled />
-                </div>
-                <div className="form-row">
-                  <label>Email:</label>
-                  <input value={opportunity.contact.email} disabled />
-                </div>
-                <div className="form-row">
-                  <label>Điện thoại:</label>
-                  <input value={opportunity.contact.phone} disabled />
-                </div>
-                <div className="form-row">
-                  <label>Người liên hệ chính:</label>
-                  <input value={opportunity.contact.mainContact} disabled />
-                </div>
-                <div className="form-row last-row">
-                  <label>Ghi chú:</label>
-                  <input value={opportunity.contact.note} disabled />
-                </div>
-              </div>
-            ),
-          },
-          {
-            key: "products",
-            label: "Sản phẩm dự kiến",
-            children: (
-              <Table
-                columns={productColumns}
-                dataSource={opportunity.service}
-                rowKey="id"
-                pagination={false}
-                bordered
-              />
-            ),
-          },
-          {
-            key: "activities",
-            label: "Hoạt động",
-            children: (
-              <Timeline>
-                <Timeline.Item color="blue">01/09: Gọi điện cho khách hàng</Timeline.Item>
-                <Timeline.Item color="green">02/09: Gửi proposal</Timeline.Item>
-                <Timeline.Item color="red">05/09: Khách yêu cầu demo</Timeline.Item>
-              </Timeline>
-            ),
-          },
-        ]}
-      />
+      </Card>
     </div>
   );
 };

@@ -76,7 +76,7 @@ const QuotationDetail: React.FC = () => {
 
       <Card style={{ margin: "24px 0" }}>
         {/* Thông tin chung */}
-        <h3>Thông tin báo giá</h3>
+        <h3>Thông tin chi tiết mẫu báo giá</h3>
         <Form
           layout="horizontal"
           initialValues={quotation}
@@ -147,7 +147,7 @@ const QuotationDetail: React.FC = () => {
         />
 
         {summary && (
-          <div style={{ marginTop: 16, marginRight: "25%", textAlign: "right" }}>
+          <div style={{ marginTop: 16, textAlign: "right" }}>
             <p>
               <b>Tổng chưa VAT:</b> {summary.totalBeforeVat.toLocaleString()} VND
             </p>

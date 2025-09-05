@@ -274,7 +274,7 @@ export const QuotationForm = ({
           />
 
           {summary && (
-            <div style={{ marginTop: 16, marginRight: "25%", textAlign: "right" }}>
+            <div style={{ marginTop: 16, textAlign: "right" }}>
               <p>
                 <b>Tổng chưa VAT:</b> {fmt(summary.totalBeforeVat)} VND
               </p>
