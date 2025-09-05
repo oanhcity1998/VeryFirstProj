@@ -137,9 +137,6 @@ const ContractList: React.FC = () => {
       />
 
       {/* Form modal */}
-<<<<<<< HEAD
-      <CreateContractForm open={openForm} onCancel={() => setOpenForm(false)} onSave={handleSave} />
-=======
       <CreateContractForm
         open={openForm}
         onCancel={() => setOpenForm(false)}
@@ -156,7 +153,6 @@ const ContractList: React.FC = () => {
         title="Chỉnh sửa báo giá & hợp đồng" // ✅ new title
         initialValues={editRecord || undefined} // ✅ pass record data
         />
->>>>>>> bf69e6c (fixed bug)
     </div>
   );
 };
