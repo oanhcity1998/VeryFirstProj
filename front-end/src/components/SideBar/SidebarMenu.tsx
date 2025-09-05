@@ -9,6 +9,7 @@ import {
   DollarOutlined,
   IdcardOutlined,
   UserSwitchOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu.css";
@@ -71,6 +72,11 @@ const SidebarMenu = ({ collapsed }) => {
       key: "7",
       icon: <DollarOutlined />,
       label: <Link to={ROUTES_APP.crm.opportunityList}>Cơ hội</Link>,
+    },
+    {
+      key: "8",
+      icon: <FileTextOutlined />,
+      label: <Link to={ROUTES_APP.crm.contractList}>Hợp đồng</Link>,
     },
     // {
     //   key: "8",
