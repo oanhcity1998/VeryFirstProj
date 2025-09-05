@@ -145,19 +145,41 @@ const ProductPage = () => {
       dataIndex: "type",
       key: "type",
       width: 150,
+      render: (value) => (value === "package" ? "Theo gói" : "Theo tháng"),
+    },
+    {
+      title: "Giá (VND)",
+      dataIndex: "priceVND",
+      key: "priceVND",
+      width: 120,
+      render: (value) => value?.toLocaleString("vi-VN"),
     },
     {
       title: "Giá (USD)",
-      dataIndex: "price",
-      key: "price",
+      dataIndex: "priceUSD",
+      key: "priceUSD",
       width: 120,
-      render: (value: number) => value?.toLocaleString("en-US"),
+      render: (value) => value?.toLocaleString("en-US"),
     },
     {
       title: "VAT (%)",
       dataIndex: "vat",
       key: "vat",
       width: 100,
+    },
+    {
+      title: "Giá sau VAT (VND)",
+      dataIndex: "priceAfterVatVND",
+      key: "priceAfterVatVND",
+      width: 150,
+      render: (value) => value?.toLocaleString("vi-VN"),
+    },
+    {
+      title: "Giá sau VAT (USD)",
+      dataIndex: "priceAfterVatUSD",
+      key: "priceAfterVatUSD",
+      width: 150,
+      render: (value) => value?.toLocaleString("en-US"),
     },
     {
       title: "Ngày tạo",
@@ -202,7 +224,7 @@ const ProductPage = () => {
   };
 
   return (
-    <div style={{ padding: 20 }}>
+    <div>
       {/* Thanh công cụ */}
       <div
         style={{
@@ -216,6 +238,7 @@ const ProductPage = () => {
         </Space>
 
         <Space>
+          {/* Searchbar  */}
           <Search
             placeholder="Tìm kiếm"
             allowClear
@@ -224,7 +247,6 @@ const ProductPage = () => {
             onChange={(e) => setSearchValue(e.target.value)}
             style={{ width: 250 }}
           />
-
           {/* Bộ lọc */}
           <Select
             allowClear

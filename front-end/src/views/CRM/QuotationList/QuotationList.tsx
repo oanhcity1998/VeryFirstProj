@@ -162,8 +162,9 @@ const QuotationList = () => {
     <>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
         <h2>Danh sách mẫu báo giá</h2>
-
+        
         <Space>
+          {/* Searchbar  */}
           <Search
             placeholder="Nhập tên mẫu báo giá..."
             onChange={(e) => setSearchText(e.target.value)}

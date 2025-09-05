@@ -111,14 +111,23 @@ const LeadList = () => {
   return (
     <>
       <div className="leadlist-header">
+<<<<<<< HEAD
         <h2>Danh sách Khách tiềm năng</h2>
+=======
+        <h2>Danh sách lead</h2>
+>>>>>>> bf69e6c (fixed bug)
 
         <Space>
           <Search
             placeholder="Tìm kiếm Khách tiềm năng..."
             onChange={(e) => setSearchText(e.target.value)}
             allowClear
+<<<<<<< HEAD
           />
+=======
+            className="leadlist-search"
+            />
+>>>>>>> bf69e6c (fixed bug)
           <Select
             allowClear
             placeholder="Trạng thái"

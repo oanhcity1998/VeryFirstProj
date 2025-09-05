@@ -1,8 +1,10 @@
 import React from "react";
-import { Table, Typography } from "antd";
+import { Table, Typography, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { generatePath, useNavigate } from "react-router-dom";
+import { useNavigate, generatePath } from "react-router-dom";
+import { EditOutlined } from "@ant-design/icons";
 import { ROUTES_APP } from "../../routes";
+
 
 const { Link } = Typography;
 
@@ -25,6 +27,7 @@ interface TableContractProps {
   selectedRowKeys: React.Key[];
   onSelectChange: (keys: React.Key[]) => void;
   onRow?: (record: Contract) => React.HTMLAttributes<HTMLElement>;
+  onEditClick?: (record: Contract) => void; // ✅ add callback
 }
 
 const TableContract: React.FC<TableContractProps> = ({
@@ -32,6 +35,7 @@ const TableContract: React.FC<TableContractProps> = ({
   selectedRowKeys,
   onSelectChange,
   onRow,
+  onEditClick,
 }) => {
   const navigate = useNavigate();
 
@@ -63,6 +67,29 @@ const TableContract: React.FC<TableContractProps> = ({
     { title: "Người duyệt", dataIndex: "approver", key: "approver" },
     { title: "Ngày duyệt", dataIndex: "approvedAt", key: "approvedAt" },
     { title: "Trạng thái", dataIndex: "status", key: "status" },
+
+    // ✅ New action column like in TableQuotation
+    {
+      title: "",
+      key: "action",
+      width: 60,
+      render: (_, record) => (
+        <Tooltip title="Chỉnh sửa">
+          <EditOutlined
+            style={{
+              fontSize: 20,
+              cursor: "pointer",
+              color: "#1890ff",
+              padding: 8,
+            }}
+            onClick={(e) => {
+              e.stopPropagation(); // prevent row click
+              onEditClick?.(record);
+            }}
+          />
+        </Tooltip>
+      ),
+    },
   ];
 
   const rowSelection = {
@@ -76,7 +103,7 @@ const TableContract: React.FC<TableContractProps> = ({
       columns={columns}
       dataSource={data}
       rowKey="id"
-      pagination={{ pageSize: 5 }}
+      pagination={{ pageSize: 5, position: ["bottomCenter"] }}
       className="contract-table"
       onRow={onRow}
     />

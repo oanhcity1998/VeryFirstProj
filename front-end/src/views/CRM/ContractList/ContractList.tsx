@@ -22,6 +22,7 @@ const ContractList: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState<string | undefined>();
   const [openForm, setOpenForm] = useState(false);
   const [viewDetail, setViewDetail] = useState<ViewDetail>(null);
+  const [editRecord, setEditRecord] = useState<Contract | null>(null);
 
   const navigate = useNavigate();
 
@@ -132,10 +133,30 @@ const ContractList: React.FC = () => {
         onRow={(record) => ({
           onClick: () => handleRowClick(record),
         })}
+        onEditClick={(record) => setEditRecord(record)}
       />
 
       {/* Form modal */}
+<<<<<<< HEAD
       <CreateContractForm open={openForm} onCancel={() => setOpenForm(false)} onSave={handleSave} />
+=======
+      <CreateContractForm
+        open={openForm}
+        onCancel={() => setOpenForm(false)}
+        onSave={handleSave}
+      />
+
+      <CreateContractForm
+        open={!!editRecord}
+        onCancel={() => setEditRecord(null)}
+        onSave={(data) => {
+            console.log("Edited data:", data);
+            setEditRecord(null);
+        }}
+        title="Chỉnh sửa báo giá & hợp đồng" // ✅ new title
+        initialValues={editRecord || undefined} // ✅ pass record data
+        />
+>>>>>>> bf69e6c (fixed bug)
     </div>
   );
 };

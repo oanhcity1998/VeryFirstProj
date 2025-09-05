@@ -5,6 +5,13 @@
   align-items: center;
 }
 
+.leadlist-search {
+  max-width: 300px;
+  margin-right: auto;
+  margin-left: 8px;
+  margin:auto
+}
+
 .filter-popover {
   display: flex;
   flex-direction: column;

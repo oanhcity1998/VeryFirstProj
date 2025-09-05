@@ -1,7 +1,11 @@
 import React, { useState } from "react";
-import { Input, Table, Button, Row, Col, Modal } from "antd";
+import { Input, Table, Button, Row, Col, Modal, Breadcrumb, Card, Typography } from "antd";
+import { Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import "./ContractDetail.css";
+import { ROUTES_APP } from "../../../routes";
+
+const { Title } = Typography;
 
 interface ContractDetailProps {
   role?: "Nhân viên" | "Giám đốc";
@@ -9,14 +13,9 @@ interface ContractDetailProps {
   onBack: () => void;
 }
 
-
 const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai, onBack }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const title =
-    loai === "baogia" ? "Chi tiết báo giá" : "Chi tiết hợp đồng";
-
-console.log("ContractDetail received loai:", loai);
-
+  const title = loai === "baogia" ? "Chi tiết báo giá" : "Chi tiết hợp đồng";
 
   const products = [
     { key: 1, name: "Dịch vụ kế toán", type: "Tháng", priceVND: 5000000, priceUSD: 400, vat: 10 },
@@ -59,89 +58,68 @@ console.log("ContractDetail received loai:", loai);
     setIsModalOpen(false);
   };
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
   return (
     <div className="contract-detail">
+      {/* Header */}
       <div className="contract-detail-header">
-        <Button
-            icon={<ArrowLeftOutlined />}
-            type="text"
-            onClick={onBack}
-            className="back-button"
-        />
-        <h2 className="contract-detail-title">{title}</h2>
-    </div>
-
-
-      {/* 2-column form */}
-      <Row gutter={24} className="form-grid">
-        <Col span={12} className="form-item">
-          <label>Mã báo giá</label>
-          <Input value="AF25_BG1" disabled />
-        </Col>
-        <Col span={12} className="form-item">
-          <label>Tên báo giá</label>
-          <Input value="Báo giá piggy hotel" disabled />
-        </Col>
-
-        <Col span={12} className="form-item">
-          <label>Mẫu báo giá</label>
-          <Input value="Mẫu báo giá 1" disabled />
-        </Col>
-        <Col span={12} className="form-item">
-          <label>Ngày tạo</label>
-          <Input value="20/02/2025" disabled />
-        </Col>
-
-        <Col span={12} className="form-item">
-          <label>Điều khoản thanh toán</label>
-          <Input value="Trả trước 50%" disabled />
-        </Col>
-        <Col span={12} className="form-item">
-          <label>Thời hạn hiệu lực</label>
-          <Input value="30 ngày" disabled />
-        </Col>
-
-        <Col span={12} className="form-item">
-          <label>Nhân viên phụ trách</label>
-          <Input value="Văn A" disabled />
-        </Col>
-        <Col span={12} className="form-item">
-          <label>Người duyệt</label>
-          <Input value="Trần B" disabled />
-        </Col>
-
-        <Col span={12} className="form-item">
-          <label>Trạng thái</label>
-          <Input value="Chờ duyệt" disabled />
-        </Col>
-        <Col span={12} className="form-item">
-          <label>Ngày duyệt</label>
-          <Input value="" disabled />
-        </Col>
-      </Row>
-
-      <h3>Danh sách sản phẩm</h3>
-      <Table
-        dataSource={products}
-        columns={columns}
-        pagination={false}
-        bordered
-        className="product-table"
-      />
-
-      {/* Totals block */}
-      <div className="totals">
-        <p>Tổng giá trước VAT (VND): {totalVND.toLocaleString("vi-VN")}</p>
-        <p>Tổng giá trước VAT (USD): {totalUSD}</p>
-        <p>Tổng giá sau VAT (VND): {totalVNDWithVAT.toLocaleString("vi-VN")}</p>
-        <p>Tổng giá sau VAT (USD): {totalUSDWithVAT}</p>
+        <Button icon={<ArrowLeftOutlined />} type="text" onClick={onBack} className="back-button" />
+        <Breadcrumb className="contract-detail-title" separator=">">
+          <Breadcrumb.Item>
+            <Link to={ROUTES_APP.crm.contractList}>Danh sách hợp đồng & cơ hội</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>{title}</Breadcrumb.Item>
+        </Breadcrumb>
       </div>
 
-      <div className="actions">
+      {/* Card wrapper */}
+      <Card title={title} style={{ marginTop: 16 }}>
+        <Row gutter={24} className="form-grid">
+          <Col span={12}>
+            <FormItem label="Mã báo giá" value="AF25_BG1" />
+          </Col>
+          <Col span={12}>
+            <FormItem label="Tên báo giá" value="Báo giá piggy hotel" />
+          </Col>
+          <Col span={12}>
+            <FormItem label="Mẫu báo giá" value="Mẫu báo giá 1" />
+          </Col>
+          <Col span={12}>
+            <FormItem label="Ngày tạo" value="20/02/2025" />
+          </Col>
+          <Col span={12}>
+            <FormItem label="Điều khoản thanh toán" value="Trả trước 50%" />
+          </Col>
+          <Col span={12}>
+            <FormItem label="Thời hạn hiệu lực" value="30 ngày" />
+          </Col>
+          <Col span={12}>
+            <FormItem label="Nhân viên phụ trách" value="Văn A" />
+          </Col>
+          <Col span={12}>
+            <FormItem label="Người duyệt" value="Trần B" />
+          </Col>
+          <Col span={12}>
+            <FormItem label="Trạng thái" value="Chờ duyệt" />
+          </Col>
+          <Col span={12}>
+            <FormItem label="Ngày duyệt" value="" />
+          </Col>
+        </Row>
+      </Card>
+
+      {/* Products card */}
+      <Card title="Danh sách sản phẩm" style={{ marginTop: 16 }}>
+        <Table dataSource={products} columns={columns} pagination={false} bordered />
+        <div className="totals" style={{ marginTop: 16 }}>
+          <p>Tổng giá trước VAT (VND): {totalVND.toLocaleString("vi-VN")}</p>
+          <p>Tổng giá trước VAT (USD): {totalUSD}</p>
+          <p>Tổng giá sau VAT (VND): {totalVNDWithVAT.toLocaleString("vi-VN")}</p>
+          <p>Tổng giá sau VAT (USD): {totalUSDWithVAT}</p>
+        </div>
+      </Card>
+
+      {/* Actions */}
+      <div className="actions" style={{ marginTop: 16 }}>
         <Button>Xem báo giá</Button>
         <Button type="primary" onClick={() => setIsModalOpen(true)}>
           {role === "Giám đốc" ? "Duyệt" : "Gửi"}
@@ -155,10 +133,18 @@ console.log("ContractDetail received loai:", loai);
         okText={role === "Giám đốc" ? "Duyệt" : "Gửi"}
         cancelText="Huỷ"
         onOk={handleOk}
-        onCancel={handleCancel}
+        onCancel={() => setIsModalOpen(false)}
       />
     </div>
   );
 };
+
+// Small helper component for read-only fields
+const FormItem: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+  <div style={{ marginBottom: 12 }}>
+    <label style={{ display: "block", fontWeight: 500 }}>{label}</label>
+    <Input value={value} disabled />
+  </div>
+);
 
 export default ContractDetail;
