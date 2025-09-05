@@ -88,28 +88,23 @@ const EmployeeDetail: React.FC = () => {
 
   return (
     <div className="employee-detail-container">
-      <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
-        <Col>
-          <h2>Chi tiết nhân sự</h2>
-        </Col>
-        <Col>
-          <Button type="primary" onClick={() => navigate(ROUTES_APP.hrm.employeeList)}>
-            Quay lại
-          </Button>
-        </Col>
-      </Row>
-
       <Breadcrumb style={{ marginBottom: "16px" }}>
         <Breadcrumb.Item>
-          Danh sách nhân sự
+          <Link to={ROUTES_APP.hrm.employeeList}>Danh sách nhân sự</Link>
         </Breadcrumb.Item>
         <Breadcrumb.Item>Chi tiết nhân sự</Breadcrumb.Item>
         <Breadcrumb.Item>{employee.fullName}</Breadcrumb.Item>
       </Breadcrumb>
 
+
+
       <Row gutter={16}>
         <Col span={24}>
-          <Card title="Thông tin nhân sự" variant="outlined">
+          <Card title={
+            <h2 style={{ margin: 0 }}>
+              Chi tiết nhân sự {employee.fullName}
+            </h2>
+          } variant="outlined">
             <Form form={form} layout="vertical" disabled={true}>
               <Row gutter={16}>
                 <Col span={8}>
