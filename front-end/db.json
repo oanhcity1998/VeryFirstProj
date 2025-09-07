@@ -1,0 +1,81 @@
+{
+  "contacts": [
+    {
+      "contactName": "Nguyễn Văn A 1",
+      "customerName": "Công ty TNHH ABC",
+      "phone": "0901234567",
+      "email": "vana@abc.com",
+      "title": "Giám đốc",
+      "mainContact": "Nguyễn Văn A",
+      "note": "Khách hàng lâu năm",
+      "id": "1"
+    },
+    {
+      "contactName": "Phạm Văn Quyết 1",
+      "customerName": "OpenAI Corp",
+      "phone": "0912345678",
+      "email": "quyetpv@openai.com",
+      "title": "Developer",
+      "mainContact": "Phạm Văn Quyết",
+      "note": "Khách VIP",
+      "id": "e89d"
+    }
+  ],
+  "quotation": [
+    {
+      "id": 1,
+      "quotationName": "Báo giá thiết bị văn phòng",
+      "validityPeriod": "30 ngày",
+      "paymentTerms": "Thanh toán 50% trước, 50% sau giao hàng",
+      "products": [
+        {
+          "id": 1,
+          "productName": "Máy in HP 107w",
+          "productType": "Thiết bị văn phòng",
+          "priceVND": 5000000,
+          "priceUSD": 210,
+          "vat": 10,
+          "afterVatVND": 5500000,
+          "afterVatUSD": 231
+        },
+        {
+          "id": 2,
+          "productName": "Giấy A4 Double A",
+          "productType": "Vật tư tiêu hao",
+          "priceVND": 250000,
+          "priceUSD": 11,
+          "vat": 5,
+          "afterVatVND": 262500,
+          "afterVatUSD": 11.55
+        }
+      ],
+      "status": "Draft"
+    }
+  ],
+  "products": [
+    {
+      "key": 1,
+      "name": "iPhone 15 Pro",
+      "description": "Smartphone cao cấp",
+      "type": "Theo gói",
+      "price": 1200,
+      "currency": "USD",
+      "exchangeRate": 24000,
+      "vat": 10,
+      "createdAt": "2025-01-01",
+      "updatedAt": "2025-01-10"
+    },
+    {
+      "key": 2,
+      "name": "MacBook Air M2",
+      "description": "Laptop nhẹ và mạnh",
+      "type": "Theo tháng",
+      "price": 1500,
+      "currency": "USD",
+      "exchangeRate": 24000,
+      "vat": 10,
+      "createdAt": "2025-01-05",
+      "updatedAt": "2025-01-12"
+    }
+  ]
+}

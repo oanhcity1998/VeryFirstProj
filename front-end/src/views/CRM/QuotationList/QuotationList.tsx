@@ -89,7 +89,6 @@ const QuotationList = () => {
   // modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedQuotation, setSelectedQuotation] = useState<Quotation | null>(null);
 
   const [deleting, setDeleting] = useState(false);
@@ -162,7 +161,7 @@ const QuotationList = () => {
     <>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
         <h2>Danh sách mẫu báo giá</h2>
-        
+
         <Space>
           {/* Searchbar  */}
           <Search

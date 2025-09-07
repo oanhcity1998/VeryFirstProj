@@ -1,15 +1,13 @@
-import { useMemo, useState } from "react";
-import { Button, Space, Modal, message, Input, Dropdown, Select, Breadcrumb } from "antd";
+import { useEffect, useMemo, useState } from "react";
+import { Button, Space, Modal, message, Select } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import TableContact, { Contact } from "../../../components/TableContact/TableContact";
 import ContactForm from "../../../components/ContactForm/ContactForm";
 import Search from "antd/es/input/Search";
-import { generatePath, useNavigate } from "react-router-dom";
-import { ROUTES_APP } from "../../../routes";
+import { createContact, deleteContact, getContacts, updateContact } from "./contactService";
 
 export const mockContactDatas: Contact[] = [
   {
-    key: "1",
     id: "1",
     contactName: "Nguyễn Văn A",
     customerName: "Công ty TNHH ABC",
@@ -22,18 +20,14 @@ export const mockContactDatas: Contact[] = [
 ];
 
 const ContactList = () => {
-  const navigate = useNavigate();
-  const [data, setData] = useState(mockContactDatas);
-
+  const [data, setData] = useState<Contact[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
 
   // modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
-
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -51,14 +45,49 @@ const ContactList = () => {
     [data]
   );
 
-  // 🗑 handle delete
+  useEffect(() => {
+    getContacts()
+      .then((res) => setData(res))
+      .catch(() => {
+        console.warn("API lỗi, dùng mock data");
+        setData(mockContactDatas);
+      });
+  }, []);
+
+  // ➕ create
+  const handleCreate = async (newContact: any) => {
+    try {
+      const saved = await createContact(newContact);
+      setData((prev) => [...prev, saved]);
+      setIsCreateModalOpen(false);
+      message.success("Đã thêm người liên hệ");
+    } catch {
+      message.error("Không thể thêm người liên hệ");
+    }
+  };
+
+  // ✏️ edit
+  const handleEdit = async (updatedContact: any) => {
+    if (!selectedContact) return;
+    try {
+      const saved = await updateContact(selectedContact.id, updatedContact);
+      setData((prev) => prev.map((item) => (item.id === saved.id ? saved : item)));
+      setIsEditModalOpen(false);
+      message.success("Đã cập nhật thông tin liên hệ");
+    } catch {
+      message.error("Không thể cập nhật thông tin liên hệ");
+    }
+  };
+
+  // 🗑 delete
   const handleDelete = async () => {
     try {
       setDeleting(true);
-      setData((prev) => prev.filter((item) => !selectedRowKeys.includes(item.key)));
+      await Promise.all(selectedRowKeys.map((id) => deleteContact(id)));
+      setData((prev) => prev.filter((item) => !selectedRowKeys.includes(item.id)));
       setSelectedRowKeys([]);
       message.success("Đã xóa thông tin người liên hệ");
-    } catch (err) {
+    } catch {
       message.error("Không thể xóa thông tin người liên hệ");
     } finally {
       setDeleting(false);
@@ -66,35 +95,11 @@ const ContactList = () => {
     }
   };
 
-  // ➕ handle create
-  const handleCreate = (newContact: any) => {
-    const newData = {
-      key: Date.now().toString(),
-      id: Date.now().toString(),
-      ...newContact,
-    };
-    setData((prev) => [...prev, newData]);
-    setIsCreateModalOpen(false);
-    message.success("Đã thêm người liên hệ");
-  };
-
-  // ✏️ handle edit
-  const handleEdit = (updatedContact: any) => {
-    if (!selectedContact) return;
-    setData((prev) =>
-      prev.map((item) => (item.key === selectedContact.key ? { ...item, ...updatedContact } : item))
-    );
-    setIsEditModalOpen(false);
-    message.success("Đã cập nhật thông tin liên hệ");
-  };
-
   return (
     <>
       {/* header actions */}
       <div style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "center" }}>
         <h2 style={{ flex: 1 }}>Danh sách thông tin liên hệ</h2>
-
-        
 
         <Space>
           {/* Searchbar  */}

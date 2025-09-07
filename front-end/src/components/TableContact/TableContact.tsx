@@ -7,7 +7,6 @@ import { ROUTES_APP } from "../../routes";
 
 // Định nghĩa type cho Contact
 export interface Contact {
-  key: string;
   id: string;
   contactName: string;
   customerName: string;
@@ -142,9 +141,9 @@ const TableContact = ({
             }
           : undefined
       }
+      rowKey="id"
       columns={columns}
       dataSource={filteredData}
-      rowKey="key"
       scroll={{ x: "max-content", y: "calc(100vh - 330px)" }}
       pagination={{ position: ["bottomCenter"] }}
     />
