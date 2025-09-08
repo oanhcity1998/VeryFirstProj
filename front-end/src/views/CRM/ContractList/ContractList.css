@@ -25,3 +25,25 @@
 .contract-link:hover {
   text-decoration: underline;
 }
+
+.contract-list-container {
+  padding: 16px;
+  width: 100%;
+  max-width: 1400px; /* optional, for large screens */
+  margin: 0 auto;    /* center on big monitors */
+}
+
+.contract-list-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .contract-list-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+

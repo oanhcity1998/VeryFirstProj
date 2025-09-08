@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Space, Typography, Input, Select } from "antd";
+import { Button, Space, Typography, Input, Select, Row, Col } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import "./ContractList.css";
 import { generatePath, useNavigate } from "react-router-dom";
@@ -89,41 +89,49 @@ const ContractList: React.FC = () => {
     <div className="contract-list-container">
       {/* Header */}
       <div className="contract-list-header">
-        <h2 className="contract-title">Danh sách hợp đồng</h2>
-        <div className="contract-actions">
-          <Search
-            placeholder="Tìm kiếm hợp đồng..."
-            allowClear
-            onSearch={(val) => setSearchText(val)}
-            style={{ width: 220 }}
-          />
-          <Select
-            placeholder="Trạng thái"
-            allowClear
-            style={{ width: 150 }}
-            onChange={(val) => setStatusFilter(val)}
-          >
-            <Option value="Chờ duyệt">Chờ duyệt</Option>
-            <Option value="Đã duyệt">Đã duyệt</Option>
-            <Option value="Huỷ">Huỷ</Option>
-          </Select>
-          <Select
-            placeholder="Loại hợp đồng"
-            allowClear
-            style={{ width: 150 }}
-            onChange={(val) => setTypeFilter(val)}
-          >
-            <Option value="Báo giá">Báo giá</Option>
-            <Option value="Hợp đồng">Hợp đồng</Option>
-          </Select>
-          <Button danger disabled={selectedRowKeys.length === 0} icon={<DeleteOutlined />}>
-            Xoá
-          </Button>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpenForm(true)}>
-            Tạo
-          </Button>
+        <Row gutter={[16, 16]} align="middle" justify="space-between" style={{ flexWrap: "wrap" }}>
+            <Col>
+            <h2 className="contract-title">Danh sách hợp đồng</h2>
+            </Col>
+
+            <Col flex="auto">
+            <Space wrap style={{ justifyContent: "flex-end", width: "100%" }}>
+                <Search
+                placeholder="Tìm kiếm hợp đồng..."
+                allowClear
+                onSearch={(val) => setSearchText(val)}
+                style={{ minWidth: 180, maxWidth: 240, width: "100%" }}
+                />
+                <Select
+                placeholder="Trạng thái"
+                allowClear
+                style={{ minWidth: 140 }}
+                onChange={(val) => setStatusFilter(val)}
+                >
+                <Option value="Chờ duyệt">Chờ duyệt</Option>
+                <Option value="Đã duyệt">Đã duyệt</Option>
+                <Option value="Huỷ">Huỷ</Option>
+                </Select>
+                <Select
+                placeholder="Loại hợp đồng"
+                allowClear
+                style={{ minWidth: 140 }}
+                onChange={(val) => setTypeFilter(val)}
+                >
+                <Option value="Báo giá">Báo giá</Option>
+                <Option value="Hợp đồng">Hợp đồng</Option>
+                </Select>
+                <Button danger disabled={selectedRowKeys.length === 0} icon={<DeleteOutlined />}>
+                Xoá
+                </Button>
+                <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpenForm(true)}>
+                Tạo
+                </Button>
+            </Space>
+            </Col>
+        </Row>
         </div>
-      </div>
+
 
       {/* Table (separated component) */}
       <ContractTable
