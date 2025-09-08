@@ -123,6 +123,12 @@ const OpportunityDetail = () => {
     <div className="opportunity-detail-container">
       {/* Header */}
       <div className="opportunity-detail-header">
+        <Button
+          icon={<ArrowLeftOutlined />}
+          type="text"
+          onClick={() => navigate(-1)}
+          className="back-button"
+        />
         <Breadcrumb separator=">">
           <Breadcrumb.Item>
             <Link to={ROUTES_APP.crm.opportunityList}>Danh sách cơ hội</Link>

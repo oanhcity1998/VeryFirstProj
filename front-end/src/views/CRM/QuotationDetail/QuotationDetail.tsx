@@ -65,7 +65,13 @@ const QuotationDetail: React.FC = () => {
   return (
     <Card className="quotation-detail-container" bordered={false}>
       {/* Header */}
-      <div className="quotation-detail-header">
+      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
+        <Button
+          icon={<ArrowLeftOutlined />}
+          type="text"
+          onClick={() => navigate(-1)}
+          className="back-button"
+        />
         <Breadcrumb className="quotation-detail-breadcrumb" separator=">">
           <Breadcrumb.Item>
             <Link to={ROUTES_APP.crm.quotationList}>Danh sách mẫu báo giá</Link>

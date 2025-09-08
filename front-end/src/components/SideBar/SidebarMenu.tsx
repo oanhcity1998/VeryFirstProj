@@ -10,6 +10,7 @@ import {
   IdcardOutlined,
   UserSwitchOutlined,
   FileTextOutlined,
+  AccountBookOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu.css";
@@ -35,6 +36,10 @@ const SidebarMenu = ({ collapsed }) => {
     selectedKey = "6";
   } else if (location.pathname.startsWith(ROUTES_APP.crm.opportunityList)) {
     selectedKey = "7";
+  } else if (location.pathname.startsWith(ROUTES_APP.crm.contractList)) {
+    selectedKey = "8";
+  } else if (location.pathname.startsWith(ROUTES_APP.crm.debtReportList)) {
+    selectedKey = "9";
   }
 
   const items = [
@@ -78,16 +83,11 @@ const SidebarMenu = ({ collapsed }) => {
       icon: <FileTextOutlined />,
       label: <Link to={ROUTES_APP.crm.contractList}>Hợp đồng</Link>,
     },
-    // {
-    //   key: "8",
-    //   icon: <TeamOutlined />,
-    //   label: <Link to={ROUTES_APP.hrm.employeeList}>Nhân viên</Link>,
-    // },
-    // {
-    //   key: "9",
-    //   icon: <IdcardOutlined />,
-    //   label: <Link to={ROUTES_APP.hrm.positionList}>Chức vụ</Link>,
-    // },
+    {
+      key: "9",
+      icon: <AccountBookOutlined />,
+      label: <Link to={ROUTES_APP.crm.debtReportList}>Báo cáo công nợ</Link>,
+    },
   ];
 
   return (

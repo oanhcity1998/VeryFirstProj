@@ -17,6 +17,8 @@ export const ROUTES_APP = {
     leadDetail: "/crm/leadlist/:id",
     contractList: "/contracts",
     contractDetail: "/contracts/:id",
+    debtReportList: "/crm/debtReportList",
+    debtReportDetail: "/crm/debtReportList/:id",
   },
   hrm: {
     homeHRM: "hrm/home",
