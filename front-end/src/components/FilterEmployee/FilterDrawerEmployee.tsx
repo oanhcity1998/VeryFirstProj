@@ -1,15 +1,15 @@
 import { Drawer, Form, Button, Select } from "antd";
-import "./FilterDrawer-HRM.css";
+import "./FilterDrawerEmployee.css";
 
 const { Option } = Select;
 
-interface FilterDrawerHRMProps {
+interface FilterDrawerEmployeeProps {
   open: boolean;
   onClose: () => void;
   onConfirm: (values: any) => void;
 }
 
-const FilterDrawerHRM: React.FC<FilterDrawerHRMProps> = ({ open, onClose, onConfirm }) => {
+const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({ open, onClose, onConfirm }) => {
   const [form] = Form.useForm();
 
   const handleConfirm = () => {
@@ -91,4 +91,4 @@ const FilterDrawerHRM: React.FC<FilterDrawerHRMProps> = ({ open, onClose, onConf
   );
 };
 
-export default FilterDrawerHRM;
+export default FilterDrawerEmployee;
