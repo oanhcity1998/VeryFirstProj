@@ -58,6 +58,24 @@ const AssetDetail: React.FC = () => {
     ];
 
     useEffect(() => {
+        if (asset) {
+            form.setFieldsValue({
+                ...asset,
+                purchaseDate: asset.purchaseDate
+                    ? dayjs(asset.purchaseDate, "DD/MM/YYYY")
+                    : null,
+                warranty: asset.warranty
+                    ? dayjs(asset.warranty, "DD/MM/YYYY")
+                    : null,
+                value: asset.value
+                    ? Number(asset.value).toLocaleString("en-US") // 👉 format US
+                    : "",
+            });
+        }
+    }, [asset, form]);
+
+
+    useEffect(() => {
         const foundAsset = assets.find((a) => a.id === id);
         if (foundAsset) {
             setAsset(foundAsset);
