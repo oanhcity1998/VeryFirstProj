@@ -1,11 +1,19 @@
 import React, { useState } from "react";
-import { Input, Table, Button, Row, Col, Modal, Breadcrumb, Card, Typography } from "antd";
+import { useParams } from "react-router-dom"
+import { Input, Table, Button, Row, Col, Modal, Breadcrumb, Card, Typography, Space } from "antd";
 import { Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import "./ContractDetail.css";
 import { ROUTES_APP } from "../../../routes";
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import fontkit from "@pdf-lib/fontkit";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
+
 
 const { Title } = Typography;
+
 
 interface ContractDetailProps {
   role?: "Nhân viên" | "Giám đốc";
@@ -15,6 +23,11 @@ interface ContractDetailProps {
 
 const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai, onBack }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+
+
+    const { id } = useParams(); // lấy contact id từ URL
   const title = loai === "baogia" ? "Chi tiết báo giá" : "Chi tiết hợp đồng";
 
   const products = [
@@ -53,10 +66,62 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
   const totalVNDWithVAT = products.reduce((sum, p) => sum + (p.priceVND * (100 + p.vat)) / 100, 0);
   const totalUSDWithVAT = products.reduce((sum, p) => sum + (p.priceUSD * (100 + p.vat)) / 100, 0);
 
-  const handleOk = () => {
-    console.log(`${role} đã ${role === "Giám đốc" ? "duyệt" : "gửi"} hợp đồng`);
+  const tenBaoGia = "Piggy hotel";
+
+  // Generate + download PDF immediately
+  const handleGeneratePDF = async () => {
+    const response = await fetch("/05+BAOGIA+-+XIDONG+(1)-ocr.pdf");
+    const existingPdfBytes = await response.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(existingPdfBytes);
+
+    pdfDoc.registerFontkit(fontkit);
+
+    // Load font
+    const fontBytes = await fetch("/fonts/Roboto/static/Roboto-MediumItalic.ttf").then(res =>
+      res.arrayBuffer()
+    );
+    const customFont = await pdfDoc.embedFont(fontBytes);
+
+    const pages = pdfDoc.getPages();
+    const firstPage = pages[0];
+    const { height } = firstPage.getSize();
+
+    // Cover + replace text
+    firstPage.drawRectangle({
+      x: 115,
+      y: 675-3,
+      width: 400,
+      height: 20,
+      color: rgb(246 / 255, 250 / 255, 253 / 255), // #f6fafd
+    });
+
+    firstPage.drawText(`${tenBaoGia}`, {
+      x: 118,
+      y: 676,
+      size: 11,
+      font: customFont,
+      color: rgb(76 / 255, 88 / 255, 92 / 255), // #4c585c
+    });
+
+    const pdfBytes = await pdfDoc.save();
+    const blob = new Blob([pdfBytes], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+
+    // Save for preview
+    setPdfUrl(url);
+    setPreviewOpen(true);
     setIsModalOpen(false);
   };
+
+  const handleDownload = () => {
+    if (!pdfUrl) return;
+    const link = document.createElement("a");
+    link.href = pdfUrl;
+    link.download = "quotation.pdf";
+    link.click();
+  };
+
+
 
   return (
     <div className="contract-detail">
@@ -119,22 +184,51 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
       </Card>
 
       {/* Actions */}
-      <div className="actions" style={{ marginTop: 16 }}>
-        <Button>Xem báo giá</Button>
-        <Button type="primary" onClick={() => setIsModalOpen(true)}>
-          {role === "Giám đốc" ? "Duyệt" : "Gửi"}
-        </Button>
+      <div style={{ marginTop: 16, display: "flex", justifyContent: "flex-end", flexWrap: "wrap" }}>
+        <Space wrap>
+          <Button>Xem báo giá</Button>
+          <Button type="primary" onClick={() => setIsModalOpen(true)}>
+            {role === "Giám đốc" ? "Duyệt" : "Gửi"}
+          </Button>
+        </Space>
       </div>
 
       {/* Modal popup */}
       <Modal
         open={isModalOpen}
-        title={role === "Giám đốc" ? "Bạn có muốn duyệt hợp đồng này?" : "Bạn có muốn gửi hợp đồng này?"}
-        okText={role === "Giám đốc" ? "Duyệt" : "Gửi"}
+        title="Bạn có muốn gửi hợp đồng này?"
+        okText="Gửi"
         cancelText="Huỷ"
-        onOk={handleOk}
+        onOk={handleGeneratePDF}
         onCancel={() => setIsModalOpen(false)}
       />
+
+      {/* Preview modal */}
+      <Modal
+        open={previewOpen}
+        title="Xem trước PDF"
+        onCancel={() => setPreviewOpen(false)}
+        footer={[
+          <Button key="back" onClick={() => setPreviewOpen(false)}>
+            Đóng
+          </Button>,
+          <Button key="download" type="primary" onClick={handleDownload}>
+            Tải xuống
+          </Button>,
+        ]}
+        width="80%"
+        style={{ top: 20 }}
+      >
+        {pdfUrl && (
+          <iframe
+            src={pdfUrl}
+            title="PDF Preview"
+            width="100%"
+            height="600px"
+            style={{ border: "none" }}
+          />
+        )}
+      </Modal>
     </div>
   );
 };

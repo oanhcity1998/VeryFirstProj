@@ -7,6 +7,7 @@ import { ROUTES_APP } from "../../../routes";
 import { getContact, getContacts } from "../ContactList/contactService";
 import { Contact } from "../../../components/TableContact/TableContact";
 
+
 const ContactDetail: React.FC = () => {
   const { id } = useParams(); // lấy contact id từ URL
   const navigate = useNavigate();

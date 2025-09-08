@@ -26,14 +26,14 @@ const ContractList: React.FC = () => {
 
   const navigate = useNavigate();
 
-  // ContractList.tsx
-  const handleRowClick = (record: Contract) => {
-    navigate(
-      `${generatePath(ROUTES_APP.crm.contractDetail, { id: record.id })}?loai=${
-        record.type === "Báo giá" ? "baogia" : "hopdong"
-      }`
-    );
-  };
+//   // ContractList.tsx
+//   const handleRowClick = (record: Contract) => {
+//     navigate(
+//       `${generatePath(ROUTES_APP.crm.contractDetail, { id: record.id })}?loai=${
+//         record.type === "Báo giá" ? "baogia" : "hopdong"
+//       }`
+//     );
+//   };
 
   if (viewDetail) {
     return <ContractDetail loai={viewDetail.loai} onBack={() => setViewDetail(null)} />;
@@ -130,9 +130,6 @@ const ContractList: React.FC = () => {
         data={filteredData}
         selectedRowKeys={selectedRowKeys}
         onSelectChange={setSelectedRowKeys}
-        onRow={(record) => ({
-          onClick: () => handleRowClick(record),
-        })}
         onEditClick={(record) => setEditRecord(record)}
       />
 
