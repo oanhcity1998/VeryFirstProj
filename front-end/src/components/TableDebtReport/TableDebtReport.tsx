@@ -12,7 +12,6 @@ interface TableDebtReportProps {
   setSelectedRowKeys: (keys: number[]) => void;
   onEditClick?: (record: DebtReport) => void;
   onDetailClick?: (record: DebtReport) => void;
-  onExportClick?: (record: DebtReport, type: "excel" | "pdf") => void;
   filterStatus: string | null;
 }
 
@@ -23,7 +22,6 @@ export const TableDebtReport = ({
   setSelectedRowKeys,
   onEditClick,
   onDetailClick,
-  onExportClick,
   filterStatus,
 }: TableDebtReportProps) => {
   // 🔎 Lọc theo search + status
@@ -117,9 +115,9 @@ export const TableDebtReport = ({
       },
     },
     {
-      title: "Thao tác",
+      title: "Hành động",
       key: "action",
-      width: 120,
+      width: 70,
       fixed: "right",
       render: (_, record) => (
         <div style={{ display: "flex", gap: 8 }}>
@@ -129,24 +127,6 @@ export const TableDebtReport = ({
               onClick={(e) => {
                 e.stopPropagation();
                 onEditClick?.(record);
-              }}
-            />
-          </Tooltip>
-          <Tooltip title="Xuất Excel">
-            <DownloadOutlined
-              style={{ fontSize: 18, color: "green", cursor: "pointer" }}
-              onClick={(e) => {
-                e.stopPropagation();
-                onExportClick?.(record, "excel");
-              }}
-            />
-          </Tooltip>
-          <Tooltip title="Xuất PDF">
-            <DownloadOutlined
-              style={{ fontSize: 18, color: "red", cursor: "pointer" }}
-              onClick={(e) => {
-                e.stopPropagation();
-                onExportClick?.(record, "pdf");
               }}
             />
           </Tooltip>

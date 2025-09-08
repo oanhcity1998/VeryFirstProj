@@ -216,6 +216,10 @@ const DebtReportDetail = () => {
             <TabPane tab="Thanh toán" key="payment">
               {(report.payments || []).map((pmt, idx) => (
                 <Card key={idx} size="small" style={{ marginBottom: 12 }}>
+                  <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
+                    Thanh toán báo cáo công nợ {`<${report?.reportNo}>`}
+                  </h3>
+
                   <Row gutter={16}>
                     <Col span={12}>
                       <Form.Item label="Mã thanh toán">
@@ -237,6 +241,11 @@ const DebtReportDetail = () => {
                         <Input value={pmt.method} disabled />
                       </Form.Item>
                     </Col>
+                    <Col span={12}>
+                      <Form.Item label="Trạng thái thanh toán">
+                        <Input value={pmt.status} disabled />
+                      </Form.Item>
+                    </Col>
                   </Row>
                 </Card>
               ))}
@@ -244,6 +253,10 @@ const DebtReportDetail = () => {
 
             {/* Tab công nợ */}
             <TabPane tab="Công nợ" key="debt">
+              <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
+                Công nợ {`<${report?.reportNo}>`}
+              </h3>
+
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item name="debtNoVAT" label="Số tiền chưa VAT">
@@ -272,14 +285,18 @@ const DebtReportDetail = () => {
             <TabPane tab="Hoa hồng CTV" key="collaborator">
               {(report.collaborators || []).map((ctv, idx) => (
                 <Card key={idx} size="small" style={{ marginBottom: 12 }}>
+                  <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
+                    Hoa hồng cộng tác viên {`<${report?.reportNo}>`}
+                  </h3>
+
                   <Row gutter={16}>
                     <Col span={12}>
-                      <Form.Item label="Tên CTV">
+                      <Form.Item label="Tên cộng tác viên">
                         <Input value={ctv.name} disabled />
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Form.Item label="SĐT">
+                      <Form.Item label="Số điện thoại">
                         <Input value={ctv.phone} disabled />
                       </Form.Item>
                     </Col>
@@ -298,7 +315,7 @@ const DebtReportDetail = () => {
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Form.Item label="Còn phải chi">
+                      <Form.Item label="Số tiền còn phải chi">
                         <InputNumber
                           value={ctv.remainingAmount}
                           disabled

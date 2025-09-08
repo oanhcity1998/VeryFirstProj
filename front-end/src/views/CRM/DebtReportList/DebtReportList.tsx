@@ -4,7 +4,6 @@ import {
   PlusOutlined,
   DeleteOutlined,
   FilterOutlined,
-  DownloadOutlined,
   SettingOutlined,
   InboxOutlined,
 } from "@ant-design/icons";
@@ -138,26 +137,83 @@ export const mockDebtReportData: DebtReport[] = [
   },
 ];
 
-const exportToExcel = (data: DebtReport[], fileName = "debt-report.xlsx") => {
-  // 1. Convert JSON → sheet
-  const worksheet = XLSX.utils.json_to_sheet(
-    data.map((r) => ({
+const exportDebtReportsToExcel = (reports: DebtReport[], fileName = "debt-reports.xlsx") => {
+  if (!reports.length) return;
+
+  const workbook = XLSX.utils.book_new();
+
+  // Sheet chính: thông tin tổng hợp
+  const mainSheet = XLSX.utils.json_to_sheet(
+    reports.map((r) => ({
       "Số báo cáo": r.reportNo,
-      "Ngày báo cáo": r.reportDate,
+      "Ngày báo cáo": dayjs(r.reportDate).format("DD/MM/YYYY"),
       "Khách hàng": r.customer,
       "Hợp đồng": r.contract,
       "Trạng thái báo cáo": r.status,
       "Trạng thái công nợ": r.debtStatus ?? "-",
-      "Tổng công nợ": r.totalDebt ?? "-",
-      "Còn lại": r.remainingDebt ?? "-",
+      "Tổng công nợ": r.totalDebt ? Intl.NumberFormat("vi-VN").format(r.totalDebt) : "-",
+      "Còn lại": r.remainingDebt ? Intl.NumberFormat("vi-VN").format(r.remainingDebt) : "-",
     }))
   );
+  XLSX.utils.book_append_sheet(workbook, mainSheet, "Tổng hợp");
 
-  // 2. Tạo workbook
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Báo cáo công nợ");
+  // Sheet hóa đơn
+  const allInvoices: any[] = [];
+  reports.forEach((r) => {
+    (r.invoices || []).forEach((inv) => {
+      allInvoices.push({
+        "Báo cáo": r.reportNo,
+        "Số hóa đơn": inv.invoiceNo,
+        "Ngày hóa đơn": dayjs(inv.invoiceDate).format("DD/MM/YYYY"),
+        "Tỉ lệ suất (%)": inv.rate ?? "-",
+        "Giá trị chưa VAT": inv.amountNoVAT
+          ? Intl.NumberFormat("vi-VN").format(inv.amountNoVAT)
+          : "-",
+        "Trạng thái": inv.status ?? "-",
+        "Tổng giá trị": inv.totalAmount ? Intl.NumberFormat("vi-VN").format(inv.totalAmount) : "-",
+      });
+    });
+  });
+  const invoiceSheet = XLSX.utils.json_to_sheet(allInvoices);
+  XLSX.utils.book_append_sheet(workbook, invoiceSheet, "Hóa đơn");
 
-  // 3. Xuất ra buffer rồi tạo file
+  // Sheet thanh toán
+  const allPayments: any[] = [];
+  reports.forEach((r) => {
+    (r.payments || []).forEach((pmt) => {
+      allPayments.push({
+        "Báo cáo": r.reportNo,
+        "Mã thanh toán": pmt.paymentCode,
+        "Ngày thu tiền": dayjs(pmt.paymentDate).format("DD/MM/YYYY"),
+        "Số tiền đã thu": pmt.amount ? Intl.NumberFormat("vi-VN").format(pmt.amount) : "-",
+        "Phương thức": pmt.method,
+        "Trạng thái": pmt.status ?? "-",
+      });
+    });
+  });
+  const paymentSheet = XLSX.utils.json_to_sheet(allPayments);
+  XLSX.utils.book_append_sheet(workbook, paymentSheet, "Thanh toán");
+
+  // Sheet CTV
+  const allCTVs: any[] = [];
+  reports.forEach((r) => {
+    (r.collaborators || []).forEach((ctv) => {
+      allCTVs.push({
+        "Báo cáo": r.reportNo,
+        "Tên CTV": ctv.name,
+        SĐT: ctv.phone ?? "-",
+        "Tỷ lệ hoa hồng (%)": ctv.commissionRate ?? "-",
+        "Số tiền hoa hồng": ctv.amount ? Intl.NumberFormat("vi-VN").format(ctv.amount) : "-",
+        "Còn phải chi": ctv.remainingAmount
+          ? Intl.NumberFormat("vi-VN").format(ctv.remainingAmount)
+          : "-",
+      });
+    });
+  });
+  const ctvSheet = XLSX.utils.json_to_sheet(allCTVs);
+  XLSX.utils.book_append_sheet(workbook, ctvSheet, "CTV");
+
+  // Xuất file
   const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
   const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
   saveAs(blob, fileName);
@@ -219,16 +275,6 @@ const DebtReportList = () => {
     }
   };
 
-  // 👉 Export (Excel/PDF)
-  const handleExport = (record: DebtReport, type: "excel" | "pdf") => {
-    if (type === "excel") {
-      exportToExcel([record], `${record.reportNo}.xlsx`);
-      message.success(`Đã xuất ${record.reportNo} sang Excel`);
-    } else {
-      message.info("Chưa hỗ trợ PDF, cần cài thêm jspdf + autotable");
-    }
-  };
-
   // 👉 Apply filter + search
   const filteredData = data.filter((item) => {
     const matchSearch =
@@ -254,6 +300,7 @@ const DebtReportList = () => {
 
   const [importOpen, setImportOpen] = useState(false);
   const [importing, setImporting] = useState(false);
+
   // upload handler
   const handleUpload = async (file) => {
     setImporting(true);
@@ -290,13 +337,17 @@ const DebtReportList = () => {
                 </Button>
                 <Button
                   type="text"
+                  disabled={!selectedRowKeys.length}
                   onClick={() => {
-                    console.log("Export clicked");
-                    if (!selectedReport) {
-                      message.warning("Vui lòng chọn báo cáo trước khi export");
+                    if (!selectedRowKeys.length) {
+                      message.warning("Vui lòng chọn ít nhất 1 báo cáo để xuất");
                       return;
                     }
-                    handleExport(selectedReport, "excel");
+                    const reportsToExport = data.filter((r) => selectedRowKeys.includes(r.id));
+                    exportDebtReportsToExcel(
+                      reportsToExport,
+                      `debt-reports-${dayjs().format("YYYYMMDD_HHmmss")}.xlsx`
+                    );
                   }}
                 >
                   Export
@@ -389,7 +440,6 @@ const DebtReportList = () => {
           setSelectedReport(record);
           setIsEditModalOpen(true);
         }}
-        onExportClick={handleExport}
         onDetailClick={(record) =>
           navigate(generatePath(ROUTES_APP.crm.debtReportDetail, { id: record.id }))
         }
