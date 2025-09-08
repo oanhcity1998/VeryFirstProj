@@ -1,12 +1,33 @@
-import { Modal, Form, Input, DatePicker, InputNumber, Select, Collapse, Button } from "antd";
+import { Modal, Form, Input, DatePicker, InputNumber, Button, Progress, Card, Space } from "antd";
+import { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { useEffect } from "react";
-
-const { Panel } = Collapse;
 
 export const DebtReportForm = ({ mode, role, open, onCancel, onOk, initialValues }: any) => {
   const [form] = Form.useForm();
   const isEdit = mode === "edit";
+
+  const [progress, setProgress] = useState<Record<string, number>>({});
+
+  // Các field theo section
+  const sectionFields: Record<string, (string | string[])[]> = {
+    init: ["reportNo", "reportDate", "contract", "customer", "auditor", "director"],
+    fee: ["fee", "exchangeRate", "feeUSD", "feeNoVAT", "feeWithVAT"],
+    invoice: [
+      ["invoice", "invoiceNo"],
+      ["invoice", "invoiceDate"],
+    ],
+    payment: [
+      ["payment", "paymentCode"],
+      ["payment", "amount"],
+    ],
+    debt: ["debtNoVAT", "debtWithVAT"],
+    collaborator: [
+      ["collaborator", "name"],
+      ["collaborator", "commissionRate"],
+      ["collaborator", "amount"],
+      ["collaborator", "remainingAmount"],
+    ],
+  };
 
   useEffect(() => {
     if (open && initialValues) {
@@ -14,10 +35,28 @@ export const DebtReportForm = ({ mode, role, open, onCancel, onOk, initialValues
         ...initialValues,
         reportDate: initialValues.reportDate ? dayjs(initialValues.reportDate) : null,
       });
+      updateProgress();
     } else if (open) {
       form.resetFields();
+      setProgress({});
     }
   }, [open, initialValues, form]);
+
+  const updateProgress = () => {
+    const values = form.getFieldsValue();
+    const newProgress: Record<string, number> = {};
+
+    Object.entries(sectionFields).forEach(([section, fields]) => {
+      let filled = 0;
+      fields.forEach((f) => {
+        const val = Array.isArray(f) ? values?.[f[0]]?.[f[1]] : values?.[f];
+        if (val !== undefined && val !== null && val !== "") filled++;
+      });
+      newProgress[section] = Math.round((filled / fields.length) * 100);
+    });
+
+    setProgress(newProgress);
+  };
 
   const handleOk = (status?: "Khởi tạo" | "Chờ kế toán" | "Xác nhận") => {
     form.validateFields().then((values) => {
@@ -28,6 +67,18 @@ export const DebtReportForm = ({ mode, role, open, onCancel, onOk, initialValues
       onOk?.(payload, status);
     });
   };
+
+  const renderHeader = (label: string, key: string) => (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <span style={{ fontWeight: 600 }}>{label}</span>
+      <Progress
+        percent={progress[key] || 0}
+        size="small"
+        style={{ width: 120 }}
+        status={progress[key] === 100 ? "success" : "active"}
+      />
+    </div>
+  );
 
   return (
     <Modal
@@ -56,10 +107,10 @@ export const DebtReportForm = ({ mode, role, open, onCancel, onOk, initialValues
       ]}
       width={1000}
     >
-      <Form form={form} layout="vertical">
-        <Collapse defaultActiveKey={["init"]}>
+      <Form form={form} layout="vertical" onValuesChange={updateProgress}>
+        <Space direction="vertical" style={{ width: "100%" }} size="large">
           {/* Thông tin khởi tạo */}
-          <Panel header="Thông tin khởi tạo" key="init">
+          <Card title={renderHeader("Thông tin khởi tạo", "init")}>
             <Form.Item name="reportNo" label="Số báo cáo" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
@@ -78,12 +129,12 @@ export const DebtReportForm = ({ mode, role, open, onCancel, onOk, initialValues
             <Form.Item name="director" label="Giám đốc phụ trách">
               <Input />
             </Form.Item>
-          </Panel>
+          </Card>
 
-          {/* Thông tin kế toán */}
           {role !== "HCNS" && (
             <>
-              <Panel header="Thông tin phí" key="fee">
+              {/* Thông tin phí */}
+              <Card title={renderHeader("Thông tin phí", "fee")}>
                 <Form.Item name="fee" label="Phí">
                   <InputNumber style={{ width: "100%" }} />
                 </Form.Item>
@@ -99,47 +150,59 @@ export const DebtReportForm = ({ mode, role, open, onCancel, onOk, initialValues
                 <Form.Item name="feeWithVAT" label="Phí gồm VAT">
                   <InputNumber style={{ width: "100%" }} />
                 </Form.Item>
-              </Panel>
+              </Card>
 
-              <Panel header="Hóa đơn" key="invoice">
-                {/* Có thể dùng Form.List để lặp nhiều hóa đơn */}
+              {/* Hóa đơn */}
+              <Card title={renderHeader("Hóa đơn", "invoice")}>
                 <Form.Item name={["invoice", "invoiceNo"]} label="Số hóa đơn">
                   <Input />
                 </Form.Item>
                 <Form.Item name={["invoice", "invoiceDate"]} label="Ngày hóa đơn">
                   <DatePicker style={{ width: "100%" }} />
                 </Form.Item>
-              </Panel>
+              </Card>
 
-              <Panel header="Thanh toán" key="payment">
+              {/* Thanh toán */}
+              <Card title={renderHeader("Thanh toán", "payment")}>
                 <Form.Item name={["payment", "paymentCode"]} label="Mã thanh toán">
                   <Input />
                 </Form.Item>
                 <Form.Item name={["payment", "amount"]} label="Số tiền đã thu">
                   <InputNumber style={{ width: "100%" }} />
                 </Form.Item>
-              </Panel>
+              </Card>
 
-              <Panel header="Công nợ" key="debt">
+              {/* Công nợ */}
+              <Card title={renderHeader("Công nợ", "debt")}>
                 <Form.Item name="debtNoVAT" label="Số tiền chưa VAT">
                   <InputNumber style={{ width: "100%" }} />
                 </Form.Item>
                 <Form.Item name="debtWithVAT" label="Số tiền đã VAT">
                   <InputNumber style={{ width: "100%" }} />
                 </Form.Item>
-              </Panel>
+              </Card>
 
-              <Panel header="Hoa hồng cộng tác viên" key="collaborator">
+              {/* Hoa hồng cộng tác viên */}
+              <Card title={renderHeader("Hoa hồng cộng tác viên", "collaborator")}>
                 <Form.Item name={["collaborator", "name"]} label="Tên cộng tác viên">
+                  <Input />
+                </Form.Item>
+                <Form.Item name={["collaborator", "phone"]} label="Số điện thoại">
                   <Input />
                 </Form.Item>
                 <Form.Item name={["collaborator", "commissionRate"]} label="Tỷ lệ hoa hồng (%)">
                   <InputNumber min={0} max={100} style={{ width: "100%" }} />
                 </Form.Item>
-              </Panel>
+                <Form.Item name={["collaborator", "amount"]} label="Số tiền hoa hồng">
+                  <InputNumber min={0} style={{ width: "100%" }} />
+                </Form.Item>
+                <Form.Item name={["collaborator", "remainingAmount"]} label="Số tiền còn phải chi">
+                  <InputNumber min={0} style={{ width: "100%" }} />
+                </Form.Item>
+              </Card>
             </>
           )}
-        </Collapse>
+        </Space>
       </Form>
     </Modal>
   );

@@ -1,6 +1,13 @@
 import { useState } from "react";
-import { Button, Space, Modal, message } from "antd";
-import { PlusOutlined, DeleteOutlined, FilterOutlined, DownloadOutlined } from "@ant-design/icons";
+import { Button, Space, Modal, message, Popover, Upload } from "antd";
+import {
+  PlusOutlined,
+  DeleteOutlined,
+  FilterOutlined,
+  DownloadOutlined,
+  SettingOutlined,
+  InboxOutlined,
+} from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 import { generatePath, useNavigate } from "react-router-dom";
 import { DebtReportForm } from "../../../components/DebtReportForm/DebtReportForm";
@@ -8,18 +15,27 @@ import { TableDebtReport } from "../../../components/TableDebtReport/TableDebtRe
 import { FilterDebtReportDrawer } from "../../../components/Filter/FilterDebtReportDrawer";
 import { ROUTES_APP } from "../../../routes";
 
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
+dayjs.extend(isBetween);
+
 export interface Invoice {
   invoiceNo: string; // Số hóa đơn
   invoiceDate: string; // Ngày hóa đơn (YYYY-MM-DD)
   rate?: number; // Tỉ lệ suất (%)
   amountNoVAT?: number; // Giá trị chưa VAT
+  status?: "Thanh toán" | "Chưa thanh toán"; // Trạng thái hóa đơn
+  totalAmount?: number; // Tổng giá trị hóa đơn
 }
 
 export interface Payment {
   paymentCode: string; // Mã thanh toán
-  amount: number; // Số tiền đã thu
   paymentDate: string; // Ngày thu tiền (YYYY-MM-DD)
+  amount: number; // Số tiền đã thu
   method: "Tiền mặt" | "Chuyển khoản"; // Phương thức thanh toán
+  status?: "Thanh toán" | "Chưa thanh toán"; // Trạng thái thanh toán
 }
 
 export interface Collaborator {
@@ -27,6 +43,7 @@ export interface Collaborator {
   phone?: string; // Số điện thoại
   commissionRate?: number; // Tỷ lệ hoa hồng (%)
   amount?: number; // Số tiền hoa hồng
+  remainingAmount?: number; // 👉 Số tiền còn phải chi
 }
 
 export interface DebtReport {
@@ -41,11 +58,10 @@ export interface DebtReport {
   status: "Khởi tạo" | "Chờ kế toán" | "Xác nhận"; // Trạng thái báo cáo
 
   // 👉 Thông tin chờ kế toán
-  fee?: number; // Phí
   exchangeRate?: number; // Tỉ giá
   feeUSD?: number; // Phí USD
-  feeNoVAT?: number; // Phí chưa VAT
   feeVND?: number; // Phí VNĐ
+  feeNoVAT?: number; // Phí chưa VAT
   feeWithVAT?: number; // Phí gồm VAT
 
   // 👉 Hóa đơn
@@ -80,28 +96,47 @@ export const mockDebtReportData: DebtReport[] = [
     director: "Trần Văn B",
     status: "Khởi tạo",
     debtStatus: "Còn nợ",
-    fee: 1000,
     exchangeRate: 25000,
     feeUSD: 40,
     feeNoVAT: 900000,
     feeVND: 1000000,
     feeWithVAT: 1100000,
-    invoices: [{ invoiceNo: "INV-001", invoiceDate: "2025-09-02", rate: 10, amountNoVAT: 500000 }],
+    invoices: [
+      {
+        invoiceNo: "INV-001",
+        invoiceDate: "2025-09-02",
+        rate: 10,
+        amountNoVAT: 500000,
+        status: "Thanh toán",
+        totalAmount: 550000,
+      },
+    ],
     payments: [
-      { paymentCode: "PMT-001", amount: 200000, paymentDate: "2025-09-03", method: "Chuyển khoản" },
+      {
+        paymentCode: "PMT-001",
+        amount: 200000,
+        paymentDate: "2025-09-03",
+        method: "Chuyển khoản",
+        status: "Thanh toán",
+      },
     ],
     collaborators: [
-      { name: "Nguyễn Văn CTV", phone: "0901234567", commissionRate: 5, amount: 25000 },
+      {
+        name: "Nguyễn Văn CTV",
+        phone: "0901234567",
+        commissionRate: 5,
+        amount: 25000,
+        remainingAmount: 12500,
+      },
     ],
     debtNoVAT: 500000,
     debtWithVAT: 550000,
     totalDebtRemaining: 300000,
     badDebt: 0,
+    remainingDebt: 300000,
+    totalDebt: 550000,
   },
 ];
-
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
 
 const exportToExcel = (data: DebtReport[], fileName = "debt-report.xlsx") => {
   // 1. Convert JSON → sheet
@@ -209,7 +244,7 @@ const DebtReportList = () => {
       : true;
     const matchDebtStatus = filterDebtStatus ? item.debtStatus === filterDebtStatus : true;
     const matchDate = filterDate
-      ? item.reportDate >= filterDate[0] && item.reportDate <= filterDate[1]
+      ? dayjs(item.reportDate).isBetween(filterDate[0], filterDate[1], "day", "[]")
       : true;
 
     return (
@@ -217,6 +252,22 @@ const DebtReportList = () => {
     );
   });
 
+  const [importOpen, setImportOpen] = useState(false);
+  const [importing, setImporting] = useState(false);
+  // upload handler
+  const handleUpload = async (file) => {
+    setImporting(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1500)); // fake API call
+      message.success(`${file.name} đã được import thành công`);
+      setImportOpen(false);
+    } catch (err) {
+      message.error("Import thất bại");
+    } finally {
+      setImporting(false);
+    }
+    return false;
+  };
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
@@ -229,6 +280,55 @@ const DebtReportList = () => {
             style={{ maxWidth: 300 }}
           />
 
+          {/* Cài đặt */}
+          <Popover
+            content={
+              <Space direction="vertical">
+                <Button type="text" onClick={() => setImportOpen(true)}>
+                  {/* must have onClick to trigger */}
+                  Import
+                </Button>
+                <Button
+                  type="text"
+                  onClick={() => {
+                    console.log("Export clicked");
+                    if (!selectedReport) {
+                      message.warning("Vui lòng chọn báo cáo trước khi export");
+                      return;
+                    }
+                    handleExport(selectedReport, "excel");
+                  }}
+                >
+                  Export
+                </Button>
+              </Space>
+            }
+            trigger="click"
+            placement="bottom"
+          >
+            <Button icon={<SettingOutlined />}>Cài đặt</Button>
+          </Popover>
+          <Modal
+            open={importOpen}
+            title="Import dữ liệu"
+            onCancel={() => setImportOpen(false)}
+            footer={null}
+            centered
+          >
+            <Upload.Dragger
+              name="file"
+              multiple={false}
+              beforeUpload={handleUpload}
+              showUploadList={false}
+              disabled={importing}
+            >
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">Click hoặc kéo thả file vào đây để Import</p>
+              <p className="ant-upload-hint">Chỉ chấp nhận 1 file mỗi lần</p>
+            </Upload.Dragger>
+          </Modal>
           {/* Filter */}
           <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>
             Bộ lọc

@@ -1,4 +1,4 @@
-// src/App.jsx
+import { ROUTES_APP } from "./routes";
 import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout/mainLayout";
 import Home from "./views/Home";
@@ -13,12 +13,9 @@ import LeadDetail from "./views/CRM/LeadDetail/LeadDetail";
 import OpportunityList from "./views/CRM/OpportunityList/OpportunityList";
 import ContractList from "./views/CRM/ContractList/ContractList";
 import ContractDetailWrapper from "./views/CRM/ContractDetail/ContractDetailWrapper";
-import { ROUTES_APP } from "./routes";
 import EmployeeList from "./views/HRM/EmployeeList/EmployeeList";
 import EmployeeDetail from "./views/HRM/EmployeeDetail/EmployeeDetail";
 import PositionList from "./views/HRM/PositionList/PositionList";
-
-import "./App.css";
 import ContactDetail from "./views/CRM/ContactDetail/ContactDetail";
 import QuotationDetail from "./views/CRM/QuotationDetail/QuotationDetail";
 import OpportunityDetail from "./views/CRM/OpportunityDetail/OpportunityDetail";
@@ -73,7 +70,7 @@ export default function App() {
           <Route path={ROUTES_APP.crm.debtReportList} element={<DebtReportList />} />
           <Route path={ROUTES_APP.crm.debtReportDetail} element={<DebtReportDetail />} />
 
-          {/* +++++++++++++++++++++++++++++++++++++++++++ HRM +++++++++++++++++++++++++++++++++++++++++++ */}
+          {/* ++++++++++++++++++++++++++++ HRM +++++++++++++++++++++++++++++++++++++++++++ */}
           {/* home hrm */}
           <Route path={ROUTES_APP.hrm.homeHRM} element={<HomeHRM />} />
 
