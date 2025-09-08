@@ -26,5 +26,7 @@ export const ROUTES_APP = {
     employeeDetail: "/hrm/employee-list/:id",
     positionList: "/hrm/position-list",
     departmentList: "/hrm/department-list",
+    assetList: "/hrm/asset-list",
+    assetDetail: "/hrm/asset-list/:id",
   },
 };

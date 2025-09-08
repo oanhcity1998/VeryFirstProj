@@ -1,0 +1,11 @@
+.asset-detail-container .ant-picker {
+    height: 32px !important;
+    /* ép chiều cao bằng Input */
+    padding: 4px 11px !important;
+    /* chỉnh lại padding */
+}
+
+.asset-detail-container .ant-picker-input>input {
+    height: 24px !important;
+    /* input bên trong DatePicker */
+}

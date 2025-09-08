@@ -4,6 +4,7 @@ import {
   UserOutlined,
   SolutionOutlined,
   TeamOutlined,
+  AppstoreOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu-HRM.css";
@@ -27,6 +28,8 @@ const SidebarMenuHRM: React.FC<SidebarMenuHRMProps> = ({ collapsed }) => {
     selectedKey = "3";
   } else if (location.pathname.startsWith("/hrm/department-list")) {
     selectedKey = "4";
+  } else if (location.pathname.startsWith("/hrm/asset-list")) {
+    selectedKey = "5";
   }
 
   const items = [
@@ -49,6 +52,11 @@ const SidebarMenuHRM: React.FC<SidebarMenuHRMProps> = ({ collapsed }) => {
       key: "4",
       icon: <TeamOutlined />,
       label: <Link to={ROUTES_APP.hrm.departmentList}>Phòng ban</Link>,
+    },
+    {
+      key: "5",
+      icon: <AppstoreOutlined />,
+      label: <Link to={ROUTES_APP.hrm.assetList}>Tài sản</Link>,
     },
   ];
 

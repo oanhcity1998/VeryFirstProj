@@ -11,10 +11,10 @@ import {
 import "./EmployeeList.css";
 import TableEmployee from "../../../components/TableEmployee/TableEmployee";
 import EmployeeForm from "../../../components/EmployeeForm/EmployeeForm";
-import FilterDrawerHRM from "../../../components/Filter-HRM/FilterDrawer-HRM";
 import * as XLSX from "xlsx";
 import dayjs, { Dayjs } from "dayjs";
 import Search from "antd/es/input/Search";
+import FilterDrawerEmployee from "../../../components/FilterEmployee/FilterDrawerEmployee";
 
 interface Employee {
   key: string;
@@ -576,7 +576,7 @@ const EmployeeList: React.FC = () => {
         saveText="Lưu"
       />
 
-      <FilterDrawerHRM
+      <FilterDrawerEmployee
         open={filterOpen}
         onClose={() => setFilterOpen(false)}
         onConfirm={(values) => console.log("Apply filter:", values)}
