@@ -23,10 +23,10 @@ import DepartmentList from "./views/HRM/DepartmentList/DepartmentList";
 import Profile from "./views/Profile";
 import HomeCRM from "./views/CRM/HomeCRM/HomeCRM";
 import HomeHRM from "./views/HRM/HomeHRM/HomeHRM";
-import DebtReportList from "./views/CRM/DebtReportList/DebtReportList";
-import DebtReportDetail from "./views/CRM/DebtReportDetail/DebtReportDetail";
 import AssetList from "./views/HRM/AssetList/AssetList";
 import AssetDetail from "./views/HRM/AssetDetail/AssetDetail";
+import DebtReportList from "./views/CRM/DebtReportList/DebtReportList";
+import DebtReportDetail from "./views/CRM/DebtReportDetail/DebtReportDetail";
 
 export default function App() {
   return (
@@ -89,7 +89,6 @@ export default function App() {
           {/* Tài sản */}
           <Route path={ROUTES_APP.hrm.assetList} element={<AssetList />} />
           <Route path={ROUTES_APP.hrm.assetDetail} element={<AssetDetail />} />
-
         </Route>
       </Routes>
     </BrowserRouter>

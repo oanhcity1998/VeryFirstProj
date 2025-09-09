@@ -9,15 +9,16 @@ import {
 } from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 import { generatePath, useNavigate } from "react-router-dom";
-import { DebtReportForm } from "../../../components/DebtReportForm/DebtReportForm";
 import { TableDebtReport } from "../../../components/TableDebtReport/TableDebtReport";
 import { FilterDebtReportDrawer } from "../../../components/Filter/FilterDebtReportDrawer";
 import { ROUTES_APP } from "../../../routes";
+import { normalizeDebtReport } from "./debtReport.utils";
 
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
+import { DebtReportForm } from "../../../components/DebtReportForm/DebtReportForm";
 dayjs.extend(isBetween);
 
 // 👉 Hóa đơn
@@ -67,7 +68,7 @@ export interface DebtReport {
   feeWithVAT?: number; // Phí gồm VAT
 
   // 👉 Hóa đơn
-  invoices?: Invoice[];
+  invoice?: Invoice;
 
   // 👉 Thanh toán
   payments?: Payment[];
@@ -79,7 +80,7 @@ export interface DebtReport {
   badDebt?: number; // Nợ khó đòi
 
   // 👉 Hoa hồng cộng tác viên
-  collaborators?: Collaborator[];
+  collaborator?: Collaborator;
 
   // 👉 Thông tin tổng hợp cũ
   totalDebt?: number; // Tổng công nợ
@@ -89,6 +90,7 @@ export interface DebtReport {
 
 export const mockDebtReportData: DebtReport[] = [
   {
+    // 👉 Thông tin khởi tạo
     id: 1,
     reportNo: "BCN-001",
     reportDate: "2025-09-01",
@@ -97,38 +99,25 @@ export const mockDebtReportData: DebtReport[] = [
     auditor: "Nguyễn Văn A",
     director: "Trần Văn B",
     status: "Khởi tạo",
-    debtStatus: "Chưa thanh toán",
+
+    // 👉 Thông tin chờ kế toán
     exchangeRate: 25000,
     feeUSD: 40,
     feeNoVAT: 900000,
     feeVND: 1000000,
     feeWithVAT: 1100000,
-    invoices: [
-      {
-        invoiceNo: "INV-001",
-        invoiceDate: "2025-09-02",
-        rate: 10,
-        amountNoVAT: 500000,
-        status: "Thanh toán",
-        totalAmount: 550000,
-      },
-      {
-        invoiceNo: "INV-002",
-        invoiceDate: "2025-09-05",
-        rate: 8,
-        amountNoVAT: 400000,
-        status: "Chưa thanh toán",
-        totalAmount: 432000,
-      },
-      {
-        invoiceNo: "INV-003",
-        invoiceDate: "2025-09-08",
-        rate: 10,
-        amountNoVAT: 600000,
-        status: "Thanh toán",
-        totalAmount: 660000,
-      },
-    ],
+
+    // 👉 Hóa đơn
+    invoice: {
+      invoiceNo: "INV-001",
+      invoiceDate: "2025-09-02",
+      rate: 10,
+      amountNoVAT: 500000,
+      status: "Thanh toán",
+      totalAmount: 550000,
+    },
+
+    // 👉 Thanh toán
     payments: [
       {
         paymentCode: "PMT-001",
@@ -137,116 +126,27 @@ export const mockDebtReportData: DebtReport[] = [
         method: "Chuyển khoản",
         status: "Thanh toán",
       },
-      {
-        paymentCode: "PMT-002",
-        amount: 100000,
-        paymentDate: "2025-09-07",
-        method: "Tiền mặt",
-        status: "Thanh toán",
-      },
     ],
-    collaborators: [
-      {
-        name: "Nguyễn Văn CTV",
-        phone: "0901234567",
-        commissionRate: 5,
-        amount: 25000,
-        remainingAmount: 12500,
-      },
-    ],
+
+    // 👉 Công nợ
     debtNoVAT: 900000,
     debtWithVAT: 982000,
     totalDebtRemaining: 300000,
     badDebt: 0,
-    remainingDebt: 300000,
+
+    // 👉 Hoa hồng cộng tác viên
+    collaborator: {
+      name: "Nguyễn Văn CTV",
+      phone: "0901234567",
+      commissionRate: 5,
+      amount: 25000,
+      remainingAmount: 12500,
+    },
+
+    // 👉 Thông tin tổng hợp
     totalDebt: 982000,
-  },
-  {
-    id: 2,
-    reportNo: "BCN-002",
-    reportDate: "2025-09-04",
-    contract: "HĐ-2025-02",
-    customer: "Công ty XYZ",
-    auditor: "Phạm Thị C",
-    director: "Ngô Văn D",
-    status: "Chờ kế toán",
+    remainingDebt: 300000,
     debtStatus: "Thanh toán một phần",
-    exchangeRate: 24000,
-    feeUSD: 50,
-    feeNoVAT: 1200000,
-    feeVND: 1250000,
-    feeWithVAT: 1375000,
-    invoices: [
-      {
-        invoiceNo: "INV-010",
-        invoiceDate: "2025-09-04",
-        rate: 12,
-        amountNoVAT: 1000000,
-        status: "Thanh toán",
-        totalAmount: 1120000,
-      },
-      {
-        invoiceNo: "INV-020",
-        invoiceDate: "2025-09-06",
-        rate: 10,
-        amountNoVAT: 800000,
-        status: "Thanh toán",
-        totalAmount: 880000,
-      },
-      {
-        invoiceNo: "INV-030",
-        invoiceDate: "2025-09-09",
-        rate: 8,
-        amountNoVAT: 600000,
-        status: "Thanh toán",
-        totalAmount: 648000,
-      },
-    ],
-    payments: [
-      {
-        paymentCode: "PMT-010",
-        amount: 600000,
-        paymentDate: "2025-09-05",
-        method: "Chuyển khoản",
-        status: "Thanh toán",
-      },
-      {
-        paymentCode: "PMT-020",
-        amount: 400000,
-        paymentDate: "2025-09-08",
-        method: "Tiền mặt",
-        status: "Thanh toán",
-      },
-    ],
-    collaborators: [
-      {
-        name: "Trần Văn E",
-        phone: "0912345678",
-        commissionRate: 7,
-        amount: 70000,
-        remainingAmount: 30000,
-      },
-      {
-        name: "Lê Thị F",
-        phone: "0987654321",
-        commissionRate: 3,
-        amount: 30000,
-        remainingAmount: 0,
-      },
-      {
-        name: "Nguyễn Văn G",
-        phone: "0901234567",
-        commissionRate: 5,
-        amount: 50000,
-        remainingAmount: 0,
-      },
-    ],
-    debtNoVAT: 1000000,
-    debtWithVAT: 1120000,
-    totalDebtRemaining: 520000,
-    badDebt: 200000,
-    remainingDebt: 320000,
-    totalDebt: 1120000,
   },
 ];
 
@@ -273,19 +173,20 @@ const exportDebtReportsToExcel = (reports: DebtReport[], fileName = "debt-report
   // Sheet hóa đơn
   const allInvoices: any[] = [];
   reports.forEach((r) => {
-    (r.invoices || []).forEach((inv) => {
+    if (r.invoice) {
+      const inv = r.invoice;
       allInvoices.push({
         "Báo cáo": r.reportNo,
-        "Số hóa đơn": inv.invoiceNo,
-        "Ngày hóa đơn": dayjs(inv.invoiceDate).format("DD/MM/YYYY"),
-        "Tỉ lệ suất (%)": inv.rate ?? "-",
+        "Hóa đơn": inv.invoiceNo,
+        Ngày: dayjs(inv.invoiceDate).format("DD/MM/YYYY"),
+        "Tỉ lệ (%)": inv.rate ?? "-",
         "Giá trị chưa VAT": inv.amountNoVAT
           ? Intl.NumberFormat("vi-VN").format(inv.amountNoVAT)
           : "-",
         "Trạng thái": inv.status ?? "-",
         "Tổng giá trị": inv.totalAmount ? Intl.NumberFormat("vi-VN").format(inv.totalAmount) : "-",
       });
-    });
+    }
   });
   const invoiceSheet = XLSX.utils.json_to_sheet(allInvoices);
   XLSX.utils.book_append_sheet(workbook, invoiceSheet, "Hóa đơn");
@@ -310,7 +211,8 @@ const exportDebtReportsToExcel = (reports: DebtReport[], fileName = "debt-report
   // Sheet CTV
   const allCTVs: any[] = [];
   reports.forEach((r) => {
-    (r.collaborators || []).forEach((ctv) => {
+    if (r.collaborator) {
+      const ctv = r.collaborator;
       allCTVs.push({
         "Báo cáo": r.reportNo,
         "Tên CTV": ctv.name,
@@ -321,7 +223,7 @@ const exportDebtReportsToExcel = (reports: DebtReport[], fileName = "debt-report
           ? Intl.NumberFormat("vi-VN").format(ctv.remainingAmount)
           : "-",
       });
-    });
+    }
   });
   const ctvSheet = XLSX.utils.json_to_sheet(allCTVs);
   XLSX.utils.book_append_sheet(workbook, ctvSheet, "CTV");
@@ -356,18 +258,20 @@ const DebtReportList = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
 
   // 👉 Create
-  const handleCreate = (values: DebtReport) => {
-    const newReport: DebtReport = { ...values, id: data.length + 1 };
-    setData((prev) => [...prev, newReport]);
+  const handleCreate = (report: DebtReport) => {
+    const newReport: DebtReport = { ...report, id: data.length + 1 };
+    const normalized = normalizeDebtReport(newReport); // normalize sau khi có id
+    setData((prev) => [...prev, normalized]);
     setIsCreateModalOpen(false);
     message.success("Tạo báo cáo thành công!");
   };
 
   // 👉 Edit
-  const handleEdit = (values: DebtReport) => {
+  const handleEdit = (report: DebtReport) => {
     if (!selectedReport) return;
-    const updated: DebtReport = { ...selectedReport, ...values };
-    setData((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+    const updated: DebtReport = { ...selectedReport, ...report };
+    const normalized = normalizeDebtReport(updated); // normalize khi update
+    setData((prev) => prev.map((r) => (r.id === updated.id ? normalized : r)));
     setIsEditModalOpen(false);
     message.success("Cập nhật báo cáo thành công!");
   };
@@ -379,7 +283,6 @@ const DebtReportList = () => {
       setData((prev) => prev.filter((item) => !selectedRowKeys.includes(item.id)));
       setSelectedRowKeys([]);
       message.success("Đã xóa báo cáo");
-      navigate(ROUTES_APP.crm.debtReportList);
     } catch (err) {
       message.error("Không thể xóa báo cáo");
     } finally {
@@ -582,15 +485,7 @@ const DebtReportList = () => {
         role="KETOAN"
         open={isEditModalOpen}
         onCancel={() => setIsEditModalOpen(false)}
-        onOk={(values, status) => {
-          if (!selectedReport) return;
-          const updated: DebtReport = { ...selectedReport, ...values, status };
-          setData((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
-          setIsEditModalOpen(false);
-          message.success(
-            status === "Xác nhận" ? "Báo cáo đã được xác nhận!" : "Lưu báo cáo tạm thành công!"
-          );
-        }}
+        onOk={(values, status) => handleEdit({ ...values, status } as DebtReport)}
         initialValues={selectedReport}
       />
     </>
