@@ -66,13 +66,20 @@ button:focus-visible {
   }
 } */
 
-/* html,
+html,
 body,
+.ant-layout,
 #root {
   height: auto;
   min-height: 100%;
   overflow-y: auto;
-} */
+}
+
+.ant-layout-content {
+  flex: 1; /* cho phép Content chiếm phần còn lại */
+  min-height: auto; /* không bị khóa cứng */
+  overflow: visible; /* đảm bảo nội dung bên trong được cuộn */
+}
 
 .ant-input {
   height: auto !important;

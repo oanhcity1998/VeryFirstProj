@@ -110,6 +110,7 @@ export const TableDebtReport = ({
           "Khởi tạo": "blue",
           "Chờ kế toán": "orange",
           "Xác nhận": "green",
+          Hủy: "red",
         };
         return <Tag color={colorMap[status] || "default"}>{status}</Tag>;
       },

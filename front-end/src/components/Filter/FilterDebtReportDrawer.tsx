@@ -64,13 +64,13 @@ export const FilterDebtReportDrawer = ({
         </Form.Item> */}
 
         {/* Hợp đồng */}
-        <Form.Item label="Hợp đồng">
+        {/* <Form.Item label="Hợp đồng">
           <Input
             placeholder="Nhập số hợp đồng"
             value={filterContract ?? ""}
             onChange={(e) => setFilterContract(e.target.value || null)}
           />
-        </Form.Item>
+        </Form.Item> */}
 
         {/* Khách hàng */}
         <Form.Item label="Khách hàng">
@@ -88,7 +88,8 @@ export const FilterDebtReportDrawer = ({
             value={filterDebtStatus ?? undefined}
             onChange={(val) => setFilterDebtStatus(val || null)}
           >
-            <Select.Option value="Còn nợ">Còn nợ</Select.Option>
+            <Select.Option value="Chưa thanh toán">Chưa thanh toán</Select.Option>
+            <Select.Option value="Thanh toán một phần">Thanh toán một phần</Select.Option>
             <Select.Option value="Đã thanh toán">Đã thanh toán</Select.Option>
             <Select.Option value="Khó đòi">Khó đòi</Select.Option>
           </Select>
@@ -104,6 +105,7 @@ export const FilterDebtReportDrawer = ({
             <Select.Option value="Khởi tạo">Khởi tạo</Select.Option>
             <Select.Option value="Chờ kế toán">Chờ kế toán</Select.Option>
             <Select.Option value="Xác nhận">Xác nhận</Select.Option>
+            <Select.Option value="Hủy">Hủy</Select.Option>
           </Select>
         </Form.Item>
 

@@ -20,6 +20,7 @@ import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 dayjs.extend(isBetween);
 
+// 👉 Hóa đơn
 export interface Invoice {
   invoiceNo: string; // Số hóa đơn
   invoiceDate: string; // Ngày hóa đơn (YYYY-MM-DD)
@@ -29,6 +30,7 @@ export interface Invoice {
   totalAmount?: number; // Tổng giá trị hóa đơn
 }
 
+// 👉 Thanh toán
 export interface Payment {
   paymentCode: string; // Mã thanh toán
   paymentDate: string; // Ngày thu tiền (YYYY-MM-DD)
@@ -37,6 +39,7 @@ export interface Payment {
   status?: "Thanh toán" | "Chưa thanh toán"; // Trạng thái thanh toán
 }
 
+// 👉 Cộng tác viên
 export interface Collaborator {
   name: string; // Tên cộng tác viên
   phone?: string; // Số điện thoại
@@ -54,7 +57,7 @@ export interface DebtReport {
   customer: string; // Khách hàng
   auditor?: string; // Kiểm toán viên
   director?: string; // Giám đốc phụ trách
-  status: "Khởi tạo" | "Chờ kế toán" | "Xác nhận"; // Trạng thái báo cáo
+  status: "Khởi tạo" | "Chờ kế toán" | "Xác nhận" | "Hủy"; // Trạng thái báo cáo
 
   // 👉 Thông tin chờ kế toán
   exchangeRate?: number; // Tỉ giá
@@ -81,7 +84,7 @@ export interface DebtReport {
   // 👉 Thông tin tổng hợp cũ
   totalDebt?: number; // Tổng công nợ
   remainingDebt?: number; // Công nợ còn lại
-  debtStatus?: "Còn nợ" | "Đã thanh toán" | "Khó đòi";
+  debtStatus?: "Chưa thanh toán" | "Thanh toán một phần" | "Đã thanh toán" | "Khó đòi"; // Trạng thái công nợ
 }
 
 export const mockDebtReportData: DebtReport[] = [
@@ -94,7 +97,7 @@ export const mockDebtReportData: DebtReport[] = [
     auditor: "Nguyễn Văn A",
     director: "Trần Văn B",
     status: "Khởi tạo",
-    debtStatus: "Còn nợ",
+    debtStatus: "Chưa thanh toán",
     exchangeRate: 25000,
     feeUSD: 40,
     feeNoVAT: 900000,
@@ -109,6 +112,22 @@ export const mockDebtReportData: DebtReport[] = [
         status: "Thanh toán",
         totalAmount: 550000,
       },
+      {
+        invoiceNo: "INV-002",
+        invoiceDate: "2025-09-05",
+        rate: 8,
+        amountNoVAT: 400000,
+        status: "Chưa thanh toán",
+        totalAmount: 432000,
+      },
+      {
+        invoiceNo: "INV-003",
+        invoiceDate: "2025-09-08",
+        rate: 10,
+        amountNoVAT: 600000,
+        status: "Thanh toán",
+        totalAmount: 660000,
+      },
     ],
     payments: [
       {
@@ -116,6 +135,13 @@ export const mockDebtReportData: DebtReport[] = [
         amount: 200000,
         paymentDate: "2025-09-03",
         method: "Chuyển khoản",
+        status: "Thanh toán",
+      },
+      {
+        paymentCode: "PMT-002",
+        amount: 100000,
+        paymentDate: "2025-09-07",
+        method: "Tiền mặt",
         status: "Thanh toán",
       },
     ],
@@ -128,12 +154,99 @@ export const mockDebtReportData: DebtReport[] = [
         remainingAmount: 12500,
       },
     ],
-    debtNoVAT: 500000,
-    debtWithVAT: 550000,
+    debtNoVAT: 900000,
+    debtWithVAT: 982000,
     totalDebtRemaining: 300000,
     badDebt: 0,
     remainingDebt: 300000,
-    totalDebt: 550000,
+    totalDebt: 982000,
+  },
+  {
+    id: 2,
+    reportNo: "BCN-002",
+    reportDate: "2025-09-04",
+    contract: "HĐ-2025-02",
+    customer: "Công ty XYZ",
+    auditor: "Phạm Thị C",
+    director: "Ngô Văn D",
+    status: "Chờ kế toán",
+    debtStatus: "Thanh toán một phần",
+    exchangeRate: 24000,
+    feeUSD: 50,
+    feeNoVAT: 1200000,
+    feeVND: 1250000,
+    feeWithVAT: 1375000,
+    invoices: [
+      {
+        invoiceNo: "INV-010",
+        invoiceDate: "2025-09-04",
+        rate: 12,
+        amountNoVAT: 1000000,
+        status: "Thanh toán",
+        totalAmount: 1120000,
+      },
+      {
+        invoiceNo: "INV-020",
+        invoiceDate: "2025-09-06",
+        rate: 10,
+        amountNoVAT: 800000,
+        status: "Thanh toán",
+        totalAmount: 880000,
+      },
+      {
+        invoiceNo: "INV-030",
+        invoiceDate: "2025-09-09",
+        rate: 8,
+        amountNoVAT: 600000,
+        status: "Thanh toán",
+        totalAmount: 648000,
+      },
+    ],
+    payments: [
+      {
+        paymentCode: "PMT-010",
+        amount: 600000,
+        paymentDate: "2025-09-05",
+        method: "Chuyển khoản",
+        status: "Thanh toán",
+      },
+      {
+        paymentCode: "PMT-020",
+        amount: 400000,
+        paymentDate: "2025-09-08",
+        method: "Tiền mặt",
+        status: "Thanh toán",
+      },
+    ],
+    collaborators: [
+      {
+        name: "Trần Văn E",
+        phone: "0912345678",
+        commissionRate: 7,
+        amount: 70000,
+        remainingAmount: 30000,
+      },
+      {
+        name: "Lê Thị F",
+        phone: "0987654321",
+        commissionRate: 3,
+        amount: 30000,
+        remainingAmount: 0,
+      },
+      {
+        name: "Nguyễn Văn G",
+        phone: "0901234567",
+        commissionRate: 5,
+        amount: 50000,
+        remainingAmount: 0,
+      },
+    ],
+    debtNoVAT: 1000000,
+    debtWithVAT: 1120000,
+    totalDebtRemaining: 520000,
+    badDebt: 200000,
+    remainingDebt: 320000,
+    totalDebt: 1120000,
   },
 ];
 

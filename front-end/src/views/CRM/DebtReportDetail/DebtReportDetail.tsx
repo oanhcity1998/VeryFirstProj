@@ -49,9 +49,10 @@ const DebtReportDetail = () => {
       <Form
         form={form}
         layout="horizontal"
-        labelCol={{ span: 12 }}
-        wrapperCol={{ span: 12 }}
-        // labelWrap
+        labelWrap
+        labelCol={{ span: 11 }}
+        wrapperCol={{ span: 13 }}
+        labelAlign="left"
         initialValues={{
           ...report,
           reportDate: report.reportDate ? dayjs(report.reportDate) : null,
@@ -63,7 +64,13 @@ const DebtReportDetail = () => {
           title="Thông tin chung"
           style={{ marginBottom: 16 }}
           extra={
-            <Form.Item name="status" label="Trạng thái báo cáo">
+            <Form.Item
+              name="status"
+              label="Trạng thái báo cáo"
+              labelCol={{ span: 10 }}
+              wrapperCol={{ span: 14 }}
+              style={{ marginBottom: 0 }}
+            >
               <Input />
             </Form.Item>
           }
@@ -113,31 +120,26 @@ const DebtReportDetail = () => {
                 </h3>
 
                 <Row gutter={16}>
-                  <Col span={24}>
-                    <Form.Item
-                      name="exchangeRate"
-                      label="Tỉ giá"
-                      labelCol={{ span: 6 }} // giữ giống với field khác
-                      wrapperCol={{ span: 18 }} // input chiếm phần còn lại
-                    >
+                  <Col span={12}>
+                    <Form.Item name="exchangeRate" label="Tỉ giá">
                       <InputNumber disabled style={{ width: "100%" }} formatter={numberFormatter} />
                     </Form.Item>
                   </Col>
-                </Row>
-
-                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item></Form.Item>
+                  </Col>
                   <Col span={12}>
                     <Form.Item name="feeUSD" label="Phí USD">
                       <InputNumber disabled style={{ width: "100%" }} formatter={numberFormatter} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item name="feeNoVAT" label="Phí chưa VAT">
+                    <Form.Item name="feeVND" label="Phí VNĐ">
                       <InputNumber disabled style={{ width: "100%" }} formatter={numberFormatter} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item name="feeVND" label="Phí VNĐ">
+                    <Form.Item name="feeNoVAT" label="Phí chưa VAT">
                       <InputNumber disabled style={{ width: "100%" }} formatter={numberFormatter} />
                     </Form.Item>
                   </Col>
@@ -237,7 +239,7 @@ const DebtReportDetail = () => {
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Form.Item label="Phương thức">
+                      <Form.Item label="Phương thức thanh toán ">
                         <Input value={pmt.method} disabled />
                       </Form.Item>
                     </Col>
@@ -269,7 +271,12 @@ const DebtReportDetail = () => {
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item name="totalDebtRemaining" label="Tổng công nợ còn phải thu">
+                  <Form.Item
+                    name="totalDebtRemaining"
+                    label="Tổng công nợ còn phải thu (đã VAT)"
+                    // labelCol={{ span: 10 }}
+                    // wrapperCol={{ span: 14 }}
+                  >
                     <InputNumber style={{ width: "100%" }} />
                   </Form.Item>
                 </Col>
