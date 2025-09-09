@@ -12,11 +12,11 @@ import {
   Col,
   Select,
 } from "antd";
-import { DebtReport, mockDebtReportData } from "../DebtReportList/DebtReportList";
 import { ROUTES_APP } from "../../../routes";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import "./DebtReportDetail.css";
+import { mockDebtReportData } from "../DebtReportList/DebtReportList";
 
 const { TabPane } = Tabs;
 
@@ -154,64 +154,62 @@ const DebtReportDetail = () => {
 
             {/* Tab hóa đơn */}
             <TabPane tab="Hóa đơn" key="invoice">
-              {(report.invoices || []).map((inv, idx) => (
-                <Card key={idx} size="small" style={{ marginBottom: 12 }}>
-                  <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
-                    Hóa đơn báo cáo công nợ {`<${report?.reportNo}>`}
-                  </h3>
+              <Card size="small" style={{ marginBottom: 12 }}>
+                <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
+                  Hóa đơn báo cáo công nợ {`<${report?.reportNo}>`}
+                </h3>
 
-                  <Row gutter={16}>
-                    <Col span={12}>
-                      <Form.Item label="Số hóa đơn">
-                        <Input value={inv.invoiceNo} disabled />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item label="Ngày hóa đơn">
-                        <Input value={inv.invoiceDate} disabled />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item label="Tỉ lệ suất (%)">
-                        <InputNumber
-                          value={inv.rate}
-                          disabled
-                          style={{ width: "100%" }}
-                          formatter={numberFormatter}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item label="Giá trị chưa VAT">
-                        <InputNumber
-                          value={inv.amountNoVAT}
-                          disabled
-                          style={{ width: "100%" }}
-                          formatter={numberFormatter}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item label="Trạng thái">
-                        <Select value={inv.status} disabled>
-                          <Select.Option value="Chưa thanh toán">Chưa thanh toán</Select.Option>
-                          <Select.Option value="Thanh toán">Thanh toán</Select.Option>
-                        </Select>
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item label="Tổng cộng">
-                        <InputNumber
-                          value={inv.totalAmount}
-                          disabled
-                          style={{ width: "100%" }}
-                          formatter={numberFormatter}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </Card>
-              ))}
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item label="Số hóa đơn">
+                      <Input value={report?.invoice?.invoiceNo} disabled />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Ngày hóa đơn">
+                      <Input value={report?.invoice?.invoiceDate} disabled />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Tỉ lệ suất (%)">
+                      <InputNumber
+                        value={report?.invoice?.rate}
+                        disabled
+                        style={{ width: "100%" }}
+                        formatter={numberFormatter}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Giá trị chưa VAT">
+                      <InputNumber
+                        value={report?.invoice?.amountNoVAT}
+                        disabled
+                        style={{ width: "100%" }}
+                        formatter={numberFormatter}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Trạng thái">
+                      <Select value={report?.invoice?.status} disabled>
+                        <Select.Option value="Chưa thanh toán">Chưa thanh toán</Select.Option>
+                        <Select.Option value="Thanh toán">Thanh toán</Select.Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Tổng cộng">
+                      <InputNumber
+                        value={report?.invoice?.totalAmount}
+                        disabled
+                        style={{ width: "100%" }}
+                        formatter={numberFormatter}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Card>
             </TabPane>
 
             {/* Tab thanh toán */}
@@ -290,49 +288,51 @@ const DebtReportDetail = () => {
 
             {/* Tab hoa hồng CTV */}
             <TabPane tab="Hoa hồng CTV" key="collaborator">
-              {(report.collaborators || []).map((ctv, idx) => (
-                <Card key={idx} size="small" style={{ marginBottom: 12 }}>
-                  <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
-                    Hoa hồng cộng tác viên {`<${report?.reportNo}>`}
-                  </h3>
+              <Card size="small" style={{ marginBottom: 12 }}>
+                <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
+                  Hoa hồng cộng tác viên {`<${report?.reportNo}>`}
+                </h3>
 
-                  <Row gutter={16}>
-                    <Col span={12}>
-                      <Form.Item label="Tên cộng tác viên">
-                        <Input value={ctv.name} disabled />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item label="Số điện thoại">
-                        <Input value={ctv.phone} disabled />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item label="Tỷ lệ hoa hồng (%)">
-                        <InputNumber
-                          value={ctv.commissionRate}
-                          disabled
-                          style={{ width: "100%" }}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item label="Số tiền hoa hồng">
-                        <InputNumber value={ctv.amount} disabled style={{ width: "100%" }} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item label="Số tiền còn phải chi">
-                        <InputNumber
-                          value={ctv.remainingAmount}
-                          disabled
-                          style={{ width: "100%" }}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </Card>
-              ))}
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item label="Tên cộng tác viên">
+                      <Input value={report?.collaborator?.name} disabled />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Số điện thoại">
+                      <Input value={report?.collaborator?.phone} disabled />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Tỷ lệ hoa hồng (%)">
+                      <InputNumber
+                        value={report?.collaborator?.commissionRate}
+                        disabled
+                        style={{ width: "100%" }}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Số tiền hoa hồng">
+                      <InputNumber
+                        value={report?.collaborator?.amount}
+                        disabled
+                        style={{ width: "100%" }}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Số tiền còn phải chi">
+                      <InputNumber
+                        value={report?.collaborator?.remainingAmount}
+                        disabled
+                        style={{ width: "100%" }}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Card>
             </TabPane>
           </Tabs>
         </Card>

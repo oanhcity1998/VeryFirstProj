@@ -72,7 +72,22 @@ export const DebtReportForm = ({ mode, role, open, onCancel, onOk, initialValues
     if (open && initialValues) {
       form.setFieldsValue({
         ...initialValues,
+        // Report date
         reportDate: initialValues.reportDate ? dayjs(initialValues.reportDate) : null,
+        // Invoice date
+        invoice: initialValues.invoice
+          ? {
+              ...initialValues.invoice,
+              invoiceDate: initialValues.invoice.invoiceDate
+                ? dayjs(initialValues.invoice.invoiceDate)
+                : null,
+            }
+          : undefined,
+        // Payments array
+        payments: initialValues.payments?.map((p: any) => ({
+          ...p,
+          paymentDate: p.paymentDate ? dayjs(p.paymentDate) : null,
+        })),
       });
       updateProgress();
     } else if (open) {
@@ -85,14 +100,61 @@ export const DebtReportForm = ({ mode, role, open, onCancel, onOk, initialValues
     const values = form.getFieldsValue();
     const newProgress: Record<string, number> = {};
 
-    Object.entries(sectionFields).forEach(([section, fields]) => {
+    const calcSection = (section: string, fields: (string | string[])[]) => {
       let filled = 0;
+      let total = 0;
+
+      if (section === "payment") {
+        const arr = values?.payments;
+        if (Array.isArray(arr) && arr.length > 0) {
+          arr.forEach((p) => {
+            let blockFilled = 0;
+            let blockTotal = 0;
+            fields.forEach((f) => {
+              const [, child] = f as [string, string];
+              blockTotal++;
+              const val = p?.[child];
+              if (val !== undefined && val !== null && val !== "") blockFilled++;
+            });
+            filled += blockFilled / blockTotal;
+            total++;
+          });
+        }
+        return total > 0 ? Math.round((filled / total) * 100) : 0;
+      }
+
       fields.forEach((f) => {
-        const val = Array.isArray(f) ? values?.[f[0]]?.[f[1]] : values?.[f];
-        if (val !== undefined && val !== null && val !== "") filled++;
+        if (Array.isArray(f)) {
+          const [parent, child] = f;
+          const val = values?.[parent];
+          if (typeof val === "object" && val !== null) {
+            total++;
+            if (val?.[child] !== undefined && val?.[child] !== null && val?.[child] !== "") {
+              filled++;
+            }
+          } else {
+            total++;
+          }
+        } else {
+          total++;
+          const val = values?.[f];
+          if (val !== undefined && val !== null && val !== "") filled++;
+        }
       });
-      newProgress[section] = Math.round((filled / fields.length) * 100);
+
+      return total > 0 ? Math.round((filled / total) * 100) : 0;
+    };
+
+    // Tính cho từng section con
+    Object.entries(sectionFields).forEach(([section, fields]) => {
+      if (section === "accounting") return; // bỏ qua, xử lý riêng
+      newProgress[section] = calcSection(section, fields);
     });
+
+    // Tính accounting = trung bình các section con
+    const accountingSections = ["fee", "invoice", "payment", "debt", "collaborator"];
+    const sum = accountingSections.reduce((acc, s) => acc + (newProgress[s] || 0), 0);
+    newProgress.accounting = Math.round(sum / accountingSections.length);
 
     setProgress(newProgress);
   };
@@ -110,7 +172,7 @@ export const DebtReportForm = ({ mode, role, open, onCancel, onOk, initialValues
   const renderHeader = (label: string, key: string) => (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
       <span style={{ fontWeight: "bolder" }}>{label}</span>
-      {key === "init" && (
+      {key === "init" && isEdit && (
         <Row style={{ width: "40%" }}>
           <Form.Item
             name="status"
@@ -268,27 +330,77 @@ export const DebtReportForm = ({ mode, role, open, onCancel, onOk, initialValues
 
               {/* Thanh toán */}
               <Card title={renderHeader("Thanh toán", "payment")}>
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Form.Item name={["payment", "paymentCode"]} label="Mã thanh toán">
-                      <Input />
-                    </Form.Item>
-                    <Form.Item name={["payment", "amount"]} label="Số tiền đã thu">
-                      <InputNumber style={{ width: "100%" }} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item name={["payment", "paymentDate"]} label="Ngày thu tiền">
-                      <Input />
-                    </Form.Item>
-                    <Form.Item name={["payment", "status"]} label="Trạng thái thanh toán">
-                      <Select allowClear>
-                        <Select.Option value="Chưa thanh toán">Chưa thanh toán</Select.Option>
-                        <Select.Option value="Đã thanh toán">Đã thanh toán</Select.Option>
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                </Row>
+                <Form.List name="payments">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <Row gutter={16} key={key} align="middle">
+                          <Col span={12}>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "paymentCode"]}
+                              label="Mã thanh toán"
+                              rules={[{ required: true, message: "Nhập mã thanh toán" }]}
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={12}>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "amount"]}
+                              label="Số tiền đã thu"
+                              rules={[{ required: true, message: "Nhập số tiền" }]}
+                            >
+                              <InputNumber style={{ width: "100%" }} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={12}>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "paymentDate"]}
+                              label="Ngày thu tiền"
+                              rules={[{ required: true, message: "Chọn ngày" }]}
+                            >
+                              <DatePicker style={{ width: "100%" }} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={12}>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "status"]}
+                              label="Trạng thái"
+                              rules={[{ required: true, message: "Chọn trạng thái" }]}
+                            >
+                              <Select>
+                                <Select.Option value="Chưa thanh toán">
+                                  Chưa thanh toán
+                                </Select.Option>
+                                <Select.Option value="Đã thanh toán">Đã thanh toán</Select.Option>
+                              </Select>
+                            </Form.Item>
+                          </Col>
+                          <Col span={24}>
+                            <Button
+                              style={{ width: "100%", marginBottom: 24 }}
+                              danger
+                              type="default"
+                              onClick={() => remove(name)}
+                            >
+                              Xóa
+                            </Button>
+                          </Col>
+                        </Row>
+                      ))}
+
+                      <Form.Item wrapperCol={{ span: 24 }}>
+                        <Button type="default" onClick={() => add()} block>
+                          Thêm thanh toán
+                        </Button>
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
               </Card>
 
               {/* Công nợ */}
