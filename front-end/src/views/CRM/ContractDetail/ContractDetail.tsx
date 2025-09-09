@@ -184,7 +184,7 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
       </Card>
 
       {/* Actions */}
-      <div style={{ marginTop: 16, display: "flex", justifyContent: "flex-end", flexWrap: "wrap", gap:8 }}>
+      <div style={{ marginTop: 16, display: "flex", justifyContent: "flex-end", flexWrap: "wrap", gap:12, position:"sticky",  }}>
         <Space wrap>
           <Button>Xem báo giá</Button>
           <Button type="primary" onClick={() => setIsModalOpen(true)}>

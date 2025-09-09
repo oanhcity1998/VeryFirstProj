@@ -160,7 +160,7 @@ const TableAsset: React.FC<TableAssetProps> = ({
                 showSizeChanger: false,
             }}
             rowKey="key"
-            scroll={{ x: 800, y: 600 }}
+            scroll={{ x: "max-content", y: 600 }}
             rowClassName={(record: Asset) =>
                 selectedRowKeys.includes(record.key) ? "selected-row" : ""
             }
