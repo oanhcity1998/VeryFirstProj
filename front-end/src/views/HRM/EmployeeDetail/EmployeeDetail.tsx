@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, generatePath, Link } from "react-router-dom";
-import { Form, Button, Row, Col, Card, Typography, Input, DatePicker, Breadcrumb } from "antd";
-import dayjs, { Dayjs } from "dayjs";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { Form, Row, Col, Card, Input, DatePicker, Breadcrumb } from "antd";
+import dayjs from "dayjs";
 import "./EmployeeDetail.css";
 import { ROUTES_APP } from "../../../routes";
-
-const { Title } = Typography;
 
 interface Employee {
   key: string;
@@ -68,16 +66,29 @@ const EmployeeDetail: React.FC = () => {
   ];
 
   useEffect(() => {
-    console.log("ID from URL:", id);
     const foundEmployee = employees.find((emp) => emp.id === id);
     if (foundEmployee) {
       setEmployee(foundEmployee);
       form.setFieldsValue({
         ...foundEmployee,
-        birthDate: foundEmployee.birthDate ? dayjs(foundEmployee.birthDate, "DD/MM/YYYY") : null,
-        issueDate: foundEmployee.issueDate ? dayjs(foundEmployee.issueDate, "DD/MM/YYYY") : null,
-        startDate: foundEmployee.startDate ? dayjs(foundEmployee.startDate, "DD/MM/YYYY") : null,
-        endDate: foundEmployee.endDate ? dayjs(foundEmployee.endDate, "DD/MM/YYYY") : null,
+        birthDate: foundEmployee.birthDate
+          ? dayjs(foundEmployee.birthDate, "DD/MM/YYYY")
+          : null,
+        issueDate: foundEmployee.issueDate
+          ? dayjs(foundEmployee.issueDate, "DD/MM/YYYY")
+          : null,
+        startDate: foundEmployee.startDate
+          ? dayjs(foundEmployee.startDate, "DD/MM/YYYY")
+          : null,
+        endDate: foundEmployee.endDate
+          ? dayjs(foundEmployee.endDate, "DD/MM/YYYY")
+          : null,
+        salary: new Intl.NumberFormat("en-US").format(
+          Number(foundEmployee.salary)
+        ),
+        bonus: new Intl.NumberFormat("en-US").format(
+          Number(foundEmployee.bonus)
+        ),
       });
     } else {
       navigate(ROUTES_APP.hrm.employeeList);
@@ -96,107 +107,103 @@ const EmployeeDetail: React.FC = () => {
         <Breadcrumb.Item>{employee.fullName}</Breadcrumb.Item>
       </Breadcrumb>
 
-
-
       <Row gutter={16}>
         <Col span={24}>
-          <Card title={
-            <h2 style={{ margin: 0 }}>
-              Chi tiết nhân sự {employee.fullName}
-            </h2>
-          } variant="outlined">
+          <Card
+            title={<h2 style={{ margin: 0 }}>Chi tiết nhân sự {employee.fullName}</h2>}
+            variant="outlined"
+          >
             <Form form={form} layout="vertical" disabled={true}>
-              <Row gutter={16}>
+              <Row gutter={16} align="stretch">
+                {/* Thông tin nhân sự */}
                 <Col span={8}>
-                  <Card title="Thông tin nhân sự" variant="outlined">
+                  <Card
+                    title="Thông tin nhân sự"
+                    variant="outlined"
+                    className="employee-card"
+                  >
                     <Form.Item label="Họ và tên" name="fullName">
-                      <Input placeholder="Nhập họ và tên" />
+                      <Input />
                     </Form.Item>
                     <Form.Item label="Ngày sinh" name="birthDate">
-                      <DatePicker
-                        format="DD/MM/YYYY"
-                        style={{ width: "100%" }}
-                        placeholder="Chọn ngày sinh"
-                      />
+                      <DatePicker format="DD/MM/YYYY" style={{ width: "100%" }} />
                     </Form.Item>
                     <Form.Item label="Số điện thoại" name="phone">
-                      <Input placeholder="Nhập số điện thoại" />
+                      <Input />
                     </Form.Item>
                     <Form.Item label="Vị trí" name="position">
-                      <Input placeholder="Nhập vị trí công việc" />
+                      <Input />
                     </Form.Item>
                     <Form.Item label="Giới tính" name="gender">
-                      <Input placeholder="Nam / Nữ" />
+                      <Input />
                     </Form.Item>
                     <Form.Item label="Email" name="email">
-                      <Input placeholder="Nhập email" />
+                      <Input />
                     </Form.Item>
                     <Form.Item label="Phòng ban" name="department">
-                      <Input placeholder="Nhập tên phòng ban" />
+                      <Input />
                     </Form.Item>
                   </Card>
                 </Col>
 
+                {/* Thông tin bổ sung */}
                 <Col span={8}>
-                  <Card title="Thông tin bổ sung" variant="outlined">
+                  <Card
+                    title="Thông tin bổ sung"
+                    variant="outlined"
+                    className="employee-card"
+                  >
                     <Form.Item label="Số CCCD" name="idNumber">
-                      <Input placeholder="Nhập số CCCD" />
+                      <Input />
                     </Form.Item>
                     <Form.Item label="Nơi cấp" name="issuePlace">
-                      <Input placeholder="Nhập nơi cấp CCCD" />
+                      <Input />
                     </Form.Item>
                     <Form.Item label="Ngày cấp" name="issueDate">
-                      <DatePicker
-                        format="DD/MM/YYYY"
-                        style={{ width: "100%" }}
-                        placeholder="Chọn ngày cấp"
-                      />
+                      <DatePicker format="DD/MM/YYYY" style={{ width: "100%" }} />
                     </Form.Item>
                     <Form.Item label="Địa chỉ thường trú" name="permanentAddress">
-                      <Input placeholder="Nhập địa chỉ thường trú" />
+                      <Input />
                     </Form.Item>
                     <Form.Item label="Địa chỉ tạm trú" name="temporaryAddress">
-                      <Input placeholder="Nhập địa chỉ tạm trú" />
+                      <Input />
                     </Form.Item>
                     <Form.Item label="Mã số TNCN" name="personalTaxCode">
-                      <Input placeholder="Nhập mã số TNCN" />
+                      <Input />
                     </Form.Item>
                     <Form.Item label="Mã số BHXH" name="socialInsuranceNumber">
-                      <Input placeholder="Nhập mã số BHXH" />
+                      <Input />
                     </Form.Item>
                     <Form.Item label="Tài khoản ngân hàng" name="bankAccount">
-                      <Input placeholder="Nhập số tài khoản ngân hàng" />
+                      <Input />
                     </Form.Item>
                   </Card>
                 </Col>
 
+                {/* Thông tin hợp đồng */}
                 <Col span={8}>
-                  <Card title="Thông tin hợp đồng" variant="outlined">
+                  <Card
+                    title="Thông tin hợp đồng"
+                    variant="outlined"
+                    className="employee-card"
+                  >
                     <Form.Item label="Loại hợp đồng lao động" name="contractType">
-                      <Input placeholder="VD: Hợp đồng xác định thời hạn" />
+                      <Input />
                     </Form.Item>
                     <Form.Item label="Thời hạn hợp đồng lao động" name="contractTerm">
-                      <Input placeholder="VD: 12 tháng" />
+                      <Input />
                     </Form.Item>
                     <Form.Item label="Ngày bắt đầu" name="startDate">
-                      <DatePicker
-                        format="DD/MM/YYYY"
-                        style={{ width: "100%" }}
-                        placeholder="Chọn ngày bắt đầu"
-                      />
+                      <DatePicker format="DD/MM/YYYY" style={{ width: "100%" }} />
                     </Form.Item>
                     <Form.Item label="Ngày kết thúc" name="endDate">
-                      <DatePicker
-                        format="DD/MM/YYYY"
-                        style={{ width: "100%" }}
-                        placeholder="Chọn ngày kết thúc"
-                      />
+                      <DatePicker format="DD/MM/YYYY" style={{ width: "100%" }} />
                     </Form.Item>
                     <Form.Item label="Mức lương" name="salary">
-                      <Input placeholder="Nhập mức lương" />
+                      <Input />
                     </Form.Item>
                     <Form.Item label="Tiền thưởng" name="bonus">
-                      <Input placeholder="Nhập tiền thưởng" />
+                      <Input />
                     </Form.Item>
                   </Card>
                 </Col>
