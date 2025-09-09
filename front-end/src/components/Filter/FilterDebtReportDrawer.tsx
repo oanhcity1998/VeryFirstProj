@@ -1,5 +1,6 @@
 import { Drawer, Form, Select, DatePicker, Button, Input } from "antd";
 import dayjs from "dayjs";
+import { customerOptions } from "../DebtReportForm/DebtReportForm";
 
 interface FilterDebtReportDrawerProps {
   open: boolean;
@@ -74,11 +75,18 @@ export const FilterDebtReportDrawer = ({
 
         {/* Khách hàng */}
         <Form.Item label="Khách hàng">
-          <Input
-            placeholder="Nhập tên khách hàng"
-            value={filterCustomer ?? ""}
-            onChange={(e) => setFilterCustomer(e.target.value || null)}
-          />
+          <Select
+            allowClear
+            placeholder="Chọn khách hàng"
+            onChange={(e) => setFilterCustomer(e || null)}
+            value={filterCustomer || ""}
+          >
+            {customerOptions.map((c) => (
+              <Select.Option key={c.id} value={c.name}>
+                {c.name}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
 
         {/* Trạng thái công nợ */}

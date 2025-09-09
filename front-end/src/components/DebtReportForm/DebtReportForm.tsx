@@ -17,23 +17,23 @@ import dayjs from "dayjs";
 import { DebtReport } from "../../views/CRM/DebtReportList/DebtReportList";
 
 // Mock data
-const contractOptions = [
+export const contractOptions = [
   { id: "HD001", name: "Hợp đồng 001" },
   { id: "HD002", name: "Hợp đồng 002" },
 ];
 
-const customerOptions = [
+export const customerOptions = [
   { id: "KH001", name: "Công ty ABC" },
   { id: "KH002", name: "Công ty XYZ" },
 ];
 
-const auditorOptions = [
+export const auditorOptions = [
   { id: "auditor1", name: "Nguyễn Văn A" },
   { id: "auditor2", name: "Trần Thị B" },
   { id: "auditor3", name: "Phạm Văn C" },
 ];
 
-const directorOptions = [
+export const directorOptions = [
   { id: "gd1", name: "Nguyễn Giám Đốc" },
   { id: "gd2", name: "Trần Giám Đốc" },
 ];
