@@ -22,19 +22,29 @@
   background: #fafafa;
   border-color: #d9d9d9;
   color: #333;
-  cursor: not-allowed; /* Chỉ báo không chỉnh sửa */
+  cursor: not-allowed;
 }
 
-.employee-detail-container .ant-btn {
-  border-radius: 4px;
+/* Fix DatePicker bằng Input */
+.employee-detail-container .ant-picker {
+  height: 32px !important;
+  padding: 0 11px !important;
+  display: flex;
+  align-items: center;
 }
 
-.employee-detail-container .ant-btn-primary {
-  background: #1890ff;
-  border-color: #1890ff;
+.employee-detail-container .ant-picker-input>input {
+  height: 30px !important;
+  line-height: 30px !important;
 }
 
-.employee-detail-container .ant-btn-default {
-  background: #fff;
-  border-color: #d9d9d9;
+/* 3 card cùng chiều cao */
+.employee-detail-container .employee-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.employee-detail-container .ant-row {
+  align-items: stretch !important;
 }
