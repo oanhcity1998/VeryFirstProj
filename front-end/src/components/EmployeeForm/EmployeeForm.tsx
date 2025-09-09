@@ -1,6 +1,16 @@
 import { useEffect } from "react";
-import { Modal, Form, Input, Button, DatePicker, Row, Col, Card } from "antd";
-import dayjs, { Dayjs } from "dayjs";
+import {
+  Modal,
+  Form,
+  Input,
+  Button,
+  DatePicker,
+  Row,
+  Col,
+  Card,
+  InputNumber,
+} from "antd";
+import dayjs from "dayjs";
 import "./EmployeeForm.css";
 
 interface Employee {
@@ -89,6 +99,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         ? values.startDate.format("DD/MM/YYYY")
         : null,
       endDate: values.endDate ? values.endDate.format("DD/MM/YYYY") : null,
+      salary: values.salary ? values.salary.toString() : null,
+      bonus: values.bonus ? values.bonus.toString() : null,
     });
     onCancel();
   };
@@ -114,24 +126,20 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       width={1100}
     >
       <Form form={form} layout="vertical" onFinish={onFinish}>
-        <Row gutter={16}>
+        <Row gutter={16} align="stretch">
           <Col span={8}>
-            <Card title={infoTitle} bordered>
+            <Card title={infoTitle} bordered className="employee-card">
               <Form.Item
                 label="Họ và tên"
                 name="fullName"
-                rules={[
-                  { required: true, message: "Vui lòng nhập họ và tên!" },
-                ]}
+                rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
               >
                 <Input placeholder="Nhập họ và tên" />
               </Form.Item>
               <Form.Item
                 label="Ngày sinh"
                 name="birthDate"
-                rules={[
-                  { required: true, message: "Vui lòng chọn ngày sinh!" },
-                ]}
+                rules={[{ required: true, message: "Vui lòng chọn ngày sinh!" }]}
               >
                 <DatePicker
                   format="DD/MM/YYYY"
@@ -162,9 +170,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               <Form.Item
                 label="Giới tính"
                 name="gender"
-                rules={[
-                  { required: true, message: "Vui lòng nhập giới tính!" },
-                ]}
+                rules={[{ required: true, message: "Vui lòng nhập giới tính!" }]}
               >
                 <Input placeholder="Nam / Nữ" />
               </Form.Item>
@@ -181,9 +187,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               <Form.Item
                 label="Phòng ban"
                 name="department"
-                rules={[
-                  { required: true, message: "Vui lòng nhập phòng ban!" },
-                ]}
+                rules={[{ required: true, message: "Vui lòng nhập phòng ban!" }]}
               >
                 <Input placeholder="Nhập tên phòng ban" />
               </Form.Item>
@@ -191,7 +195,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
           </Col>
 
           <Col span={8}>
-            <Card title={extraInfoTitle} bordered>
+            <Card title={extraInfoTitle} bordered className="employee-card">
               <Form.Item
                 label="Số CCCD"
                 name="idNumber"
@@ -221,10 +225,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 label="Địa chỉ thường trú"
                 name="permanentAddress"
                 rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập địa chỉ thường trú!",
-                  },
+                  { required: true, message: "Vui lòng nhập địa chỉ thường trú!" },
                 ]}
               >
                 <Input placeholder="Nhập địa chỉ thường trú" />
@@ -245,13 +246,11 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
           </Col>
 
           <Col span={8}>
-            <Card title={contractTitle} bordered>
+            <Card title={contractTitle} bordered className="employee-card">
               <Form.Item
                 label="Loại hợp đồng lao động"
                 name="contractType"
-                rules={[
-                  { required: true, message: "Vui lòng nhập loại hợp đồng!" },
-                ]}
+                rules={[{ required: true, message: "Vui lòng nhập loại hợp đồng!" }]}
               >
                 <Input placeholder="VD: Hợp đồng xác định thời hạn" />
               </Form.Item>
@@ -261,9 +260,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               <Form.Item
                 label="Ngày bắt đầu"
                 name="startDate"
-                rules={[
-                  { required: true, message: "Vui lòng chọn ngày bắt đầu!" },
-                ]}
+                rules={[{ required: true, message: "Vui lòng chọn ngày bắt đầu!" }]}
               >
                 <DatePicker
                   format="DD/MM/YYYY"
@@ -274,9 +271,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               <Form.Item
                 label="Ngày kết thúc"
                 name="endDate"
-                rules={[
-                  { required: true, message: "Vui lòng chọn ngày kết thúc!" },
-                ]}
+                rules={[{ required: true, message: "Vui lòng chọn ngày kết thúc!" }]}
               >
                 <DatePicker
                   format="DD/MM/YYYY"
@@ -285,10 +280,24 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 />
               </Form.Item>
               <Form.Item label="Mức lương" name="salary">
-                <Input placeholder="Nhập mức lương" />
+                <InputNumber
+                  style={{ width: "100%" }}
+                  placeholder="Nhập mức lương"
+                  formatter={(value) =>
+                    `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  }
+                  parser={(value) => value!.replace(/,/g, "")}
+                />
               </Form.Item>
               <Form.Item label="Tiền thưởng" name="bonus">
-                <Input placeholder="Nhập tiền thưởng" />
+                <InputNumber
+                  style={{ width: "100%" }}
+                  placeholder="Nhập tiền thưởng"
+                  formatter={(value) =>
+                    `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  }
+                  parser={(value) => value!.replace(/,/g, "")}
+                />
               </Form.Item>
             </Card>
           </Col>

@@ -112,14 +112,14 @@ const AssetDetail: React.FC = () => {
                         variant="outlined"
                     >
                         <Form form={form} layout="vertical" disabled>
-                            <Row gutter={16}>
+                            <Row gutter={16} align={'stretch'}>
                                 {/* Cột 1 */}
                                 <Col span={8}>
-                                    <Card title="Thông tin cơ bản" variant="outlined">
+                                    <Card title="Thông tin cơ bản" variant="outlined" className="asset-card">
                                         <Form.Item label="Mã tài sản" name="id">
                                             <Input />
                                         </Form.Item>
-                                        <Form.Item label="Tên tài sản" name="name">
+                                        <Form.Item label="Tên tài sản" name="name" >
                                             <Input />
                                         </Form.Item>
                                         <Form.Item label="Loại sản phẩm" name="type">
@@ -133,7 +133,7 @@ const AssetDetail: React.FC = () => {
 
                                 {/* Cột 2 */}
                                 <Col span={8}>
-                                    <Card title="Thông tin sở hữu" variant="outlined">
+                                    <Card title="Thông tin sở hữu" variant="outlined" className="asset-card">
                                         <Form.Item label="Phòng ban sở hữu" name="department">
                                             <Input />
                                         </Form.Item>
@@ -151,7 +151,7 @@ const AssetDetail: React.FC = () => {
 
                                 {/* Cột 3 */}
                                 <Col span={8}>
-                                    <Card title="Thông tin khác" variant="outlined">
+                                    <Card title="Thông tin khác" variant="outlined" className="asset-card">
                                         <Form.Item label="Ngày mua" name="purchaseDate">
                                             <DatePicker
                                                 format="DD/MM/YYYY"
