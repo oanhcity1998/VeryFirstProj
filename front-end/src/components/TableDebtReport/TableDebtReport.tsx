@@ -56,17 +56,11 @@ export const TableDebtReport = ({
       ),
     },
     {
-      title: "Ngày báo cáo",
+      title: "Ngày lập",
       dataIndex: "reportDate",
       key: "reportDate",
       width: 140,
       render: (val: string) => dayjs(val).format("YYYY-MM-DD"),
-    },
-    {
-      title: "Khách hàng",
-      dataIndex: "customer",
-      key: "customer",
-      width: 200,
     },
     {
       title: "Hợp đồng",
@@ -75,36 +69,57 @@ export const TableDebtReport = ({
       width: 160,
     },
     {
+      title: "Khách hàng",
+      dataIndex: "customer",
+      key: "customer",
+      width: 200,
+    },
+    {
       title: "Kiểm toán viên",
       dataIndex: "auditor",
       key: "auditor",
-      width: 160,
+      width: 200,
+      render(value) {
+        if (!value || value.length === 0) return "-";
+
+        const auditors = Array.isArray(value) ? value : [value];
+
+        return (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+            {auditors.map((name) => (
+              <Tag key={name} color="blue">
+                {name}
+              </Tag>
+            ))}
+          </div>
+        );
+      },
     },
     {
-      title: "Giám đốc phụ trách",
+      title: "Giám đốc",
       dataIndex: "director",
       key: "director",
       width: 180,
     },
     {
-      title: "Tổng công nợ",
-      dataIndex: "totalDebt",
-      key: "totalDebt",
-      width: 160,
-      render: (val?: number) => (val ? val.toLocaleString() : "-"),
+      title: "Trạng thái công nợ",
+      dataIndex: "debtStatus",
+      key: "debtStatus",
+      width: 140,
+      render: (status: string) => {
+        const colorMap: Record<string, string> = {
+          "Chưa thanh toán": "blue",
+          "Thanh toán một phần": "orange",
+          "Đã thanh toán": "green",
+          "Khó đòi": "red",
+        };
+        return <Tag color={colorMap[status] || "default"}>{status}</Tag>;
+      },
     },
     {
-      title: "Công nợ còn lại",
-      dataIndex: "remainingDebt",
-      key: "remainingDebt",
-      width: 160,
-      render: (val?: number) => (val ? val.toLocaleString() : "-"),
-    },
-    {
-      title: "Trạng thái",
+      title: "Trạng thái báo cáo",
       dataIndex: "status",
       key: "status",
-      width: 140,
       render: (status: string) => {
         const colorMap: Record<string, string> = {
           "Khởi tạo": "blue",
@@ -113,6 +128,18 @@ export const TableDebtReport = ({
           Hủy: "red",
         };
         return <Tag color={colorMap[status] || "default"}>{status}</Tag>;
+      },
+    },
+    {
+      title: "Tổng nợ còn lại",
+      dataIndex: "totalDebtRemaining",
+      key: "totalDebtRemaining",
+      width: 140,
+      render: (value: number) => {
+        if (value == null) return "-";
+        return (
+          <span style={{ color: value > 0 ? "red" : "green" }}>{value.toLocaleString()} ₫</span>
+        );
       },
     },
     {

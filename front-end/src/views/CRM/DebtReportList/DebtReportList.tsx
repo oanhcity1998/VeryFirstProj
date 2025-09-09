@@ -318,10 +318,16 @@ const DebtReportList = () => {
   const [importing, setImporting] = useState(false);
 
   // upload handler
-  const handleUpload = async (file) => {
+  const handleUpload = async (file: File) => {
     setImporting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // fake API call
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data);
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(sheet);
+
+      console.log("Imported data:", json);
+      // TODO: map json -> DebtReport rồi setData
       message.success(`${file.name} đã được import thành công`);
       setImportOpen(false);
     } catch (err) {
@@ -331,6 +337,7 @@ const DebtReportList = () => {
     }
     return false;
   };
+
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
@@ -435,7 +442,7 @@ const DebtReportList = () => {
             okButtonProps={{ danger: true, loading: deleting }}
             centered
           >
-            <p>Bạn có chắc muốn xóa báo cáo này?</p>
+            <p>Bạn có chắc muốn xóa {selectedRowKeys.length} báo cáo này?</p>
           </Modal>
 
           {/* Create */}
@@ -473,7 +480,8 @@ const DebtReportList = () => {
             id: data.length + 1,
             status: status ?? "Khởi tạo",
           };
-          setData((prev) => [...prev, newReport]);
+          const normalized = normalizeDebtReport(newReport);
+          setData((prev) => [...prev, normalized]);
           setIsCreateModalOpen(false);
           message.success("Tạo báo cáo thành công!");
         }}
