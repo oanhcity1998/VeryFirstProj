@@ -38,7 +38,23 @@ export const directorOptions = [
   { id: "gd2", name: "Trần Giám Đốc" },
 ];
 
-export const DebtReportForm = ({ mode, role, open, onCancel, onOk, initialValues }: any) => {
+interface DebtReportFormProps {
+  mode: "create" | "edit";
+  role: string;
+  open: boolean;
+  onCancel: () => void;
+  onOk: (values: DebtReport, status?: DebtReport["status"]) => void;
+  initialValues?: DebtReport | null;
+}
+
+export const DebtReportForm = ({
+  mode,
+  role,
+  open,
+  onCancel,
+  onOk,
+  initialValues,
+}: DebtReportFormProps) => {
   const [form] = Form.useForm();
   const isEdit = mode === "edit";
 
@@ -242,7 +258,7 @@ export const DebtReportForm = ({ mode, role, open, onCancel, onOk, initialValues
   const numberFormatter = (value?: string | number) =>
     `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-  const numberOnly = (value) => value?.replace(/\D/g, "");
+  const numberOnly = (value?: string | number) => String(value)?.replace(/\D/g, "");
 
   return (
     <Modal

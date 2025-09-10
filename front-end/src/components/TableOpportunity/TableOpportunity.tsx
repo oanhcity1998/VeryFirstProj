@@ -107,13 +107,7 @@ export const TableOpportunity = ({
       key: "service",
       width: 200,
       render: (services) =>
-        Array.isArray(services)
-          ? services.map((s) => (
-              <Tag key={s.id} color="blue" style={{ marginBottom: 4 }}>
-                {s.productName}
-              </Tag>
-            ))
-          : "-",
+        Array.isArray(services) ? services.map((s) => <p key={s.id}>{s.productName}</p>) : "-",
     },
     {
       title: "Xác suất",
@@ -121,7 +115,7 @@ export const TableOpportunity = ({
       dataIndex: "probability",
       key: "probability",
       width: 150,
-      render: (prob: number) => <Progress percent={prob} size="small" />,
+      render: (prob: number) => <>{prob}%</>,
     },
     {
       title: "Ưu tiên",
@@ -129,10 +123,6 @@ export const TableOpportunity = ({
       dataIndex: "priority",
       key: "priority",
       width: 120,
-      render: (priority: string) => {
-        const color = priority === "High" ? "red" : priority === "Medium" ? "orange" : "blue";
-        return <Tag color={color}>{priority}</Tag>;
-      },
     },
     {
       title: "Nhân viên phụ trách",
@@ -147,15 +137,6 @@ export const TableOpportunity = ({
       dataIndex: "stage",
       key: "stage",
       width: 160,
-      render: (stage: string) => {
-        const colorMap: Record<string, string> = {
-          Mới: "blue",
-          "Đạt yêu cầu": "orange",
-          "Đàm phán": "purple",
-          Đóng: "green",
-        };
-        return <Tag color={colorMap[stage] || "default"}>{stage}</Tag>;
-      },
     },
     {
       title: "Hành động tiếp theo",
