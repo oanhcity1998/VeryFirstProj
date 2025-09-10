@@ -15,7 +15,7 @@ class EmployeeAPI(http.Controller):
         except Exception:
             return {"error": "Invalid JSON body"}
 
-        required_fields = ["name", "birthday", "gender", "department_id", "job_id", "x_id_number"]
+        required_fields = ["name", "birthday", "gender", "work_phone", "work_email", "department_id", "job_id", "id_number", "id_issued_place", "id_issued_date", "permanent_address"]
         for field in required_fields:
             if field not in data or not data[field]:
                 return {"error": f"Missing required field: {field}"}
@@ -28,28 +28,26 @@ class EmployeeAPI(http.Controller):
             "work_email": data.get("work_email"),
             "department_id": data.get("department_id"),
             "job_id": data.get("job_id"),
-            "x_id_number": data.get("x_id_number"),
-            "x_id_issued_place": data.get("x_id_issued_place"),
-            "x_id_issued_date": data.get("x_id_issued_date"),
+            "id_number": data.get("id_number"),
+            "id_issued_place": data.get("id_issued_place"),
+            "id_issued_date": data.get("id_issued_date"),
             "permanent_address": data.get("permanent_address"),
-            "x_temporary_address": data.get("x_temporary_address"),
-            "x_tax_id": data.get("x_tax_id"),
-            "x_insurance_id": data.get("x_insurance_id"),
-            "x_bank_account": data.get("x_bank_account"),
+            "temporary_address": data.get("temporary_address"),
+            "tax_id": data.get("tax_id"),
+            "insurance_id": data.get("insurance_id"),
+            "bank_account": data.get("bank_account"),
         })
 
         contract_data = data.get("contract")
         if contract_data:
             request.env["hr.contract.custom"].sudo().create({
-                "name": f"HĐ cho {employee.name}",
+                "name": contract_data.get("name"),
+                "x_contract_type": contract_data.get("contract_type"),
                 "employee_id": employee.id,
-                "x_contract_type": contract_data.get("x_contract_type"),
-                "x_contract_term": contract_data.get("x_contract_term"),
                 "date_start": contract_data.get("date_start"),
                 "date_end": contract_data.get("date_end"),
                 "wage": contract_data.get("wage"),
-                "x_bonus": contract_data.get("x_bonus"),
-                "state": "draft",
+                "x_bonus": contract_data.get("bonus")
             })
 
         return {"id": employee.id, "message": "Created successfully"}
@@ -83,16 +81,41 @@ class EmployeeAPI(http.Controller):
         total = request.env['hr.employee'].sudo().search_count(domain)
 
         offset = (page - 1) * limit
-        employees = request.env['hr.employee'].sudo().search(domain, offset=offset, limit=limit)
+        employees = request.env['hr.employee'].sudo().search(domain, offset=offset, limit=limit, order='id')
 
         data = []
         for emp in employees:
             data.append({
                 "id": emp.id,
                 "name": emp.name,
+                "birthday": str(emp.birthday) if emp.birthday else None,
+                "gender": emp.gender,
+                "work_phone": emp.work_phone,
+                "work_email": emp.work_email,
                 "department_id": emp.department_id.id if emp.department_id else None,
+                "department": emp.department_id.name if emp.department_id else None,
                 "job_id": emp.job_id.id if emp.job_id else None,
+                "job": emp.job_id.name if emp.job_id else None,
                 "status": "active" if emp.active else "inactive",
+                "cccd": emp.id_number,
+                "issued_date_cccd": str(emp.id_issued_date) if emp.id_issued_date else None,
+                "issued_place_cccd": emp.id_issued_place,
+                "permanent_address": emp.permanent_address,
+                "temporary_address": emp.temporary_address,
+                "tax_id": emp.tax_id,
+                "insurance_id": emp.insurance_id,
+                "bank_account": emp.bank_account,
+                "constract": [ 
+                    {
+                        "id": c.id, 
+                        "x_contract_type": c.x_contract_type, 
+                        "x_contract_term": c.x_contract_term, 
+                        "date_start": str(c.date_start) if c.date_start else None, 
+                        "date_end": str(c.date_end) if c.date_end else None, 
+                        "wage": c.wage, 
+                        "x_bonus": c.x_bonus
+                    } 
+                    for c in request.env['hr.contract.custom'].sudo().search([('employee_id', '=', emp.id)])],
             })
 
         return request.make_response(
@@ -107,7 +130,6 @@ class EmployeeAPI(http.Controller):
     def get_employee(self, employee_id, **kwargs):
         Employee = request.env['hr.employee'].sudo()
         Contract = request.env['hr.contract.custom'].sudo()
-        Attachment = request.env['ir.attachment'].sudo()
 
         employee = Employee.search([('id', '=', employee_id)], limit=1)
         if not employee:
@@ -124,16 +146,21 @@ class EmployeeAPI(http.Controller):
             "gender": employee.gender,
             "work_phone": employee.work_phone,
             "work_email": employee.work_email,
+            "department_id": employee.department_id.id if employee.department_id else None,
             "department": employee.department_id.name if employee.department_id else None,
+            "job_id": employee.job_id.id if employee.job_id else None,
             "job": employee.job_id.name if employee.job_id else None,
-            "x_id_number": employee.x_id_number,
-            "x_id_issued_place": employee.x_id_issued_place,
-            "x_id_issued_date": str(employee.x_id_issued_date) if employee.x_id_issued_date else None,
+            "id_number": employee.id_number,
+            "id_issued_place": employee.id_issued_place,
+            "id_issued_date": str(employee.id_issued_date) if employee.id_issued_date else None,
             "permanent_address": employee.permanent_address,
-            "x_temporary_address": employee.x_temporary_address,
-            "x_tax_id": employee.x_tax_id,
-            "x_insurance_id": employee.x_insurance_id,
-            "x_bank_account": employee.x_bank_account,
+            "temporary_address": employee.temporary_address,
+            "tax_id": employee.tax_id,
+            "insurance_id": employee.insurance_id,
+            "bank_account": employee.bank_account,
+            "status": "active" if employee.active else "inactive",
+            "created_at": str(employee.create_date) if employee.create_date else None,
+            "updated_at": str(employee.write_date) if employee.write_date else None
         }
 
         contracts = []
@@ -148,29 +175,15 @@ class EmployeeAPI(http.Controller):
                 "x_bonus": c.x_bonus,
             })
 
-        attachments = []
-        for att in Attachment.search([
-            ('res_model', '=', 'hr.employee'),
-            ('res_id', '=', employee.id)
-        ]):
-            attachments.append({
-                "id": att.id,
-                "name": att.name,
-                "url": f"/web/content/{att.id}",
-                "mimetype": att.mimetype,
-            })
-
         response = {
             "profile": profile,
-            "contracts": contracts,
-            "attachments": attachments,
+            "contracts": contracts
         }
 
         return request.make_response(
             json.dumps(response),
             headers=[('Content-Type', 'application/json')]
         )
-
 
     @http.route('/api/hr/employees/<int:employee_id>', type='http', auth='user', methods=['PUT'], csrf=False)
     def update_employee(self, employee_id, **kwargs):
@@ -257,7 +270,8 @@ class EmployeeAPI(http.Controller):
 
         return request.make_response(
             json.dumps({"message": "Employee marked inactive"}),
-            headers=[('Content-Type', 'application/json')]
+            headers=[('Content-Type', 'application/json')],
+            status=200
         )
 
 

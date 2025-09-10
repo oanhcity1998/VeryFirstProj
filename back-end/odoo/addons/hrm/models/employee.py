@@ -12,18 +12,16 @@ class HrEmployee(models.Model):
         ("other", "Other"),
     ], string="Gender", required=True)
 
-    x_id_number = fields.Char("ID/CCCD Number", required=True)
-    x_id_issued_place = fields.Char("Issued Place", required=True)
-    x_id_issued_date = fields.Date("Issued Date", required=True)
+    id_number = fields.Char("ID/CCCD Number", required=True)
+    id_issued_place = fields.Char("Issued Place", required=True)
+    id_issued_date = fields.Date("Issued Date", required=True)
 
     permanent_address = fields.Char("Permanent Address", required=True)
-    x_temporary_address = fields.Char("Temporary Address")
-    x_tax_id = fields.Char("Tax ID")
-    x_insurance_id = fields.Char("Insurance ID")
-    x_bank_account = fields.Char("Bank Account")
-
+    temporary_address = fields.Char("Temporary Address")
+    tax_id = fields.Char("Tax ID")
+    insurance_id = fields.Char("Insurance ID")
+    bank_account = fields.Char("Bank Account")
     work_email = fields.Char("Work Email", unique=True)
-
     active = fields.Boolean(default=True)
 
     _sql_constraints = [
