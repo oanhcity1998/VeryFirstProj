@@ -253,37 +253,39 @@ const DebtReportDetail = () => {
 
             {/* Tab công nợ */}
             <TabPane tab="Công nợ" key="debt">
-              <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
-                Công nợ {`<${report?.reportNo}>`}
-              </h3>
+              <Card size="small" style={{ marginBottom: 12 }}>
+                <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
+                  Công nợ {`<${report?.reportNo}>`}
+                </h3>
 
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item name="debtNoVAT" label="Số tiền chưa VAT">
-                    <InputNumber style={{ width: "100%" }} />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item name="debtWithVAT" label="Số tiền đã VAT">
-                    <InputNumber style={{ width: "100%" }} />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item
-                    name="totalDebtRemaining"
-                    label="Tổng công nợ còn phải thu (đã VAT)"
-                    // labelCol={{ span: 10 }}
-                    // wrapperCol={{ span: 14 }}
-                  >
-                    <InputNumber style={{ width: "100%" }} />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item name="badDebt" label="Nợ khó đòi">
-                    <InputNumber style={{ width: "100%" }} />
-                  </Form.Item>
-                </Col>
-              </Row>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item name="debtNoVAT" label="Số tiền chưa VAT">
+                      <InputNumber style={{ width: "100%" }} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item name="debtWithVAT" label="Số tiền đã VAT">
+                      <InputNumber style={{ width: "100%" }} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      name="totalDebtRemaining"
+                      label="Tổng công nợ còn phải thu (đã VAT)"
+                      // labelCol={{ span: 10 }}
+                      // wrapperCol={{ span: 14 }}
+                    >
+                      <InputNumber style={{ width: "100%" }} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item name="badDebt" label="Nợ khó đòi">
+                      <InputNumber style={{ width: "100%" }} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Card>
             </TabPane>
 
             {/* Tab hoa hồng CTV */}

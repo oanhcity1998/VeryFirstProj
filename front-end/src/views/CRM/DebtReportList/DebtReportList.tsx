@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Space, Modal, message, Popover, Upload } from "antd";
+import { Button, Space, Modal, message, Popover, Upload, Tooltip } from "antd";
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -343,12 +343,14 @@ const DebtReportList = () => {
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
         <h2>Báo cáo Công nợ</h2>
         <Space>
-          <Search
-            placeholder="Tìm theo số báo cáo / khách hàng..."
-            onChange={(e) => setSearchText(e.target.value)}
-            allowClear
-            style={{ maxWidth: 300 }}
-          />
+          <Tooltip>
+            <Search
+              placeholder="Tìm theo số báo cáo / khách hàng..."
+              onChange={(e) => setSearchText(e.target.value)}
+              allowClear
+              style={{ maxWidth: 300 }}
+            />
+          </Tooltip>
 
           {/* Cài đặt */}
           <Popover
@@ -447,7 +449,7 @@ const DebtReportList = () => {
 
           {/* Create */}
           <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsCreateModalOpen(true)}>
-            Tạo báo cáo
+            Tạo
           </Button>
         </Space>
       </div>

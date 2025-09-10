@@ -1,6 +1,6 @@
 import { ROUTES_APP } from "./routes";
 import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom";
-import MainLayout from "./layouts/MainLayout/mainLayout";
+import MainLayout from "@/layouts/MainLayout/mainLayout";
 import Home from "./views/Home";
 import Login from "./views/Login";
 import CustomerList from "./views/CRM/CustomerList/CustomerList";

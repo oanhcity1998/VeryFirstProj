@@ -5,18 +5,16 @@ import {
   ContactsOutlined,
   InboxOutlined,
   SolutionOutlined,
-  TeamOutlined,
   DollarOutlined,
-  IdcardOutlined,
   UserSwitchOutlined,
   FileTextOutlined,
   AccountBookOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu.css";
-import { ROUTES_APP } from "../../routes";
+import { ROUTES_APP } from "@/routes";
 
-const SidebarMenu = ({ collapsed }) => {
+const SidebarMenu = ({ collapsed }: { collapsed: boolean }) => {
   const location = useLocation();
 
   // Map paths to keys
