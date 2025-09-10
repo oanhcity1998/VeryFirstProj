@@ -66,7 +66,7 @@ class EmployeeAPI(http.Controller):
         if q:
             domain.append('|')
             domain.append(('name', 'ilike', q))
-            domain.append(('x_id_number', 'ilike', q))
+            domain.append(('id_number', 'ilike', q))
 
         if department_id:
             domain.append(('department_id', '=', int(department_id)))
@@ -167,12 +167,12 @@ class EmployeeAPI(http.Controller):
         for c in Contract.search([('employee_id', '=', employee.id)]):
             contracts.append({
                 "id": c.id,
+                "name": c.name,
                 "x_contract_type": c.x_contract_type,
-                "x_contract_term": c.x_contract_term,
                 "date_start": str(c.date_start) if c.date_start else None,
                 "date_end": str(c.date_end) if c.date_end else None,
                 "wage": c.wage,
-                "x_bonus": c.x_bonus,
+                "bonus": c.x_bonus,
             })
 
         response = {
