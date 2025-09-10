@@ -114,7 +114,7 @@ const ContactList = () => {
           <Select
             allowClear
             placeholder="Lọc theo Khách hàng"
-            style={{ width: 200 }}
+            style={{ width: 150 }}
             value={filterCustomer}
             onChange={(val) => setFilterCustomer(val)}
             options={customerOptions.map((c) => ({ label: c, value: c }))}
@@ -123,7 +123,7 @@ const ContactList = () => {
           <Select
             allowClear
             placeholder="Lọc theo Liên hệ chính"
-            style={{ width: 200 }}
+            style={{ width: 150 }}
             value={filterMainContact}
             onChange={(val) => setFilterMainContact(val)}
             options={mainContactOptions.map((m) => ({ label: m, value: m }))}
