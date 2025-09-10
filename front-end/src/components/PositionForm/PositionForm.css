@@ -8,8 +8,6 @@
 
 .form-section h3 {
   margin-bottom: 16px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #000;
+  color: #000 !important;
   /* màu đen như department */
 }
