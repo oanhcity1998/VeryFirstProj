@@ -1,4 +1,4 @@
-:root {
+/* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -27,7 +27,6 @@ body {
   display: flex;
   place-items: center;
   min-width: 320px;
-  min-height: 100vh;
 }
 
 h1 {
@@ -65,4 +64,23 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+} */
+
+html,
+body,
+.ant-layout,
+#root {
+  height: auto;
+  min-height: 100%;
+  overflow-y: auto;
+}
+
+.ant-layout-content {
+  flex: 1; /* cho phép Content chiếm phần còn lại */
+  min-height: auto; /* không bị khóa cứng */
+  overflow: visible; /* đảm bảo nội dung bên trong được cuộn */
+}
+
+.ant-input {
+  height: auto !important;
 }

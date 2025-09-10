@@ -1,9 +1,10 @@
 // src/components/TableLead/TableLead.tsx
-import { Table, Tooltip, Button } from "antd";
-import {Link} from "react-router-dom"
+import { Table, Tooltip, Button, Typography } from "antd";
+import { generatePath, Link } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
-import "./TableLead.css";   // ✅ import css
+import "./TableLead.css"; // ✅ import css
+import { ROUTES_APP } from "../../routes";
 
 export interface Lead {
   id: number;
@@ -21,7 +22,7 @@ interface TableLeadProps {
   searchText: string;
   selectedRowKeys: number[];
   setSelectedRowKeys: (keys: number[]) => void;
-  onEdit: (record: any) => void; 
+  onEdit: (record: any) => void;
 }
 
 const TableLead = ({
@@ -41,7 +42,9 @@ const TableLead = ({
       dataIndex: "leadName",
       key: "leadName",
       render: (_: any, record: any) => (
-        <Link to={`/leads/${record.id}`}>{record.leadName}</Link> // 👈 link
+        <Link to={generatePath(ROUTES_APP.crm.leadDetail, { id: record.id })}>
+          {record.leadName}
+        </Link> // 👈 link
       ),
     },
     { title: "Tên liên hệ", dataIndex: "contactName", key: "contactName" },
@@ -54,8 +57,12 @@ const TableLead = ({
       title: "Hành động",
       key: "action",
       render: (_: any, record: any) => (
-        <Button type="link" icon={<EditOutlined />} onClick={() => onEdit(record)}>
-        </Button>
+        <Button
+          type="link"
+          icon={<EditOutlined />}
+          onClick={() => onEdit(record)}
+          className="lead-edit-icon"
+        ></Button>
       ),
     },
   ];

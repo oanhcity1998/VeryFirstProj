@@ -1,0 +1,16 @@
+.filter-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+}
+
+.filter-footer .ant-btn-dangerous {
+    background: #ff4d4f;
+    border-color: #ff4d4f;
+    color: white;
+}
+
+.filter-footer .ant-btn-primary {
+    background: #1677ff;
+    border-color: #1677ff;
+}

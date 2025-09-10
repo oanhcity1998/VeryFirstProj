@@ -1,9 +1,16 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { Table, Tooltip, Tag, Progress } from "antd";
 import { EditOutlined, FileTextOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { generatePath, Link } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";
 import { Opportunity } from "../../views/CRM/OpportunityList/OpportunityList";
+import { ROUTES_APP } from "../../routes";
+import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 interface TableOpportunityProps {
   data: Opportunity[];
@@ -41,7 +48,8 @@ export const TableOpportunity = ({
       const matchStage = filterStage ? item.stage === filterStage : true;
 
       const matchDate = filterDate
-        ? item.expectedCloseDate >= filterDate[0] && item.expectedCloseDate <= filterDate[1]
+        ? dayjs(item.expectedCloseDate).isSameOrAfter(dayjs(filterDate[0])) &&
+          dayjs(item.expectedCloseDate).isSameOrBefore(dayjs(filterDate[1]))
         : true;
 
       return matchSearch && matchPriority && matchStage && matchDate;
@@ -56,7 +64,7 @@ export const TableOpportunity = ({
       width: 240,
       fixed: "left",
       render: (_, record) => (
-        <Link onClick={() => onShowClick?.(record)} to="#">
+        <Link to={generatePath(ROUTES_APP.crm.opportunityDetail, { id: record.id })}>
           <FileTextOutlined style={{ marginRight: 6, color: "#1890ff" }} />
           {record.name}
         </Link>
@@ -92,6 +100,14 @@ export const TableOpportunity = ({
       dataIndex: "service",
       key: "service",
       width: 200,
+      render: (services) =>
+        Array.isArray(services)
+          ? services.map((s) => (
+              <Tag key={s.id} color="blue" style={{ marginBottom: 4 }}>
+                {s.productName}
+              </Tag>
+            ))
+          : "-",
     },
     {
       title: "Xác suất",
@@ -123,13 +139,12 @@ export const TableOpportunity = ({
       width: 160,
       render: (stage: string) => {
         const colorMap: Record<string, string> = {
-          Qualification: "blue",
-          Proposal: "orange",
-          Negotiation: "purple",
-          "Closed Won": "green",
-          "Closed Lost": "red",
+          Mới: "blue",
+          "Đạt yêu cầu": "orange",
+          "Đàm phán": "purple",
+          Đóng: "green",
         };
-        return <Tag color={colorMap[stage]}>{stage}</Tag>;
+        return <Tag color={colorMap[stage] || "default"}>{stage}</Tag>;
       },
     },
     {
@@ -174,8 +189,20 @@ export const TableOpportunity = ({
       columns={columns}
       dataSource={filteredData}
       rowKey="id"
-      scroll={{ x: "max-content", y: "calc(100vh - 330px)" }}
-      pagination={{ position: ["bottomCenter"] }}
+      scroll={{ x: "max-content", y: "calc(100vh - 150px)" }}
+      pagination={{
+        pageSize: 10,
+        position: ["bottomCenter"],
+        // itemRender: (page, type, originalElement) => {
+        //   if (type === "prev") {
+        //     return <button className="ant-pagination-item-link">Previous</button>;
+        //   }
+        //   if (type === "next") {
+        //     return <button className="ant-pagination-item-link">Next</button>;
+        //   }
+        //   return originalElement;
+        // },
+      }}
     />
   );
 };

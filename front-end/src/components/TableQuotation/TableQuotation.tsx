@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 import { Table, Tooltip } from "antd";
 import { EditOutlined, FileTextOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { generatePath, Link } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";
 import { Product, Quotation } from "../../views/CRM/QuotationList/QuotationList";
+import { ROUTES_APP } from "../../routes";
 
 interface TableQuotationProps {
   data: Quotation[];
@@ -61,7 +62,7 @@ export const TableQuotation = ({
       width: 220,
       fixed: "left",
       render: (_, record) => (
-        <Link onClick={() => onShowClick?.(record)} to="#">
+        <Link to={generatePath(ROUTES_APP.crm.quotationDetail, { id: record.id })}>
           <FileTextOutlined style={{ marginRight: 6, color: "#1890ff" }} />
           {record.quotationName}
         </Link>

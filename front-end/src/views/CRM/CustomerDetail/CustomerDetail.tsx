@@ -1,25 +1,12 @@
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import {
-  Card,
-  Input,
-  Tabs,
-  Button,
-  Form,
-  Row,
-  Col,
-  Breadcrumb,
-  Modal,
-  Select,
-  message,
-  Space,
-} from "antd";
-import { ArrowLeftOutlined, SearchOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import ContactList from "../ContactList/ContactList";
+import { Card, Input, Tabs, Button, Form, Row, Col, Breadcrumb, Select, message } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import TableContact from "../../../components/TableContact/TableContact";
 import ContactForm from "../../../components/ContactForm/ContactForm";
 
 import "./CustomerDetail.css";
+import { ROUTES_APP } from "../../../routes";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -150,7 +137,7 @@ export default function CustomerDetail() {
   //   try {
   //     setDeleting(true);
   //     message.success("Đã xóa khách hàng");
-  //     navigate(ROUTES_APP.customerList);
+  //     navigate(ROUTES_APP.crm.customerList);
   //   } finally {
   //     setDeleting(false);
   //     setDeleteOpen(false);
@@ -163,7 +150,7 @@ export default function CustomerDetail() {
   };
 
   const breadcrumbItems = [
-    { title: <Link to="/customerlist">Danh sách khách hàng</Link> },
+    { title: <Link to={ROUTES_APP.crm.customerList}>Danh sách khách hàng</Link> },
     { title: "Thông tin chi tiết" },
     { title: customer.name },
   ];
@@ -395,7 +382,7 @@ export default function CustomerDetail() {
             filterMainContact={filterMainContact}
             selectedRowKeys={selectedRowKeys}
             setSelectedRowKeys={setSelectedRowKeys as (keys: string[]) => void}
-            onRowClick={(record) => {
+            onShowClick={(record) => {
               setSelectedContact(record as any);
               setIsDetailModalOpen(true);
             }}
@@ -441,7 +428,6 @@ export default function CustomerDetail() {
       className="customer-detail-card"
       title={
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <Button type="text" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)} />
           <Breadcrumb items={breadcrumbItems} separator=">" />
         </div>
       }

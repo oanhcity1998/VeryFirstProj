@@ -1,7 +1,7 @@
 // src/views/LeadList/LeadList.tsx
 import { useState } from "react";
-import { Button, Space, Modal, message } from "antd";
-import { PlusOutlined, DeleteOutlined, FilterOutlined } from "@ant-design/icons";
+import { Button, Space, Modal, message, Select, Checkbox } from "antd";
+import { PlusOutlined, DeleteOutlined, FilterOutlined, DownOutlined } from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 import TableLead, { Lead } from "../../../components/TableLead/TableLead";
 import "./LeadList.css";
@@ -10,7 +10,7 @@ import LeadForm from "../../../components/LeadForm/LeadForm";
 const dataSource: Lead[] = [
   {
     id: 1,
-    leadName: "Lead 1",
+    leadName: "Khách tiềm năng 1",
     contactName: "Nguyễn Thùy Linh",
     email: "thuy@example.com",
     phone: "098454546",
@@ -28,12 +28,24 @@ const LeadList = () => {
   const [deleting, setDeleting] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [editData, setEditData] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [opportunityOpen, setOpportunityOpen] = useState(false);
+  const [converting, setConverting] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string[]>([]);
+  const [priorityFilter, setPriorityFilter] = useState<string[]>([]);
+  const [filters, setFilters] = useState({
+    status: null,
+    priority: null,
+  });
+
+
+
 
   const handleDelete = () => {
     setDeleting(true);
     setData((prev) => prev.filter((item) => !selectedRowKeys.includes(item.id)));
     setSelectedRowKeys([]);
-    message.success("Đã xóa lead");
+    message.success("Đã xóa Khách tiềm năng");
     setDeleteOpen(false);
     setDeleting(false);
   };
@@ -57,21 +69,109 @@ const LeadList = () => {
     setOpenForm(false);
   };
 
+  const handleConvertToOpportunity = () => {
+    setConverting(true);
+    // Example: convert logic here
+    message.success("Khách tiềm năng đã được chuyển thành cơ hội");
+    setSelectedRowKeys([]);
+    setOpportunityOpen(false);
+    setConverting(false);
+  };
+
+  const statusOptions = ["Khách hàng mới", "Đang chăm sóc", "Chưa quan tâm"];
+  const priorityOptions = ["Có", "Không"];
+
+  // Status popover content
+  const StatusContent = (
+    <div className="filter-popover">
+      {statusOptions.map(opt => (
+        <Checkbox
+          key={opt}
+          checked={statusFilter.includes(opt)}
+          onChange={(e) => {
+            setStatusFilter(prev =>
+              e.target.checked ? [...prev, opt] : prev.filter(v => v !== opt)
+            );
+          }}
+        >
+          {opt}
+        </Checkbox>
+      ))}
+      <div className="filter-actions">
+        <Button size="small" type="link" onClick={() => setStatusFilter([])}>Xoá chọn</Button>
+      </div>
+    </div>
+  );
+
+  const filteredData = data.filter((item) => {
+    const matchStatus = filters.status ? item.status === filters.status : true;
+    const matchPriority = filters.priority ? item.priority === filters.priority : true;
+    return matchStatus && matchPriority;
+  });
+
 
 
   return (
     <>
       <div className="leadlist-header">
         <h2>Danh sách lead</h2>
-        <Search
-          placeholder="Tìm kiếm lead..."
-          onChange={(e) => setSearchText(e.target.value)}
-          allowClear
-          className="leadlist-search"
-        />
 
         <Space>
-          <Button>Cơ hội</Button>
+          <Search
+            placeholder="Tìm kiếm Khách tiềm năng..."
+            onChange={(e) => setSearchText(e.target.value)}
+            allowClear
+            className="leadlist-search"
+            />
+          <Select
+            allowClear
+            placeholder="Trạng thái"
+            style={{ width: 180 }}
+            value={filters.status}
+            onChange={(val) => setFilters((prev) => ({ ...prev, status: val }))}
+            options={[
+              { label: "Khách hàng mới", value: "Khách hàng mới" },
+              { label: "Đang chăm sóc", value: "Đang chăm sóc" },
+              { label: "Chưa quan tâm", value: "Chưa quan tâm" },
+            ]}
+          />
+
+          <Select
+            allowClear
+            placeholder="Ưu tiên"
+            style={{ width: 150 }}
+            value={filters.priority}
+            onChange={(val) => setFilters((prev) => ({ ...prev, priority: val }))}
+            options={[
+              { label: "Cao", value: "Cao" },
+              { label: "Thấp", value: "Thấp" },
+            ]}
+          />
+
+
+
+          {/* Opportunity button  */}
+          <Button
+            onClick={() => setOpportunityOpen(true)}
+            disabled={selectedRowKeys.length === 0}
+          >
+            Cơ hội
+          </Button>
+          {/* Opportunity Modal */}
+          <Modal
+            open={opportunityOpen}
+            title="Chuyển thành cơ hội"
+            onOk={handleConvertToOpportunity}
+            onCancel={() => setOpportunityOpen(false)}
+            okText="Xác nhận"
+            cancelText="Hủy"
+            okButtonProps={{ loading: converting }}
+            centered
+          >
+            <p>Bạn có muốn chuyển Khách tiềm năng này thành cơ hội?</p>
+          </Modal>
+
+          {/* Delete button  */}
           <Button
             danger
             icon={<DeleteOutlined />}
@@ -80,6 +180,7 @@ const LeadList = () => {
           >
             Xóa
           </Button>
+          {/* Delete Modal  */}
           <Modal
             open={deleteOpen}
             title="Xác nhận xóa"
@@ -90,7 +191,7 @@ const LeadList = () => {
             okButtonProps={{ danger: true, loading: deleting }}
             centered
           >
-            <p>Bạn có chắc muốn xóa lead này?</p>
+            <p>Bạn có chắc muốn xóa Khách tiềm năng này?</p>
           </Modal>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
             Tạo
@@ -99,26 +200,27 @@ const LeadList = () => {
       </div>
 
       <TableLead
-        data={data}
+        data={filteredData}
         searchText={searchText}
         selectedRowKeys={selectedRowKeys}
         setSelectedRowKeys={setSelectedRowKeys}
-        onEdit={handleEdit}   
+        onEdit={handleEdit}
       />
 
       <Modal
         open={openForm}
-        title={editData ? "Chỉnh sửa Lead" : "Thêm mới Lead"}
+        title={editData ? "Chỉnh sửa Khách tiềm năng" : "Thêm mới Khách tiềm năng"}
         onCancel={() => setOpenForm(false)}
         footer={null}
         destroyOnClose
-        >
+      >
         <LeadForm
-            initialValues={editData}
-            onCancel={() => setOpenForm(false)}
-            onSubmit={handleSubmit}
+          open={openForm}
+          initialValues={editData}
+          onCancel={() => setOpenForm(false)}
+          onSubmit={handleSubmit}
         />
-        </Modal>
+      </Modal>
 
     </>
   );

@@ -1,0 +1,9 @@
+npm i -g json-server
+
+++++++++++++++++++++++++ 
+
+cd .\front-end\ ;
+
+npm run dev     #Chạy dev
+npm server      #Chạy fake api
+

@@ -7,6 +7,10 @@ import {
   SolutionOutlined,
   TeamOutlined,
   DollarOutlined,
+  IdcardOutlined,
+  UserSwitchOutlined,
+  FileTextOutlined,
+  AccountBookOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu.css";
@@ -20,55 +24,69 @@ const SidebarMenu = ({ collapsed }) => {
 
   if (location.pathname === ROUTES_APP.home) {
     selectedKey = "1";
-  } else if (location.pathname.startsWith(ROUTES_APP.customerList)) {
+  } else if (location.pathname.startsWith(ROUTES_APP.crm.customerList)) {
     selectedKey = "2";
-  } else if (location.pathname.startsWith(ROUTES_APP.productPage)) {
+  } else if (location.pathname.startsWith(ROUTES_APP.crm.productPage)) {
     selectedKey = "3";
-  } else if (location.pathname.startsWith(ROUTES_APP.contactList)) {
+  } else if (location.pathname.startsWith(ROUTES_APP.crm.contactList)) {
     selectedKey = "4";
-  } else if (location.pathname.startsWith(ROUTES_APP.quotationList)) {
+  } else if (location.pathname.startsWith(ROUTES_APP.crm.quotationList)) {
     selectedKey = "5";
-  } else if (location.pathname.startsWith(ROUTES_APP.leadList)) {
+  } else if (location.pathname.startsWith(ROUTES_APP.crm.leadList)) {
     selectedKey = "6";
-  } else if (location.pathname.startsWith(ROUTES_APP.opportunityList)) {
+  } else if (location.pathname.startsWith(ROUTES_APP.crm.opportunityList)) {
     selectedKey = "7";
+  } else if (location.pathname.startsWith(ROUTES_APP.crm.contractList)) {
+    selectedKey = "8";
+  } else if (location.pathname.startsWith(ROUTES_APP.crm.debtReportList)) {
+    selectedKey = "9";
   }
 
   const items = [
     {
       key: "1",
       icon: <HomeOutlined />,
-      label: <Link to={ROUTES_APP.home}>Trang chủ</Link>,
+      label: <Link to={ROUTES_APP.crm.homeCRM}>Trang chủ</Link>,
     },
     {
       key: "2",
       icon: <UserOutlined />,
-      label: <Link to={ROUTES_APP.contactList}>Khách hàng</Link>,
+      label: <Link to={ROUTES_APP.crm.customerList}>Khách hàng</Link>,
     },
     {
       key: "3",
       icon: <InboxOutlined />,
-      label: <Link to={ROUTES_APP.productPage}>Sản phẩm</Link>,
+      label: <Link to={ROUTES_APP.crm.productPage}>Sản phẩm</Link>,
     },
     {
       key: "4",
       icon: <ContactsOutlined />,
-      label: <Link to={ROUTES_APP.contactList}>Liên hệ</Link>,
+      label: <Link to={ROUTES_APP.crm.contactList}>Liên hệ</Link>,
     },
     {
       key: "5",
       icon: <SolutionOutlined />,
-      label: <Link to={ROUTES_APP.quotationList}>Mẫu báo giá</Link>,
+      label: <Link to={ROUTES_APP.crm.quotationList}>Mẫu báo giá</Link>,
     },
     {
       key: "6",
-      icon: <TeamOutlined />,
-      label: <Link to={ROUTES_APP.leadList}>Lead</Link>,
+      icon: <UserSwitchOutlined />,
+      label: <Link to={ROUTES_APP.crm.leadList}>Khách tiềm năng</Link>,
     },
     {
       key: "7",
       icon: <DollarOutlined />,
-      label: <Link to={ROUTES_APP.opportunityList}>Opportunity</Link>,
+      label: <Link to={ROUTES_APP.crm.opportunityList}>Cơ hội</Link>,
+    },
+    {
+      key: "8",
+      icon: <FileTextOutlined />,
+      label: <Link to={ROUTES_APP.crm.contractList}>Hợp đồng</Link>,
+    },
+    {
+      key: "9",
+      icon: <AccountBookOutlined />,
+      label: <Link to={ROUTES_APP.crm.debtReportList}>Báo cáo công nợ</Link>,
     },
   ];
 

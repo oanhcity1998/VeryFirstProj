@@ -10,11 +10,11 @@ import {
 import TableCustomer from "../../../components/TableCustomer/TableCustomer";
 import CreateCustomerForm from "../../../components/CustomerForm/CreateCustomerForm";
 import FilterDrawer from "../../../components/Filter/FilterDrawer";
-import EditCustomerForm from "../../../components/CustomerForm/EditCustomerForm";
 
 import "./CustomerList.css";
 import { ROUTES_APP } from "../../../routes";
 import { useNavigate } from "react-router-dom";
+import Search from "antd/es/input/Search";
 
 const CustomerList = () => {
   const navigate = useNavigate();
@@ -67,7 +67,7 @@ const CustomerList = () => {
       // await api.delete(`/customers/${customer.id}`);
 
       message.success("Đã xóa khách hàng");
-      navigate(ROUTES_APP.customerList);
+      navigate(ROUTES_APP.crm.customerList);
     } catch (err) {
       message.error("Không thể xóa khách hàng");
     } finally {
@@ -98,10 +98,11 @@ const CustomerList = () => {
 
         <div className="customer-list-actions">
           {/* Search bar */}
-          <Input.Search
+          <Search
             placeholder="Tìm kiếm khách hàng..."
             allowClear
             className="customer-list-search"
+            name="search"
           />
 
           {/* Bộ lọc */}
@@ -153,6 +154,7 @@ const CustomerList = () => {
           {/* Delete */}
           <Button
             danger
+            icon={<DeleteOutlined />}
             disabled={selectedRowKeys.length === 0}
             onClick={() => setDeleteOpen(true)}
           >
@@ -188,6 +190,7 @@ const CustomerList = () => {
 
       <CreateCustomerForm
         open={isModalOpen}
+        mode={editingCustomer ? "edit" : "add"}
         customer={editingCustomer} // 👈 pass the record when editing
         onCancel={() => setIsModalOpen(false)}
         onSave={(values) => {

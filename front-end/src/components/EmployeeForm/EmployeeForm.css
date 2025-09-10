@@ -1,0 +1,59 @@
+.form-section {
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: #fff;
+}
+
+.form-section h3 {
+  margin-bottom: 16px;
+  color: #1890ff;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.ant-form-item {
+  margin-bottom: 16px;
+}
+
+.ant-form-item-label {
+  font-weight: 500;
+  color: #333;
+}
+
+.ant-input,
+.ant-select-selector,
+.ant-picker {
+  border-radius: 4px;
+  height: 40px;
+}
+
+.ant-btn {
+  border-radius: 4px;
+}
+
+
+/* ép DatePicker = Input */
+.employee-detail-container .ant-picker {
+  height: 32px !important;
+  display: flex;
+  align-items: center;
+  padding: 0 11px !important;
+}
+
+.employee-detail-container .ant-picker-input>input {
+  height: 30px !important;
+  line-height: 30px !important;
+}
+
+/* 3 Card bằng chiều cao */
+.employee-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ant-row {
+  align-items: stretch !important;
+}

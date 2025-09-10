@@ -1,0 +1,50 @@
+.employee-detail-container {
+  padding: 20px;
+}
+
+.employee-detail-container .ant-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.employee-detail-container .ant-card-head {
+  background: #fff;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.employee-detail-container .ant-form-item-label {
+  font-weight: 500;
+  color: #333;
+}
+
+.employee-detail-container .ant-input,
+.employee-detail-container .ant-picker {
+  background: #fafafa;
+  border-color: #d9d9d9;
+  color: #333;
+  cursor: not-allowed;
+}
+
+/* Fix DatePicker bằng Input */
+.employee-detail-container .ant-picker {
+  height: 32px !important;
+  padding: 0 11px !important;
+  display: flex;
+  align-items: center;
+}
+
+.employee-detail-container .ant-picker-input>input {
+  height: 30px !important;
+  line-height: 30px !important;
+}
+
+/* 3 card cùng chiều cao */
+.employee-detail-container .employee-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.employee-detail-container .ant-row {
+  align-items: stretch !important;
+}

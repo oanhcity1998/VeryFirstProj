@@ -1,0 +1,23 @@
+.asset-detail-container .ant-picker {
+    height: 32px !important;
+    /* ép chiều cao bằng Input */
+    padding: 4px 11px !important;
+    /* chỉnh lại padding */
+}
+
+.asset-detail-container .ant-picker-input>input {
+    height: 24px !important;
+    /* input bên trong DatePicker */
+}
+
+
+/* ép 3 card cao bằng nhau */
+.asset-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.asset-detail-container .ant-row {
+    align-items: stretch !important;
+}

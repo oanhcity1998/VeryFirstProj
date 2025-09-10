@@ -1,16 +1,23 @@
-import {useState} from "react"
+import { useState } from "react";
 import { Table, Form, Checkbox, Button, Modal } from "antd";
-import { Link } from "react-router-dom";
+import { generatePath, Link } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
-import CreateCustomerForm from "../CustomerForm/CreateCustomerForm"
+import CreateCustomerForm from "../CustomerForm/CreateCustomerForm";
 import dayjs from "dayjs";
 
-import "./TableCustomer.css"
+import "./TableCustomer.css";
+import { ROUTES_APP } from "../../routes";
 
-const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, onEdit }) => {
+const TableCustomer = ({
+  data = [],
+  selectedRowKeys = [],
+  setSelectedRowKeys,
+  onEdit,
+}) => {
   const allKeys = data.map((item) => item.key);
   const isAllChecked = selectedRowKeys.length === data.length;
-  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
+  const isIndeterminate =
+    selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
 
   const [customerdata, setcustomerData] = useState([...data]);
 
@@ -74,7 +81,9 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, on
             if (e.target.checked) {
               setSelectedRowKeys([...selectedRowKeys, record.key]);
             } else {
-              setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.key));
+              setSelectedRowKeys(
+                selectedRowKeys.filter((key) => key !== record.key)
+              );
             }
           }}
         />
@@ -91,9 +100,19 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, on
       dataIndex: "customerName",
       width: 200,
       fixed: "left", // ✅ fixed
-      render: (text, record) => <Link to={`/customerlist/${record.id}`}>{text}</Link>,
+      render: (text, record) => (
+        <Link
+          to={generatePath(ROUTES_APP.crm.customerDetail, { id: record.id })}
+        >
+          {text}
+        </Link>
+      ),
     },
-    { title: "Tên DN ghi trên hợp đồng", dataIndex: "contractName", width: 200 },
+    {
+      title: "Tên DN ghi trên hợp đồng",
+      dataIndex: "contractName",
+      width: 200,
+    },
     { title: "Tên DN bằng tiếng Anh", dataIndex: "englishName", width: 200 },
     { title: "Mã số thuế", dataIndex: "taxCode", width: 150 },
     { title: "Số điện thoại", dataIndex: "phone", width: 150 },
@@ -106,8 +125,16 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, on
     { title: "Số nhân sự", dataIndex: "employees", width: 180 },
     { title: "Doanh thu TB/năm", dataIndex: "revenue", width: 180 },
     { title: "Văn bản TB/tháng", dataIndex: "documentsPerMonth", width: 180 },
-    { title: "Trạng thái quyết toán thuế ", dataIndex: "taxSettlementStatus", width: 180 },
-    { title: "Năm quyết toán thuế ", dataIndex: "taxSettlementYear", width: 180 },
+    {
+      title: "Trạng thái quyết toán thuế ",
+      dataIndex: "taxSettlementStatus",
+      width: 180,
+    },
+    {
+      title: "Năm quyết toán thuế ",
+      dataIndex: "taxSettlementYear",
+      width: 180,
+    },
     {
       title: "Tài liệu",
       dataIndex: "documents",
@@ -124,33 +151,33 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, on
     {
       title: "",
       key: "actions",
-      fixed: "right",   // 👈 always stick on the right
+      fixed: "right", // 👈 always stick on the right
       width: 80,
       render: (_, record) => (
         <Button
           icon={<EditOutlined />}
           type="link"
           onClick={() => onEdit(record)}
+          className="customer-edit-icon"
         />
       ),
-    }, 
+    },
   ];
 
   return (
     <div>
       <Table
-      columns={columns}
-      dataSource={data}
-      pagination={{position: ['bottomCenter'],}} // center positioning
-      rowKey="key"
-      scroll={{ x: 2500, y: 600 }} // enable horizontal scroll
-      rowClassName={(record) =>
-        selectedRowKeys.includes(record.key) ? "selected-row" : ""
-      }
-    />
-    
+        columns={columns}
+        dataSource={data}
+        pagination={{ position: ["bottomCenter"] }} // center positioning
+        rowKey="key"
+        scroll={{ x: 2500, y: 600 }} // enable horizontal scroll
+        rowClassName={(record) =>
+          selectedRowKeys.includes(record.key) ? "selected-row" : ""
+        }
+      />
+
       <Modal
-        title={editingCustomer ? "Sửa khách hàng" : "Thêm khách hàng"}
         open={isModalVisible}
         onOk={() => form.submit()}
         onCancel={() => setIsModalVisible(false)}
@@ -177,12 +204,8 @@ const TableCustomer = ({ data = [], selectedRowKeys = [], setSelectedRowKeys, on
           initialValues={editingProduct || {}} // ✅ if editing, pre-fill data
         />
       </Modal> */}
-
-
     </div>
   );
-
-  
 };
 
 export default TableCustomer;

@@ -1,12 +1,12 @@
 import { Table, Checkbox } from "antd";
-import { Link } from "react-router-dom";
+import { generatePath, Link } from "react-router-dom";
 import { useMemo } from "react";
 import { EditOutlined } from "@ant-design/icons";
 import { ColumnsType } from "antd/es/table";
+import { ROUTES_APP } from "../../routes";
 
 // Định nghĩa type cho Contact
 export interface Contact {
-  key: string;
   id: string;
   contactName: string;
   customerName: string;
@@ -64,7 +64,10 @@ const TableContact = ({
       width: 200,
       fixed: "left",
       render: (_, record) => (
-        <Link onClick={() => onShowClick && onShowClick(record)} to={"#"}>
+        <Link
+          onClick={() => onShowClick && onShowClick(record)}
+          to={generatePath(ROUTES_APP.crm.contactDetail, { id: record.id })} /*to={"#"}*/
+        >
           {record.contactName}
         </Link>
       ),
@@ -138,9 +141,9 @@ const TableContact = ({
             }
           : undefined
       }
+      rowKey="id"
       columns={columns}
       dataSource={filteredData}
-      rowKey="key"
       scroll={{ x: "max-content", y: "calc(100vh - 330px)" }}
       pagination={{ position: ["bottomCenter"] }}
     />

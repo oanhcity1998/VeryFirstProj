@@ -29,6 +29,19 @@ export const FilterOpportunityDrawer = ({
   return (
     <Drawer title="Bộ lọc cơ hội" placement="right" onClose={onClose} open={open} width={320}>
       <Form layout="vertical">
+        <Form.Item label="Ngày dự kiến chốt">
+          <RangePicker
+            style={{ width: "100%" }}
+            format="YYYY-MM-DD"
+            value={filterDate ? [dayjs(filterDate[0]), dayjs(filterDate[1])] : undefined}
+            onChange={(dates) =>
+              setFilterDate(
+                dates ? [dates[0]!.format("YYYY-MM-DD"), dates[1]!.format("YYYY-MM-DD")] : null
+              )
+            }
+          />
+        </Form.Item>
+
         <Form.Item label="Ưu tiên">
           <Select
             allowClear
@@ -53,19 +66,6 @@ export const FilterOpportunityDrawer = ({
             <Select.Option value="Closed Won">Closed Won</Select.Option>
             <Select.Option value="Closed Lost">Closed Lost</Select.Option>
           </Select>
-        </Form.Item>
-
-        <Form.Item label="Ngày dự kiến chốt">
-          <RangePicker
-            style={{ width: "100%" }}
-            format="YYYY-MM-DD"
-            value={filterDate ? [dayjs(filterDate[0]), dayjs(filterDate[1])] : undefined}
-            onChange={(dates) =>
-              setFilterDate(
-                dates ? [dates[0]!.format("YYYY-MM-DD"), dates[1]!.format("YYYY-MM-DD")] : null
-              )
-            }
-          />
         </Form.Item>
 
         <Button type="primary" onClick={onConfirm} block>

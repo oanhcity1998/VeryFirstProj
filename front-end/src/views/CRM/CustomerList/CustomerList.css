@@ -1,5 +1,5 @@
 .h2 {
-    margin-bottom: 16px;
+  margin-bottom: 16px;
 }
 
 .customer-list-header {
@@ -19,13 +19,24 @@
   align-items: center;
 }
 
-.customer-list-search {
-  width: 250px;
-}
-
 /* Highlight the whole row when selected */
 .ant-table-row-selected > td {
-  background-color: #cce6ff !important;  /* light blue */
+  background-color: #cce6ff !important; /* light blue */
 }
 
+.customer-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
 
+.customer-list-right {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* space between title and searchbar */
+}
+
+.customer-list-search {
+  width: 300px; /* adjust length of search bar */
+}
