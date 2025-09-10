@@ -27,7 +27,7 @@
 }
 
 .contract-list-container {
-  padding: 16px;
+  /* padding: 16px; */
   width: 100%;
   /* max-width: 1400px; optional, for large screens */
   margin: 0 auto;    /* center on big monitors */
