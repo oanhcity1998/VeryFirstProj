@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "types": ["react", "react-dom"],
+    "jsx": "react-jsx",
+
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"]
+    },
+
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    "isolatedModules": true,
+    "noEmit": true
+  },
+  "include": ["src"]
+}
