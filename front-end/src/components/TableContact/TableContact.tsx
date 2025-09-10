@@ -60,6 +60,7 @@ const TableContact = ({
   const columns: ColumnsType<Contact> = [
     {
       title: "Tên người liên hệ",
+      align: "center",
       dataIndex: "contactName",
       width: 200,
       fixed: "left",
@@ -74,32 +75,38 @@ const TableContact = ({
     },
     {
       title: "Khách hàng",
+      align: "center",
       dataIndex: "customerName",
       width: 200,
       fixed: "left",
     },
     {
       title: "Số điện thoại",
+      align: "center",
       dataIndex: "phone",
       width: 150,
     },
     {
       title: "Email",
+      align: "center",
       dataIndex: "email",
       width: 200,
     },
     {
       title: "Chức danh",
+      align: "center",
       dataIndex: "title",
       width: 150,
     },
     {
       title: "Người liên hệ chính",
+      align: "center",
       dataIndex: "mainContact",
       width: 150,
     },
     {
       title: "Ghi chú",
+      align: "center",
       dataIndex: "note",
       width: 200,
     },
@@ -108,6 +115,7 @@ const TableContact = ({
   if (showEdit) {
     columns.push({
       title: "",
+      align: "center",
       dataIndex: "",
       width: 60,
       fixed: "right",

@@ -57,6 +57,7 @@ export const TableQuotation = ({
   const columns: ColumnsType<Quotation> = [
     {
       title: "Tên mẫu báo giá",
+      align: "center",
       dataIndex: "quotationName",
       key: "quotationName",
       width: 220,
@@ -70,18 +71,21 @@ export const TableQuotation = ({
     },
     {
       title: "Thời hạn hiệu lực",
+      align: "center",
       dataIndex: "validityPeriod",
       key: "validityPeriod",
       width: 180,
     },
     {
       title: "Điều khoản thanh toán",
+      align: "center",
       dataIndex: "paymentTerms",
       key: "paymentTerms",
       width: 180,
     },
     {
       title: "Sản phẩm",
+      align: "center",
       dataIndex: "products",
       key: "products",
       width: 220,
@@ -90,6 +94,7 @@ export const TableQuotation = ({
     },
     {
       title: "Tổng chưa VAT (VND)",
+      align: "center",
       dataIndex: "products",
       key: "totalBeforeVat",
       width: 180,
@@ -97,6 +102,7 @@ export const TableQuotation = ({
     },
     {
       title: "VAT 5% (VND)",
+      align: "center",
       dataIndex: "products",
       key: "vat5",
       width: 150,
@@ -104,6 +110,7 @@ export const TableQuotation = ({
     },
     {
       title: "VAT 10% (VND)",
+      align: "center",
       dataIndex: "products",
       key: "vat10",
       width: 150,
@@ -111,12 +118,14 @@ export const TableQuotation = ({
     },
     {
       title: "Trạng thái",
+      align: "center",
       dataIndex: "status",
       key: "status",
       width: 160,
     },
     {
-      title: "",
+      title: "Hành động",
+      align: "center",
       key: "action",
       width: 60,
       fixed: "right",
