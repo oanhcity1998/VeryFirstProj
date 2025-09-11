@@ -4,7 +4,19 @@ import "./FilterDrawer.css";
 
 const { Option } = Select;
 
-const FilterDrawer = ({ open, onClose, onConfirm }) => {
+interface FilterDrawerProps {
+  open: boolean;
+  onClose: (values?: FilterValues) => void;
+  onConfirm: (values: FilterValues) => void;
+}
+
+type FilterValues = {
+  VAT?: string | null;
+  Product?: string | null;
+  Status?: string | null;
+};
+
+const FilterDrawer: React.FC<FilterDrawerProps> = ({ open, onClose, onConfirm }) => {
   const [form] = Form.useForm();
 
   const handleConfirm = () => {
@@ -20,11 +32,11 @@ const FilterDrawer = ({ open, onClose, onConfirm }) => {
       title="Bộ lọc"
       placement="right"
       open={open}
-      onClose={onClose}
+      onClose={onClose as any}
       width={350}
       footer={
         <div className="filter-footer">
-          <Button danger onClick={onClose}>
+          <Button danger onClick={onClose as any}>
             Huỷ
           </Button>
           <Button type="primary" onClick={handleConfirm}>

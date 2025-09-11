@@ -6,9 +6,16 @@ import CreateCustomerForm from "../CustomerForm/CreateCustomerForm";
 import dayjs from "dayjs";
 
 import "./TableCustomer.css";
-import { ROUTES_APP } from "../../app/routes";
+import { ROUTES_APP } from "@/app/routes";
 
-const TableCustomer = ({
+interface TableCustomerProps {
+  data?: any[];
+  selectedRowKeys?: (string | number)[];
+  setSelectedRowKeys: React.Dispatch<React.SetStateAction<(string | number)[]>>;
+  onEdit: (customer: any) => void;
+}
+
+const TableCustomer: React.FC<TableCustomerProps> = ({
   data = [],
   selectedRowKeys = [],
   setSelectedRowKeys,
@@ -16,32 +23,29 @@ const TableCustomer = ({
 }) => {
   const allKeys = data.map((item) => item.key);
   const isAllChecked = selectedRowKeys.length === data.length;
-  const isIndeterminate =
-    selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
+  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
 
   const [customerdata, setcustomerData] = useState([...data]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
+  const [editingProduct, setEditingProduct] = useState<any>(null);
   const [editingCustomer, setEditingCustomer] = useState(null);
 
   const [form] = Form.useForm();
 
   // Chỉnh sửa sản phẩm
-  const handleEdit = (record) => {
+  const handleEdit = (record: any) => {
     setEditingCustomer(record);
     form.setFieldsValue(record); // ✅ preload values
     setIsModalVisible(true);
   };
 
   // Lưu dữ liệu từ form
-  const handleSave = (values) => {
+  const handleSave = (values: any) => {
     if (editingProduct) {
       setcustomerData((prev) =>
         prev.map((item) =>
-          item.key === editingProduct.key
-            ? { ...item, ...values, updatedAt: dayjs() }
-            : item
+          item.key === editingProduct.key ? { ...item, ...values, updatedAt: dayjs() } : item
         )
       );
     } else {
@@ -74,16 +78,14 @@ const TableCustomer = ({
       dataIndex: "option",
       width: 60,
       fixed: "left", // ✅ fixed
-      render: (_, record) => (
+      render: (_: any, record: any) => (
         <Checkbox
           checked={selectedRowKeys.includes(record.key)}
           onChange={(e) => {
             if (e.target.checked) {
               setSelectedRowKeys([...selectedRowKeys, record.key]);
             } else {
-              setSelectedRowKeys(
-                selectedRowKeys.filter((key) => key !== record.key)
-              );
+              setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.key));
             }
           }}
         />
@@ -100,12 +102,8 @@ const TableCustomer = ({
       dataIndex: "customerName",
       width: 200,
       fixed: "left", // ✅ fixed
-      render: (text, record) => (
-        <Link
-          to={generatePath(ROUTES_APP.crm.customerDetail, { id: record.id })}
-        >
-          {text}
-        </Link>
+      render: (text: any, record: any) => (
+        <Link to={generatePath(ROUTES_APP.crm.customerDetail, { id: record.id })}>{text}</Link>
       ),
     },
     {
@@ -139,7 +137,7 @@ const TableCustomer = ({
       title: "Tài liệu",
       dataIndex: "documents",
       width: 200,
-      render: (file) =>
+      render: (file: any) =>
         file ? (
           <a href={file} download target="_blank" rel="noopener noreferrer">
             📂 Tải xuống
@@ -153,7 +151,7 @@ const TableCustomer = ({
       key: "actions",
       fixed: "right", // 👈 always stick on the right
       width: 80,
-      render: (_, record) => (
+      render: (_: any, record: any) => (
         <Button
           icon={<EditOutlined />}
           type="link"
@@ -167,14 +165,12 @@ const TableCustomer = ({
   return (
     <div>
       <Table
-        columns={columns}
+        columns={columns as any}
         dataSource={data}
         pagination={{ position: ["bottomCenter"] }} // center positioning
         rowKey="key"
         scroll={{ x: 2500, y: 600 }} // enable horizontal scroll
-        rowClassName={(record) =>
-          selectedRowKeys.includes(record.key) ? "selected-row" : ""
-        }
+        rowClassName={(record) => (selectedRowKeys.includes(record.key) ? "selected-row" : "")}
       />
 
       <Modal
@@ -184,7 +180,10 @@ const TableCustomer = ({
         okText="Lưu"
         cancelText="Hủy"
       >
-        <CreateCustomerForm form={form} onFinish={handleSave} />
+        <CreateCustomerForm
+          // form={form}
+          onSave={handleSave as any}
+        />
       </Modal>
 
       {/* <Modal

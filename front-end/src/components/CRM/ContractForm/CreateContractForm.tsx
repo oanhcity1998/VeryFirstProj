@@ -59,7 +59,7 @@ const CreateContractForm: React.FC<CreateContractFormProps> = ({
   }, [initialValues]);
 
   const handleDelete = (key: number) => {
-    setProducts(products.filter((p) => p.key !== key));
+    setProducts(products.filter((p: any) => p.key !== key));
   };
 
   const handleSave = () => {

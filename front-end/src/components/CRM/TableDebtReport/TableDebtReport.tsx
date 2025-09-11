@@ -3,12 +3,12 @@ import { Table, Tooltip, Tag } from "antd";
 import { EditOutlined, FileTextOutlined, DownloadOutlined } from "@ant-design/icons";
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import { DebtReport } from "../../views/CRM/DebtReportList/DebtReportList";
+import { DebtReport } from "@/views/CRM/DebtReportList/DebtReportList";
 
 interface TableDebtReportProps {
   data: DebtReport[];
   searchText: string;
-  selectedRowKeys: number[];
+  selectedRowKeys: React.Key[];
   setSelectedRowKeys: (keys: number[]) => void;
   onEditClick?: (record: DebtReport) => void;
   onDetailClick?: (record: DebtReport) => void;

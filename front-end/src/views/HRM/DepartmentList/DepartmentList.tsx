@@ -153,7 +153,7 @@ const DepartmentList: React.FC = () => {
         let rowHasError = false;
 
         for (let j = 0; j < headerRow.length; j++) {
-          const key = headerRow[j];
+          const key = headerRow[j] as keyof Department;
           const value = row[j];
           if (!value && requiredFields.includes(key)) {
             errors.push(`Lỗi tại hàng ${i + 1}, cột "${key}": Dữ liệu bị trống.`);
@@ -336,7 +336,7 @@ const DepartmentList: React.FC = () => {
           setIsModalOpen(false);
           setSelectedDepartment(null);
         }}
-        onSave={handleSave}
+        onSave={handleSave as any}
         department={selectedDepartment}
         modalTitle={selectedDepartment ? "Cập nhật phòng ban" : "Thêm phòng ban"}
         cancelText="Hủy"

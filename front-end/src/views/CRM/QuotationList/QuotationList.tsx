@@ -93,7 +93,7 @@ const QuotationList = () => {
 
   const [deleting, setDeleting] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   // 👉 Hàm tính tổng + VAT từ danh sách sản phẩm
   const getSummary = (products: Product[]) => {

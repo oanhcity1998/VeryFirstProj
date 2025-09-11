@@ -21,6 +21,10 @@ import { DebtReportForm } from "@/components/CRM/DebtReportForm/DebtReportForm";
 import { TableDebtReport } from "@/components/CRM/TableDebtReport/TableDebtReport";
 dayjs.extend(isBetween);
 
+import rawConfig from "@/@kvac/config/debtReport/debtReport.table.json";
+import { KVTableConfig } from "@/@kvac/ui/KVTable";
+const debtReportTableConfig = rawConfig as KVTableConfig;
+
 // 👉 Hóa đơn
 export interface Invoice {
   invoiceNo: string; // Số hóa đơn
@@ -255,7 +259,7 @@ const DebtReportList = () => {
   // delete state
   const [deleting, setDeleting] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   // 👉 Create
   const handleCreate = (report: DebtReport) => {
@@ -469,6 +473,15 @@ const DebtReportList = () => {
           navigate(generatePath(ROUTES_APP.crm.debtReportDetail, { id: record.id }))
         }
       />
+      {/* <KVTable
+        rowKey="id"
+        data={filteredData}
+        config={debtReportTableConfig}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: setSelectedRowKeys,
+        }}
+      /> */}
 
       {/* Modal create → HCNS */}
       <DebtReportForm

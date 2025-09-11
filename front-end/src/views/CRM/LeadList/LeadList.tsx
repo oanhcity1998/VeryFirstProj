@@ -23,7 +23,7 @@ const dataSource: Lead[] = [
 const LeadList = () => {
   const [data, setData] = useState(dataSource);
   const [searchText, setSearchText] = useState("");
-  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [openForm, setOpenForm] = useState(false);
@@ -37,9 +37,6 @@ const LeadList = () => {
     status: null,
     priority: null,
   });
-
-
-
 
   const handleDelete = () => {
     setDeleting(true);
@@ -84,13 +81,13 @@ const LeadList = () => {
   // Status popover content
   const StatusContent = (
     <div className="filter-popover">
-      {statusOptions.map(opt => (
+      {statusOptions.map((opt) => (
         <Checkbox
           key={opt}
           checked={statusFilter.includes(opt)}
           onChange={(e) => {
-            setStatusFilter(prev =>
-              e.target.checked ? [...prev, opt] : prev.filter(v => v !== opt)
+            setStatusFilter((prev) =>
+              e.target.checked ? [...prev, opt] : prev.filter((v) => v !== opt)
             );
           }}
         >
@@ -98,7 +95,9 @@ const LeadList = () => {
         </Checkbox>
       ))}
       <div className="filter-actions">
-        <Button size="small" type="link" onClick={() => setStatusFilter([])}>Xoá chọn</Button>
+        <Button size="small" type="link" onClick={() => setStatusFilter([])}>
+          Xoá chọn
+        </Button>
       </div>
     </div>
   );
@@ -108,8 +107,6 @@ const LeadList = () => {
     const matchPriority = filters.priority ? item.priority === filters.priority : true;
     return matchStatus && matchPriority;
   });
-
-
 
   return (
     <>
@@ -148,13 +145,8 @@ const LeadList = () => {
             ]}
           />
 
-
-
           {/* Opportunity button  */}
-          <Button
-            onClick={() => setOpportunityOpen(true)}
-            disabled={selectedRowKeys.length === 0}
-          >
+          <Button onClick={() => setOpportunityOpen(true)} disabled={selectedRowKeys.length === 0}>
             Cơ hội
           </Button>
           {/* Opportunity Modal */}
@@ -221,7 +213,6 @@ const LeadList = () => {
           onSubmit={handleSubmit}
         />
       </Modal>
-
     </>
   );
 };

@@ -14,7 +14,7 @@ import {
 } from "antd";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { DebtReport } from "../../views/CRM/DebtReportList/DebtReportList";
+import { DebtReport } from "@/views/CRM/DebtReportList/DebtReportList";
 
 // Mock data
 export const contractOptions = [

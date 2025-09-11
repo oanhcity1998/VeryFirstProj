@@ -1,6 +1,6 @@
+import { Product } from "@/views/CRM/QuotationList/QuotationList";
 import { Button, Modal, Table, Form, Input, Breadcrumb, Select } from "antd";
 import { useEffect, useMemo, useState } from "react";
-import { Product } from "../../views/CRM/QuotationList/QuotationList";
 
 export const fmt = (n?: number) => (typeof n === "number" ? n.toLocaleString() : "0");
 

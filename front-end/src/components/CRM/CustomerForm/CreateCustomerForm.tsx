@@ -1,26 +1,39 @@
-import {useEffect} from "react"
+import { useEffect } from "react";
 import { Modal, Form, Input, Button, Upload, Select } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import "./CreateCustomerForm.css";
 
 const { Option } = Select;
 
-const CreateCustomerForm = ({onCancel, onSave, customer, open  }) => {
+interface CreateCustomerFormProps {
+  onCancel?: () => void;
+  onSave: (customer: any) => void;
+  customer?: any | null;
+  open?: boolean;
+  mode?: "edit" | "add";
+}
+
+const CreateCustomerForm: React.FC<CreateCustomerFormProps> = ({
+  onCancel,
+  onSave,
+  customer,
+  open,
+  mode,
+}) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-      if (customer) {
-        form.setFieldsValue(customer);
-      } else {
-        form.resetFields();
-      }
-    }, [customer, form]);
-  
-    const onFinish = (values) => {
-      onSave(values);
-    };
-  
-  
+    if (customer) {
+      form.setFieldsValue(customer);
+    } else {
+      form.resetFields();
+    }
+  }, [customer, form]);
+
+  const onFinish = (values: any) => {
+    onSave(values);
+  };
+
   // const handleOk = () => {
   //   form.validateFields().then(values => {
   //     console.log("Form values:", values);
@@ -31,7 +44,7 @@ const CreateCustomerForm = ({onCancel, onSave, customer, open  }) => {
 
   return (
     <Modal
-      title="Danh sách khách hàng / Tạo mới"
+      title={mode === "edit" ? "Chỉnh sửa khách hàng" : "Thêm khách hàng"}
       open={open}
       onCancel={onCancel}
       footer={[

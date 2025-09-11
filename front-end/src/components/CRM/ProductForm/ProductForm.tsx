@@ -1,7 +1,14 @@
 import React, { useEffect } from "react";
-import { Form, Input, InputNumber, Button, Select } from "antd";
+import { Form, Input, InputNumber, Button, Select, FormInstance } from "antd";
+import { Product } from "@/views/CRM/ProductPage/ProductPage";
 
-const ProductForm = ({ form, onSave, product }) => {
+interface ProductFormProps {
+  form: FormInstance; // từ antd
+  onSave: (values: Product) => void;
+  product?: Product | null;
+}
+
+const ProductForm: React.FC<ProductFormProps> = ({ form, onSave, product }) => {
   // const [form] = Form.useForm();
 
   useEffect(() => {
@@ -13,7 +20,7 @@ const ProductForm = ({ form, onSave, product }) => {
   }, [product, form]);
 
   // Tính giá sau VAT
-  const handleValuesChange = (changedValues, allValues) => {
+  const handleValuesChange = (changedValues: any, allValues: any) => {
     const { priceVND, priceUSD, vat } = allValues;
     if (priceVND && vat !== undefined) {
       form.setFieldsValue({
@@ -27,7 +34,7 @@ const ProductForm = ({ form, onSave, product }) => {
     }
   };
 
-  const onFinish = (values) => {
+  const onFinish = (values: any) => {
     onSave(values);
   };
 

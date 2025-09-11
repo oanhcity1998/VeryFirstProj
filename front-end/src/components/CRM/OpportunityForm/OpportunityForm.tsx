@@ -11,8 +11,8 @@ import {
 } from "antd";
 import { useEffect } from "react";
 import dayjs from "dayjs";
-import { Opportunity } from "../../views/CRM/OpportunityList/OpportunityList";
 import { opportunityStages } from "@/views/CRM/OpportunityDetail/OpportunityDetail";
+import { Opportunity } from "@/views/CRM/OpportunityList/OpportunityList";
 
 interface OpportunityFormProps {
   mode: "create" | "edit" | "detail";

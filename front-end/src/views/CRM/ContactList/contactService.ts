@@ -1,4 +1,4 @@
-import { Contact } from "../../../components/TableContact/TableContact";
+import { Contact } from "@/components/CRM/TableContact/TableContact";
 
 const API_URL = "http://localhost:3001/contacts";
 

@@ -12,6 +12,9 @@ import "./CustomerList.css";
 import { ROUTES_APP } from "../../../app/routes";
 import { useNavigate } from "react-router-dom";
 import Search from "antd/es/input/Search";
+import TableCustomer from "@/components/CRM/TableCustomer/TableCustomer";
+import CreateCustomerForm from "@/components/CRM/CustomerForm/CreateCustomerForm";
+import FilterDrawer from "@/components/CRM/Filter/FilterDrawer";
 
 const CustomerList = () => {
   const navigate = useNavigate();
@@ -46,7 +49,7 @@ const CustomerList = () => {
 
   const [editingCustomer, setEditingCustomer] = useState(null);
 
-  const handleEdit = (record) => {
+  const handleEdit = (record: any) => {
     setEditingCustomer(record); // set current row
     setIsModalOpen(true);
   };
@@ -74,7 +77,7 @@ const CustomerList = () => {
   };
 
   // upload handler
-  const handleUpload = async (file) => {
+  const handleUpload = async (file: any) => {
     setImporting(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 1500)); // fake API call
@@ -181,7 +184,7 @@ const CustomerList = () => {
       <TableCustomer
         data={data as any}
         selectedRowKeys={selectedRowKeys}
-        setSelectedRowKeys={setSelectedRowKeys}
+        setSelectedRowKeys={setSelectedRowKeys as any}
         onEdit={handleEdit}
       />
 
@@ -190,7 +193,7 @@ const CustomerList = () => {
         mode={editingCustomer ? "edit" : "add"}
         customer={editingCustomer} // 👈 pass the record when editing
         onCancel={() => setIsModalOpen(false)}
-        onSave={(values) => {
+        onSave={(values: any) => {
           console.log("Saved customer:", values);
           setIsModalOpen(false);
         }}
@@ -200,7 +203,7 @@ const CustomerList = () => {
       <FilterDrawer
         open={filterOpen}
         onClose={() => setFilterOpen(false)}
-        onConfirm={(values) => console.log("Apply filter:", values)}
+        onConfirm={(values: any) => console.log("Apply filter:", values)}
       />
     </>
   );

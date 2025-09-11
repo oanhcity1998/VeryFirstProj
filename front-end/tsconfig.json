@@ -15,8 +15,9 @@
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true, // ✅ cho phép import JSON
+    "esModuleInterop": true, // ✅ để dùng import mặc định
 
     "isolatedModules": true,
     "noEmit": true
