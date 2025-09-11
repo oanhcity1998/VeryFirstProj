@@ -19,7 +19,7 @@ import { useState } from "react";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { ROUTES_APP } from "../../../app/routes";
 import "./OpportunityDetail.css";
-import { fmt } from "../../../components/QuotationForm/QuotationForm";
+import { fmt } from "@/components/CRM/QuotationForm/QuotationForm";
 
 // Fake data
 const fakeData = [
