@@ -3,10 +3,10 @@ import { Button, Space, Typography, Input, Select, Row, Col } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import "./QuoteList.css";
 import { generatePath, useNavigate } from "react-router-dom";
-import ContractTable, { Contract } from "../../../components/TableContract/TableContract";
-import CreateContractForm from "../../../components/ContractForm/CreateContractForm";
+import ContractTable, { Contract } from "@/components/CRM/TableContract/TableContract";
+import CreateContractForm from "@/components/CRM/ContractForm/CreateContractForm";
 import ContractDetail from "../ContractDetail/ContractDetail";
-import { ROUTES_APP } from "../../../routes";
+import { ROUTES_APP } from "@/app/routes";
 
 const { Search } = Input;
 const { Option } = Select;
