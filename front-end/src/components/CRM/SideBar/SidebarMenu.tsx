@@ -83,6 +83,11 @@ const SidebarMenu = ({ collapsed }: { collapsed: boolean }) => {
     },
     {
       key: "9",
+      icon: <FileTextOutlined />,
+      label: <Link to={ROUTES_APP.crm.quoteList}>Báo giá</Link>,
+    },
+    {
+      key: "10",
       icon: <AccountBookOutlined />,
       label: <Link to={ROUTES_APP.crm.debtReportList}>Báo cáo công nợ</Link>,
     },

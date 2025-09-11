@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { Modal, Form, Input, Button, Upload, Select } from "antd";
+import {useEffect} from "react"
+import { Modal, Form, Input, Button, Upload, Select, Col, Row, Card } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import "./CreateCustomerForm.css";
 
@@ -58,9 +58,11 @@ const CreateCustomerForm: React.FC<CreateCustomerFormProps> = ({
       width={800}
       // destroyOnClose
     >
-      <Form form={form} layout="vertical" onFinish={onFinish}>
+      <Form className="form-container" form={form} layout="vertical" onFinish={onFinish}>
         {/* ✅ Thông tin khách hàng */}
-        <div className="form-section">
+      <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+        <Col span={12}>
+        <Card>
           <h3>Thông tin khách hàng</h3>
 
           <Form.Item label="Tên khách hàng" name="customerName" rules={[{ required: true }]}>
@@ -102,10 +104,11 @@ const CreateCustomerForm: React.FC<CreateCustomerFormProps> = ({
           <Form.Item label="Thị trường chính" name="mainMarket">
             <Input />
           </Form.Item>
-        </div>
-
+          </Card>
+        </Col>
         {/* ✅ Thông tin bổ sung */}
-        <div className="form-section">
+        <Col span={12}>
+          <Card>
           <h3>Thông tin bổ sung</h3>
 
           <Form.Item label="Số lượng chi nhánh hoạt động" name="branchCount">
@@ -141,7 +144,9 @@ const CreateCustomerForm: React.FC<CreateCustomerFormProps> = ({
           <Form.Item label="Năm quyết toán" name="taxSettlemenYear">
             <Input />
           </Form.Item>
-        </div>
+        </Card>
+        </Col>
+      </Row>  
       </Form>
     </Modal>
   );

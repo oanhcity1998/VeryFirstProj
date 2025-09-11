@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { Card, Input, Tabs, Form, Row, Col, Breadcrumb, Select, message } from "antd";
-
+import { Card, Input, Tabs, Button, Form, Row, Col, Breadcrumb, Select, message } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import TableContact from "@/components/CRM/TableContact/TableContact";
+import ContactForm from "@/components/CRM/ContactForm/ContactForm";
+import QuoteList from "../QuoteList/QuoteList"
+import ContractList from "../ContractList/ContractList"
 
 import "./CustomerDetail.css";
 import { ROUTES_APP } from "../../../app/routes";
-import TableContact from "@/components/CRM/TableContact/TableContact";
-import ContactForm from "@/components/CRM/ContactForm/ContactForm";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -418,8 +420,8 @@ export default function CustomerDetail() {
         </div>
       ),
     },
-    { key: "3", label: "Báo giá", children: <p>Thông tin báo giá…</p> },
-    { key: "4", label: "Hợp đồng", children: <p>Danh sách hợp đồng…</p> },
+    { key: "3", label: "Báo giá", children: <QuoteList/> },
+    { key: "4", label: "Hợp đồng", children: <ContractList/> },
     { key: "5", label: "Tài liệu", children: <p>File tài liệu…</p> },
   ];
 

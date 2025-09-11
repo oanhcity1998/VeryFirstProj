@@ -13,6 +13,8 @@ import LeadDetail from "./views/CRM/LeadDetail/LeadDetail";
 import OpportunityList from "./views/CRM/OpportunityList/OpportunityList";
 import ContractList from "./views/CRM/ContractList/ContractList";
 import ContractDetailWrapper from "./views/CRM/ContractDetail/ContractDetailWrapper";
+import QuoteList from "./views/CRM/QuoteList/QuoteList";
+import QuoteDetailWrapper from "./views/CRM/QuoteDetail/QuoteDetailWrapper";
 import EmployeeList from "./views/HRM/EmployeeList/EmployeeList";
 import EmployeeDetail from "./views/HRM/EmployeeDetail/EmployeeDetail";
 import PositionList from "./views/HRM/PositionList/PositionList";
@@ -67,6 +69,10 @@ export default function App() {
           {/* Hợp đồng  */}
           <Route path={ROUTES_APP.crm.contractList} element={<ContractList />} />
           <Route path={ROUTES_APP.crm.contractDetail} element={<ContractDetailWrapper />} />
+
+          {/* Hợp đồng  */}
+          <Route path={ROUTES_APP.crm.quoteList} element={<QuoteList />} />
+          <Route path={ROUTES_APP.crm.quoteDetail} element={<QuoteDetailWrapper />} />
 
           {/* Báo cáo công nợ */}
           <Route path={ROUTES_APP.crm.debtReportList} element={<DebtReportList />} />
