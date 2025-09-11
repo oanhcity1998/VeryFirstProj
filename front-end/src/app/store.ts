@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { AnyAction, configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // Mặc định sử dụng localStorage
@@ -11,7 +11,8 @@ const persistConfig = {
   // whitelist: ['counter'], // Chỉ lưu state của counter
 };
 
-const persistedReducer = persistReducer(persistConfig, ""); // Truyền reducer trực tiếp
+const dummyReducer = (state = {}, action: AnyAction) => state;
+const persistedReducer = persistReducer(persistConfig, dummyReducer); // Truyền reducer trực tiếp
 
 export const store = configureStore({
   reducer: persistedReducer,
