@@ -13,7 +13,7 @@ services:
       - odoo-db-data:/var/lib/postgresql/data
 
   odoo:
-    image: odoo:17
+    image: my-custom-odoo-image
     depends_on:
       - db
     ports:
