@@ -14,12 +14,20 @@ import {
   Popover,
   Dropdown,
   Select,
+  DatePicker,
+  Form,
+  Input,
 } from "antd";
-import { useState } from "react";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { ArrowLeftOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { ROUTES_APP } from "../../../app/routes";
 import "./OpportunityDetail.css";
 import { fmt } from "@/components/CRM/QuotationForm/QuotationForm";
+import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
+import { ColumnsType } from "antd/es/table";
+
+dayjs.extend(isBetween);
 
 // Fake data
 const fakeData = [
@@ -69,10 +77,40 @@ const fakeData = [
   },
 ];
 
+// Định nghĩa kiểu Activity
+interface Activity {
+  id: number;
+  date: string;
+  method: "Gọi" | "Gặp mặt";
+  summary: string;
+  owner: string;
+  note: string;
+}
+
+const initialActivities: Activity[] = [
+  {
+    id: 1,
+    date: "2025-09-01",
+    method: "Gọi",
+    summary: "Gọi điện cho khách hàng",
+    owner: "Nguyễn Văn A",
+    note: "",
+  },
+  {
+    id: 2,
+    date: "2025-09-02",
+    method: "Gặp mặt",
+    summary: "Gửi proposal",
+    owner: "Phạm Văn Quyết",
+    note: "Khách hàng yêu cầu demo",
+  },
+];
+
 export const opportunityStages = ["Mới", "Đạt yêu cầu", "Đàm phán", "Đóng", "Mất", "Đạt"] as const;
 
 const OpportunityDetail = () => {
   const { id } = useParams();
+  const [form] = Form.useForm();
   const navigate = useNavigate();
 
   const [losing, setLosing] = useState(false);
@@ -82,6 +120,75 @@ const OpportunityDetail = () => {
   const opportunity = fakeData.find((o) => o.id === Number(id));
   const [currentStage, setCurrentStage] = useState(0);
   const [stageClose, setStageClose] = useState<"Mất" | "Đạt" | "Đóng">("Đóng");
+
+  // Activities state
+  const [activities, setActivities] = useState(initialActivities);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
+
+  const [filterMethod, setFilterMethod] = useState<string | undefined>();
+  const [filterDateRange, setFilterDateRange] = useState(null);
+
+  // Delete Activities state
+  const [deletingActivities, setDeletingActivities] = useState(false);
+  const [deleteActivitiesOpen, setDeleteActivitiesOpen] = useState(false);
+  const [selectedActivitiesRowKeys, setSelectedActivitiesRowKeys] = useState<React.Key[]>([]);
+
+  useEffect(() => {
+    if (editingActivity) {
+      form.setFieldsValue({
+        ...editingActivity,
+        date: dayjs(editingActivity.date),
+      });
+    } else {
+      form.resetFields();
+    }
+  }, [editingActivity, form]);
+
+  const filteredActivities = activities.filter((a) => {
+    const methodMatch = filterMethod ? a.method === filterMethod : true;
+    const dateMatch = filterDateRange
+      ? dayjs(a.date).isBetween(filterDateRange[0], filterDateRange[1], "day", "[]")
+      : true;
+    return methodMatch && dateMatch;
+  });
+
+  // 👉 Xóa
+  const handleActivitiesDelete = async () => {
+    try {
+      setDeletingActivities(true);
+      setActivities((prev) => prev.filter((item) => !selectedActivitiesRowKeys.includes(item.id)));
+      setSelectedActivitiesRowKeys([]);
+    } catch (err) {
+      message.error("Không thể xóa cơ hội");
+    } finally {
+      setDeletingActivities(false);
+      setDeleteActivitiesOpen(false);
+    }
+  };
+
+  const activityColumns: ColumnsType<Activity> = [
+    { title: "Ngày gặp mặt", dataIndex: "date" },
+    { title: "Hình thức", dataIndex: "method" },
+    { title: "Tóm tắt nội dung", dataIndex: "summary" },
+    { title: "Người thực hiện", dataIndex: "owner" },
+    { title: "Ghi chú", dataIndex: "note" },
+    {
+      title: "Hành động",
+      align: "center",
+      render: (_, record: Activity) => (
+        <Button
+          type="link"
+          onClick={() => {
+            setEditingActivity(record);
+            setIsModalOpen(true);
+          }}
+        >
+          <EditOutlined />
+        </Button>
+      ),
+    },
+  ];
 
   if (!opportunity) return <p>Không tìm thấy cơ hội</p>;
 
@@ -181,7 +288,11 @@ const OpportunityDetail = () => {
                   open={isLoseModalOpen}
                   title="Xác nhận Xóa"
                   onOk={() => handelLose(reasonLose)}
-                  onCancel={() => setIsLoseModalOpen(false)}
+                  onCancel={() => {
+                    setIsModalOpen(false);
+                    setEditingActivity(null);
+                    form.resetFields(); // ✅ tránh giữ giá trị cũ
+                  }}
                   okText="Xóa"
                   cancelText="Hủy"
                   okButtonProps={{ danger: true, loading: losing }}
@@ -311,11 +422,148 @@ const OpportunityDetail = () => {
               key: "activities",
               label: "Hoạt động",
               children: (
-                <Timeline>
-                  <Timeline.Item color="blue">01/09: Gọi điện cho khách hàng</Timeline.Item>
-                  <Timeline.Item color="green">02/09: Gửi proposal</Timeline.Item>
-                  <Timeline.Item color="red">05/09: Khách yêu cầu demo</Timeline.Item>
-                </Timeline>
+                <>
+                  <div
+                    style={{ marginBottom: 16, display: "flex", justifyContent: "space-between" }}
+                  >
+                    <h3>Danh sách hoạt động</h3>
+
+                    <Space style={{ marginBottom: 16 }}>
+                      {/* Filter type  */}
+                      <Select
+                        placeholder="Hình thức hoạt động"
+                        allowClear
+                        onChange={(value) => setFilterMethod(value)}
+                        style={{ width: 150 }}
+                        options={[
+                          { value: "Gọi", label: "Gọi" },
+                          { value: "Gặp mặt", label: "Gặp mặt" },
+                        ]}
+                      />
+
+                      {/* Date picker Filter */}
+                      <DatePicker.RangePicker
+                        style={{ height: 32 }}
+                        allowClear
+                        placeholder={["Từ gặp mặt ngày", "Đến ngày"]}
+                        onChange={(dates) => setFilterDateRange(dates as any)}
+                      />
+
+                      {/* Delete button */}
+                      <Button
+                        danger
+                        onClick={() => setDeleteActivitiesOpen(true)}
+                        disabled={selectedActivitiesRowKeys.length === 0}
+                      >
+                        Xóa
+                      </Button>
+                      <Modal
+                        open={deleteActivitiesOpen}
+                        title="Xác nhận xóa"
+                        onOk={handleActivitiesDelete}
+                        onCancel={() => setDeleteActivitiesOpen(false)}
+                        okText="Xóa"
+                        cancelText="Hủy"
+                        okButtonProps={{ danger: true, loading: deletingActivities }}
+                        centered
+                      >
+                        <p>
+                          Bạn có chắc muốn xóa {selectedActivitiesRowKeys.length} hoạt động này?
+                          Hành động này không thể hoàn tác.
+                        </p>
+                      </Modal>
+
+                      {/* Add button */}
+                      <Button type="primary" onClick={() => setIsModalOpen(true)}>
+                        Tạo
+                      </Button>
+                    </Space>
+                  </div>
+
+                  <Table<Activity>
+                    rowSelection={{
+                      selectedRowKeys: selectedActivitiesRowKeys,
+                      onChange: (keys) => {
+                        setSelectedActivitiesRowKeys(keys as number[]);
+                      },
+                    }}
+                    columns={activityColumns}
+                    dataSource={filteredActivities}
+                    rowKey="id"
+                    bordered
+                    pagination={{ position: ["bottomCenter"] }}
+                  />
+
+                  <Modal
+                    open={isModalOpen}
+                    title={editingActivity ? "Sửa hoạt động" : "Thêm hoạt động"}
+                    onCancel={() => {
+                      setIsModalOpen(false);
+                      setEditingActivity(null);
+                    }}
+                    onOk={() => {
+                      form.validateFields().then((values) => {
+                        const payload = {
+                          ...values,
+                          date: values.date.format("YYYY-MM-DD"), // ép về string
+                        };
+
+                        if (editingActivity?.id) {
+                          setActivities((prev) =>
+                            prev.map((a) =>
+                              a.id === editingActivity.id ? { ...a, ...payload } : a
+                            )
+                          );
+                        } else {
+                          setActivities((prev) => [...prev, { ...payload, id: Date.now() }]);
+                        }
+
+                        setIsModalOpen(false);
+                        setEditingActivity(null);
+                        form.resetFields();
+                      });
+                    }}
+                  >
+                    <Form form={form} layout="vertical" initialValues={editingActivity || {}}>
+                      <Form.Item
+                        label="Ngày gặp mặt"
+                        name="date"
+                        rules={[{ required: true, message: "Vui lòng chọn ngày" }]}
+                      >
+                        <DatePicker style={{ width: "100%" }} />
+                      </Form.Item>
+
+                      <Form.Item
+                        label="Hình thức"
+                        name="method"
+                        rules={[{ required: true, message: "Vui lòng chọn hình thức" }]}
+                      >
+                        <Select
+                          options={[
+                            { value: "Gọi", label: "Gọi" },
+                            { value: "Gặp mặt", label: "Gặp mặt" },
+                          ]}
+                        />
+                      </Form.Item>
+
+                      <Form.Item label="Tóm tắt nội dung" name="summary">
+                        <Input />
+                      </Form.Item>
+
+                      <Form.Item
+                        label="Người thực hiện"
+                        name="owner"
+                        rules={[{ required: true, message: "Vui lòng nhập người thực hiện" }]}
+                      >
+                        <Input />
+                      </Form.Item>
+
+                      <Form.Item label="Ghi chú" name="note">
+                        <Input />
+                      </Form.Item>
+                    </Form>
+                  </Modal>
+                </>
               ),
             },
           ]}
