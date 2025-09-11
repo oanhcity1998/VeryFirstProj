@@ -41,6 +41,7 @@ export const TableDebtReport = ({
   const columns: ColumnsType<DebtReport> = [
     {
       title: "Số báo cáo",
+      align: "center",
       dataIndex: "reportNo",
       key: "reportNo",
       width: 150,
@@ -57,6 +58,7 @@ export const TableDebtReport = ({
     },
     {
       title: "Ngày lập",
+      align: "center",
       dataIndex: "reportDate",
       key: "reportDate",
       width: 140,
@@ -64,18 +66,21 @@ export const TableDebtReport = ({
     },
     {
       title: "Hợp đồng",
+      align: "center",
       dataIndex: "contract",
       key: "contract",
       width: 160,
     },
     {
       title: "Khách hàng",
+      align: "center",
       dataIndex: "customer",
       key: "customer",
       width: 200,
     },
     {
       title: "Kiểm toán viên",
+      align: "center",
       dataIndex: "auditor",
       key: "auditor",
       width: 200,
@@ -85,80 +90,62 @@ export const TableDebtReport = ({
         const auditors = Array.isArray(value) ? value : [value];
 
         return (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+          <>
             {auditors.map((name) => (
-              <Tag key={name} color="blue">
-                {name}
-              </Tag>
+              <p key={name}>{name}</p>
             ))}
-          </div>
+          </>
         );
       },
     },
     {
       title: "Giám đốc",
+      align: "center",
       dataIndex: "director",
       key: "director",
       width: 180,
     },
     {
       title: "Trạng thái công nợ",
+      align: "center",
       dataIndex: "debtStatus",
       key: "debtStatus",
       width: 140,
-      render: (status: string) => {
-        const colorMap: Record<string, string> = {
-          "Chưa thanh toán": "blue",
-          "Thanh toán một phần": "orange",
-          "Đã thanh toán": "green",
-          "Khó đòi": "red",
-        };
-        return <Tag color={colorMap[status] || "default"}>{status}</Tag>;
-      },
     },
     {
       title: "Trạng thái báo cáo",
+      align: "center",
       dataIndex: "status",
       key: "status",
-      render: (status: string) => {
-        const colorMap: Record<string, string> = {
-          "Khởi tạo": "blue",
-          "Chờ kế toán": "orange",
-          "Xác nhận": "green",
-          Hủy: "red",
-        };
-        return <Tag color={colorMap[status] || "default"}>{status}</Tag>;
-      },
+      width: 140,
     },
     {
       title: "Tổng nợ còn lại",
+      align: "center",
       dataIndex: "totalDebtRemaining",
       key: "totalDebtRemaining",
       width: 140,
       render: (value: number) => {
         if (value == null) return "-";
-        return (
-          <span style={{ color: value > 0 ? "red" : "green" }}>{value.toLocaleString()} ₫</span>
-        );
+        return <span>{value.toLocaleString()} ₫</span>;
       },
     },
     {
       title: "Hành động",
+      align: "center",
       key: "action",
       width: 70,
       fixed: "right",
       render: (_, record) => (
-        <div style={{ display: "flex", gap: 8 }}>
-          <Tooltip title="Chỉnh sửa">
-            <EditOutlined
-              style={{ fontSize: 18, color: "#1890ff", cursor: "pointer" }}
-              onClick={(e) => {
-                e.stopPropagation();
-                onEditClick?.(record);
-              }}
-            />
-          </Tooltip>
-        </div>
+        <Tooltip title="Chỉnh sửa">
+          <EditOutlined
+            style={{ fontSize: 18, color: "#1890ff", cursor: "pointer" }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEditClick?.(record);
+            }}
+          />
+        </Tooltip>
       ),
     },
   ];

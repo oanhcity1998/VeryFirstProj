@@ -10,6 +10,10 @@ import {
   Modal,
   message,
   Card,
+  Steps,
+  Popover,
+  Dropdown,
+  Select,
 } from "antd";
 import { useState } from "react";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -73,9 +77,11 @@ const OpportunityDetail = () => {
   const navigate = useNavigate();
 
   const [losing, setLosing] = useState(false);
+  const [reasonLose, setReasonLose] = useState("");
   const [isLoseModalOpen, setIsLoseModalOpen] = useState(false);
 
   const opportunity = fakeData.find((o) => o.id === Number(id));
+  const [currentStage, setCurrentStage] = useState(0);
   const [stage, setStage] = useState<StageType>((opportunity?.stage as StageType) || "Mới");
 
   if (!opportunity) return <p>Không tìm thấy cơ hội</p>;
@@ -106,11 +112,13 @@ const OpportunityDetail = () => {
     },
   ];
 
-  const handelLose = async () => {
+  const handelLose = async (reason: string) => {
     try {
       setLosing(true);
+      setCurrentStage(stages.length - 1);
+      // alert(reason);
       // message.success("Đã xóa cơ hội");
-      navigate(ROUTES_APP.crm.opportunityList);
+      // navigate(ROUTES_APP.crm.opportunityList);
     } catch (err) {
       // message.error("Không thể xóa cơ hội");
     } finally {
@@ -118,6 +126,12 @@ const OpportunityDetail = () => {
       setIsLoseModalOpen(false);
     }
   };
+
+  const reasons = [
+    { key: "1", label: "Khách hàng không quan tâm" },
+    { key: "2", label: "Ngân sách hạn chế" },
+    { key: "3", label: "Chọn nhà cung cấp khác" },
+  ];
 
   return (
     <div className="opportunity-detail-container">
@@ -137,44 +151,74 @@ const OpportunityDetail = () => {
         </Breadcrumb>
       </div>
 
+      <Card
+        title="Giai đoạn"
+        extra={
+          <Popover
+            content={
+              <Space direction="vertical">
+                <Button
+                  disabled={currentStage === stages.length - 1}
+                  type="primary"
+                  onClick={() => setIsLoseModalOpen(true)}
+                  danger
+                >
+                  Mất
+                </Button>
+                <Button
+                  disabled={currentStage === stages.length - 1}
+                  type="primary"
+                  style={{ backgroundColor: "#60A917", borderColor: "#60A917" }}
+                  onClick={() => setCurrentStage(stages.length - 1)}
+                >
+                  Đạt
+                </Button>
+
+                <Modal
+                  open={isLoseModalOpen}
+                  title="Xác nhận Xóa"
+                  onOk={() => handelLose(reasonLose)}
+                  onCancel={() => setIsLoseModalOpen(false)}
+                  okText="Xóa"
+                  cancelText="Hủy"
+                  okButtonProps={{ danger: true, loading: losing }}
+                  centered
+                >
+                  <Select
+                    placeholder="Chọn lý do mất cơ hội"
+                    onChange={(value) => {
+                      setReasonLose(value);
+                    }}
+                  >
+                    {reasons.map((r) => (
+                      <Select.Option key={r.key} value={r.label}>
+                        {r.label}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Modal>
+              </Space>
+            }
+            trigger="click"
+          >
+            <Button disabled={currentStage === stages.length - 1} type="primary">
+              Xác định
+            </Button>
+          </Popover>
+        }
+        style={{ marginBottom: 16 }}
+      >
+        <Steps
+          current={currentStage}
+          items={stages.map((title) => ({
+            title,
+            disabled: title === "Đóng" || currentStage === stages.length - 1,
+          }))}
+          onChange={(value) => setCurrentStage(value)}
+        />
+      </Card>
+
       <Card>
-        {/* Stage + buttons */}
-        <div className="opportunity-detail-stage">
-          <Space>
-            <Button type="primary" onClick={() => setIsLoseModalOpen(true)} danger>
-              Mất
-            </Button>
-            <Button type="primary" style={{ backgroundColor: "#60A917", borderColor: "#60A917" }}>
-              Đạt
-            </Button>
-
-            <Modal
-              open={isLoseModalOpen}
-              title="Xác nhận Xóa"
-              onOk={handelLose}
-              onCancel={() => setIsLoseModalOpen(false)}
-              okText="Xóa"
-              cancelText="Hủy"
-              okButtonProps={{ danger: true, loading: losing }}
-              centered
-            >
-              <p>Bạn có muốn xoá thông tin cơ hội này?</p>
-            </Modal>
-          </Space>
-
-          <Segmented
-            value={stage}
-            onChange={(val) => setStage(val as StageType)}
-            options={stages.map((s) => ({ label: s, value: s, disabled: s === "Đóng" }))}
-            size="middle"
-            style={{
-              background: "#fff",
-              border: "1px solid #d9d9d9",
-              borderRadius: 8,
-            }}
-          />
-        </div>
-
         {/* Tabs */}
         <Tabs
           defaultActiveKey="general"

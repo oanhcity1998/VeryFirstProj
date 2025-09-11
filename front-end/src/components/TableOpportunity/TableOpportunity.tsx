@@ -59,6 +59,7 @@ export const TableOpportunity = ({
   const columns: ColumnsType<Opportunity> = [
     {
       title: "Tên cơ hội",
+      align: "center",
       dataIndex: "name",
       key: "name",
       width: 240,
@@ -72,18 +73,21 @@ export const TableOpportunity = ({
     },
     {
       title: "Liên hệ",
+      align: "center",
       dataIndex: "contactName",
       key: "contactName",
       width: 180,
     },
     {
       title: "Công ty",
+      align: "center",
       dataIndex: "company",
       key: "company",
       width: 200,
     },
     {
       title: "Giá trị dự kiến (VND)",
+      align: "center",
       dataIndex: "expectedValue",
       key: "expectedValue",
       width: 180,
@@ -91,70 +95,59 @@ export const TableOpportunity = ({
     },
     {
       title: "Ngày chốt dự kiến",
+      align: "center",
       dataIndex: "expectedCloseDate",
       key: "expectedCloseDate",
       width: 150,
     },
     {
       title: "Dịch vụ dự kiến",
+      align: "center",
       dataIndex: "service",
       key: "service",
       width: 200,
       render: (services) =>
-        Array.isArray(services)
-          ? services.map((s) => (
-              <Tag key={s.id} color="blue" style={{ marginBottom: 4 }}>
-                {s.productName}
-              </Tag>
-            ))
-          : "-",
+        Array.isArray(services) ? services.map((s) => <p key={s.id}>{s.productName}</p>) : "-",
     },
     {
       title: "Xác suất",
+      align: "center",
       dataIndex: "probability",
       key: "probability",
       width: 150,
-      render: (prob: number) => <Progress percent={prob} size="small" />,
+      render: (prob: number) => <>{prob}%</>,
     },
     {
       title: "Ưu tiên",
+      align: "center",
       dataIndex: "priority",
       key: "priority",
       width: 120,
-      render: (priority: string) => {
-        const color = priority === "High" ? "red" : priority === "Medium" ? "orange" : "blue";
-        return <Tag color={color}>{priority}</Tag>;
-      },
     },
     {
       title: "Nhân viên phụ trách",
+      align: "center",
       dataIndex: "owner",
       key: "owner",
       width: 180,
     },
     {
       title: "Giai đoạn",
+      align: "center",
       dataIndex: "stage",
       key: "stage",
       width: 160,
-      render: (stage: string) => {
-        const colorMap: Record<string, string> = {
-          Mới: "blue",
-          "Đạt yêu cầu": "orange",
-          "Đàm phán": "purple",
-          Đóng: "green",
-        };
-        return <Tag color={colorMap[stage] || "default"}>{stage}</Tag>;
-      },
     },
     {
       title: "Hành động tiếp theo",
+      align: "center",
       dataIndex: "nextAction",
       key: "nextAction",
       width: 220,
     },
     {
-      title: "",
+      title: "Hành động",
+      align: "center",
       key: "action",
       width: 60,
       fixed: "right",
@@ -193,15 +186,6 @@ export const TableOpportunity = ({
       pagination={{
         pageSize: 10,
         position: ["bottomCenter"],
-        // itemRender: (page, type, originalElement) => {
-        //   if (type === "prev") {
-        //     return <button className="ant-pagination-item-link">Previous</button>;
-        //   }
-        //   if (type === "next") {
-        //     return <button className="ant-pagination-item-link">Next</button>;
-        //   }
-        //   return originalElement;
-        // },
       }}
     />
   );

@@ -46,12 +46,12 @@ const ContactList = () => {
   );
 
   useEffect(() => {
-    getContacts()
-      .then((res) => setData(res))
-      .catch(() => {
-        console.warn("API lỗi, dùng mock data");
-        setData(mockContactDatas);
-      });
+    // getContacts()
+    //   .then((res) => setData(res))
+    //   .catch(() => {
+    //     console.warn("API lỗi, dùng mock data");
+    setData(mockContactDatas);
+    // });
   }, []);
 
   // ➕ create
