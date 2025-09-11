@@ -459,7 +459,7 @@ const DebtReportList = () => {
       </div>
 
       {/* Table */}
-      {/* <TableDebtReport
+      <TableDebtReport
         data={filteredData}
         searchText={searchText}
         filterStatus={filterStatus}
@@ -472,8 +472,8 @@ const DebtReportList = () => {
         onDetailClick={(record) =>
           navigate(generatePath(ROUTES_APP.crm.debtReportDetail, { id: record.id }))
         }
-      /> */}
-      <KVTable
+      />
+      {/* <KVTable
         rowKey="id"
         data={filteredData}
         config={debtReportTableConfig}
@@ -481,7 +481,7 @@ const DebtReportList = () => {
           selectedRowKeys,
           onChange: setSelectedRowKeys,
         }}
-      />
+      /> */}
 
       {/* Modal create → HCNS */}
       <DebtReportForm

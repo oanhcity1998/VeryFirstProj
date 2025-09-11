@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Tooltip } from "antd";
+import { Table, Tag, Tooltip } from "antd";
 import { EditOutlined, FileTextOutlined } from "@ant-design/icons";
 import { generatePath, Link } from "react-router-dom";
 import { ColumnsType, TableProps } from "antd/es/table";
@@ -8,7 +8,7 @@ import { ROUTES_APP } from "@/app/routes";
 export interface KVTableColumn {
   title: string;
   dataIndex: string;
-  type?: "text" | "number" | "date" | "link" | "tag" | "actions";
+  type?: "text" | "number" | "date" | "link" | "tag" | "list";
   linkTo?: string; // 👉 route key, ví dụ "crm.opportunityDetail"
   width?: number;
   align?: "left" | "center" | "right";
@@ -55,6 +55,7 @@ export function KVTable<T extends { id: number | string }>({
       align: col.align ?? "center",
       width: col.width,
       render: (value: any, record: T) => {
+        // type link, link to route
         if (col.type === "link" && col.linkTo) {
           const recordId = record[rowKey as keyof T] as string | number;
           return (
@@ -64,9 +65,53 @@ export function KVTable<T extends { id: number | string }>({
             </Link>
           );
         }
+
+        // type number
         if (col.type === "number") {
           return value != null ? value.toLocaleString() : "-";
         }
+
+        // type date
+        if (col.type === "date") {
+          return value != null ? new Date(value).toLocaleDateString() : "-";
+        }
+
+        // type tag
+        if (col.type === "tag") {
+          const tagArr = Array.isArray(value) ? value : [value];
+
+          return (
+            <div>
+              {tagArr?.map((item, index) => (
+                <Tag key={index} color={item.color}>
+                  {item.value}
+                </Tag>
+              ))}
+            </div>
+          );
+        }
+
+        // type text
+        if (col.type === "text") {
+          return value ?? "-";
+        }
+
+        // type list
+        if (col.type === "list") {
+          if (!value || value.length === 0) return "-";
+
+          const list = Array.isArray(value) ? value : [value];
+
+          return (
+            <>
+              {list.map((name) => (
+                <p key={name}>{name}</p>
+              ))}
+            </>
+          );
+        }
+
+        // default
         return value ?? "-";
       },
     };

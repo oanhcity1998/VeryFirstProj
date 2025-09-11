@@ -199,7 +199,7 @@ const OpportunityList = () => {
         filterStage={filterStage}
         filterDate={filterDate}
       />
-      <KVTable<Opportunity>
+      {/* <KVTable<Opportunity>
         data={data}
         rowKey="id"
         config={opportunityTableConfig}
@@ -208,7 +208,7 @@ const OpportunityList = () => {
           onChange: setSelectedRowKeys,
         }}
         onEditClick={(record) => console.log("Edit:", record)}
-      />
+      /> */}
 
       {/* Modal create */}
       <OpportunityForm
