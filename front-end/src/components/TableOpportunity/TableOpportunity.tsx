@@ -4,7 +4,7 @@ import { EditOutlined, FileTextOutlined } from "@ant-design/icons";
 import { generatePath, Link } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";
 import { Opportunity } from "../../views/CRM/OpportunityList/OpportunityList";
-import { ROUTES_APP } from "../../routes";
+import { ROUTES_APP } from "../../app/routes";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
@@ -49,7 +49,7 @@ export const TableOpportunity = ({
 
       const matchDate = filterDate
         ? dayjs(item.expectedCloseDate).isSameOrAfter(dayjs(filterDate[0])) &&
-          dayjs(item.expectedCloseDate).isSameOrBefore(dayjs(filterDate[1]))
+        dayjs(item.expectedCloseDate).isSameOrBefore(dayjs(filterDate[1]))
         : true;
 
       return matchSearch && matchPriority && matchStage && matchDate;

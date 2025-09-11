@@ -17,7 +17,7 @@ import {
 } from "antd";
 import { useState } from "react";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { ROUTES_APP } from "../../../routes";
+import { ROUTES_APP } from "../../../app/routes";
 import "./OpportunityDetail.css";
 import { fmt } from "../../../components/QuotationForm/QuotationForm";
 

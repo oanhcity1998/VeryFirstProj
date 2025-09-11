@@ -3,7 +3,7 @@ import { Breadcrumb, Button, Card, Descriptions, Table, Tag, Divider, Form, Sele
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import "./QuotationDetail.css";
-import { ROUTES_APP } from "../../../routes";
+import { ROUTES_APP } from "../../../app/routes";
 import Input from "antd/es/input/Input";
 import TextArea from "antd/es/input/TextArea";
 

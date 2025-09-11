@@ -6,7 +6,7 @@ import CreateCustomerForm from "../CustomerForm/CreateCustomerForm";
 import dayjs from "dayjs";
 
 import "./TableCustomer.css";
-import { ROUTES_APP } from "../../routes";
+import { ROUTES_APP } from "../../app/routes";
 
 const TableCustomer = ({
   data = [],

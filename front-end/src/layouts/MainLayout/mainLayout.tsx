@@ -21,7 +21,7 @@ import SidebarMenu from "../../components/SideBar/SidebarMenu";
 import "./mainLayout.css";
 import SidebarMenuHRM from "../../components/SiderBar-HRM/SidebarMenu-HRM";
 // import FilterDrawer from "../components/FilterDrawer";
-import { ROUTES_APP } from "../../routes";
+import { ROUTES_APP } from "../../app/routes";
 
 const { Header, Sider, Content } = Layout;
 const { Search } = Input;
