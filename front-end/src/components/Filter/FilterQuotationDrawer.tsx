@@ -1,10 +1,32 @@
 import React from "react";
 import { Drawer, Form, Button, Select } from "antd";
+import { Quotation } from "@/views/CRM/QuotationList/QuotationList";
 // import "./FilterQuotationDrawer.css";
 
 const { Option } = Select;
 
-const FilterQuotationDrawer = ({
+interface Option {
+  label: string;
+  value: string | number;
+}
+
+interface FilterQuotationDrawerProps {
+  open: boolean;
+  onClose: (values?: any) => void;
+  onConfirm: (values: React.MouseEvent<HTMLButtonElement>) => void;
+  filterVAT: number | null;
+  setFilterVAT: React.Dispatch<React.SetStateAction<number | null>>;
+  filterProduct: string | null;
+  setFilterProduct: React.Dispatch<React.SetStateAction<string | null>>;
+  filterStatus: Quotation["status"] | null;
+  setFilterStatus: React.Dispatch<React.SetStateAction<Quotation["status"] | null>>;
+
+  VATOptions: (Option | number | string)[];
+  ProductOptions: (Option | number | string)[];
+  StatusOptions: (Option | number | string)[];
+}
+
+const FilterQuotationDrawer: React.FC<FilterQuotationDrawerProps> = ({
   open,
   onClose,
   onConfirm,

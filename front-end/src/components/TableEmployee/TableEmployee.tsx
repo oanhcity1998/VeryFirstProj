@@ -48,8 +48,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
 }) => {
   const allKeys = data.map((item) => item.key);
   const isAllChecked = selectedRowKeys.length === data.length;
-  const isIndeterminate =
-    selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
+  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
 
   const [employeeData, setEmployeeData] = useState<Employee[]>([...data]);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -70,30 +69,30 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
         prev.map((item) =>
           item.key === editingEmployee.key
             ? {
-              ...item,
-              fullName: values.fullName,
-              birthDate: values.birthDate,
-              phone: values.phone,
-              position: values.position,
-              gender: values.gender,
-              email: values.email,
-              department: values.department,
-              idNumber: values.idNumber,
-              issuePlace: values.issuePlace,
-              issueDate: values.issueDate,
-              permanentAddress: values.permanentAddress,
-              temporaryAddress: values.temporaryAddress,
-              personalTaxCode: values.personalTaxCode,
-              socialInsuranceNumber: values.socialInsuranceNumber,
-              bankAccount: values.bankAccount,
-              contractType: values.contractType,
-              contractTerm: values.contractTerm,
-              startDate: values.startDate,
-              endDate: values.endDate,
-              salary: values.salary,
-              bonus: values.bonus,
-              updatedAt: dayjs(),
-            }
+                ...item,
+                fullName: values.fullName,
+                birthDate: values.birthDate,
+                phone: values.phone,
+                position: values.position,
+                gender: values.gender,
+                email: values.email,
+                department: values.department,
+                idNumber: values.idNumber,
+                issuePlace: values.issuePlace,
+                issueDate: values.issueDate,
+                permanentAddress: values.permanentAddress,
+                temporaryAddress: values.temporaryAddress,
+                personalTaxCode: values.personalTaxCode,
+                socialInsuranceNumber: values.socialInsuranceNumber,
+                bankAccount: values.bankAccount,
+                contractType: values.contractType,
+                contractTerm: values.contractTerm,
+                startDate: values.startDate,
+                endDate: values.endDate,
+                salary: values.salary,
+                bonus: values.bonus,
+                updatedAt: dayjs(),
+              }
             : item
         )
       );
@@ -156,9 +155,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
             if (e.target.checked) {
               setSelectedRowKeys([...selectedRowKeys, record.key]);
             } else {
-              setSelectedRowKeys(
-                selectedRowKeys.filter((key) => key !== record.key)
-              );
+              setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.key));
             }
           }}
         />
@@ -180,11 +177,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       width: 150,
       align: "center" as const,
       render: (text: string, record: Employee) => (
-        <Link
-          to={generatePath(ROUTES_APP.hrm.employeeDetail, { id: record.id })}
-        >
-          {text}
-        </Link>
+        <Link to={generatePath(ROUTES_APP.hrm.employeeDetail, { id: record.id })}>{text}</Link>
       ),
     },
     {
@@ -367,8 +360,8 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       {isModalVisible && (
         <EmployeeForm
           form={form}
-          employee={editingEmployee}
-          onSave={handleSave}
+          employee={editingEmployee as any}
+          onSave={handleSave as any}
           onCancel={() => {
             console.log("abcd"), setIsModalVisible(false);
           }}

@@ -9,33 +9,35 @@ import {
   Col,
   Card,
   InputNumber,
+  FormInstance,
 } from "antd";
 import dayjs from "dayjs";
 import "./EmployeeForm.css";
+import { Employee } from "@/views/HRM/EmployeeList/EmployeeList";
 
-interface Employee {
-  fullName?: string;
-  birthDate?: string;
-  phone?: string;
-  position?: string;
-  gender?: string;
-  email?: string;
-  department?: string;
-  idNumber?: string;
-  issuePlace?: string;
-  issueDate?: string;
-  permanentAddress?: string;
-  temporaryAddress?: string;
-  personalTaxCode?: string;
-  socialInsuranceNumber?: string;
-  bankAccount?: string;
-  contractType?: string;
-  contractTerm?: string;
-  startDate?: string;
-  endDate?: string;
-  salary?: string;
-  bonus?: string;
-}
+// interface Employee {
+//   fullName?: string;
+//   birthDate?: string;
+//   phone?: string;
+//   position?: string;
+//   gender?: string;
+//   email?: string;
+//   department?: string;
+//   idNumber?: string;
+//   issuePlace?: string;
+//   issueDate?: string;
+//   permanentAddress?: string;
+//   temporaryAddress?: string;
+//   personalTaxCode?: string;
+//   socialInsuranceNumber?: string;
+//   bankAccount?: string;
+//   contractType?: string;
+//   contractTerm?: string;
+//   startDate?: string;
+//   endDate?: string;
+//   salary?: string;
+//   bonus?: string;
+// }
 
 interface EmployeeFormProps {
   onCancel: () => void;
@@ -48,9 +50,11 @@ interface EmployeeFormProps {
   contractTitle?: string;
   cancelText?: string;
   saveText?: string;
+  form: FormInstance;
 }
 
 const EmployeeForm: React.FC<EmployeeFormProps> = ({
+  form,
   onCancel,
   onSave,
   employee,
@@ -62,24 +66,16 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   cancelText = "Hủy",
   saveText = "Lưu",
 }) => {
-  const [form] = Form.useForm();
+  // const [form] = Form.useForm();
 
   useEffect(() => {
     if (employee) {
       form.setFieldsValue({
         ...employee,
-        birthDate: employee.birthDate
-          ? dayjs(employee.birthDate, "DD/MM/YYYY")
-          : null,
-        issueDate: employee.issueDate
-          ? dayjs(employee.issueDate, "DD/MM/YYYY")
-          : null,
-        startDate: employee.startDate
-          ? dayjs(employee.startDate, "DD/MM/YYYY")
-          : null,
-        endDate: employee.endDate
-          ? dayjs(employee.endDate, "DD/MM/YYYY")
-          : null,
+        birthDate: employee.birthDate ? dayjs(employee.birthDate, "DD/MM/YYYY") : null,
+        issueDate: employee.issueDate ? dayjs(employee.issueDate, "DD/MM/YYYY") : null,
+        startDate: employee.startDate ? dayjs(employee.startDate, "DD/MM/YYYY") : null,
+        endDate: employee.endDate ? dayjs(employee.endDate, "DD/MM/YYYY") : null,
       });
     } else {
       form.resetFields();
@@ -89,15 +85,9 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   const onFinish = (values: any) => {
     onSave({
       ...values,
-      birthDate: values.birthDate
-        ? values.birthDate.format("DD/MM/YYYY")
-        : null,
-      issueDate: values.issueDate
-        ? values.issueDate.format("DD/MM/YYYY")
-        : null,
-      startDate: values.startDate
-        ? values.startDate.format("DD/MM/YYYY")
-        : null,
+      birthDate: values.birthDate ? values.birthDate.format("DD/MM/YYYY") : null,
+      issueDate: values.issueDate ? values.issueDate.format("DD/MM/YYYY") : null,
+      startDate: values.startDate ? values.startDate.format("DD/MM/YYYY") : null,
       endDate: values.endDate ? values.endDate.format("DD/MM/YYYY") : null,
       salary: values.salary ? values.salary.toString() : null,
       bonus: values.bonus ? values.bonus.toString() : null,
@@ -224,9 +214,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               <Form.Item
                 label="Địa chỉ thường trú"
                 name="permanentAddress"
-                rules={[
-                  { required: true, message: "Vui lòng nhập địa chỉ thường trú!" },
-                ]}
+                rules={[{ required: true, message: "Vui lòng nhập địa chỉ thường trú!" }]}
               >
                 <Input placeholder="Nhập địa chỉ thường trú" />
               </Form.Item>
@@ -283,9 +271,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 <InputNumber
                   style={{ width: "100%" }}
                   placeholder="Nhập mức lương"
-                  formatter={(value) =>
-                    `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                  }
+                  formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                   parser={(value) => value!.replace(/,/g, "")}
                 />
               </Form.Item>
@@ -293,9 +279,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 <InputNumber
                   style={{ width: "100%" }}
                   placeholder="Nhập tiền thưởng"
-                  formatter={(value) =>
-                    `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                  }
+                  formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                   parser={(value) => value!.replace(/,/g, "")}
                 />
               </Form.Item>

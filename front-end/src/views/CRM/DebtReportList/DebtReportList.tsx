@@ -19,7 +19,11 @@ import { saveAs } from "file-saver";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { DebtReportForm } from "../../../components/DebtReportForm/DebtReportForm";
+import KVTable, { KVTableConfig } from "@/@kvac/ui/KVTable";
 dayjs.extend(isBetween);
+
+import rawConfig from "@/@kvac/config/debtReport/debtReport.table.json";
+const debtReportTableConfig = rawConfig as KVTableConfig;
 
 // 👉 Hóa đơn
 export interface Invoice {
@@ -255,7 +259,7 @@ const DebtReportList = () => {
   // delete state
   const [deleting, setDeleting] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   // 👉 Create
   const handleCreate = (report: DebtReport) => {
@@ -455,7 +459,7 @@ const DebtReportList = () => {
       </div>
 
       {/* Table */}
-      <TableDebtReport
+      {/* <TableDebtReport
         data={filteredData}
         searchText={searchText}
         filterStatus={filterStatus}
@@ -468,6 +472,15 @@ const DebtReportList = () => {
         onDetailClick={(record) =>
           navigate(generatePath(ROUTES_APP.crm.debtReportDetail, { id: record.id }))
         }
+      /> */}
+      <KVTable
+        rowKey="id"
+        data={filteredData}
+        config={debtReportTableConfig}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: setSelectedRowKeys,
+        }}
       />
 
       {/* Modal create → HCNS */}

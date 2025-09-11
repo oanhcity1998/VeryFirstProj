@@ -15,7 +15,7 @@ dayjs.extend(isSameOrBefore);
 interface TableOpportunityProps {
   data: Opportunity[];
   searchText: string;
-  selectedRowKeys: number[];
+  selectedRowKeys: React.Key[];
   setSelectedRowKeys: (keys: number[]) => void;
   onShowClick?: (record: Opportunity) => void;
   onEditClick?: (record: Opportunity) => void;

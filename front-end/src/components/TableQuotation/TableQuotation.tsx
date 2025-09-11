@@ -12,7 +12,7 @@ interface TableQuotationProps {
   filterProduct: string | null;
   filterVat: number | null;
   filterStatus: Quotation["status"] | null;
-  selectedRowKeys: number[];
+  selectedRowKeys: React.Key[];
   setSelectedRowKeys: (keys: number[]) => void;
   onShowClick?: (record: Quotation) => void;
   onEditClick?: (record: Quotation) => void;

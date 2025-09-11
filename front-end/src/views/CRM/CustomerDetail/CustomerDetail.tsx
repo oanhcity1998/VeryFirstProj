@@ -144,7 +144,7 @@ export default function CustomerDetail() {
   //   }
   // };
 
-  const handleEdit = (values) => {
+  const handleEdit = (values: any) => {
     message.success("Đã cập nhật liên hệ");
     setIsEditModalOpen(false);
   };

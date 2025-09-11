@@ -20,7 +20,7 @@ export interface Lead {
 interface TableLeadProps {
   data: any[];
   searchText: string;
-  selectedRowKeys: number[];
+  selectedRowKeys: React.Key[];
   setSelectedRowKeys: (keys: number[]) => void;
   onEdit: (record: any) => void;
 }

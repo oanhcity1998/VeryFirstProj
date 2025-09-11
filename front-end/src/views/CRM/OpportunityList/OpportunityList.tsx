@@ -9,6 +9,10 @@ import { ROUTES_APP } from "../../../routes";
 import { FilterOpportunityDrawer } from "../../../components/Filter/FilterOpportunityDrawer";
 import dayjs from "dayjs";
 import { Product } from "../QuotationList/QuotationList";
+import KVTable, { KVTableConfig } from "@/@kvac/ui/KVTable";
+
+import rawConfig from "@/@kvac/config/opportunity/opportunity.table.json";
+const opportunityTableConfig = rawConfig as KVTableConfig;
 
 // Interface CRM Opportunity
 export interface Opportunity {
@@ -85,7 +89,7 @@ const OpportunityList = () => {
   // Delete state
   const [deleting, setDeleting] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   // 👉 Tạo mới
   const handleCreate = (values: Opportunity) => {
@@ -196,6 +200,16 @@ const OpportunityList = () => {
         filterPriority={filterPriority}
         filterStage={filterStage}
         filterDate={filterDate}
+      />
+      <KVTable<Opportunity>
+        data={data}
+        rowKey="id"
+        config={opportunityTableConfig}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: setSelectedRowKeys,
+        }}
+        onEditClick={(record) => console.log("Edit:", record)}
       />
 
       {/* Modal create */}
