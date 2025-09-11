@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom"
+import { useParams } from "react-router-dom";
 import { Input, Table, Button, Row, Col, Modal, Breadcrumb, Card, Typography, Space } from "antd";
 import { Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -10,10 +10,7 @@ import fontkit from "@pdf-lib/fontkit";
 // import jsPDF from "jspdf";
 // import autoTable from "jspdf-autotable";
 
-
-
 const { Title } = Typography;
-
 
 interface ContractDetailProps {
   role?: "Nhân viên" | "Giám đốc";
@@ -26,8 +23,7 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
 
-
-    const { id } = useParams(); // lấy contact id từ URL
+  const { id } = useParams(); // lấy contact id từ URL
   const title = loai === "baogia" ? "Chi tiết báo giá" : "Chi tiết hợp đồng";
 
   const products = [
@@ -77,7 +73,7 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
     pdfDoc.registerFontkit(fontkit);
 
     // Load font
-    const fontBytes = await fetch("/fonts/Roboto/static/Roboto-MediumItalic.ttf").then(res =>
+    const fontBytes = await fetch("/fonts/Roboto/static/Roboto-MediumItalic.ttf").then((res) =>
       res.arrayBuffer()
     );
     const customFont = await pdfDoc.embedFont(fontBytes);
@@ -89,7 +85,7 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
     // Cover + replace text
     firstPage.drawRectangle({
       x: 115,
-      y: 675-3,
+      y: 675 - 3,
       width: 400,
       height: 20,
       color: rgb(246 / 255, 250 / 255, 253 / 255), // #f6fafd
@@ -104,7 +100,7 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
     });
 
     const pdfBytes = await pdfDoc.save();
-    const blob = new Blob([pdfBytes], { type: "application/pdf" });
+    const blob = new Blob([pdfBytes as any], { type: "application/pdf" });
     const url = URL.createObjectURL(blob);
 
     // Save for preview
@@ -120,8 +116,6 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
     link.download = "quotation.pdf";
     link.click();
   };
-
-
 
   return (
     <div className="quote-detail">
@@ -184,7 +178,16 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
       </Card>
 
       {/* Actions */}
-      <div style={{ marginTop: 16, display: "flex", justifyContent: "flex-end", flexWrap: "wrap", gap:12, position:"sticky",  }}>
+      <div
+        style={{
+          marginTop: 16,
+          display: "flex",
+          justifyContent: "flex-end",
+          flexWrap: "wrap",
+          gap: 12,
+          position: "sticky",
+        }}
+      >
         <Space wrap>
           <Button>Xem báo giá</Button>
           <Button type="primary" onClick={() => setIsModalOpen(true)}>

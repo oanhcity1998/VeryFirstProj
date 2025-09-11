@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { Button, Space, Modal, message, Upload, Select, Form, Input, DatePicker } from "antd";
-import { PlusOutlined, DeleteFilled, InboxOutlined, FilterOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  DeleteFilled,
+  InboxOutlined,
+  FilterOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import dayjs from "dayjs";
 import "./AssetList.css";
@@ -366,7 +372,7 @@ const AssetList: React.FC = () => {
           </Modal>
           <Button
             danger
-            icon={<DeleteFilled />}
+            icon={<DeleteOutlined />}
             disabled={selectedRowKeys.length === 0}
             onClick={() => setDeleteOpen(true)}
           >

@@ -5,6 +5,7 @@ import {
   SolutionOutlined,
   TeamOutlined,
   AppstoreOutlined,
+  NotificationOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu-HRM.css";
@@ -22,14 +23,16 @@ const SidebarMenuHRM: React.FC<SidebarMenuHRMProps> = ({ collapsed }) => {
 
   if (location.pathname === "/") {
     selectedKey = "1";
-  } else if (location.pathname.startsWith("/hrm/employee-list")) {
+  } else if (location.pathname.startsWith(ROUTES_APP.hrm.employeeList)) {
     selectedKey = "2";
-  } else if (location.pathname.startsWith("/hrm/position-list")) {
+  } else if (location.pathname.startsWith(ROUTES_APP.hrm.positionList)) {
     selectedKey = "3";
-  } else if (location.pathname.startsWith("/hrm/department-list")) {
+  } else if (location.pathname.startsWith(ROUTES_APP.hrm.departmentList)) {
     selectedKey = "4";
-  } else if (location.pathname.startsWith("/hrm/asset-list")) {
+  } else if (location.pathname.startsWith(ROUTES_APP.hrm.assetList)) {
     selectedKey = "5";
+  } else if (location.pathname.startsWith(ROUTES_APP.hrm.proposals)) {
+    selectedKey = "6";
   }
 
   const items = [
@@ -57,6 +60,11 @@ const SidebarMenuHRM: React.FC<SidebarMenuHRMProps> = ({ collapsed }) => {
       key: "5",
       icon: <AppstoreOutlined />,
       label: <Link to={ROUTES_APP.hrm.assetList}>Tài sản</Link>,
+    },
+    {
+      key: "6",
+      icon: <NotificationOutlined />,
+      label: <Link to={ROUTES_APP.hrm.proposals}>Mẫu đề xuất</Link>,
     },
   ];
 
