@@ -12,6 +12,7 @@ import {
 import { useEffect } from "react";
 import dayjs from "dayjs";
 import { Opportunity } from "../../views/CRM/OpportunityList/OpportunityList";
+import { opportunityStages } from "@/views/CRM/OpportunityDetail/OpportunityDetail";
 
 interface OpportunityFormProps {
   mode: "create" | "edit" | "detail";
@@ -181,16 +182,12 @@ export const OpportunityForm = ({
             rules={[{ required: true }]}
           >
             <Select>
-              <Select.Option value="Qualification">Qualification</Select.Option>
-              <Select.Option value="Proposal">Proposal</Select.Option>
-              <Select.Option value="Negotiation">Negotiation</Select.Option>
-              <Select.Option value="Closed Won">Closed Won</Select.Option>
-              <Select.Option value="Closed Lost">Closed Lost</Select.Option>
+              {opportunityStages.map((stage) => (
+                <Select.Option key={stage} value={stage}>
+                  {stage}
+                </Select.Option>
+              ))}
             </Select>
-          </Form.Item>
-
-          <Form.Item style={{ fontWeight: "500" }} label="Hành động tiếp theo" name="nextAction">
-            <Input.TextArea rows={3} />
           </Form.Item>
         </Form>
       </Card>

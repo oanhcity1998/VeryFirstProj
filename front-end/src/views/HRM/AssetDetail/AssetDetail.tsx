@@ -14,7 +14,7 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import "./AssetDetail.css";
-import { ROUTES_APP } from "../../../routes";
+import { ROUTES_APP } from "../../../app/routes";
 
 const { Title } = Typography;
 

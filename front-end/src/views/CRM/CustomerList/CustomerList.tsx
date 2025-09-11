@@ -12,7 +12,7 @@ import CreateCustomerForm from "../../../components/CustomerForm/CreateCustomerF
 import FilterDrawer from "../../../components/Filter/FilterDrawer";
 
 import "./CustomerList.css";
-import { ROUTES_APP } from "../../../routes";
+import { ROUTES_APP } from "../../../app/routes";
 import { useNavigate } from "react-router-dom";
 import Search from "antd/es/input/Search";
 

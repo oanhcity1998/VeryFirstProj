@@ -4,7 +4,7 @@ import { EditOutlined, FileTextOutlined } from "@ant-design/icons";
 import { generatePath, Link } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";
 import { Product, Quotation } from "../../views/CRM/QuotationList/QuotationList";
-import { ROUTES_APP } from "../../routes";
+import { ROUTES_APP } from "../../app/routes";
 
 interface TableQuotationProps {
   data: Quotation[];
@@ -42,8 +42,8 @@ export const TableQuotation = ({
 
       const matchProduct = filterProduct
         ? item.products.some((p) =>
-            p.productName.toLowerCase().includes(filterProduct.toLowerCase())
-          )
+          p.productName.toLowerCase().includes(filterProduct.toLowerCase())
+        )
         : true;
 
       const matchVat = filterVat !== null ? item.products.some((p) => p.vat === filterVat) : true;

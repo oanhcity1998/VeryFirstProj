@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Search from "antd/es/input/Search";
 import { OpportunityForm } from "../../../components/OpportunityForm/OpportunityForm";
 import { TableOpportunity } from "../../../components/TableOpportunity/TableOpportunity";
-import { ROUTES_APP } from "../../../routes";
+import { ROUTES_APP } from "../../../app/routes";
 import { FilterOpportunityDrawer } from "../../../components/Filter/FilterOpportunityDrawer";
 import dayjs from "dayjs";
 import { Product } from "../QuotationList/QuotationList";
@@ -28,7 +28,6 @@ export interface Opportunity {
   owner: string; // Nhân viên phụ trách
   // stage: "Qualification" | "Proposal" | "Negotiation" | "Closed Won" | "Closed Lost"; // Giai đoạn
   stage: "Mới" | "Đạt yêu cầu" | "Đàm phán" | "Đóng"; // Giai đoạn
-  nextAction?: string; // Hành động tiếp theo
 }
 
 const dataSource: Opportunity[] = [
@@ -65,7 +64,6 @@ const dataSource: Opportunity[] = [
     priority: "High",
     owner: "Phạm Văn Quyết",
     stage: "Mới",
-    nextAction: "Chuẩn bị demo cho khách hàng",
   },
 ];
 

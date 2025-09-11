@@ -3,7 +3,7 @@ import { Table, Checkbox, Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import "./TableAsset.css";
 import { generatePath, Link } from "react-router-dom";
-import { ROUTES_APP } from "../../routes";
+import { ROUTES_APP } from "../../app/routes";
 
 interface Asset {
     key: string;

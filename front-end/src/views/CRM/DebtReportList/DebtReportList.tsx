@@ -11,7 +11,7 @@ import Search from "antd/es/input/Search";
 import { generatePath, useNavigate } from "react-router-dom";
 import { TableDebtReport } from "../../../components/TableDebtReport/TableDebtReport";
 import { FilterDebtReportDrawer } from "../../../components/Filter/FilterDebtReportDrawer";
-import { ROUTES_APP } from "../../../routes";
+import { ROUTES_APP } from "../../../app/routes";
 import { normalizeDebtReport } from "./debtReport.utils";
 
 import * as XLSX from "xlsx";

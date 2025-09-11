@@ -1,4 +1,4 @@
-import { ROUTES_APP } from "./routes";
+import { ROUTES_APP } from "./app/routes";
 import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom";
 import MainLayout from "@/layouts/MainLayout/mainLayout";
 import Home from "./views/Home";
