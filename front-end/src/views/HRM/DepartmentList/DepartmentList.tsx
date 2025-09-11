@@ -5,8 +5,9 @@ import * as XLSX from "xlsx";
 import dayjs from "dayjs";
 import "./DepartmentList.css";
 import Search from "antd/es/input/Search";
-import TableDepartment from "../../../components/TableDepartment/TableDepartment";
-import DepartmentForm from "../../../components/DepartmentForm/DepartmentForm";
+import DepartmentForm from "@/components/HRM/DepartmentForm/DepartmentForm";
+import TableDepartment from "@/components/HRM/TableDepartment/TableDepartment";
+
 
 interface Department {
   key: string;

@@ -3,8 +3,9 @@ import { Table, Tooltip } from "antd";
 import { EditOutlined, FileTextOutlined } from "@ant-design/icons";
 import { generatePath, Link } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";
-import { Product, Quotation } from "../../views/CRM/QuotationList/QuotationList";
-import { ROUTES_APP } from "../../app/routes";
+import { Product, Quotation } from "@/views/CRM/QuotationList/QuotationList";
+import { ROUTES_APP } from "@/app/routes";
+
 
 interface TableQuotationProps {
   data: Quotation[];

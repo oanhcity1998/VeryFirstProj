@@ -5,16 +5,15 @@ import {
   SettingOutlined,
   FilterOutlined,
   InboxOutlined,
-  DeleteFilled,
   DeleteOutlined,
 } from "@ant-design/icons";
 import "./EmployeeList.css";
-import TableEmployee from "../../../components/TableEmployee/TableEmployee";
-import EmployeeForm from "../../../components/EmployeeForm/EmployeeForm";
 import * as XLSX from "xlsx";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import Search from "antd/es/input/Search";
-import FilterDrawerEmployee from "../../../components/FilterEmployee/FilterDrawerEmployee";
+import TableEmployee from "@/components/HRM/TableEmployee/TableEmployee";
+import EmployeeForm from "@/components/HRM/EmployeeForm/EmployeeForm";
+import FilterDrawerEmployee from "@/components/HRM/FilterEmployee/FilterDrawerEmployee";
 
 interface Employee {
   key: string;

@@ -1,5 +1,4 @@
-import React, { useState, useMemo } from "react";
-import ProductForm from "../../../components/ProductForm/ProductForm";
+import { useState, useMemo } from "react";
 import { Table, Button, Space, Modal, Form, Select } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
@@ -7,6 +6,7 @@ import "./ProductPage.css";
 import Search from "antd/es/input/Search";
 import type { ColumnsType, TableRowSelection } from "antd/es/table/interface";
 import type { Key } from "react";
+import ProductForm from "@/components/CRM/ProductForm/ProductForm";
 
 // Định nghĩa kiểu Product
 export type Product = {

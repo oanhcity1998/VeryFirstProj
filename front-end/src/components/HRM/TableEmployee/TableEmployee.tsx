@@ -5,7 +5,7 @@ import { EditOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 import "./TableEmployee.css";
 import EmployeeForm from "../EmployeeForm/EmployeeForm";
-import { ROUTES_APP } from "../../app/routes";
+import { ROUTES_APP } from "@/app/routes";
 
 interface Employee {
   key: string;

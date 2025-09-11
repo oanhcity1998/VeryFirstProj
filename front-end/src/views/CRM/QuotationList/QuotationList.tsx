@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
 import { Button, Space, Modal, message } from "antd";
 import { PlusOutlined, DeleteOutlined, FilterOutlined } from "@ant-design/icons";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./QuotationList.css";
-import FilterQuotationDrawer from "../../../components/Filter/FilterQuotationDrawer";
 import Search from "antd/es/input/Search";
-import { QuotationForm } from "../../../components/QuotationForm/QuotationForm";
-import { TableQuotation } from "../../../components/TableQuotation/TableQuotation";
 import { ROUTES_APP } from "../../../app/routes";
+import FilterQuotationDrawer from "@/components/CRM/Filter/FilterQuotationDrawer";
+import { TableQuotation } from "@/components/CRM/TableQuotation/TableQuotation";
+import { QuotationForm } from "@/components/CRM/QuotationForm/QuotationForm";
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 export interface Product {

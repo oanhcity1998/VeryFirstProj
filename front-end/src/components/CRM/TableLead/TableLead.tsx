@@ -4,7 +4,7 @@ import { generatePath, Link } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
 import "./TableLead.css"; // ✅ import css
-import { ROUTES_APP } from "../../app/routes";
+import { ROUTES_APP } from "@/app/routes";
 
 export interface Lead {
   id: number;

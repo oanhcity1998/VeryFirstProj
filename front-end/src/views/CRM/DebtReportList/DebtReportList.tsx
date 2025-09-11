@@ -9,8 +9,6 @@ import {
 } from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 import { generatePath, useNavigate } from "react-router-dom";
-import { TableDebtReport } from "../../../components/TableDebtReport/TableDebtReport";
-import { FilterDebtReportDrawer } from "../../../components/Filter/FilterDebtReportDrawer";
 import { ROUTES_APP } from "../../../app/routes";
 import { normalizeDebtReport } from "./debtReport.utils";
 
@@ -18,7 +16,9 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
-import { DebtReportForm } from "../../../components/DebtReportForm/DebtReportForm";
+import FilterDebtReportDrawer from "@/components/CRM/Filter/FilterDebtReportDrawer";
+import { DebtReportForm } from "@/components/CRM/DebtReportForm/DebtReportForm";
+import { TableDebtReport } from "@/components/CRM/TableDebtReport/TableDebtReport";
 dayjs.extend(isBetween);
 
 // 👉 Hóa đơn
