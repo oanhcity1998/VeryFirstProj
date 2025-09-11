@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Button, Space, Modal, message, Upload, Select } from "antd";
-import { PlusOutlined, DeleteFilled, InboxOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Button, Modal, message, Upload, Select } from "antd";
+import { PlusOutlined, InboxOutlined, DeleteOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import dayjs from "dayjs";
 import "./PositionList.css";
-import TablePosition from "../../../components/TablePosition/TablePosition";
-import PositionForm from "../../../components/PositionForm/PositionForm";
 import Search from "antd/es/input/Search";
+import TablePosition from "@/components/HRM/TablePosition/TablePosition";
+import PositionForm from "@/components/HRM/PositionForm/PositionForm";
 
 interface Position {
   key: string;

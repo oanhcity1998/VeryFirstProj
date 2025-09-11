@@ -3,7 +3,7 @@ import { Table, Typography, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useNavigate, generatePath } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
-import { ROUTES_APP } from "../../app/routes";
+import { ROUTES_APP } from "@/app/routes";
 
 
 const { Link } = Typography;

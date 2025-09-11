@@ -1,13 +1,13 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { Table, Tooltip, Tag, Progress } from "antd";
 import { EditOutlined, FileTextOutlined } from "@ant-design/icons";
 import { generatePath, Link } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";
-import { Opportunity } from "../../views/CRM/OpportunityList/OpportunityList";
-import { ROUTES_APP } from "../../app/routes";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import { Opportunity } from "@/views/CRM/OpportunityList/OpportunityList";
+import { ROUTES_APP } from "@/app/routes";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);

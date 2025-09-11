@@ -19,7 +19,7 @@ import { useState } from "react";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { ROUTES_APP } from "../../../app/routes";
 import "./OpportunityDetail.css";
-import { fmt } from "../../../components/QuotationForm/QuotationForm";
+import { fmt } from "@/components/CRM/QuotationForm/QuotationForm";
 
 // Fake data
 const fakeData = [
@@ -230,31 +230,31 @@ const OpportunityDetail = () => {
                 <div className="detail-form">
                   <div className="form-row">
                     <label>Tên cơ hội:</label>
-                    <input value={opportunity.name} disabled />
+                    <input title="Form" value={opportunity.name} disabled />
                   </div>
                   <div className="form-row">
                     <label>Giá trị dự kiến:</label>
-                    <input value={opportunity.expectedValue.toLocaleString() + " VND"} disabled />
+                    <input title="Form" value={opportunity.expectedValue.toLocaleString() + " VND"} disabled />
                   </div>
                   <div className="form-row">
                     <label>Ngày chốt dự kiến:</label>
-                    <input value={opportunity.expectedCloseDate} disabled />
+                    <input title="Form" value={opportunity.expectedCloseDate} disabled />
                   </div>
                   <div className="form-row">
                     <label>Xác suất:</label>
-                    <input value={`${opportunity.probability}%`} disabled />
+                    <input title="Form" value={`${opportunity.probability}%`} disabled />
                   </div>
                   <div className="form-row">
                     <label>Ưu tiên:</label>
-                    <input value={opportunity.priority} disabled />
+                    <input title="Form" value={opportunity.priority} disabled />
                   </div>
                   <div className="form-row">
                     <label>Giai đoạn:</label>
-                    <input value={opportunity.stage} disabled />
+                    <input title="Form" value={opportunity.stage} disabled />
                   </div>
                   <div className="form-row">
                     <label>Người phụ trách:</label>
-                    <input value={opportunity.owner} disabled />
+                    <input title="Form" value={opportunity.owner} disabled />
                   </div>
                 </div>
               ),
@@ -266,31 +266,31 @@ const OpportunityDetail = () => {
                 <div className="detail-form">
                   <div className="form-row">
                     <label>Tên liên hệ:</label>
-                    <input value={opportunity.contact.contactName} disabled />
+                    <input title="Form" value={opportunity.contact.contactName} disabled />
                   </div>
                   <div className="form-row">
                     <label>Chức vụ:</label>
-                    <input value={opportunity.contact.title} disabled />
+                    <input title="Form" value={opportunity.contact.title} disabled />
                   </div>
                   <div className="form-row">
                     <label>Công ty:</label>
-                    <input value={opportunity.contact.customerName} disabled />
+                    <input title="Form" value={opportunity.contact.customerName} disabled />
                   </div>
                   <div className="form-row">
                     <label>Email:</label>
-                    <input value={opportunity.contact.email} disabled />
+                    <input title="Form" value={opportunity.contact.email} disabled />
                   </div>
                   <div className="form-row">
                     <label>Điện thoại:</label>
-                    <input value={opportunity.contact.phone} disabled />
+                    <input title="Form" value={opportunity.contact.phone} disabled />
                   </div>
                   <div className="form-row">
                     <label>Người liên hệ chính:</label>
-                    <input value={opportunity.contact.mainContact} disabled />
+                    <input title="Form" value={opportunity.contact.mainContact} disabled />
                   </div>
                   <div className="form-row last-row">
                     <label>Ghi chú:</label>
-                    <input value={opportunity.contact.note} disabled />
+                    <input title="Form" value={opportunity.contact.note} disabled />
                   </div>
                 </div>
               ),

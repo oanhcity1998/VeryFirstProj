@@ -4,10 +4,11 @@ import { PlusOutlined, DeleteFilled, InboxOutlined, FilterOutlined } from "@ant-
 import * as XLSX from "xlsx";
 import dayjs from "dayjs";
 import "./AssetList.css";
-import TableAsset from "../../../components/TableAsset/TableAsset";
-import AssetForm from "../../../components/AssetForm/AssetForm";
+
 import Search from "antd/es/input/Search";
-import FilterDrawerAsset from "../../../components/FilterAsset/FilterDrawerAsset";
+import FilterDrawerAsset from "@/components/HRM/FilterAsset/FilterDrawerAsset";
+import TableAsset from "@/components/HRM/TableAsset/TableAsset";
+import AssetForm from "@/components/HRM/AssetForm/AssetForm";
 
 interface Asset {
     key: string;

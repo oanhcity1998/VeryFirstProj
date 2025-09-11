@@ -7,9 +7,6 @@ import {
   FilterOutlined,
   InboxOutlined,
 } from "@ant-design/icons";
-import TableCustomer from "../../../components/TableCustomer/TableCustomer";
-import CreateCustomerForm from "../../../components/CustomerForm/CreateCustomerForm";
-import FilterDrawer from "../../../components/Filter/FilterDrawer";
 
 import "./CustomerList.css";
 import { ROUTES_APP } from "../../../app/routes";

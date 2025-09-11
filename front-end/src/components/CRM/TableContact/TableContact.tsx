@@ -3,7 +3,7 @@ import { generatePath, Link } from "react-router-dom";
 import { useMemo } from "react";
 import { EditOutlined } from "@ant-design/icons";
 import { ColumnsType } from "antd/es/table";
-import { ROUTES_APP } from "../../app/routes";
+import { ROUTES_APP } from "@/app/routes";
 
 // Định nghĩa type cho Contact
 export interface Contact {

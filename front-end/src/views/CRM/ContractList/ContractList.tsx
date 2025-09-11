@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Button, Space, Typography, Input, Select, Row, Col } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import "./ContractList.css";
-import { generatePath, useNavigate } from "react-router-dom";
-import ContractTable, { Contract } from "../../../components/TableContract/TableContract";
-import CreateContractForm from "../../../components/ContractForm/CreateContractForm";
+import { useNavigate } from "react-router-dom";
 import ContractDetail from "../ContractDetail/ContractDetail";
 import { ROUTES_APP } from "../../../app/routes";
+import TableContract, { Contract } from "@/components/CRM/TableContract/TableContract";
+import CreateContractForm from "@/components/CRM/ContractForm/CreateContractForm";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -134,7 +134,7 @@ const ContractList: React.FC = () => {
 
 
       {/* Table (separated component) */}
-      <ContractTable
+      <TableContract
         data={filteredData}
         selectedRowKeys={selectedRowKeys}
         onSelectChange={setSelectedRowKeys}

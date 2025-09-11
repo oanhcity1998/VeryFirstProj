@@ -1,14 +1,13 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Button, Space, Modal, message } from "antd";
 import { PlusOutlined, DeleteOutlined, FilterOutlined } from "@ant-design/icons";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Search from "antd/es/input/Search";
-import { OpportunityForm } from "../../../components/OpportunityForm/OpportunityForm";
-import { TableOpportunity } from "../../../components/TableOpportunity/TableOpportunity";
 import { ROUTES_APP } from "../../../app/routes";
-import { FilterOpportunityDrawer } from "../../../components/Filter/FilterOpportunityDrawer";
-import dayjs from "dayjs";
 import { Product } from "../QuotationList/QuotationList";
+import { FilterOpportunityDrawer } from "@/components/CRM/Filter/FilterOpportunityDrawer";
+import { TableOpportunity } from "@/components/CRM/TableOpportunity/TableOpportunity";
+import { OpportunityForm } from "@/components/CRM/OpportunityForm/OpportunityForm";
 
 // Interface CRM Opportunity
 export interface Opportunity {

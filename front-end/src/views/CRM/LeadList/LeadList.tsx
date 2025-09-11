@@ -1,11 +1,11 @@
 // src/views/LeadList/LeadList.tsx
 import { useState } from "react";
 import { Button, Space, Modal, message, Select, Checkbox } from "antd";
-import { PlusOutlined, DeleteOutlined, FilterOutlined, DownOutlined } from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import Search from "antd/es/input/Search";
-import TableLead, { Lead } from "../../../components/TableLead/TableLead";
 import "./LeadList.css";
-import LeadForm from "../../../components/LeadForm/LeadForm";
+import TableLead, { Lead } from "@/components/CRM/TableLead/TableLead";
+import LeadForm from "@/components/CRM/LeadForm/LeadForm";
 
 const dataSource: Lead[] = [
   {
@@ -122,7 +122,7 @@ const LeadList = () => {
             onChange={(e) => setSearchText(e.target.value)}
             allowClear
             className="leadlist-search"
-            />
+          />
           <Select
             allowClear
             placeholder="Trạng thái"

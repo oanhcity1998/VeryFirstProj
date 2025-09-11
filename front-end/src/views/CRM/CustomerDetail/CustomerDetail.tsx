@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { Card, Input, Tabs, Button, Form, Row, Col, Breadcrumb, Select, message } from "antd";
-import { ArrowLeftOutlined } from "@ant-design/icons";
-import TableContact from "../../../components/TableContact/TableContact";
-import ContactForm from "../../../components/ContactForm/ContactForm";
+import { Card, Input, Tabs, Form, Row, Col, Breadcrumb, Select, message } from "antd";
+
 
 import "./CustomerDetail.css";
 import { ROUTES_APP } from "../../../app/routes";
+import TableContact from "@/components/CRM/TableContact/TableContact";
+import ContactForm from "@/components/CRM/ContactForm/ContactForm";
 
 const { TextArea } = Input;
 const { Option } = Select;
