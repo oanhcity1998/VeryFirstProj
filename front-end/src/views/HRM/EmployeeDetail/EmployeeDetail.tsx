@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { Form, Row, Col, Card, Input, DatePicker, Breadcrumb } from "antd";
 import dayjs from "dayjs";
 import "./EmployeeDetail.css";
-import { ROUTES_APP } from "../../../routes";
+import { ROUTES_APP } from "../../../app/routes";
 
 interface Employee {
   key: string;

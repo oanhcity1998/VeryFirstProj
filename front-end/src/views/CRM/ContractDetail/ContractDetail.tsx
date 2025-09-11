@@ -4,7 +4,7 @@ import { Input, Table, Button, Row, Col, Modal, Breadcrumb, Card, Typography, Sp
 import { Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import "./ContractDetail.css";
-import { ROUTES_APP } from "../../../routes";
+import { ROUTES_APP } from "../../../app/routes";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import jsPDF from "jspdf";
@@ -27,7 +27,7 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
   const [previewOpen, setPreviewOpen] = useState(false);
 
 
-    const { id } = useParams(); // lấy contact id từ URL
+  const { id } = useParams(); // lấy contact id từ URL
   const title = loai === "baogia" ? "Chi tiết báo giá" : "Chi tiết hợp đồng";
 
   const products = [
@@ -89,7 +89,7 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
     // Cover + replace text
     firstPage.drawRectangle({
       x: 115,
-      y: 675-3,
+      y: 675 - 3,
       width: 400,
       height: 20,
       color: rgb(246 / 255, 250 / 255, 253 / 255), // #f6fafd
@@ -184,7 +184,7 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
       </Card>
 
       {/* Actions */}
-      <div style={{ marginTop: 16, display: "flex", justifyContent: "flex-end", flexWrap: "wrap", gap:12, position:"sticky",  }}>
+      <div style={{ marginTop: 16, display: "flex", justifyContent: "flex-end", flexWrap: "wrap", gap: 12, position: "sticky", }}>
         <Space wrap>
           <Button>Xem báo giá</Button>
           <Button type="primary" onClick={() => setIsModalOpen(true)}>

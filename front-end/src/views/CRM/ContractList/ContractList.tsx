@@ -6,7 +6,7 @@ import { generatePath, useNavigate } from "react-router-dom";
 import ContractTable, { Contract } from "../../../components/TableContract/TableContract";
 import CreateContractForm from "../../../components/ContractForm/CreateContractForm";
 import ContractDetail from "../ContractDetail/ContractDetail";
-import { ROUTES_APP } from "../../../routes";
+import { ROUTES_APP } from "../../../app/routes";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -26,14 +26,14 @@ const ContractList: React.FC = () => {
 
   const navigate = useNavigate();
 
-//   // ContractList.tsx
-//   const handleRowClick = (record: Contract) => {
-//     navigate(
-//       `${generatePath(ROUTES_APP.crm.contractDetail, { id: record.id })}?loai=${
-//         record.type === "Báo giá" ? "baogia" : "hopdong"
-//       }`
-//     );
-//   };
+  //   // ContractList.tsx
+  //   const handleRowClick = (record: Contract) => {
+  //     navigate(
+  //       `${generatePath(ROUTES_APP.crm.contractDetail, { id: record.id })}?loai=${
+  //         record.type === "Báo giá" ? "baogia" : "hopdong"
+  //       }`
+  //     );
+  //   };
 
   if (viewDetail) {
     return <ContractDetail loai={viewDetail.loai} onBack={() => setViewDetail(null)} />;
@@ -90,47 +90,47 @@ const ContractList: React.FC = () => {
       {/* Header */}
       <div className="contract-list-header">
         <Row gutter={[16, 16]} align="middle" justify="space-between" style={{ flexWrap: "wrap" }}>
-            <Col>
+          <Col>
             <h2 className="contract-title">Danh sách hợp đồng</h2>
-            </Col>
+          </Col>
 
-            <Col flex="auto">
+          <Col flex="auto">
             <Space wrap style={{ justifyContent: "flex-end", width: "100%" }}>
-                <Search
+              <Search
                 placeholder="Tìm kiếm hợp đồng..."
                 allowClear
                 onSearch={(val) => setSearchText(val)}
                 style={{ minWidth: 180, maxWidth: 240, width: "100%" }}
-                />
-                <Select
+              />
+              <Select
                 placeholder="Trạng thái"
                 allowClear
                 style={{ minWidth: 140 }}
                 onChange={(val) => setStatusFilter(val)}
-                >
+              >
                 <Option value="Chờ duyệt">Chờ duyệt</Option>
                 <Option value="Đã duyệt">Đã duyệt</Option>
                 <Option value="Huỷ">Huỷ</Option>
-                </Select>
-                <Select
+              </Select>
+              <Select
                 placeholder="Loại hợp đồng"
                 allowClear
                 style={{ minWidth: 140 }}
                 onChange={(val) => setTypeFilter(val)}
-                >
+              >
                 <Option value="Báo giá">Báo giá</Option>
                 <Option value="Hợp đồng">Hợp đồng</Option>
-                </Select>
-                <Button danger disabled={selectedRowKeys.length === 0} icon={<DeleteOutlined />}>
+              </Select>
+              <Button danger disabled={selectedRowKeys.length === 0} icon={<DeleteOutlined />}>
                 Xoá
-                </Button>
-                <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpenForm(true)}>
+              </Button>
+              <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpenForm(true)}>
                 Tạo
-                </Button>
+              </Button>
             </Space>
-            </Col>
+          </Col>
         </Row>
-        </div>
+      </div>
 
 
       {/* Table (separated component) */}
@@ -152,12 +152,12 @@ const ContractList: React.FC = () => {
         open={!!editRecord}
         onCancel={() => setEditRecord(null)}
         onSave={(data) => {
-            console.log("Edited data:", data);
-            setEditRecord(null);
+          console.log("Edited data:", data);
+          setEditRecord(null);
         }}
         title="Chỉnh sửa báo giá & hợp đồng" // ✅ new title
         initialValues={editRecord || undefined} // ✅ pass record data
-        />
+      />
     </div>
   );
 };

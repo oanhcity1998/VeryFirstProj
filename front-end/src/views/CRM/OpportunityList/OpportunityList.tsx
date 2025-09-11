@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Search from "antd/es/input/Search";
 import { OpportunityForm } from "../../../components/OpportunityForm/OpportunityForm";
 import { TableOpportunity } from "../../../components/TableOpportunity/TableOpportunity";
-import { ROUTES_APP } from "../../../routes";
+import { ROUTES_APP } from "../../../app/routes";
 import { FilterOpportunityDrawer } from "../../../components/Filter/FilterOpportunityDrawer";
 import dayjs from "dayjs";
 import { Product } from "../QuotationList/QuotationList";

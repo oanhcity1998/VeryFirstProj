@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import "./SidebarMenu-HRM.css";
-import { ROUTES_APP } from "../../routes";
+import { ROUTES_APP } from "../../app/routes";
 
 interface SidebarMenuHRMProps {
   collapsed: boolean;
