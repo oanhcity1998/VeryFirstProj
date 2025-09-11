@@ -4,7 +4,7 @@ import { Input, Table, Button, Row, Col, Modal, Breadcrumb, Card, Typography, Sp
 import { Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import "./QuoteDetail.css";
-import { ROUTES_APP } from "../../../routes";
+import { ROUTES_APP } from "../../../app/routes";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 // import jsPDF from "jspdf";
