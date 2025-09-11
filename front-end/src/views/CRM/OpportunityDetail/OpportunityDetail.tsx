@@ -69,8 +69,7 @@ const fakeData = [
   },
 ];
 
-const stages = ["Mới", "Đạt yêu cầu", "Đàm phán", "Đóng"] as const;
-type StageType = (typeof stages)[number];
+export const opportunityStages = ["Mới", "Đạt yêu cầu", "Đàm phán", "Đóng", "Mất", "Đạt"] as const;
 
 const OpportunityDetail = () => {
   const { id } = useParams();
@@ -82,7 +81,7 @@ const OpportunityDetail = () => {
 
   const opportunity = fakeData.find((o) => o.id === Number(id));
   const [currentStage, setCurrentStage] = useState(0);
-  const [stage, setStage] = useState<StageType>((opportunity?.stage as StageType) || "Mới");
+  const [stageClose, setStageClose] = useState<"Mất" | "Đạt" | "Đóng">("Đóng");
 
   if (!opportunity) return <p>Không tìm thấy cơ hội</p>;
 
@@ -115,7 +114,8 @@ const OpportunityDetail = () => {
   const handelLose = async (reason: string) => {
     try {
       setLosing(true);
-      setCurrentStage(stages.length - 1);
+      setCurrentStage(opportunityStages.length - 2);
+      setStageClose("Mất");
       // alert(reason);
       // message.success("Đã xóa cơ hội");
       // navigate(ROUTES_APP.crm.opportunityList);
@@ -158,7 +158,7 @@ const OpportunityDetail = () => {
             content={
               <Space direction="vertical">
                 <Button
-                  disabled={currentStage === stages.length - 1}
+                  disabled={currentStage > opportunityStages.length - 3}
                   type="primary"
                   onClick={() => setIsLoseModalOpen(true)}
                   danger
@@ -166,10 +166,13 @@ const OpportunityDetail = () => {
                   Mất
                 </Button>
                 <Button
-                  disabled={currentStage === stages.length - 1}
+                  disabled={currentStage > opportunityStages.length - 3}
                   type="primary"
                   style={{ backgroundColor: "#60A917", borderColor: "#60A917" }}
-                  onClick={() => setCurrentStage(stages.length - 1)}
+                  onClick={() => {
+                    setCurrentStage(opportunityStages.length - 1);
+                    setStageClose("Đạt");
+                  }}
                 >
                   Đạt
                 </Button>
@@ -201,7 +204,7 @@ const OpportunityDetail = () => {
             }
             trigger="click"
           >
-            <Button disabled={currentStage === stages.length - 1} type="primary">
+            <Button disabled={currentStage > opportunityStages.length - 3} type="primary">
               Xác định
             </Button>
           </Popover>
@@ -210,9 +213,9 @@ const OpportunityDetail = () => {
       >
         <Steps
           current={currentStage}
-          items={stages.map((title) => ({
-            title,
-            disabled: title === "Đóng" || currentStage === stages.length - 1,
+          items={opportunityStages.slice(0, opportunityStages.length - 2).map((title) => ({
+            title: title === "Đóng" ? stageClose : title,
+            disabled: title === "Đóng" || currentStage > opportunityStages.length - 3,
           }))}
           onChange={(value) => setCurrentStage(value)}
         />
@@ -233,12 +236,12 @@ const OpportunityDetail = () => {
                     <input value={opportunity.name} disabled />
                   </div>
                   <div className="form-row">
-                    <label>Giá trị dự kiến:</label>
-                    <input value={opportunity.expectedValue.toLocaleString() + " VND"} disabled />
+                    <label>Ngày dự kiến chốt:</label>
+                    <input value={opportunity.expectedCloseDate} disabled />
                   </div>
                   <div className="form-row">
-                    <label>Ngày chốt dự kiến:</label>
-                    <input value={opportunity.expectedCloseDate} disabled />
+                    <label>Giá trị dự kiến:</label>
+                    <input value={opportunity.expectedValue.toLocaleString() + " VND"} disabled />
                   </div>
                   <div className="form-row">
                     <label>Xác suất:</label>
@@ -249,11 +252,7 @@ const OpportunityDetail = () => {
                     <input value={opportunity.priority} disabled />
                   </div>
                   <div className="form-row">
-                    <label>Giai đoạn:</label>
-                    <input value={opportunity.stage} disabled />
-                  </div>
-                  <div className="form-row">
-                    <label>Người phụ trách:</label>
+                    <label>Nhân viên phụ trách:</label>
                     <input value={opportunity.owner} disabled />
                   </div>
                 </div>
@@ -277,12 +276,12 @@ const OpportunityDetail = () => {
                     <input value={opportunity.contact.customerName} disabled />
                   </div>
                   <div className="form-row">
-                    <label>Email:</label>
-                    <input value={opportunity.contact.email} disabled />
+                    <label>Số điện thoại:</label>
+                    <input value={opportunity.contact.phone} disabled />
                   </div>
                   <div className="form-row">
-                    <label>Điện thoại:</label>
-                    <input value={opportunity.contact.phone} disabled />
+                    <label>Email:</label>
+                    <input value={opportunity.contact.email} disabled />
                   </div>
                   <div className="form-row">
                     <label>Người liên hệ chính:</label>

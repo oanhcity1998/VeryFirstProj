@@ -139,13 +139,6 @@ export const TableOpportunity = ({
       width: 160,
     },
     {
-      title: "Hành động tiếp theo",
-      align: "center",
-      dataIndex: "nextAction",
-      key: "nextAction",
-      width: 220,
-    },
-    {
       title: "Hành động",
       align: "center",
       key: "action",

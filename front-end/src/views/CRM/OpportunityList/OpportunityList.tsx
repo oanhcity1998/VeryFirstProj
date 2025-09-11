@@ -24,7 +24,6 @@ export interface Opportunity {
   owner: string; // Nhân viên phụ trách
   // stage: "Qualification" | "Proposal" | "Negotiation" | "Closed Won" | "Closed Lost"; // Giai đoạn
   stage: "Mới" | "Đạt yêu cầu" | "Đàm phán" | "Đóng"; // Giai đoạn
-  nextAction?: string; // Hành động tiếp theo
 }
 
 const dataSource: Opportunity[] = [
@@ -61,7 +60,6 @@ const dataSource: Opportunity[] = [
     priority: "High",
     owner: "Phạm Văn Quyết",
     stage: "Mới",
-    nextAction: "Chuẩn bị demo cho khách hàng",
   },
 ];
 
