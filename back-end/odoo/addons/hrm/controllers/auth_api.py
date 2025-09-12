@@ -40,11 +40,25 @@ class AuthAPI(http.Controller):
                 request.session.uid = uid
                 request.session.username = username
                 request.session.expiration = 86400
-                return Response(
+
+                # Build success response
+                response = Response(
                     json.dumps({"success": True, "message": "Đăng nhập thành công."}),
                     content_type='application/json',
                     status=200
                 )
+
+                # Save session_id in cookies
+                response.set_cookie(
+                    "session_id",
+                    request.session.sid,
+                    max_age=86400,        # 1 day
+                    httponly=True,        # prevent JS access
+                    samesite="Lax",
+                    secure=False          # set True if running on HTTPS
+                )
+
+                return response
             else:
                 return Response(
                     json.dumps({"success": False, "message": "Tên đăng nhập hoặc mật khẩu không đúng."}),
@@ -53,8 +67,12 @@ class AuthAPI(http.Controller):
                 )
 
         except Exception as e:
+            _logger.exception("Unexpected error in /api/auth/login")
             return Response(
-                json.dumps({"success": False, "message": f"Lỗi server: {str(e)}, Vui lòng liên hệ với quản trị viên."}),
+                json.dumps({
+                    "success": False,
+                    "message": f"Lỗi server: {str(e)}, Vui lòng liên hệ với quản trị viên."
+                }),
                 content_type='application/json',
                 status=500
             )
