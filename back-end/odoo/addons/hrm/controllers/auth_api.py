@@ -22,7 +22,7 @@ class AuthAPI(http.Controller):
 
             if not all([username, password]):
                 return Response(
-                    json.dumps({"success": False, "message": "Thiếu tên đăng nhập hoặc mật khẩu."}),
+                    json.dumps({"success": False, "message": "Thiếu tên đăng nhập hoặc mật khẩu."}, ensure_ascii=False),
                     content_type='application/json',
                     status=400
                 )
@@ -31,7 +31,7 @@ class AuthAPI(http.Controller):
                 uid = request.session.authenticate("odoo", username, password)
             except AccessDenied:
                 return Response(
-                    json.dumps({"success": False, "message": "Tên đăng nhập hoặc mật khẩu không đúng."}),
+                    json.dumps({"success": False, "message": "Tên đăng nhập hoặc mật khẩu không đúng."}, ensure_ascii=False),
                     content_type='application/json',
                     status=401
                 )
@@ -41,27 +41,19 @@ class AuthAPI(http.Controller):
                 request.session.username = username
                 request.session.expiration = 86400
 
+                session_id = request.session.sid
+
                 # Build success response
                 response = Response(
-                    json.dumps({"success": True, "message": "Đăng nhập thành công."}),
+                    json.dumps({ "success": True, "message": "Đăng nhập thành công."}, ensure_ascii=False),
                     content_type='application/json',
                     status=200
-                )
-
-                # Save session_id in cookies
-                response.set_cookie(
-                    "session_id",
-                    request.session.sid,
-                    max_age=86400,        # 1 day
-                    httponly=True,        # prevent JS access
-                    samesite="Lax",
-                    secure=False          # set True if running on HTTPS
                 )
 
                 return response
             else:
                 return Response(
-                    json.dumps({"success": False, "message": "Tên đăng nhập hoặc mật khẩu không đúng."}),
+                    json.dumps({"success": False, "message": "Tên đăng nhập hoặc mật khẩu không đúng."}, ensure_ascii=False),
                     content_type='application/json',
                     status=401
                 )
@@ -72,7 +64,7 @@ class AuthAPI(http.Controller):
                 json.dumps({
                     "success": False,
                     "message": f"Lỗi server: {str(e)}, Vui lòng liên hệ với quản trị viên."
-                }),
+                }, ensure_ascii=False),
                 content_type='application/json',
                 status=500
             )
