@@ -1,29 +1,48 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { Card, Input, Button, Checkbox, Form, Typography, message } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch, } from "@/app/store";
 import "./Login.css";
-import { ROUTES_APP } from "../app/routes";
+import { ROUTES_APP } from "@/app/routes";
+import { setCredentials, setError, setLoading } from "@/redux/public/slices/authSlice";
+import { useLoginMutation } from "@/services/public/auth.service";
 
 const { Title, Text } = Typography;
 
 export default function Login() {
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [login, { isLoading, error }] = useLoginMutation();
+  const dispatch = useAppDispatch();
 
-  const onFinish = (values: any) => {
-    setLoading(true);
+  useEffect(() => {
+    if (isLoading) {
+      setLoading();
+      dispatch(setLoading());
+    }
+  }, [isLoading, dispatch]);
 
-    // ✅ Check credentials (admin/admin allowed)
-    if (values.email === "admin" && values.password === "admin") {
-      message.success("Login successful!");
-      setTimeout(() => {
-        setLoading(false);
-        navigate(ROUTES_APP.login); // redirect to homepage
-      }, 1000);
-    } else {
-      message.error("Invalid email or password");
-      setLoading(false);
+  useEffect(() => {
+    if (error) {
+      setLoading();
+      dispatch(setError('Invalid email or password'));
+      message.error('Invalid email or password');
+    }
+  }, [error, dispatch]);
+
+  const onFinish = async (values: any) => {
+    try {
+      const response = await login({
+        username: values.email,
+        password: values.password,
+      }).unwrap();
+
+      dispatch(setCredentials({ uid: response.uid }));
+      message.success(response.message);
+      setLoading();
+      navigate(ROUTES_APP.home || '/home');
+    } catch (err) {
+      // Error is handled by useEffect
     }
   };
 
@@ -62,7 +81,6 @@ export default function Login() {
               htmlType="submit"
               className="login-button"
               size="large"
-              loading={loading}
               block
             >
               Log in
