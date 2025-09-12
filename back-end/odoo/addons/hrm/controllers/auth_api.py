@@ -1,57 +1,60 @@
 from odoo import http
-from odoo.http import request
+from odoo.http import request, Response
 import logging
+import json
+from odoo.exceptions import AccessDenied
 
 _logger = logging.getLogger(__name__)
+
 class AuthAPI(http.Controller):
 
-    @http.route('/api/auth/login', type='json', auth='none', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/auth/login', type='http', auth='none', methods=['POST'], csrf=False, cors='*')
     def login(self, **kwargs):
-
-        username = kwargs.get('username')
-        password = kwargs.get('password')
-
-        if not all([username, password]):
-            return {
-                "jsonrpc": "2.0",
-                "id": None,
-                "error": {
-                    "code": 400,
-                    "message": "Bad Request: Missing username or password."
-                }
-            }
-
         try:
-            uid = request.session.authenticate("odoo", username, password)
-            _logger.error("Authenticated UID: %s", request.session)
+            # Parse JSON body
+            try:
+                data = json.loads(request.httprequest.data.decode('utf-8'))
+            except Exception:
+                data = request.params
+
+            username = data.get('username')
+            password = data.get('password')
+
+            if not all([username, password]):
+                return Response(
+                    json.dumps({"success": False, "message": "Thiếu tên đăng nhập hoặc mật khẩu."}),
+                    content_type='application/json',
+                    status=400
+                )
+
+            try:
+                uid = request.session.authenticate("odoo", username, password)
+            except AccessDenied:
+                return Response(
+                    json.dumps({"success": False, "message": "Tên đăng nhập hoặc mật khẩu không đúng."}),
+                    content_type='application/json',
+                    status=401
+                )
+
             if uid:
                 request.session.uid = uid
                 request.session.username = username
                 request.session.expiration = 86400
-                return {
-                    "jsonrpc": "2.0",
-                    "id": None,
-                    "result": {
-                        "uid": uid,
-                        "message": "Login successful"
-                    }
-                }
+                return Response(
+                    json.dumps({"success": True, "message": "Đăng nhập thành công."}),
+                    content_type='application/json',
+                    status=200
+                )
             else:
-                return {
-                    "jsonrpc": "2.0",
-                    "id": None,
-                    "error": {
-                        "code": 401,
-                        "message": "Authentication failed: Invalid login or password."
-                    }
-                }
+                return Response(
+                    json.dumps({"success": False, "message": "Tên đăng nhập hoặc mật khẩu không đúng."}),
+                    content_type='application/json',
+                    status=401
+                )
 
         except Exception as e:
-            return {
-                "jsonrpc": "2.0",
-                "id": None,
-                "error": {
-                    "code": 500,
-                    "message": f"An unexpected error occurred: {str(e)}"
-                }
-            }
+            return Response(
+                json.dumps({"success": False, "message": f"Lỗi server: {str(e)}, Vui lòng liên hệ với quản trị viên."}),
+                content_type='application/json',
+                status=500
+            )

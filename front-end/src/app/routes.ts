@@ -30,6 +30,7 @@ export const ROUTES_APP = {
     departmentList: "/hrm/department-list",
     assetList: "/hrm/asset-list",
     assetDetail: "/hrm/asset-list/:id",
-    proposals: "/hrm/proposals",
+    proposalTemplateList: "/hrm/proposals",
+    proposalTemplateDetail: "/hrm/proposals/:id",
   },
 };

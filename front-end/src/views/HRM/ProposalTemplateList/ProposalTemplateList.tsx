@@ -9,6 +9,15 @@ import TableProposalTemplate from "@/components/HRM/TableProposalTemplate/TableP
 
 const { RangePicker } = DatePicker;
 
+// Kiểu dữ liệu mẫu đề xuất
+export interface FieldMeta {
+  id: number;
+  fieldName: string;
+  dataType: string;
+  required: boolean;
+  example?: string;
+  note?: string;
+}
 export interface ProposalTemplate {
   key: string; // ID hoặc khóa định danh
   name: string; // Tên mẫu đề xuất
@@ -17,6 +26,7 @@ export interface ProposalTemplate {
   quantity: number; // Số lượng đề xuất
   approvalRequired: "Có" | "Không"; // Bắt buộc phê duyệt
   status: "Hoạt động" | "Không hoạt động"; // Trạng thái phê duyệt
+  fields: FieldMeta[];
 }
 
 export const statusProposalTemplateOptions: ProposalTemplate["status"][] = [
@@ -28,54 +38,146 @@ export const approvalRequiredProposalTemplateOptions: ProposalTemplate["approval
   "Không",
 ];
 
+export const proposalTemplateMocks: ProposalTemplate[] = [
+  {
+    key: "PT001",
+    name: "Mẫu đề xuất mua sắm văn phòng phẩm",
+    creator: "Nguyễn Văn A",
+    createdDate: "2025-09-10",
+    quantity: 10,
+    approvalRequired: "Có",
+    status: "Hoạt động",
+    fields: [
+      {
+        id: 1,
+        fieldName: "Tên vật phẩm",
+        dataType: "string",
+        required: true,
+        example: "Bút bi Thiên Long",
+        note: "Tên văn phòng phẩm cần mua",
+      },
+      {
+        id: 2,
+        fieldName: "Số lượng",
+        dataType: "number",
+        required: true,
+        example: "100",
+        note: "Số lượng cụ thể",
+      },
+    ],
+  },
+  {
+    key: "PT002",
+    name: "Mẫu đề xuất nâng cấp máy chủ",
+    creator: "Trần Thị B",
+    createdDate: "2025-08-25",
+    quantity: 3,
+    approvalRequired: "Có",
+    status: "Hoạt động",
+    fields: [
+      {
+        id: 1,
+        fieldName: "Cấu hình hiện tại",
+        dataType: "string",
+        required: true,
+        example: "Xeon E5, RAM 64GB",
+        note: "Thông tin cấu hình máy chủ hiện tại",
+      },
+      {
+        id: 2,
+        fieldName: "Cấu hình đề xuất",
+        dataType: "string",
+        required: true,
+        example: "Xeon Gold, RAM 128GB",
+        note: "Cấu hình mong muốn sau nâng cấp",
+      },
+    ],
+  },
+  {
+    key: "PT003",
+    name: "Mẫu đề xuất tổ chức sự kiện nội bộ",
+    creator: "Lê Văn C",
+    createdDate: "2025-09-01",
+    quantity: 5,
+    approvalRequired: "Không",
+    status: "Không hoạt động",
+    fields: [
+      {
+        id: 1,
+        fieldName: "Tên sự kiện",
+        dataType: "string",
+        required: true,
+        example: "Team Building 2025",
+        note: "Tên gọi của sự kiện",
+      },
+      {
+        id: 2,
+        fieldName: "Ngày tổ chức",
+        dataType: "date",
+        required: true,
+        example: "2025-10-15",
+        note: "Ngày dự kiến diễn ra sự kiện",
+      },
+    ],
+  },
+  {
+    key: "PT004",
+    name: "Mẫu đề xuất mua phần mềm bản quyền",
+    creator: "Phạm Thị D",
+    createdDate: "2025-09-05",
+    quantity: 2,
+    approvalRequired: "Có",
+    status: "Hoạt động",
+    fields: [
+      {
+        id: 1,
+        fieldName: "Tên phần mềm",
+        dataType: "string",
+        required: true,
+        example: "Microsoft Office 365",
+        note: "Tên phần mềm cần mua",
+      },
+      {
+        id: 2,
+        fieldName: "Số lượng license",
+        dataType: "number",
+        required: true,
+        example: "50",
+        note: "Số lượng giấy phép cần mua",
+      },
+    ],
+  },
+  {
+    key: "PT005",
+    name: "Mẫu đề xuất đào tạo nhân viên",
+    creator: "Ngô Văn E",
+    createdDate: "2025-08-30",
+    quantity: 8,
+    approvalRequired: "Không",
+    status: "Không hoạt động",
+    fields: [
+      {
+        id: 1,
+        fieldName: "Tên khóa đào tạo",
+        dataType: "string",
+        required: true,
+        example: "Kỹ năng thuyết trình",
+        note: "Tên khóa học hoặc chương trình",
+      },
+      {
+        id: 2,
+        fieldName: "Ngày bắt đầu",
+        dataType: "date",
+        required: true,
+        example: "2025-09-20",
+        note: "Thời gian khai giảng dự kiến",
+      },
+    ],
+  },
+];
+
 const ProposalTemplateList: React.FC = () => {
-  const [data, setData] = useState<ProposalTemplate[]>([
-    {
-      key: "PT001",
-      name: "Mẫu đề xuất mua sắm văn phòng phẩm",
-      creator: "Nguyễn Văn A",
-      createdDate: "2025-09-10",
-      quantity: 10,
-      approvalRequired: "Có",
-      status: "Hoạt động",
-    },
-    {
-      key: "PT002",
-      name: "Mẫu đề xuất nâng cấp máy chủ",
-      creator: "Trần Thị B",
-      createdDate: "2025-08-25",
-      quantity: 3,
-      approvalRequired: "Có",
-      status: "Hoạt động",
-    },
-    {
-      key: "PT003",
-      name: "Mẫu đề xuất tổ chức sự kiện nội bộ",
-      creator: "Lê Văn C",
-      createdDate: "2025-09-01",
-      quantity: 5,
-      approvalRequired: "Không",
-      status: "Không hoạt động",
-    },
-    {
-      key: "PT004",
-      name: "Mẫu đề xuất mua phần mềm bản quyền",
-      creator: "Phạm Thị D",
-      createdDate: "2025-09-05",
-      quantity: 2,
-      approvalRequired: "Có",
-      status: "Hoạt động",
-    },
-    {
-      key: "PT005",
-      name: "Mẫu đề xuất đào tạo nhân viên",
-      creator: "Ngô Văn E",
-      createdDate: "2025-08-30",
-      quantity: 8,
-      approvalRequired: "Không",
-      status: "Không hoạt động",
-    },
-  ]);
+  const [data, setData] = useState<ProposalTemplate[]>(proposalTemplateMocks);
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);

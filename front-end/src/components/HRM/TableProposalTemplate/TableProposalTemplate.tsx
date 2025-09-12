@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Table, Checkbox, Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import { ProposalTemplate } from "@/views/HRM/ProposalTemplateList/ProposalTemplateList";
+import { generatePath, Link } from "react-router-dom";
+import { ROUTES_APP } from "@/app/routes";
 
 interface TableProposalTemplateProps {
   data?: ProposalTemplate[];
@@ -63,6 +65,11 @@ const TableProposalTemplate: React.FC<TableProposalTemplateProps> = ({
       width: 200,
       align: "center" as const,
       fixed: "left" as const,
+      render: (value: string, record: ProposalTemplate) => (
+        <Link to={generatePath(ROUTES_APP.hrm.proposalTemplateDetail, { id: record.key })}>
+          {value}
+        </Link>
+      ),
     },
     {
       title: "Người tạo",
