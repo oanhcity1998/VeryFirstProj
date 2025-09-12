@@ -56,7 +56,7 @@ class EmployeeAPI(http.Controller):
 
         return {"id": employee.id, "message": "Created successfully"}
 
-    @http.route('/api/hr/employees', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/hr/employees', type='http', auth='user', methods=['GET'], csrf=False)
     def list_employees(self, **kwargs):
         q = kwargs.get('q', '').strip()
         department_id = kwargs.get('department_id')
