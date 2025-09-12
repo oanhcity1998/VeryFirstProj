@@ -1,22 +1,21 @@
 import { useState } from "react";
-import { Button, Modal, message, Popover, Upload, Space } from "antd";
+import { Button, Modal, message, Popover, Upload, Space, Form } from "antd";
 import {
   PlusOutlined,
   SettingOutlined,
   FilterOutlined,
   InboxOutlined,
-  DeleteFilled,
   DeleteOutlined,
 } from "@ant-design/icons";
 import "./EmployeeList.css";
-import TableEmployee from "../../../components/TableEmployee/TableEmployee";
-import EmployeeForm from "../../../components/EmployeeForm/EmployeeForm";
 import * as XLSX from "xlsx";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import Search from "antd/es/input/Search";
-import FilterDrawerEmployee from "../../../components/FilterEmployee/FilterDrawerEmployee";
+import TableEmployee from "@/components/HRM/TableEmployee/TableEmployee";
+import EmployeeForm from "@/components/HRM/EmployeeForm/EmployeeForm";
+import FilterDrawerEmployee from "@/components/HRM/FilterEmployee/FilterDrawerEmployee";
 
-interface Employee {
+export interface Employee {
   key: string;
   id: string;
   fullName: string;
@@ -43,6 +42,7 @@ interface Employee {
 }
 
 const EmployeeList: React.FC = () => {
+  const [form] = Form.useForm();
   const [data, setData] = useState<Employee[]>([
     {
       key: "1",
@@ -308,9 +308,7 @@ const EmployeeList: React.FC = () => {
     try {
       setDeleting(true);
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      const newData = data.filter(
-        (item) => !selectedRowKeys.includes(item.key)
-      );
+      const newData = data.filter((item) => !selectedRowKeys.includes(item.key));
       setData(newData);
       message.success("Đã xóa nhân sự");
     } catch (err) {
@@ -326,9 +324,7 @@ const EmployeeList: React.FC = () => {
     const fileType = file.name.split(".").pop()?.toLowerCase();
 
     if (fileType !== "xlsx" && fileType !== "csv") {
-      message.error(
-        "File không hợp lệ. Vui lòng tải lên file .xlsx hoặc .csv."
-      );
+      message.error("File không hợp lệ. Vui lòng tải lên file .xlsx hoặc .csv.");
       return Upload.LIST_IGNORE;
     }
 
@@ -367,17 +363,13 @@ const EmployeeList: React.FC = () => {
         "bonus",
       ];
 
-      const headerRow = json[0] as string[] || [];
+      const headerRow = (json[0] as string[]) || [];
       const newEmployees: Employee[] = [];
       const errors: string[] = [];
 
-      const missingHeaders = requiredFields.filter(
-        (field) => !headerRow.includes(field)
-      );
+      const missingHeaders = requiredFields.filter((field) => !headerRow.includes(field));
       if (missingHeaders.length > 0) {
-        message.error(
-          `File thiếu các cột bắt buộc: ${missingHeaders.join(", ")}`
-        );
+        message.error(`File thiếu các cột bắt buộc: ${missingHeaders.join(", ")}`);
         setImporting(false);
         setImportOpen(false);
         return;
@@ -389,13 +381,11 @@ const EmployeeList: React.FC = () => {
         let rowHasError = false;
 
         for (let j = 0; j < headerRow.length; j++) {
-          const key = headerRow[j];
+          const key = headerRow[j] as keyof Employee;
           const value = row[j];
 
           if (!value && requiredFields.includes(key)) {
-            errors.push(
-              `Lỗi tại hàng ${i + 1}, cột "${key}": Dữ liệu bị trống.`
-            );
+            errors.push(`Lỗi tại hàng ${i + 1}, cột "${key}": Dữ liệu bị trống.`);
             rowHasError = true;
           }
           newEmployee[key] = value;
@@ -414,9 +404,7 @@ const EmployeeList: React.FC = () => {
         message.error(
           <div style={{ maxHeight: "200px", overflowY: "auto" }}>
             <p>Có lỗi trong file của bạn:</p>
-            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
-              {errorMessages}
-            </pre>
+            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>{errorMessages}</pre>
           </div>,
           5
         );
@@ -430,9 +418,7 @@ const EmployeeList: React.FC = () => {
           `[Import Log] Tải lên thành công ${newEmployees.length} nhân viên lúc ${timestamp} bởi ${currentUser}`
         );
 
-        message.success(
-          `${newEmployees.length} nhân viên đã được import thành công.`
-        );
+        message.success(`${newEmployees.length} nhân viên đã được import thành công.`);
         setImportOpen(false);
         setImporting(false);
       }
@@ -462,10 +448,7 @@ const EmployeeList: React.FC = () => {
                 <Button type="text" onClick={() => setImportOpen(true)}>
                   Import
                 </Button>
-                <Button
-                  type="text"
-                  onClick={() => console.log("Export clicked")}
-                >
+                <Button type="text" onClick={() => console.log("Export clicked")}>
                   Export
                 </Button>
               </Space>
@@ -492,9 +475,7 @@ const EmployeeList: React.FC = () => {
               <p className="ant-upload-drag-icon">
                 <InboxOutlined />
               </p>
-              <p className="ant-upload-text">
-                Click hoặc kéo thả file vào đây để Import
-              </p>
+              <p className="ant-upload-text">Click hoặc kéo thả file vào đây để Import</p>
               <p className="ant-upload-hint">Chỉ chấp nhận 1 file mỗi lần</p>
             </Upload.Dragger>
           </Modal>
@@ -516,28 +497,22 @@ const EmployeeList: React.FC = () => {
             okButtonProps={{ danger: true, loading: deleting }}
             centered
           >
-            <p>
-              Bạn có chắc muốn xóa nhân sự này? Hành động này không thể hoàn
-              tác.
-            </p>
+            <p>Bạn có chắc muốn xóa nhân sự này? Hành động này không thể hoàn tác.</p>
           </Modal>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => setIsModalOpen(true)}
-          >
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsModalOpen(true)}>
             Tạo
           </Button>
         </div>
-      </div >
+      </div>
 
       <TableEmployee
-        data={data}
+        data={data as any[]}
         selectedRowKeys={selectedRowKeys}
         setSelectedRowKeys={setSelectedRowKeys}
       />
 
       <EmployeeForm
+        form={form}
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         onSave={(values: Employee) => {
@@ -564,6 +539,7 @@ const EmployeeList: React.FC = () => {
             endDate: values.endDate,
             salary: values.salary,
             bonus: values.bonus,
+            department: values.department,
           };
           setData([...data, newEmployee]);
           setIsModalOpen(false);

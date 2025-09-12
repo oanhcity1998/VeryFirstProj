@@ -1,4 +1,4 @@
-import { ROUTES_APP } from "./routes";
+import { ROUTES_APP } from "./app/routes";
 import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom";
 import MainLayout from "@/layouts/MainLayout/mainLayout";
 import Home from "./views/Home";
@@ -13,6 +13,8 @@ import LeadDetail from "./views/CRM/LeadDetail/LeadDetail";
 import OpportunityList from "./views/CRM/OpportunityList/OpportunityList";
 import ContractList from "./views/CRM/ContractList/ContractList";
 import ContractDetailWrapper from "./views/CRM/ContractDetail/ContractDetailWrapper";
+import QuoteList from "./views/CRM/QuoteList/QuoteList";
+import QuoteDetailWrapper from "./views/CRM/QuoteDetail/QuoteDetailWrapper";
 import EmployeeList from "./views/HRM/EmployeeList/EmployeeList";
 import EmployeeDetail from "./views/HRM/EmployeeDetail/EmployeeDetail";
 import PositionList from "./views/HRM/PositionList/PositionList";
@@ -27,6 +29,7 @@ import AssetList from "./views/HRM/AssetList/AssetList";
 import AssetDetail from "./views/HRM/AssetDetail/AssetDetail";
 import DebtReportList from "./views/CRM/DebtReportList/DebtReportList";
 import DebtReportDetail from "./views/CRM/DebtReportDetail/DebtReportDetail";
+import ProposalTemplateList from "./views/HRM/ProposalTemplateList/ProposalTemplateList";
 
 export default function App() {
   return (
@@ -68,6 +71,10 @@ export default function App() {
           <Route path={ROUTES_APP.crm.contractList} element={<ContractList />} />
           <Route path={ROUTES_APP.crm.contractDetail} element={<ContractDetailWrapper />} />
 
+          {/* Hợp đồng  */}
+          <Route path={ROUTES_APP.crm.quoteList} element={<QuoteList />} />
+          <Route path={ROUTES_APP.crm.quoteDetail} element={<QuoteDetailWrapper />} />
+
           {/* Báo cáo công nợ */}
           <Route path={ROUTES_APP.crm.debtReportList} element={<DebtReportList />} />
           <Route path={ROUTES_APP.crm.debtReportDetail} element={<DebtReportDetail />} />
@@ -89,6 +96,9 @@ export default function App() {
           {/* Tài sản */}
           <Route path={ROUTES_APP.hrm.assetList} element={<AssetList />} />
           <Route path={ROUTES_APP.hrm.assetDetail} element={<AssetDetail />} />
+
+          {/* Đề xuất nhân sự */}
+          <Route path={ROUTES_APP.hrm.proposals} element={<ProposalTemplateList />} />
         </Route>
       </Routes>
     </BrowserRouter>

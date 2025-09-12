@@ -3,7 +3,7 @@ import { Descriptions, Breadcrumb, Button, Card } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import "./LeadDetail.css";
-import { ROUTES_APP } from "../../../routes";
+import { ROUTES_APP } from "../../../app/routes";
 
 const LeadDetail: React.FC = () => {
   const { id } = useParams(); // 👈 get lead id from URL

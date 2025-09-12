@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Button, Space, Modal, message, Upload, Select } from "antd";
-import { PlusOutlined, DeleteFilled, InboxOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Button, Modal, message, Upload, Select } from "antd";
+import { PlusOutlined, InboxOutlined, DeleteOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import dayjs from "dayjs";
 import "./PositionList.css";
-import TablePosition from "../../../components/TablePosition/TablePosition";
-import PositionForm from "../../../components/PositionForm/PositionForm";
 import Search from "antd/es/input/Search";
+import TablePosition from "@/components/HRM/TablePosition/TablePosition";
+import PositionForm from "@/components/HRM/PositionForm/PositionForm";
 
 interface Position {
   key: string;
@@ -103,9 +103,7 @@ const PositionList: React.FC = () => {
     try {
       setDeleting(true);
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      const newData = data.filter(
-        (item) => !selectedRowKeys.includes(item.key)
-      );
+      const newData = data.filter((item) => !selectedRowKeys.includes(item.key));
       setData(newData);
       setFilteredData(newData);
       message.success("Đã xóa chức vụ");
@@ -121,9 +119,7 @@ const PositionList: React.FC = () => {
   const handleUpload = async (file: File) => {
     const fileType = file.name.split(".").pop()?.toLowerCase();
     if (fileType !== "xlsx" && fileType !== "csv") {
-      message.error(
-        "File không hợp lệ. Vui lòng tải lên file .xlsx hoặc .csv."
-      );
+      message.error("File không hợp lệ. Vui lòng tải lên file .xlsx hoặc .csv.");
       return Upload.LIST_IGNORE;
     }
 
@@ -138,17 +134,13 @@ const PositionList: React.FC = () => {
       const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
       const requiredFields = ["id", "positionName", "priority", "note"];
-      const headerRow = json[0] as string[] || [];
+      const headerRow = (json[0] as string[]) || [];
       const newPositions: Position[] = [];
       const errors: string[] = [];
 
-      const missingHeaders = requiredFields.filter(
-        (field) => !headerRow.includes(field)
-      );
+      const missingHeaders = requiredFields.filter((field) => !headerRow.includes(field));
       if (missingHeaders.length > 0) {
-        message.error(
-          `File thiếu các cột bắt buộc: ${missingHeaders.join(", ")}`
-        );
+        message.error(`File thiếu các cột bắt buộc: ${missingHeaders.join(", ")}`);
         setImporting(false);
         setImportOpen(false);
         return;
@@ -160,12 +152,10 @@ const PositionList: React.FC = () => {
         let rowHasError = false;
 
         for (let j = 0; j < headerRow.length; j++) {
-          const key = headerRow[j];
+          const key = headerRow[j] as keyof Position;
           const value = row[j];
           if (!value && requiredFields.includes(key)) {
-            errors.push(
-              `Lỗi tại hàng ${i + 1}, cột "${key}": Dữ liệu bị trống.`
-            );
+            errors.push(`Lỗi tại hàng ${i + 1}, cột "${key}": Dữ liệu bị trống.`);
             rowHasError = true;
           }
           newPosition[key] = value;
@@ -184,9 +174,7 @@ const PositionList: React.FC = () => {
         message.error(
           <div style={{ maxHeight: "200px", overflowY: "auto" }}>
             <p>Có lỗi trong file của bạn:</p>
-            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
-              {errorMessages}
-            </pre>
+            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>{errorMessages}</pre>
           </div>,
           5
         );
@@ -199,9 +187,7 @@ const PositionList: React.FC = () => {
         console.log(
           `[Import Log] Tải lên thành công ${newPositions.length} chức vụ lúc ${timestamp} bởi ${currentUser}`
         );
-        message.success(
-          `${newPositions.length} chức vụ đã được import thành công.`
-        );
+        message.success(`${newPositions.length} chức vụ đã được import thành công.`);
         setImportOpen(false);
         setImporting(false);
       }
@@ -283,9 +269,7 @@ const PositionList: React.FC = () => {
               <p className="ant-upload-drag-icon">
                 <InboxOutlined />
               </p>
-              <p className="ant-upload-text">
-                Click hoặc kéo thả file vào đây để Import
-              </p>
+              <p className="ant-upload-text">Click hoặc kéo thả file vào đây để Import</p>
               <p className="ant-upload-hint">Chỉ chấp nhận 1 file mỗi lần</p>
             </Upload.Dragger>
           </Modal>
@@ -307,10 +291,7 @@ const PositionList: React.FC = () => {
             okButtonProps={{ danger: true, loading: deleting }}
             centered
           >
-            <p>
-              Bạn có chắc muốn xóa chức vụ này? Hành động này không thể hoàn
-              tác.
-            </p>
+            <p>Bạn có chắc muốn xóa chức vụ này? Hành động này không thể hoàn tác.</p>
           </Modal>
           <Button
             type="primary"
@@ -323,7 +304,7 @@ const PositionList: React.FC = () => {
             Tạo
           </Button>
         </div>
-      </div >
+      </div>
 
       <TablePosition
         data={filteredData}
@@ -338,7 +319,7 @@ const PositionList: React.FC = () => {
           setIsModalOpen(false);
           setSelectedPosition(null);
         }}
-        onSave={handleSave}
+        onSave={handleSave as any}
         position={selectedPosition}
         modalTitle={selectedPosition ? "Cập nhật chức vụ" : "Thêm chức vụ"}
         cancelText="Hủy"

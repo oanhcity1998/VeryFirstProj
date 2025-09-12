@@ -3,10 +3,9 @@ import { Breadcrumb, Button, Card } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import "./ContactDetail.css";
-import { ROUTES_APP } from "../../../routes";
+import { ROUTES_APP } from "../../../app/routes";
 import { getContact, getContacts } from "../ContactList/contactService";
-import { Contact } from "../../../components/TableContact/TableContact";
-
+import { Contact } from "@/components/CRM/TableContact/TableContact";
 
 const ContactDetail: React.FC = () => {
   const { id } = useParams(); // lấy contact id từ URL

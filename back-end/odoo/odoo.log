@@ -1,0 +1,175 @@
+2025-08-19 07:07:38,991 59499 INFO ? odoo: Odoo version 18.0 
+2025-08-19 07:07:38,991 59499 INFO ? odoo: Using configuration file at /Users/huutin/Desktop/project/back-end/odoo/odoo.conf 
+2025-08-19 07:07:38,991 59499 INFO ? odoo: addons paths: ['/Users/huutin/Desktop/project/back-end/odoo/odoo/addons', '/Users/huutin/Library/Application Support/Odoo/addons/18.0', '/Users/huutin/Desktop/project/back-end/odoo/custom_addons'] 
+2025-08-19 07:07:38,991 59499 INFO ? odoo: database: odoo@localhost:5432 
+2025-08-19 07:07:39,207 59499 INFO ? odoo.addons.base.models.ir_actions_report: You need Wkhtmltopdf to print a pdf version of the reports. 
+2025-08-19 07:07:39,208 59499 INFO ? odoo.addons.base.models.ir_actions_report: You need Wkhtmltoimage to generate images from html. 
+2025-08-19 07:07:39,351 59499 CRITICAL ? odoo.modules.module: Couldn't load module web 
+2025-08-19 07:07:39,351 59499 ERROR ? odoo.service.server: Failed to load server-wide module `web`.
+The `web` module is provided by the addons found in the `openerp-web` project.
+Maybe you forgot to add those addons in your addons_path configuration. 
+Traceback (most recent call last):
+  File "/Users/huutin/Desktop/project/back-end/odoo/odoo/service/server.py", line 1307, in load_server_wide_modules
+    odoo.modules.module.load_openerp_module(m)
+  File "/Users/huutin/Desktop/project/back-end/odoo/odoo/modules/module.py", line 384, in load_openerp_module
+    __import__(qualname)
+ModuleNotFoundError: No module named 'odoo.addons.web'
+2025-08-19 07:07:39,353 59499 WARNING ? odoo.service.server: 'watchdog' module not installed. Code autoreload feature is disabled 
+2025-08-19 07:07:39,360 59499 INFO ? odoo.service.server: HTTP service (werkzeug) running on 192.168.1.141:8071 
+2025-08-19 07:07:39,409 59499 INFO odoo18 odoo.modules.loading: loading 1 modules... 
+2025-08-19 07:07:39,410 59499 INFO odoo18 odoo.modules.loading: Loading module base (1/1) 
+2025-08-19 07:07:39,429 59499 INFO odoo18 odoo.modules.registry: module base: creating or updating database tables 
+2025-08-19 07:07:39,930 59499 INFO odoo18 odoo.modules.loading: loading base/data/res_bank.xml 
+2025-08-19 07:07:39,935 59499 INFO odoo18 odoo.modules.loading: loading base/data/res.lang.csv 
+2025-08-19 07:07:40,065 59499 INFO odoo18 odoo.modules.loading: loading base/data/res_lang_data.xml 
+2025-08-19 07:07:40,090 59499 INFO odoo18 odoo.modules.loading: loading base/data/res_partner_data.xml 
+2025-08-19 07:07:40,165 59499 INFO odoo18 odoo.modules.loading: loading base/data/res_currency_data.xml 
+2025-08-19 07:07:40,762 59499 INFO odoo18 odoo.modules.loading: loading base/data/res_company_data.xml 
+2025-08-19 07:07:40,775 59499 INFO odoo18 odoo.modules.loading: loading base/data/res_users_data.xml 
+2025-08-19 07:07:41,440 59499 INFO odoo18 odoo.modules.loading: loading base/data/report_paperformat_data.xml 
+2025-08-19 07:07:41,446 59499 INFO odoo18 odoo.modules.loading: loading base/data/res_country_data.xml 
+2025-08-19 07:07:41,782 59499 INFO odoo18 odoo.modules.loading: loading base/data/ir_demo_data.xml 
+2025-08-19 07:07:41,794 59499 INFO odoo18 odoo.modules.loading: loading base/security/base_groups.xml 
+2025-08-19 07:07:41,962 59499 INFO odoo18 odoo.modules.loading: loading base/security/base_security.xml 
+2025-08-19 07:07:42,123 59499 INFO odoo18 odoo.modules.loading: loading base/views/base_menus.xml 
+2025-08-19 07:07:42,207 59499 INFO odoo18 odoo.modules.loading: loading base/views/decimal_precision_views.xml 
+2025-08-19 07:07:42,229 59499 INFO odoo18 odoo.modules.loading: loading base/views/res_config_views.xml 
+2025-08-19 07:07:42,237 59499 INFO odoo18 odoo.modules.loading: loading base/data/res.country.state.csv 
+2025-08-19 07:07:42,723 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_actions_views.xml 
+2025-08-19 07:07:42,889 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_asset_views.xml 
+2025-08-19 07:07:42,914 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_config_parameter_views.xml 
+2025-08-19 07:07:42,933 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_cron_views.xml 
+2025-08-19 07:07:42,972 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_cron_trigger_views.xml 
+2025-08-19 07:07:42,993 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_filters_views.xml 
+2025-08-19 07:07:43,016 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_mail_server_views.xml 
+2025-08-19 07:07:43,037 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_model_views.xml 
+2025-08-19 07:07:43,231 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_attachment_views.xml 
+2025-08-19 07:07:43,260 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_rule_views.xml 
+2025-08-19 07:07:43,292 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_sequence_views.xml 
+2025-08-19 07:07:43,323 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_ui_menu_views.xml 
+2025-08-19 07:07:43,350 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_ui_view_views.xml 
+2025-08-19 07:07:43,418 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_default_views.xml 
+2025-08-19 07:07:43,448 59499 INFO odoo18 odoo.modules.loading: loading base/data/ir_config_parameter_data.xml 
+2025-08-19 07:07:43,452 59499 INFO odoo18 odoo.modules.loading: loading base/data/ir_cron_data.xml 
+2025-08-19 07:07:43,463 59499 INFO odoo18 odoo.modules.loading: loading base/report/ir_model_report.xml 
+2025-08-19 07:07:43,467 59499 INFO odoo18 odoo.modules.loading: loading base/report/ir_model_templates.xml 
+2025-08-19 07:07:43,475 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_logging_views.xml 
+2025-08-19 07:07:43,501 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_qweb_widget_templates.xml 
+2025-08-19 07:07:43,519 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_module_views.xml 
+2025-08-19 07:07:43,586 59499 INFO odoo18 odoo.modules.loading: loading base/data/ir_module_category_data.xml 
+2025-08-19 07:07:43,842 59499 INFO odoo18 odoo.modules.loading: loading base/data/ir_module_module.xml 
+2025-08-19 07:07:43,881 59499 INFO odoo18 odoo.modules.loading: loading base/report/ir_module_reports.xml 
+2025-08-19 07:07:43,884 59499 INFO odoo18 odoo.modules.loading: loading base/report/ir_module_report_templates.xml 
+2025-08-19 07:07:43,889 59499 INFO odoo18 odoo.modules.loading: loading base/wizard/base_module_update_views.xml 
+2025-08-19 07:07:43,903 59499 INFO odoo18 odoo.modules.loading: loading base/wizard/base_language_install_views.xml 
+2025-08-19 07:07:43,917 59499 INFO odoo18 odoo.modules.loading: loading base/wizard/base_import_language_views.xml 
+2025-08-19 07:07:43,930 59499 INFO odoo18 odoo.modules.loading: loading base/wizard/base_module_upgrade_views.xml 
+2025-08-19 07:07:43,953 59499 INFO odoo18 odoo.modules.loading: loading base/wizard/base_module_uninstall_views.xml 
+2025-08-19 07:07:43,964 59499 INFO odoo18 odoo.modules.loading: loading base/wizard/base_export_language_views.xml 
+2025-08-19 07:07:43,978 59499 INFO odoo18 odoo.modules.loading: loading base/wizard/base_partner_merge_views.xml 
+2025-08-19 07:07:43,994 59499 INFO odoo18 odoo.modules.loading: loading base/data/ir_demo_failure_data.xml 
+2025-08-19 07:07:44,010 59499 INFO odoo18 odoo.modules.loading: loading base/views/ir_profile_views.xml 
+2025-08-19 07:07:44,039 59499 INFO odoo18 odoo.modules.loading: loading base/views/res_company_views.xml 
+2025-08-19 07:07:44,067 59499 INFO odoo18 odoo.modules.loading: loading base/views/res_lang_views.xml 
+2025-08-19 07:07:44,101 59499 INFO odoo18 odoo.modules.loading: loading base/views/res_partner_views.xml 
+2025-08-19 07:07:44,213 59499 INFO odoo18 odoo.modules.loading: loading base/views/res_bank_views.xml 
+2025-08-19 07:07:44,253 59499 INFO odoo18 odoo.modules.loading: loading base/views/res_country_views.xml 
+2025-08-19 07:07:44,312 59499 INFO odoo18 odoo.modules.loading: loading base/views/res_currency_views.xml 
+2025-08-19 07:07:44,366 59499 INFO odoo18 odoo.modules.loading: loading base/views/res_users_views.xml 
+2025-08-19 07:07:44,578 59499 INFO odoo18 odoo.modules.loading: loading base/views/res_device_views.xml 
+2025-08-19 07:07:44,631 59499 INFO odoo18 odoo.modules.loading: loading base/views/res_users_identitycheck_views.xml 
+2025-08-19 07:07:44,639 59499 INFO odoo18 odoo.modules.loading: loading base/views/res_config_settings_views.xml 
+2025-08-19 07:07:44,648 59499 INFO odoo18 odoo.modules.loading: loading base/views/report_paperformat_views.xml 
+2025-08-19 07:07:44,683 59499 INFO odoo18 odoo.modules.loading: loading base/security/ir.model.access.csv 
+2025-08-19 07:07:44,898 59499 INFO odoo18 odoo.modules.loading: Module base: loading demo 
+2025-08-19 07:07:44,899 59499 INFO odoo18 odoo.modules.loading: loading base/data/res_users_demo.xml 
+2025-08-19 07:07:46,357 59499 INFO odoo18 odoo.modules.loading: loading base/data/res_partner_bank_demo.xml 
+2025-08-19 07:07:46,359 59499 INFO odoo18 odoo.modules.loading: loading base/data/res_currency_demo.xml 
+2025-08-19 07:07:46,364 59499 INFO odoo18 odoo.modules.loading: loading base/data/res_currency_rate_demo.xml 
+2025-08-19 07:07:46,571 59499 INFO odoo18 odoo.modules.loading: loading base/data/res_bank_demo.xml 
+2025-08-19 07:07:46,574 59499 INFO odoo18 odoo.modules.loading: loading base/data/res_partner_demo.xml 
+2025-08-19 07:07:46,926 59499 INFO odoo18 odoo.modules.loading: loading base/data/res_partner_image_demo.xml 
+2025-08-19 07:07:47,536 59499 INFO odoo18 odoo.modules.loading: Module base loaded in 8.13s, 8237 queries (+8237 other) 
+2025-08-19 07:07:47,536 59499 INFO odoo18 odoo.modules.loading: 1 modules loaded in 8.13s, 8237 queries (+8237 extra) 
+2025-08-19 07:07:47,549 59499 INFO odoo18 odoo.modules.loading: updating modules list 
+2025-08-19 07:07:47,550 59499 INFO odoo18 odoo.addons.base.models.ir_module: ALLOW access to module.update_list on [] to user __system__ #1 via n/a 
+2025-08-19 07:07:47,562 59499 WARNING odoo18 odoo.modules.module: addons path does not exist: /Users/huutin/Desktop/project/back-end/odoo/custom_addons 
+2025-08-19 07:07:47,637 59499 WARNING odoo18 odoo.modules.graph: module base_import_module: not installable, skipped 
+2025-08-19 07:07:47,637 59499 WARNING odoo18 odoo.modules.graph: module bus: not installable, skipped 
+2025-08-19 07:07:47,637 59499 WARNING odoo18 odoo.modules.graph: module web_tour: not installable, skipped 
+2025-08-19 07:07:47,637 59499 WARNING odoo18 odoo.modules.graph: module iap: not installable, skipped 
+2025-08-19 07:07:47,638 59499 WARNING odoo18 odoo.modules.graph: module web: not installable, skipped 
+2025-08-19 07:07:47,638 59499 WARNING odoo18 odoo.modules.graph: module auth_totp: not installable, skipped 
+2025-08-19 07:07:47,638 59499 WARNING odoo18 odoo.modules.graph: module base_import: not installable, skipped 
+2025-08-19 07:07:47,638 59499 WARNING odoo18 odoo.modules.graph: module base_setup: not installable, skipped 
+2025-08-19 07:07:47,638 59499 WARNING odoo18 odoo.modules.graph: module html_editor: not installable, skipped 
+2025-08-19 07:07:47,638 59499 WARNING odoo18 odoo.modules.graph: module web_editor: not installable, skipped 
+2025-08-19 07:07:47,638 59499 WARNING odoo18 odoo.modules.graph: module web_unsplash: not installable, skipped 
+2025-08-19 07:07:47,638 59499 INFO odoo18 odoo.modules.loading: loading 1 modules... 
+2025-08-19 07:07:47,638 59499 INFO odoo18 odoo.modules.loading: 1 modules loaded in 0.00s, 0 queries (+0 extra) 
+2025-08-19 07:07:47,664 59499 ERROR odoo18 odoo.modules.loading: Some modules are not loaded, some dependencies or manifest may be missing: ['auth_totp', 'base_import', 'base_import_module', 'base_setup', 'bus', 'html_editor', 'iap', 'web', 'web_editor', 'web_tour', 'web_unsplash'] 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model base.document.layout is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model auth_totp.device is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model auth_totp.wizard is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model base_import.mapping is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model base_import.import is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model base.import.module is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model bus.bus is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model bus.listener.mixin is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model bus.presence is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model ir.websocket is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model web_tour.tour is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model web_tour.tour.step is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model iap.account is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model iap.enrich.api is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model iap.service is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model html.field.history.mixin is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model web_editor.assets is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model web_editor.converter.test is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,704 59499 INFO odoo18 odoo.modules.loading: Model web_editor.converter.test.sub is declared but cannot be loaded! (Perhaps a module was partially removed or renamed) 
+2025-08-19 07:07:47,784 59499 INFO odoo18 odoo.modules.loading: Modules loaded. 
+2025-08-19 07:07:47,785 59499 INFO odoo18 odoo.modules.registry: Registry changed, signaling through the database 
+2025-08-19 07:07:47,786 59499 INFO odoo18 odoo.modules.registry: Registry loaded in 8.425s 
+2025-08-19 07:07:48,899 59499 INFO odoo18 odoo.service.server: Initiating shutdown 
+2025-08-19 07:07:48,900 59499 INFO odoo18 odoo.service.server: Hit CTRL-C again or send a second signal to force the shutdown. 
+2025-08-19 07:07:49,386 59499 INFO odoo18 odoo.sql_db: ConnectionPool(read/write;used=0/count=0/max=64): Closed 3 connections  
+2025-08-19 07:07:56,016 59641 INFO ? odoo: Odoo version 18.0 
+2025-08-19 07:07:56,016 59641 INFO ? odoo: Using configuration file at /Users/huutin/Desktop/project/back-end/odoo/odoo.conf 
+2025-08-19 07:07:56,016 59641 INFO ? odoo: addons paths: ['/Users/huutin/Desktop/project/back-end/odoo/odoo/addons', '/Users/huutin/Library/Application Support/Odoo/addons/18.0', '/Users/huutin/Desktop/project/back-end/odoo/custom_addons'] 
+2025-08-19 07:07:56,016 59641 INFO ? odoo: database: odoo@localhost:5432 
+2025-08-19 07:07:56,106 59641 INFO ? odoo.addons.base.models.ir_actions_report: You need Wkhtmltopdf to print a pdf version of the reports. 
+2025-08-19 07:07:56,106 59641 INFO ? odoo.addons.base.models.ir_actions_report: You need Wkhtmltoimage to generate images from html. 
+2025-08-19 07:07:56,227 59641 CRITICAL ? odoo.modules.module: Couldn't load module web 
+2025-08-19 07:07:56,227 59641 ERROR ? odoo.service.server: Failed to load server-wide module `web`.
+The `web` module is provided by the addons found in the `openerp-web` project.
+Maybe you forgot to add those addons in your addons_path configuration. 
+Traceback (most recent call last):
+  File "/Users/huutin/Desktop/project/back-end/odoo/odoo/service/server.py", line 1307, in load_server_wide_modules
+    odoo.modules.module.load_openerp_module(m)
+  File "/Users/huutin/Desktop/project/back-end/odoo/odoo/modules/module.py", line 384, in load_openerp_module
+    __import__(qualname)
+ModuleNotFoundError: No module named 'odoo.addons.web'
+2025-08-19 07:07:56,238 59641 INFO ? odoo.service.server: HTTP service (werkzeug) running on 192.168.1.141:8071 
+2025-08-19 07:08:48,449 59641 INFO ? odoo.service.server: Initiating shutdown 
+2025-08-19 07:08:48,451 59641 INFO ? odoo.service.server: Hit CTRL-C again or send a second signal to force the shutdown. 
+2025-08-19 07:08:48,847 59641 INFO ? odoo.sql_db: ConnectionPool(read/write;used=0/count=0/max=64): Closed 2 connections  
+2025-08-19 07:12:19,338 60710 INFO ? odoo: Odoo version 18.0 
+2025-08-19 07:12:19,338 60710 INFO ? odoo: Using configuration file at /Users/huutin/Desktop/project/back-end/odoo/odoo.conf 
+2025-08-19 07:12:19,338 60710 INFO ? odoo: addons paths: ['/Users/huutin/Desktop/project/back-end/odoo/odoo/addons', '/Users/huutin/Library/Application Support/Odoo/addons/18.0', '/Users/huutin/Desktop/project/back-end/odoo/custom_addons'] 
+2025-08-19 07:12:19,338 60710 INFO ? odoo: database: admin@localhost:5432 
+2025-08-19 07:12:19,438 60710 INFO ? odoo.addons.base.models.ir_actions_report: You need Wkhtmltopdf to print a pdf version of the reports. 
+2025-08-19 07:12:19,438 60710 INFO ? odoo.addons.base.models.ir_actions_report: You need Wkhtmltoimage to generate images from html. 
+2025-08-19 07:12:19,570 60710 CRITICAL ? odoo.modules.module: Couldn't load module web 
+2025-08-19 07:12:19,570 60710 ERROR ? odoo.service.server: Failed to load server-wide module `web`.
+The `web` module is provided by the addons found in the `openerp-web` project.
+Maybe you forgot to add those addons in your addons_path configuration. 
+Traceback (most recent call last):
+  File "/Users/huutin/Desktop/project/back-end/odoo/odoo/service/server.py", line 1307, in load_server_wide_modules
+    odoo.modules.module.load_openerp_module(m)
+  File "/Users/huutin/Desktop/project/back-end/odoo/odoo/modules/module.py", line 384, in load_openerp_module
+    __import__(qualname)
+ModuleNotFoundError: No module named 'odoo.addons.web'
+2025-08-19 07:12:19,586 60710 INFO ? odoo.service.server: HTTP service (werkzeug) running on 192.168.1.141:8071 
+2025-08-19 07:33:17,843 60710 INFO ? odoo.service.server: Initiating shutdown 
+2025-08-19 07:33:17,847 60710 INFO ? odoo.service.server: Hit CTRL-C again or send a second signal to force the shutdown. 
+2025-08-19 07:33:18,349 60710 INFO ? odoo.sql_db: ConnectionPool(read/write;used=0/count=0/max=64): Closed 2 connections  

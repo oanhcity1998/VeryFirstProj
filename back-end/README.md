@@ -1,5 +1,15 @@
 # Odoo HR Management System
 
+```bash
+docker-compose -f docker-compose.yml up -d    
+docker-compose -f docker-compose.yml logs -f odoo
+
+Bật lại để dev: up -d
+Dừng tạm: down
+Reset sạch sẽ: down -v
+```
+
+
 ## Prerequisites
 - Docker
 - Docker Compose

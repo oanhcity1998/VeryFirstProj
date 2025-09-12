@@ -17,11 +17,10 @@ import {
   UserOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import SidebarMenu from "../../components/SideBar/SidebarMenu";
 import "./mainLayout.css";
-import SidebarMenuHRM from "../../components/SiderBar-HRM/SidebarMenu-HRM";
-// import FilterDrawer from "../components/FilterDrawer";
-import { ROUTES_APP } from "../../routes";
+import { ROUTES_APP } from "../../app/routes";
+import SidebarMenuHRM from "@/components/HRM/SiderBar-HRM/SidebarMenu-HRM";
+import SidebarMenu from "@/components/CRM/SideBar/SidebarMenu";
 
 const { Header, Sider, Content } = Layout;
 const { Search } = Input;

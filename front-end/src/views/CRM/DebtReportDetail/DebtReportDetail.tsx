@@ -12,7 +12,7 @@ import {
   Col,
   Select,
 } from "antd";
-import { ROUTES_APP } from "../../../routes";
+import { ROUTES_APP } from "../../../app/routes";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import "./DebtReportDetail.css";
@@ -273,8 +273,8 @@ const DebtReportDetail = () => {
                     <Form.Item
                       name="totalDebtRemaining"
                       label="Tổng công nợ còn phải thu (đã VAT)"
-                      // labelCol={{ span: 10 }}
-                      // wrapperCol={{ span: 14 }}
+                    // labelCol={{ span: 10 }}
+                    // wrapperCol={{ span: 14 }}
                     >
                       <InputNumber style={{ width: "100%" }} />
                     </Form.Item>

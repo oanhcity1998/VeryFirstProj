@@ -3,7 +3,7 @@ import { Card, Input, Button, Checkbox, Form, Typography, message } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
-import { ROUTES_APP } from "../routes";
+import { ROUTES_APP } from "../app/routes";
 
 const { Title, Text } = Typography;
 
@@ -11,7 +11,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const onFinish = (values) => {
+  const onFinish = (values: any) => {
     setLoading(true);
 
     // ✅ Check credentials (admin/admin allowed)

@@ -1,0 +1,84 @@
+{
+  "columns": [
+    {
+      "title": "Số báo cáo",
+      "dataIndex": "reportNo",
+      "type": "text",
+      "width": 150,
+      "fixed": "left"
+    },
+    {
+      "title": "Ngày lập",
+      "dataIndex": "reportDate",
+      "type": "date",
+      "width": 140
+    },
+    {
+      "title": "Hợp đồng",
+      "dataIndex": "contract",
+      "type": "text",
+      "width": 160
+    },
+    {
+      "title": "Khách hàng",
+      "dataIndex": "customer",
+      "type": "text",
+      "width": 200
+    },
+    {
+      "title": "Kiểm toán viên",
+      "dataIndex": "auditor",
+      "type": "list",
+      "width": 200
+    },
+    {
+      "title": "Giám đốc",
+      "dataIndex": "director",
+      "type": "text",
+      "width": 180
+    },
+    {
+      "title": "Người lập",
+      "dataIndex": "creator",
+      "type": "text",
+      "width": 160
+    },
+    {
+      "title": "Ngày xác nhận",
+      "dataIndex": "confirmedDate",
+      "type": "date",
+      "width": 140
+    },
+    {
+      "title": "Trạng thái công nợ",
+      "dataIndex": "debtStatus",
+      "type": "text",
+      "width": 140
+    },
+    {
+      "title": "Trạng thái báo cáo",
+      "dataIndex": "status",
+      "type": "tag",
+      "width": 140,
+      "options": [
+        { "value": "Khởi tạo", "color": "blue" },
+        { "value": "Chờ kế toán", "color": "orange" },
+        { "value": "Xác nhận", "color": "green" },
+        { "value": "Hủy", "color": "red" }
+      ]
+    },
+    {
+      "title": "Tổng nợ còn lại",
+      "dataIndex": "totalDebtRemaining",
+      "type": "number",
+      "width": 140
+    },
+    {
+      "title": "Ghi chú",
+      "dataIndex": "note",
+      "type": "text",
+      "width": 200
+    }
+  ],
+  "rowActions": ["detail", "edit", "delete"]
+}

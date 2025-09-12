@@ -1,0 +1,155 @@
+import {useEffect} from "react"
+import { Modal, Form, Input, Button, Upload, Select, Col, Row, Card } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import "./CreateCustomerForm.css";
+
+const { Option } = Select;
+
+interface CreateCustomerFormProps {
+  onCancel?: () => void;
+  onSave: (customer: any) => void;
+  customer?: any | null;
+  open?: boolean;
+  mode?: "edit" | "add";
+}
+
+const CreateCustomerForm: React.FC<CreateCustomerFormProps> = ({
+  onCancel,
+  onSave,
+  customer,
+  open,
+  mode,
+}) => {
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (customer) {
+      form.setFieldsValue(customer);
+    } else {
+      form.resetFields();
+    }
+  }, [customer, form]);
+
+  const onFinish = (values: any) => {
+    onSave(values);
+  };
+
+  // const handleOk = () => {
+  //   form.validateFields().then(values => {
+  //     console.log("Form values:", values);
+  //     onOk(values);
+  //     form.resetFields();
+  //   });
+  // };
+
+  return (
+    <Modal
+      title={mode === "edit" ? "Chỉnh sửa khách hàng" : "Thêm khách hàng"}
+      open={open}
+      onCancel={onCancel}
+      footer={[
+        <Button key="cancel" danger onClick={onCancel}>
+          Huỷ
+        </Button>,
+        <Button key="submit" type="primary" onClick={() => form.submit()}>
+          Xác nhận
+        </Button>,
+      ]}
+      width={800}
+      // destroyOnClose
+    >
+      <Form className="form-container" form={form} layout="vertical" onFinish={onFinish}>
+        {/* ✅ Thông tin khách hàng */}
+      <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+        <Col span={12}>
+        <Card>
+          <h3>Thông tin khách hàng</h3>
+
+          <Form.Item label="Tên khách hàng" name="customerName" rules={[{ required: true }]}>
+            <Input placeholder="Nhập tên khách hàng" />
+          </Form.Item>
+
+          <Form.Item label="Tên doanh nghiệp ghi trên hợp đồng" name="companyContractName">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Tên doanh nghiệp bằng tiếng Anh" name="companyEnglishName">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Mã số thuế" name="taxCode">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Số điện thoại" name="phone">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Số fax" name="fax">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Email" name="email">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Địa chỉ" name="address">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Ngành" name="industry">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Thị trường chính" name="mainMarket">
+            <Input />
+          </Form.Item>
+          </Card>
+        </Col>
+        {/* ✅ Thông tin bổ sung */}
+        <Col span={12}>
+          <Card>
+          <h3>Thông tin bổ sung</h3>
+
+          <Form.Item label="Số lượng chi nhánh hoạt động" name="branchCount">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Số nhân sự hiện tại của khách hàng" name="currentStaff">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Doanh thu trung bình mỗi năm" name="avgRevenue">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Số lượng văn bản trao đổi mỗi tháng" name="monthlyDocs">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Tài liệu" name="documents">
+            <Upload beforeUpload={() => false}>
+              <Button icon={<UploadOutlined />}>Upload file</Button>
+            </Upload>
+          </Form.Item>
+
+          <Form.Item label="Trạng thái quyết toán thuế" name="taxStatus">
+            <Select placeholder="Chọn trạng thái">
+              <Option value="done">Đã quyết toán</Option>
+              <Option value="pending">Chưa quyết toán</Option>
+              <Option value="other">Khác</Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item label="Năm quyết toán" name="taxSettlemenYear">
+            <Input />
+          </Form.Item>
+        </Card>
+        </Col>
+      </Row>  
+      </Form>
+    </Modal>
+  );
+};
+
+export default CreateCustomerForm;

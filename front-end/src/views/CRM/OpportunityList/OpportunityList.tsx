@@ -1,14 +1,13 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Button, Space, Modal, message } from "antd";
 import { PlusOutlined, DeleteOutlined, FilterOutlined } from "@ant-design/icons";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Search from "antd/es/input/Search";
-import { OpportunityForm } from "../../../components/OpportunityForm/OpportunityForm";
-import { TableOpportunity } from "../../../components/TableOpportunity/TableOpportunity";
-import { ROUTES_APP } from "../../../routes";
-import { FilterOpportunityDrawer } from "../../../components/Filter/FilterOpportunityDrawer";
-import dayjs from "dayjs";
+import { ROUTES_APP } from "../../../app/routes";
 import { Product } from "../QuotationList/QuotationList";
+import { FilterOpportunityDrawer } from "@/components/CRM/Filter/FilterOpportunityDrawer";
+import { TableOpportunity } from "@/components/CRM/TableOpportunity/TableOpportunity";
+import { OpportunityForm } from "@/components/CRM/OpportunityForm/OpportunityForm";
 
 // Interface CRM Opportunity
 export interface Opportunity {
@@ -24,7 +23,6 @@ export interface Opportunity {
   owner: string; // Nhân viên phụ trách
   // stage: "Qualification" | "Proposal" | "Negotiation" | "Closed Won" | "Closed Lost"; // Giai đoạn
   stage: "Mới" | "Đạt yêu cầu" | "Đàm phán" | "Đóng"; // Giai đoạn
-  nextAction?: string; // Hành động tiếp theo
 }
 
 const dataSource: Opportunity[] = [
@@ -61,7 +59,6 @@ const dataSource: Opportunity[] = [
     priority: "High",
     owner: "Phạm Văn Quyết",
     stage: "Mới",
-    nextAction: "Chuẩn bị demo cho khách hàng",
   },
 ];
 
@@ -85,7 +82,7 @@ const OpportunityList = () => {
   // Delete state
   const [deleting, setDeleting] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   // 👉 Tạo mới
   const handleCreate = (values: Opportunity) => {
@@ -197,6 +194,16 @@ const OpportunityList = () => {
         filterStage={filterStage}
         filterDate={filterDate}
       />
+      {/* <KVTable<Opportunity>
+        data={data}
+        rowKey="id"
+        config={opportunityTableConfig}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: setSelectedRowKeys,
+        }}
+        onEditClick={(record) => console.log("Edit:", record)}
+      /> */}
 
       {/* Modal create */}
       <OpportunityForm

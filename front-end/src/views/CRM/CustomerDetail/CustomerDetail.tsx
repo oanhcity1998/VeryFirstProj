@@ -2,11 +2,13 @@ import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Card, Input, Tabs, Button, Form, Row, Col, Breadcrumb, Select, message } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import TableContact from "../../../components/TableContact/TableContact";
-import ContactForm from "../../../components/ContactForm/ContactForm";
+import TableContact from "@/components/CRM/TableContact/TableContact";
+import ContactForm from "@/components/CRM/ContactForm/ContactForm";
+import QuoteList from "../QuoteList/QuoteList"
+import ContractList from "../ContractList/ContractList"
 
 import "./CustomerDetail.css";
-import { ROUTES_APP } from "../../../routes";
+import { ROUTES_APP } from "../../../app/routes";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -144,7 +146,7 @@ export default function CustomerDetail() {
   //   }
   // };
 
-  const handleEdit = (values) => {
+  const handleEdit = (values: any) => {
     message.success("Đã cập nhật liên hệ");
     setIsEditModalOpen(false);
   };
@@ -168,89 +170,89 @@ export default function CustomerDetail() {
                 <Form.Item label="Tên khách hàng">
                   <Input
                     value={customer.name}
-                    // readOnly={!isEditing}
-                    // onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
+                  // readOnly={!isEditing}
+                  // onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
                   />
                 </Form.Item>
                 <Form.Item label="Tên DN ghi trên hợp đồng">
                   <Input
                     value={customer.contractName}
-                    // readOnly={!isEditing}
-                    // onChange={(e) =>
-                    //   setCustomer({ ...customer, contractName: e.target.value })
-                    // }
+                  // readOnly={!isEditing}
+                  // onChange={(e) =>
+                  //   setCustomer({ ...customer, contractName: e.target.value })
+                  // }
                   />
                 </Form.Item>
                 <Form.Item label="Tên DN bằng tiếng Anh">
                   <Input
                     value={customer.englishName}
-                    // readOnly={!isEditing}
-                    // onChange={(e) =>
-                    //   setCustomer({ ...customer, englishName: e.target.value })
-                    // }
+                  // readOnly={!isEditing}
+                  // onChange={(e) =>
+                  //   setCustomer({ ...customer, englishName: e.target.value })
+                  // }
                   />
                 </Form.Item>
                 <Form.Item label="Mã số thuế">
                   <Input
                     value={customer.taxCode}
-                    // readOnly={!isEditing}
-                    // onChange={(e) =>
-                    //   setCustomer({ ...customer, taxCode: e.target.value })
-                    // }
+                  // readOnly={!isEditing}
+                  // onChange={(e) =>
+                  //   setCustomer({ ...customer, taxCode: e.target.value })
+                  // }
                   />
                 </Form.Item>
                 <Form.Item label="Số điện thoại">
                   <Input
                     value={customer.phone}
-                    // readOnly={!isEditing}
-                    // onChange={(e) =>
-                    //   setCustomer({ ...customer, phone: e.target.value })
-                    // }
+                  // readOnly={!isEditing}
+                  // onChange={(e) =>
+                  //   setCustomer({ ...customer, phone: e.target.value })
+                  // }
                   />
                 </Form.Item>
                 <Form.Item label="Email">
                   <Input
                     value={customer.email}
-                    // readOnly={!isEditing}
-                    // onChange={(e) =>
-                    //   setCustomer({ ...customer, email: e.target.value })
-                    // }
+                  // readOnly={!isEditing}
+                  // onChange={(e) =>
+                  //   setCustomer({ ...customer, email: e.target.value })
+                  // }
                   />
                 </Form.Item>
                 <Form.Item label="Số fax">
                   <Input
                     value={customer.fax}
-                    // readOnly={!isEditing}
-                    // onChange={(e) =>
-                    //   setCustomer({ ...customer, fax: e.target.value })
-                    // }
+                  // readOnly={!isEditing}
+                  // onChange={(e) =>
+                  //   setCustomer({ ...customer, fax: e.target.value })
+                  // }
                   />
                 </Form.Item>
                 <Form.Item label="Địa chỉ">
                   <Input
                     value={customer.address}
-                    // readOnly={!isEditing}
-                    // onChange={(e) =>
-                    //   setCustomer({ ...customer, address: e.target.value })
-                    // }
+                  // readOnly={!isEditing}
+                  // onChange={(e) =>
+                  //   setCustomer({ ...customer, address: e.target.value })
+                  // }
                   />
                 </Form.Item>
                 <Form.Item label="Ngành">
                   <Input
                     value={customer.industry}
-                    // readOnly={!isEditing}
-                    // onChange={(e) =>
-                    //   setCustomer({ ...customer, industry: e.target.value })
-                    // }
+                  // readOnly={!isEditing}
+                  // onChange={(e) =>
+                  //   setCustomer({ ...customer, industry: e.target.value })
+                  // }
                   />
                 </Form.Item>
                 <Form.Item label="Thị trường chính">
                   <Input
                     value={customer.market}
-                    // readOnly={!isEditing}
-                    // onChange={(e) =>
-                    //   setCustomer({ ...customer, market: e.target.value })
-                    // }
+                  // readOnly={!isEditing}
+                  // onChange={(e) =>
+                  //   setCustomer({ ...customer, market: e.target.value })
+                  // }
                   />
                 </Form.Item>
               </Form>
@@ -264,47 +266,47 @@ export default function CustomerDetail() {
                 <Form.Item label="Số lượng chi nhánh">
                   <Input
                     value={customer.branches}
-                    // readOnly={!isEditing}
-                    // onChange={(e) =>
-                    //   setCustomer({ ...customer, branches: e.target.value })
-                    // }
+                  // readOnly={!isEditing}
+                  // onChange={(e) =>
+                  //   setCustomer({ ...customer, branches: e.target.value })
+                  // }
                   />
                 </Form.Item>
                 <Form.Item label="Số nhân sự">
                   <Input
                     value={customer.employees}
-                    // readOnly={!isEditing}
-                    // onChange={(e) =>
-                    //   setCustomer({ ...customer, employees: e.target.value })
-                    // }
+                  // readOnly={!isEditing}
+                  // onChange={(e) =>
+                  //   setCustomer({ ...customer, employees: e.target.value })
+                  // }
                   />
                 </Form.Item>
                 <Form.Item label="Doanh thu TB/năm">
                   <Input
                     value={customer.revenue}
-                    // readOnly={!isEditing}
-                    // onChange={(e) =>
-                    //   setCustomer({ ...customer, revenue: e.target.value })
-                    // }
+                  // readOnly={!isEditing}
+                  // onChange={(e) =>
+                  //   setCustomer({ ...customer, revenue: e.target.value })
+                  // }
                   />
                 </Form.Item>
                 <Form.Item label="Văn bản TB/tháng">
                   <Input
                     value={customer.documentsPerMonth}
-                    // readOnly={!isEditing}
-                    // onChange={(e) =>
-                    //   setCustomer({
-                    //     ...customer,
-                    //     documentsPerMonth: e.target.value,
-                    //   })
-                    // }
+                  // readOnly={!isEditing}
+                  // onChange={(e) =>
+                  //   setCustomer({
+                  //     ...customer,
+                  //     documentsPerMonth: e.target.value,
+                  //   })
+                  // }
                   />
                 </Form.Item>
                 <Form.Item label="Trạng thái quyết toán thuế">
                   <Select
                     value={customer.taxStatus}
-                    // disabled={!isEditing}
-                    // onChange={(value) => setCustomer({ ...customer, taxStatus: value })}
+                  // disabled={!isEditing}
+                  // onChange={(value) => setCustomer({ ...customer, taxStatus: value })}
                   >
                     <Option value="Đã quyết toán">Đã quyết toán</Option>
                     <Option value="Chưa quyết toán">Chưa quyết toán</Option>
@@ -315,13 +317,13 @@ export default function CustomerDetail() {
                 <Form.Item label="Năm quyết toán">
                   <Input
                     value="2025"
-                    // readOnly={!isEditing}
-                    // onChange={(e) =>
-                    //   setCustomer({
-                    //     ...customer,
-                    //     documentsPerMonth: e.target.value,
-                    //   })
-                    // }
+                  // readOnly={!isEditing}
+                  // onChange={(e) =>
+                  //   setCustomer({
+                  //     ...customer,
+                  //     documentsPerMonth: e.target.value,
+                  //   })
+                  // }
                   />
                 </Form.Item>
 
@@ -329,10 +331,10 @@ export default function CustomerDetail() {
                   <TextArea
                     rows={3}
                     value={customer.notes}
-                    // readOnly={!isEditing}
-                    // onChange={(e) =>
-                    //   setCustomer({ ...customer, notes: e.target.value })
-                    // }
+                  // readOnly={!isEditing}
+                  // onChange={(e) =>
+                  //   setCustomer({ ...customer, notes: e.target.value })
+                  // }
                   />
                 </Form.Item>
               </Form>
@@ -418,8 +420,8 @@ export default function CustomerDetail() {
         </div>
       ),
     },
-    { key: "3", label: "Báo giá", children: <p>Thông tin báo giá…</p> },
-    { key: "4", label: "Hợp đồng", children: <p>Danh sách hợp đồng…</p> },
+    { key: "3", label: "Báo giá", children: <QuoteList/> },
+    { key: "4", label: "Hợp đồng", children: <ContractList/> },
     { key: "5", label: "Tài liệu", children: <p>File tài liệu…</p> },
   ];
 
@@ -431,12 +433,12 @@ export default function CustomerDetail() {
           <Breadcrumb items={breadcrumbItems} separator=">" />
         </div>
       }
-      // extra={
-      //   <div className="customer-detail-extra">
-      //     <Button onClick={toggleEdit}>{isEditing ? "Lưu" : "Chỉnh sửa"}</Button>
-      //     <Button danger onClick={() => setDeleteOpen(true)}>Xóa</Button>
-      //   </div>
-      // }
+    // extra={
+    //   <div className="customer-detail-extra">
+    //     <Button onClick={toggleEdit}>{isEditing ? "Lưu" : "Chỉnh sửa"}</Button>
+    //     <Button danger onClick={() => setDeleteOpen(true)}>Xóa</Button>
+    //   </div>
+    // }
     >
       <Tabs type="card" defaultActiveKey="1" items={tabs} />
       {/* <Modal

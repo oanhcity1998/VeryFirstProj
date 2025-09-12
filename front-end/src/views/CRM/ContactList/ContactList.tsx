@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button, Space, Modal, message, Select } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
-import TableContact, { Contact } from "../../../components/TableContact/TableContact";
-import ContactForm from "../../../components/ContactForm/ContactForm";
 import Search from "antd/es/input/Search";
 import { createContact, deleteContact, getContacts, updateContact } from "./contactService";
+import TableContact, { Contact } from "@/components/CRM/TableContact/TableContact";
+import ContactForm from "@/components/CRM/ContactForm/ContactForm";
 
 export const mockContactDatas: Contact[] = [
   {
@@ -78,7 +78,7 @@ const ContactList = () => {
       message.error("Không thể cập nhật thông tin liên hệ");
     }
   };
-
+  
   // 🗑 delete
   const handleDelete = async () => {
     try {
