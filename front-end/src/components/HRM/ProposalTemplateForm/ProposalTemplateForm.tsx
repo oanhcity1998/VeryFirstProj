@@ -80,11 +80,15 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
   }, [template, form]);
 
   const onFinish = (values: any) => {
+    const isCreate = !template;
+
     const payload: ProposalTemplate & { fields: FieldMeta[] } = {
       ...values,
-      createdDate: values.createdDate
-        ? values.createdDate.format("DD/MM/YYYY")
-        : template?.createdDate ?? "",
+      quantity: values.quantity ? values.quantity : template?.quantity ?? 0,
+      creator: values.creator ? values.creator : template?.creator ?? "Nguyễn Văn A",
+      createdDate: isCreate
+        ? dayjs().format("DD/MM/YYYY") // ✅ tạo mới thì lấy hôm nay
+        : template?.createdDate ?? dayjs().format("DD/MM/YYYY"), // sửa thì giữ ngày cũ
       approvalRequired: values.approvalRequired ? "Có" : "Không",
       fields: fieldRows, // ✅ thêm danh sách trường
     };
