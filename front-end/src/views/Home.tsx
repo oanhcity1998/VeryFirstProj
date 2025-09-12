@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Col, Row, Typography } from "antd";
 import { TeamOutlined, ShopOutlined } from "@ant-design/icons";
-import { ROUTES_APP } from "../../../app/routes";
+import { ROUTES_APP } from "../app/routes";
 import "./Home.css"; // 👈 thêm file css
 
 const { Title, Paragraph } = Typography;
