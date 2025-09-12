@@ -149,7 +149,7 @@
 /* grid menu */
 .ant-dropdown-menu {
   display: grid !important;
-  grid-template-columns: repeat(2, 1fr); /* 2 items per row */
+  grid-template-columns: repeat(1, 1fr); /* 2 items per row */
   gap: 12px;
   padding: 12px;
 }

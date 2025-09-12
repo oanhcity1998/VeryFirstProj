@@ -5,8 +5,8 @@ import {
 } from "@/models/HRM/auth.model";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const authApi = createApi({
-  reducerPath: "authApi",
+export const authService = createApi({
+  reducerPath: "authService",
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_BASE_URL }),
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponseData, LoginRequest["params"]>({
@@ -24,4 +24,4 @@ export const authApi = createApi({
   }),
 });
 
-export const { useLoginMutation } = authApi;
+export const { useLoginMutation } = authService;

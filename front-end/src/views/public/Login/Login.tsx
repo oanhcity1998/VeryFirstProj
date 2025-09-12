@@ -1,79 +1,86 @@
-import { useEffect } from "react";
-import { Card, Input, Button, Checkbox, Form, Typography, message } from "antd";
+import { useState, useEffect } from "react";
+import { Card, Input, Button, Form, Typography, message } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, } from "@/app/store";
+import { useLoginMutation } from "@/services/public/auth.service";
+import { useAppDispatch } from "@/app/store";
+import { setCredentials, setError } from "@/redux/public/slices/authSlice";
 import "./Login.css";
 import { ROUTES_APP } from "@/app/routes";
-import { setCredentials, setError, setLoading } from "@/redux/public/slices/authSlice";
-import { useLoginMutation } from "@/services/public/auth.service";
+import useToast from "@/hooks/useToast";
 
 const { Title, Text } = Typography;
 
 export default function Login() {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [login, { isLoading, error }] = useLoginMutation();
+  const { success, error: toastError } = useToast();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (isLoading) {
-      setLoading();
-      dispatch(setLoading());
-    }
-  }, [isLoading, dispatch]);
-
-  useEffect(() => {
     if (error) {
-      setLoading();
-      dispatch(setError('Invalid email or password'));
-      message.error('Invalid email or password');
+      setLoading(false);
+      dispatch(setError("Email hoặc mật khẩu không hợp lệ"));
+      message.error("Email hoặc mật khẩu không hợp lệ");
     }
   }, [error, dispatch]);
 
   const onFinish = async (values: any) => {
     try {
+      setLoading(true);
       const response = await login({
         username: values.email,
         password: values.password,
       }).unwrap();
 
       dispatch(setCredentials({ uid: response.uid }));
-      message.success(response.message);
-      setLoading();
-      navigate(ROUTES_APP.home || '/home');
+      success("Đăng nhập thành công!");
+      navigate(ROUTES_APP.home);
     } catch (err) {
-      // Error is handled by useEffect
+      toastError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="login-container">
+    <div className="login-wrapper">
       <Card className="login-card" bordered={false}>
-        <div className="login-logo">
-          <img src="/logo.png" alt="Logo" />
+        <div className="login-header">
+          <Title level={3} className="login-title">
+            Management System
+          </Title>
+          <Text className="login-subtitle">Đăng nhập để tiếp tục</Text>
         </div>
-        <Title level={4} className="login-title">
-          Sign in to your account
-        </Title>
 
-        <Form name="login" onFinish={onFinish} layout="vertical">
-          <Form.Item name="email" rules={[{ required: true, message: "Please input your Email!" }]}>
-            <Input prefix={<UserOutlined />} placeholder="Email" size="large" />
+        <Form name="login" onFinish={onFinish} layout="vertical" className="login-form">
+          <Form.Item
+            name="email"
+            rules={[{ required: true, message: "Vui lòng nhập Email!" }]}
+            style={{ marginBottom: 24 }} // thêm khoảng cách dưới field
+          >
+            <Input
+              prefix={<UserOutlined />}
+              placeholder="Nhập email"
+              size="large"
+              className="login-input"
+            />
           </Form.Item>
 
           <Form.Item
             name="password"
-            rules={[{ required: true, message: "Please input your Password!" }]}
+            rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+            style={{ marginBottom: 24 }}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="Password" size="large" />
+            <Input.Password
+              prefix={<LockOutlined />}
+              placeholder="Nhập mật khẩu"
+              size="large"
+              className="login-input"
+            />
           </Form.Item>
 
-          <Form.Item>
-            <div className="login-options">
-              <Checkbox>Keep me logged in</Checkbox>
-              <a href="/forgot-password">Forgot password?</a>
-            </div>
-          </Form.Item>
 
           <Form.Item>
             <Button
@@ -81,16 +88,19 @@ export default function Login() {
               htmlType="submit"
               className="login-button"
               size="large"
+              loading={loading || isLoading}
               block
             >
-              Log in
+              Đăng nhập
             </Button>
           </Form.Item>
-        </Form>
 
-        <Text className="signup-text">
-          Don’t have an account? <a href="/signup">Sign up</a>
-        </Text>
+          <div className="login-footer">
+            <a href="/forgot-password" className="forgot-password">
+              Quên mật khẩu?
+            </a>
+          </div>
+        </Form>
       </Card>
     </div>
   );

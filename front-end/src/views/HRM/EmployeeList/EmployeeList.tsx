@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Button, Modal, message, Popover, Upload, Space, Form } from "antd";
+import { useEffect, useState } from "react";
+import { Button, Modal, Popover, Upload, Space, Form, Pagination } from "antd";
 import {
   PlusOutlined,
   SettingOutlined,
@@ -14,288 +14,16 @@ import Search from "antd/es/input/Search";
 import TableEmployee from "@/components/HRM/TableEmployee/TableEmployee";
 import EmployeeForm from "@/components/HRM/EmployeeForm/EmployeeForm";
 import FilterDrawerEmployee from "@/components/HRM/FilterEmployee/FilterDrawerEmployee";
+import { useAppDispatch, useAppSelector } from "@/app/store";
+import { toast } from "react-toastify";
+import { useGetEmployeesQuery } from "@/services/HRM/employee.service";
+import { setEmployees, setError } from "@/redux/HRM/slices/employeeSlice";
+import { Employee, EmployeeResponse } from "@/models/HRM/employee.model";
 
-export interface Employee {
-  key: string;
-  id: string;
-  fullName: string;
-  gender: string;
-  birthDate: string;
-  idNumber: string;
-  issueDate: string;
-  issuePlace: string;
-  phone: string;
-  email: string;
-  permanentAddress: string;
-  temporaryAddress: string;
-  personalTaxCode: string;
-  socialInsuranceNumber: string;
-  bankAccount: string;
-  department: string;
-  position: string;
-  contractType: string;
-  contractTerm: string;
-  startDate: string;
-  endDate: string;
-  salary: string;
-  bonus: string;
-}
+const { Dragger } = Upload;
 
 const EmployeeList: React.FC = () => {
   const [form] = Form.useForm();
-  const [data, setData] = useState<Employee[]>([
-    {
-      key: "1",
-      id: "82334",
-      fullName: "Nguyễn Nhật Huy",
-      gender: "Nam",
-      birthDate: "04/12/1978",
-      idNumber: "523943855",
-      issueDate: "16/08/2013",
-      issuePlace: "7529 E Pecan St.",
-      phone: "+84 678 890 000",
-      email: "huy.nguyen@example.com",
-      permanentAddress: "123 Đường A, TP.HCM",
-      temporaryAddress: "456 Đường B, Hà Nội",
-      personalTaxCode: "123456789",
-      socialInsuranceNumber: "987654321",
-      bankAccount: "0987654321 - Vietcombank",
-      department: "Phòng 1",
-      position: "Nhân viên kinh doanh",
-      contractType: "Hợp đồng xác định thời hạn",
-      contractTerm: "12 tháng",
-      startDate: "01/01/2020",
-      endDate: "31/12/2021",
-      salary: "15000000",
-      bonus: "2000000",
-    },
-    {
-      key: "2",
-      id: "80938",
-      fullName: "Võ Bão Châu",
-      gender: "Nữ",
-      birthDate: "02/01/1980",
-      idNumber: "982598195",
-      issueDate: "28/10/2012",
-      issuePlace: "3900 Poplar Dr.",
-      phone: "+84 915 343 643",
-      email: "chau.vo@example.com",
-      permanentAddress: "789 Đường C, Đà Nẵng",
-      temporaryAddress: "101 Đường D, Huế",
-      personalTaxCode: "987654321",
-      socialInsuranceNumber: "123456789",
-      bankAccount: "1122334455 - Techcombank",
-      department: "Phòng 2",
-      position: "Trưởng phòng",
-      contractType: "Hợp đồng không xác định thời hạn",
-      contractTerm: "",
-      startDate: "01/03/2019",
-      endDate: "",
-      salary: "20000000",
-      bonus: "3000000",
-    },
-    {
-      key: "3",
-      id: "82278",
-      fullName: "Lê Khánh An",
-      gender: "Nữ",
-      birthDate: "20/06/1988",
-      idNumber: "081595952",
-      issueDate: "12/06/2020",
-      issuePlace: "3900 Parker Rd.",
-      phone: "+84 889 988 123",
-      email: "an.le@example.com",
-      permanentAddress: "321 Đường E, Cần Thơ",
-      temporaryAddress: "654 Đường F, Hải Phòng",
-      personalTaxCode: "456789123",
-      socialInsuranceNumber: "789123456",
-      bankAccount: "5566778899 - BIDV",
-      department: "Phòng 3",
-      position: "Nhân viên kế toán",
-      contractType: "Hợp đồng thử việc",
-      contractTerm: "2 tháng",
-      startDate: "01/07/2023",
-      endDate: "30/08/2023",
-      salary: "12000000",
-      bonus: "1000000",
-    },
-    {
-      key: "4",
-      id: "82279",
-      fullName: "Lê Khánh An",
-      gender: "Nữ",
-      birthDate: "20/06/1988",
-      idNumber: "081595952",
-      issueDate: "12/06/2020",
-      issuePlace: "3900 Parker Rd.",
-      phone: "+84 889 988 123",
-      email: "an.le@example.com",
-      permanentAddress: "321 Đường E, Cần Thơ",
-      temporaryAddress: "654 Đường F, Hải Phòng",
-      personalTaxCode: "456789123",
-      socialInsuranceNumber: "789123456",
-      bankAccount: "5566778899 - BIDV",
-      department: "Phòng 3",
-      position: "Nhân viên kế toán",
-      contractType: "Hợp đồng thử việc",
-      contractTerm: "2 tháng",
-      startDate: "01/07/2023",
-      endDate: "30/08/2023",
-      salary: "12000000",
-      bonus: "1000000",
-    },
-    {
-      key: "5",
-      id: "82280",
-      fullName: "Lê Khánh An",
-      gender: "Nữ",
-      birthDate: "20/06/1988",
-      idNumber: "081595952",
-      issueDate: "12/06/2020",
-      issuePlace: "3900 Parker Rd.",
-      phone: "+84 889 988 123",
-      email: "an.le@example.com",
-      permanentAddress: "321 Đường E, Cần Thơ",
-      temporaryAddress: "654 Đường F, Hải Phòng",
-      personalTaxCode: "456789123",
-      socialInsuranceNumber: "789123456",
-      bankAccount: "5566778899 - BIDV",
-      department: "Phòng 3",
-      position: "Nhân viên kế toán",
-      contractType: "Hợp đồng thử việc",
-      contractTerm: "2 tháng",
-      startDate: "01/07/2023",
-      endDate: "30/08/2023",
-      salary: "12000000",
-      bonus: "1000000",
-    },
-    {
-      key: "6",
-      id: "82281",
-      fullName: "Lê Khánh An",
-      gender: "Nữ",
-      birthDate: "20/06/1988",
-      idNumber: "081595952",
-      issueDate: "12/06/2020",
-      issuePlace: "3900 Parker Rd.",
-      phone: "+84 889 988 123",
-      email: "an.le@example.com",
-      permanentAddress: "321 Đường E, Cần Thơ",
-      temporaryAddress: "654 Đường F, Hải Phòng",
-      personalTaxCode: "456789123",
-      socialInsuranceNumber: "789123456",
-      bankAccount: "5566778899 - BIDV",
-      department: "Phòng 3",
-      position: "Nhân viên kế toán",
-      contractType: "Hợp đồng thử việc",
-      contractTerm: "2 tháng",
-      startDate: "01/07/2023",
-      endDate: "30/08/2023",
-      salary: "12000000",
-      bonus: "1000000",
-    },
-    {
-      key: "7",
-      id: "82282",
-      fullName: "Lê Khánh An",
-      gender: "Nữ",
-      birthDate: "20/06/1988",
-      idNumber: "081595952",
-      issueDate: "12/06/2020",
-      issuePlace: "3900 Parker Rd.",
-      phone: "+84 889 988 123",
-      email: "an.le@example.com",
-      permanentAddress: "321 Đường E, Cần Thơ",
-      temporaryAddress: "654 Đường F, Hải Phòng",
-      personalTaxCode: "456789123",
-      socialInsuranceNumber: "789123456",
-      bankAccount: "5566778899 - BIDV",
-      department: "Phòng 3",
-      position: "Nhân viên kế toán",
-      contractType: "Hợp đồng thử việc",
-      contractTerm: "2 tháng",
-      startDate: "01/07/2023",
-      endDate: "30/08/2023",
-      salary: "12000000",
-      bonus: "1000000",
-    },
-    {
-      key: "8",
-      id: "82283",
-      fullName: "Lê Khánh An",
-      gender: "Nữ",
-      birthDate: "20/06/1988",
-      idNumber: "081595952",
-      issueDate: "12/06/2020",
-      issuePlace: "3900 Parker Rd.",
-      phone: "+84 889 988 123",
-      email: "an.le@example.com",
-      permanentAddress: "321 Đường E, Cần Thơ",
-      temporaryAddress: "654 Đường F, Hải Phòng",
-      personalTaxCode: "456789123",
-      socialInsuranceNumber: "789123456",
-      bankAccount: "5566778899 - BIDV",
-      department: "Phòng 3",
-      position: "Nhân viên kế toán",
-      contractType: "Hợp đồng thử việc",
-      contractTerm: "2 tháng",
-      startDate: "01/07/2023",
-      endDate: "30/08/2023",
-      salary: "12000000",
-      bonus: "1000000",
-    },
-    {
-      key: "9",
-      id: "82284",
-      fullName: "Lê Khánh An",
-      gender: "Nữ",
-      birthDate: "20/06/1988",
-      idNumber: "081595952",
-      issueDate: "12/06/2020",
-      issuePlace: "3900 Parker Rd.",
-      phone: "+84 889 988 123",
-      email: "an.le@example.com",
-      permanentAddress: "321 Đường E, Cần Thơ",
-      temporaryAddress: "654 Đường F, Hải Phòng",
-      personalTaxCode: "456789123",
-      socialInsuranceNumber: "789123456",
-      bankAccount: "5566778899 - BIDV",
-      department: "Phòng 3",
-      position: "Nhân viên kế toán",
-      contractType: "Hợp đồng thử việc",
-      contractTerm: "2 tháng",
-      startDate: "01/07/2023",
-      endDate: "30/08/2023",
-      salary: "12000000",
-      bonus: "1000000",
-    },
-    {
-      key: "10",
-      id: "82285",
-      fullName: "Lê Khánh An",
-      gender: "Nữ",
-      birthDate: "20/06/1988",
-      idNumber: "081595952",
-      issueDate: "12/06/2020",
-      issuePlace: "3900 Parker Rd.",
-      phone: "+84 889 988 123",
-      email: "an.le@example.com",
-      permanentAddress: "321 Đường E, Cần Thơ",
-      temporaryAddress: "654 Đường F, Hải Phòng",
-      personalTaxCode: "456789123",
-      socialInsuranceNumber: "789123456",
-      bankAccount: "5566778899 - BIDV",
-      department: "Phòng 3",
-      position: "Nhân viên kế toán",
-      contractType: "Hợp đồng thử việc",
-      contractTerm: "2 tháng",
-      startDate: "01/07/2023",
-      endDate: "30/08/2023",
-      salary: "12000000",
-      bonus: "1000000",
-    },
-  ]);
-
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -303,16 +31,39 @@ const EmployeeList: React.FC = () => {
   const [deleting, setDeleting] = useState<boolean>(false);
   const [importOpen, setImportOpen] = useState<boolean>(false);
   const [importing, setImporting] = useState<boolean>(false);
+  const [queryParams, setQueryParams] = useState({
+    q: "",
+    department_id: undefined,
+    job_id: undefined,
+    status: undefined,
+    page: 1,
+    limit: 25,
+  });
+
+  const dispatch = useAppDispatch();
+  const { employees, meta, error } = useAppSelector((state) => state.employee);
+
+  const { data, isLoading, isError } = useGetEmployeesQuery(queryParams);
+
+  useEffect(() => {
+    if (data) {
+      dispatch(setEmployees(data));
+    }
+    if (isError) {
+      dispatch(setError("Failed to fetch employees"));
+      toast.error("Failed to fetch employees");
+    }
+  }, [data, isError, dispatch]);
 
   const handleDelete = async () => {
     try {
       setDeleting(true);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      const newData = data.filter((item) => !selectedRowKeys.includes(item.key));
-      setData(newData);
-      message.success("Đã xóa nhân sự");
+      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call
+      const newData = employees.filter((item) => !selectedRowKeys.includes(item.id.toString()));
+      dispatch(setEmployees({ employees: newData, meta: { ...meta!, total: newData.length } } as EmployeeResponse));
+      toast.success("Đã xóa nhân sự");
     } catch (err) {
-      message.error("Không thể xóa nhân sự");
+      toast.error("Không thể xóa nhân sự");
     } finally {
       setDeleting(false);
       setDeleteOpen(false);
@@ -324,7 +75,7 @@ const EmployeeList: React.FC = () => {
     const fileType = file.name.split(".").pop()?.toLowerCase();
 
     if (fileType !== "xlsx" && fileType !== "csv") {
-      message.error("File không hợp lệ. Vui lòng tải lên file .xlsx hoặc .csv.");
+      toast.error("File không hợp lệ. Vui lòng tải lên file .xlsx hoặc .csv.");
       return Upload.LIST_IGNORE;
     }
 
@@ -340,27 +91,27 @@ const EmployeeList: React.FC = () => {
 
       const requiredFields = [
         "id",
-        "fullName",
+        "name",
         "gender",
-        "birthDate",
-        "idNumber",
-        "issueDate",
-        "issuePlace",
-        "phone",
-        "email",
-        "permanentAddress",
-        "temporaryAddress",
-        "personalTaxCode",
-        "socialInsuranceNumber",
-        "bankAccount",
-        "department",
-        "position",
-        "contractType",
-        "contractTerm",
-        "startDate",
-        "endDate",
-        "salary",
-        "bonus",
+        "birthday",
+        "work_phone",
+        "work_email",
+        "department_id",
+        "job_id",
+        "status",
+        "cccd",
+        "issued_date_cccd",
+        "issued_place_cccd",
+        "permanent_address",
+        "temporary_address",
+        "tax_id",
+        "insurance_id",
+        "bank_account",
+        "x_contract_type",
+        "date_start",
+        "date_end",
+        "wage",
+        "x_bonus",
       ];
 
       const headerRow = (json[0] as string[]) || [];
@@ -369,7 +120,7 @@ const EmployeeList: React.FC = () => {
 
       const missingHeaders = requiredFields.filter((field) => !headerRow.includes(field));
       if (missingHeaders.length > 0) {
-        message.error(`File thiếu các cột bắt buộc: ${missingHeaders.join(", ")}`);
+        toast.error(`File thiếu các cột bắt buộc: ${missingHeaders.join(", ")}`);
         setImporting(false);
         setImportOpen(false);
         return;
@@ -377,7 +128,7 @@ const EmployeeList: React.FC = () => {
 
       for (let i = 1; i < json.length; i++) {
         const row = json[i] as any[];
-        const newEmployee: Partial<Employee> = {};
+        const newEmployee: Partial<Employee> = { contract: [] };
         let rowHasError = false;
 
         for (let j = 0; j < headerRow.length; j++) {
@@ -388,37 +139,44 @@ const EmployeeList: React.FC = () => {
             errors.push(`Lỗi tại hàng ${i + 1}, cột "${key}": Dữ liệu bị trống.`);
             rowHasError = true;
           }
-          newEmployee[key] = value;
+          if (key === "contract") {
+            newEmployee.contract = [{
+              id: i,
+              x_contract_type: row[j] as string,
+              x_contract_term: false,
+              date_start: row[j + 1] as string,
+              date_end: row[j + 2] as string,
+              wage: parseFloat(row[j + 3] as string) || 0,
+              x_bonus: parseFloat(row[j + 4] as string) || 0,
+            }];
+            j += 4; // Skip contract fields
+          } else {
+            newEmployee[key] = value;
+          }
         }
 
-        if (rowHasError) {
-          continue;
-        }
+        if (rowHasError) continue;
 
-        newEmployee.key = `imported-${Date.now()}-${i}`;
+        newEmployee.id = parseInt(newEmployee.id as string, 10);
+        newEmployee.department_id = parseInt(newEmployee.department_id as string, 10) || 0;
+        newEmployee.job_id = parseInt(newEmployee.job_id as string, 10) || 0;
         newEmployees.push(newEmployee as Employee);
       }
 
       if (errors.length > 0) {
-        const errorMessages = errors.join("\n");
-        message.error(
+        toast.error(
           <div style={{ maxHeight: "200px", overflowY: "auto" }}>
             <p>Có lỗi trong file của bạn:</p>
-            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>{errorMessages}</pre>
+            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>{errors.join("\n")}</pre>
           </div>,
-          5
+          { autoClose: 5000 }
         );
         setImporting(false);
       } else {
-        setData((prevData) => [...prevData, ...newEmployees]);
-
+        dispatch(setEmployees({ employees: [...employees, ...newEmployees], meta: { ...meta!, total: employees.length + newEmployees.length } } as EmployeeResponse));
         const timestamp = dayjs().format("HH:mm:ss DD/MM/YYYY");
-        const currentUser = "admin";
-        console.log(
-          `[Import Log] Tải lên thành công ${newEmployees.length} nhân viên lúc ${timestamp} bởi ${currentUser}`
-        );
-
-        message.success(`${newEmployees.length} nhân viên đã được import thành công.`);
+        console.log(`[Import Log] Tải lên thành công ${newEmployees.length} nhân viên lúc ${timestamp} bởi admin`);
+        toast.success(`${newEmployees.length} nhân viên đã được import thành công.`);
         setImportOpen(false);
         setImporting(false);
       }
@@ -426,6 +184,25 @@ const EmployeeList: React.FC = () => {
 
     reader.readAsBinaryString(file);
     return false;
+  };
+
+  const handleSearch = (value: string) => {
+    setQueryParams({ ...queryParams, q: value, page: 1 });
+  };
+
+  const handleFilter = (values: any) => {
+    setQueryParams({
+      ...queryParams,
+      department_id: values.department_id || undefined,
+      job_id: values.job_id || undefined,
+      status: values.status || undefined,
+      page: 1,
+    });
+    setFilterOpen(false);
+  };
+
+  const handlePageChange = (page: number) => {
+    setQueryParams({ ...queryParams, page });
   };
 
   return (
@@ -437,6 +214,7 @@ const EmployeeList: React.FC = () => {
             className="employee-search-bar"
             placeholder="Tìm kiếm theo họ và tên"
             allowClear
+            onSearch={handleSearch}
             name="search"
           />
           <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>
@@ -465,7 +243,7 @@ const EmployeeList: React.FC = () => {
             footer={null}
             centered
           >
-            <Upload.Dragger
+            <Dragger
               name="file"
               multiple={false}
               beforeUpload={handleUpload}
@@ -477,7 +255,7 @@ const EmployeeList: React.FC = () => {
               </p>
               <p className="ant-upload-text">Click hoặc kéo thả file vào đây để Import</p>
               <p className="ant-upload-hint">Chỉ chấp nhận 1 file mỗi lần</p>
-            </Upload.Dragger>
+            </Dragger>
           </Modal>
           <Button
             danger
@@ -506,9 +284,10 @@ const EmployeeList: React.FC = () => {
       </div>
 
       <TableEmployee
-        data={data as any[]}
+        data={employees as any[]}
         selectedRowKeys={selectedRowKeys}
         setSelectedRowKeys={setSelectedRowKeys}
+        loading={isLoading}
       />
 
       <EmployeeForm
@@ -517,31 +296,36 @@ const EmployeeList: React.FC = () => {
         onCancel={() => setIsModalOpen(false)}
         onSave={(values: Employee) => {
           const newEmployee: Employee = {
-            key: `10${data.length + 1}`,
-            id: `10${data.length + 1}`,
-            fullName: values.fullName,
-            birthDate: values.birthDate,
-            phone: values.phone,
-            position: values.position,
+            id: values.id,
+            name: values.name,
+            birthday: values.birthday,
             gender: values.gender,
-            email: values.email,
-            idNumber: values.idNumber,
-            issuePlace: values.issuePlace,
-            issueDate: values.issueDate,
-            permanentAddress: values.permanentAddress,
-            temporaryAddress: values.temporaryAddress,
-            personalTaxCode: values.personalTaxCode,
-            socialInsuranceNumber: values.socialInsuranceNumber,
-            bankAccount: values.bankAccount,
-            contractType: values.contractType,
-            contractTerm: values.contractTerm,
-            startDate: values.startDate,
-            endDate: values.endDate,
-            salary: values.salary,
-            bonus: values.bonus,
+            work_phone: values.work_phone,
+            work_email: values.work_email,
+            department_id: values.department_id,
             department: values.department,
+            job_id: values.job_id,
+            job: values.job,
+            status: values.status,
+            cccd: values.cccd,
+            issued_date_cccd: values.issued_date_cccd,
+            issued_place_cccd: values.issued_place_cccd,
+            permanent_address: values.permanent_address,
+            temporary_address: values.temporary_address,
+            tax_id: values.tax_id,
+            insurance_id: values.insurance_id,
+            bank_account: values.bank_account,
+            contract: [{
+              id: Date.now(),
+              x_contract_type: values.contract[0].x_contract_type,
+              x_contract_term: values.contract[0].x_contract_term,
+              date_start: values.contract[0].date_start,
+              date_end: values.contract[0].date_end,
+              wage: values.contract[0].wage,
+              x_bonus: values.contract[0].x_bonus,
+            }],
           };
-          setData([...data, newEmployee]);
+          dispatch(setEmployees({ employees: [...employees, newEmployee], meta: { ...meta!, total: (meta?.total || 0) + 1 } } as EmployeeResponse));
           setIsModalOpen(false);
         }}
         modalTitle="Thêm nhân sự"
@@ -555,8 +339,18 @@ const EmployeeList: React.FC = () => {
       <FilterDrawerEmployee
         open={filterOpen}
         onClose={() => setFilterOpen(false)}
-        onConfirm={(values) => console.log("Apply filter:", values)}
+        onConfirm={handleFilter}
       />
+
+      {meta && (
+        <Pagination
+          current={meta.page}
+          pageSize={meta.limit}
+          total={meta.total}
+          onChange={handlePageChange}
+          style={{ marginTop: 16, textAlign: "right" }}
+        />
+      )}
     </>
   );
 };

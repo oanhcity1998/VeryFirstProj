@@ -1,95 +1,53 @@
-/* Login.css */
-
-.login-container {
+.login-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: #f8fafc;
-  padding: 1rem; /* padding so card isn’t stuck on screen edges */
+  background: linear-gradient(135deg, #f0f4ff, #dbeafe);
 }
 
 .login-card {
-  width: 420px;
-  max-width: 100%;
-  padding: 2.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  background: #fff;
+  width: 400px;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-.login-logo img {
-  max-height: 60px;
-  margin-bottom: 1.5rem;
+.login-header {
+  text-align: center;
+  margin-bottom: 24px;
 }
 
 .login-title {
-  margin-bottom: 1.5rem !important;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #1e293b;
 }
 
-.ant-form-item {
-  width: 100%;
-  margin-bottom: 1rem;
-}
-
-.login-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-  white-space: nowrap;
-}
-
-.login-options .ant-checkbox-wrapper {
-  flex-shrink: 0;
+.login-subtitle {
+  color: #64748b;
   font-size: 14px;
 }
 
-.login-options a {
-  color: #1677ff;
-  text-decoration: none;
-  flex-shrink: 0;
-  font-size: 14px;
+.login-input {
+  border-radius: 8px;
 }
 
 .login-button {
+  border-radius: 8px;
   font-weight: 600;
-  width: 100%;
-  margin-top: 0.5rem;
+  background: #2563eb;
 }
 
-.signup-text {
-  display: block;
-  margin-top: 1.2rem;
-  font-size: 0.9rem;
+.login-button:hover {
+  background: #1d4ed8 !important;
 }
 
-.signup-text a {
-  color: #1677ff;
-  text-decoration: none;
+.login-footer {
+  text-align: right;
 }
 
-/* 🔹 Responsive design */
-@media (max-width: 768px) {
-  .login-card {
-    width: 90%;
-    padding: 2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .login-card {
-    width: 95%;
-    padding: 1.5rem;
-  }
-
-  .login-options {
-    font-size: 13px;
-  }
-
-  .login-options a {
-    font-size: 13px;
-  }
+.forgot-password {
+  color: #2563eb;
+  font-size: 14px;
 }

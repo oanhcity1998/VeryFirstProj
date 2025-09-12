@@ -4,11 +4,15 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import authReducer from "@/redux/public/slices/authSlice";
+import employeeReducer from "@/redux/HRM/slices/employeeSlice";
+import { employeeService } from "@/services/HRM/employee.service";
 
 // Tạo rootReducer rỗng (chưa có slice nào)
 const rootReducer = combineReducers({
   auth: authReducer,
+  employee: employeeReducer,
   [authService.reducerPath]: authService.reducer,
+  [employeeService.reducerPath]: employeeService.reducer,
 });
 
 // Cấu hình persist
@@ -28,7 +32,9 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
       },
-    }),
+    })
+      .concat(authService.middleware)
+      .concat(employeeService.middleware),
 });
 
 export const persistor = persistStore(store);
