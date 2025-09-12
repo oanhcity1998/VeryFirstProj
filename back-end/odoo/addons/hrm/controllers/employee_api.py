@@ -9,7 +9,7 @@ from openpyxl import load_workbook
 
 class EmployeeAPI(http.Controller):
 
-    @http.route('/api/hr/employees', type='json', auth='user', methods=['POST'], csrf=False)
+    @http.route('/api/hr/employees', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
     def create_employee(self, **kwargs):
         try:
             if request.httprequest.data:
@@ -55,8 +55,8 @@ class EmployeeAPI(http.Controller):
             })
 
         return {"id": employee.id, "message": "Created successfully"}
-    
-    @http.route('/api/hr/employees', type='http', auth='user', methods=['GET'], csrf=False)
+
+    @http.route('/api/hr/employees', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
     def list_employees(self, **kwargs):
         q = kwargs.get('q', '').strip()
         department_id = kwargs.get('department_id')
@@ -130,7 +130,7 @@ class EmployeeAPI(http.Controller):
         headers=[('Content-Type', 'application/json')]
     )
 
-    @http.route('/api/hr/employees/<int:employee_id>', type='http', auth='user', methods=['GET'], csrf=False)
+    @http.route('/api/hr/employees/<int:employee_id>', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
     def get_employee(self, employee_id, **kwargs):
         Employee = request.env['hr.employee'].sudo()
         Contract = request.env['hr.contract.custom'].sudo()
@@ -189,7 +189,7 @@ class EmployeeAPI(http.Controller):
             headers=[('Content-Type', 'application/json')]
         )
 
-    @http.route('/api/hr/employees/<int:employee_id>', type='http', auth='user', methods=['PUT'], csrf=False)
+    @http.route('/api/hr/employees/<int:employee_id>', type='http', auth='user', methods=['PUT'], csrf=False, cors='*')
     def update_employee(self, employee_id, **kwargs):
         Employee = request.env['hr.employee'].sudo()
         employee = Employee.browse(employee_id)
@@ -251,7 +251,7 @@ class EmployeeAPI(http.Controller):
                 "received_data": data
             }, status=200)
 
-    @http.route('/api/hr/employees/<int:employee_id>', type='http', auth='user', methods=['DELETE'], csrf=False)
+    @http.route('/api/hr/employees/<int:employee_id>', type='http', auth='user', methods=['DELETE'], csrf=False, cors='*')
     def delete_employee(self, employee_id, **kwargs):
         Employee = request.env['hr.employee'].sudo()
         employee = Employee.search([('id', '=', employee_id)], limit=1)
@@ -278,7 +278,7 @@ class EmployeeAPI(http.Controller):
             status=200
         )
 
-    @http.route('/api/hr/employees/export', type='http', auth='user', methods=['GET'], csrf=False)
+    @http.route('/api/hr/employees/export', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
     def export_employees_excel(self, **kwargs):
         try:
             # Get filter parameters (same as list_employees)
@@ -391,7 +391,7 @@ class EmployeeAPI(http.Controller):
                 status=500
             )
 
-    @http.route('/api/hr/employees/export-template', type='http', auth='user', methods=['GET'], csrf=False)
+    @http.route('/api/hr/employees/export-template', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
     def download_import_template(self, **kwargs):
         try:
             # Create Excel template
@@ -504,7 +504,7 @@ class EmployeeAPI(http.Controller):
                 status=500
             )
 
-    @http.route('/api/hr/employees/import', type='http', auth='user', methods=['POST'], csrf=False)
+    @http.route('/api/hr/employees/import', type='http', auth='user', methods=['POST'], csrf=False, cors='*')
     def import_employees_excel(self, **kwargs):
         try:
             # Get the uploaded file
