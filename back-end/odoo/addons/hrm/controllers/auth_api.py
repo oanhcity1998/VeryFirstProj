@@ -5,7 +5,7 @@ import logging
 _logger = logging.getLogger(__name__)
 class AuthAPI(http.Controller):
 
-    @http.route('/api/auth/login', type='json', auth='none', methods=['POST'], csrf=False)
+    @http.route('/api/auth/login', type='json', auth='none', methods=['POST'], csrf=False, cors='*')
     def login(self, **kwargs):
 
         username = kwargs.get('username')
