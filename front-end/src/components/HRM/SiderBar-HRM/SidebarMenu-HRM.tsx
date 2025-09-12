@@ -31,7 +31,7 @@ const SidebarMenuHRM: React.FC<SidebarMenuHRMProps> = ({ collapsed }) => {
     selectedKey = "4";
   } else if (location.pathname.startsWith(ROUTES_APP.hrm.assetList)) {
     selectedKey = "5";
-  } else if (location.pathname.startsWith(ROUTES_APP.hrm.proposals)) {
+  } else if (location.pathname.startsWith(ROUTES_APP.hrm.proposalTemplateList)) {
     selectedKey = "6";
   }
 
@@ -64,7 +64,7 @@ const SidebarMenuHRM: React.FC<SidebarMenuHRMProps> = ({ collapsed }) => {
     {
       key: "6",
       icon: <NotificationOutlined />,
-      label: <Link to={ROUTES_APP.hrm.proposals}>Mẫu đề xuất</Link>,
+      label: <Link to={ROUTES_APP.hrm.proposalTemplateList}>Mẫu đề xuất</Link>,
     },
   ];
 

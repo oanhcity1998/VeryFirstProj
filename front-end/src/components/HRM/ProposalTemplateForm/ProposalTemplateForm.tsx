@@ -14,7 +14,7 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import {
-  approvalRequiredProposalTemplateOptions,
+  FieldMeta,
   ProposalTemplate,
   statusProposalTemplateOptions,
 } from "@/views/HRM/ProposalTemplateList/ProposalTemplateList";
@@ -29,15 +29,6 @@ interface ProposalTemplateFormProps {
   saveText?: string;
 }
 
-interface FieldMeta {
-  id: number;
-  fieldName: string;
-  dataType: string;
-  required: boolean;
-  example?: string;
-  note?: string;
-  __rowKey: string; // giống bảng sản phẩm, để quản lý row tạm
-}
 const dataTypeOptions = [
   { value: "string", label: "Chuỗi ký tự" },
   { value: "number", label: "Số" },
@@ -69,7 +60,7 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
         setFieldRows(
           (template as any).fields.map((f: FieldMeta) => ({
             ...f,
-            __rowKey: String(f.id ?? Date.now()),
+            id: String(f.id ?? Date.now()),
           }))
         );
       }
@@ -110,13 +101,12 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
         required: false,
         example: "",
         note: "",
-        __rowKey: `tmp_${Date.now()}`,
       },
     ]);
   };
 
-  const handleDeleteField = (rowKey: string) => {
-    setFieldRows((prev) => prev.filter((row) => row.__rowKey !== rowKey));
+  const handleDeleteField = (id: number) => {
+    setFieldRows((prev) => prev.filter((row) => row.id !== id));
   };
 
   const fieldColumns = [
@@ -129,7 +119,7 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
           onChange={(e) =>
             setFieldRows((prev) =>
               prev.map((row) =>
-                row.__rowKey === record.__rowKey ? { ...row, fieldName: e.target.value } : row
+                row.id === record.id ? { ...row, fieldName: e.target.value } : row
               )
             )
           }
@@ -144,9 +134,7 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
           value={record.dataType}
           onChange={(val) =>
             setFieldRows((prev) =>
-              prev.map((row) =>
-                row.__rowKey === record.__rowKey ? { ...row, dataType: val } : row
-              )
+              prev.map((row) => (row.id === record.id ? { ...row, dataType: val } : row))
             )
           }
         >
@@ -166,9 +154,7 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
           value={record.required ? "Có" : "Không"}
           onChange={(val) =>
             setFieldRows((prev) =>
-              prev.map((row) =>
-                row.__rowKey === record.__rowKey ? { ...row, required: val === "Có" } : row
-              )
+              prev.map((row) => (row.id === record.id ? { ...row, required: val === "Có" } : row))
             )
           }
         >
@@ -185,9 +171,7 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
           value={record.example}
           onChange={(e) =>
             setFieldRows((prev) =>
-              prev.map((row) =>
-                row.__rowKey === record.__rowKey ? { ...row, example: e.target.value } : row
-              )
+              prev.map((row) => (row.id === record.id ? { ...row, example: e.target.value } : row))
             )
           }
         />
@@ -201,9 +185,7 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
           value={record.note}
           onChange={(e) =>
             setFieldRows((prev) =>
-              prev.map((row) =>
-                row.__rowKey === record.__rowKey ? { ...row, note: e.target.value } : row
-              )
+              prev.map((row) => (row.id === record.id ? { ...row, note: e.target.value } : row))
             )
           }
         />
@@ -213,7 +195,7 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
       title: "Thao tác",
       dataIndex: "action",
       render: (_: any, record: FieldMeta) => (
-        <Button danger size="small" onClick={() => handleDeleteField(record.__rowKey)}>
+        <Button danger size="small" onClick={() => handleDeleteField(record.id)}>
           Xoá
         </Button>
       ),
@@ -283,7 +265,7 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
             <Table<FieldMeta>
               columns={fieldColumns}
               dataSource={fieldRows}
-              rowKey="__rowKey"
+              id="id"
               pagination={false}
               bordered
             />

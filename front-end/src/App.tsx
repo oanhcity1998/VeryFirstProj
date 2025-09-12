@@ -30,6 +30,7 @@ import AssetDetail from "./views/HRM/AssetDetail/AssetDetail";
 import DebtReportList from "./views/CRM/DebtReportList/DebtReportList";
 import DebtReportDetail from "./views/CRM/DebtReportDetail/DebtReportDetail";
 import ProposalTemplateList from "./views/HRM/ProposalTemplateList/ProposalTemplateList";
+import ProposalTemplateDetail from "./views/CRM/ProposalTemplateDetail/ProposalTemplateDetail";
 
 export default function App() {
   return (
@@ -98,7 +99,11 @@ export default function App() {
           <Route path={ROUTES_APP.hrm.assetDetail} element={<AssetDetail />} />
 
           {/* Mẫu đề xuất */}
-          <Route path={ROUTES_APP.hrm.proposals} element={<ProposalTemplateList />} />
+          <Route path={ROUTES_APP.hrm.proposalTemplateList} element={<ProposalTemplateList />} />
+          <Route
+            path={ROUTES_APP.hrm.proposalTemplateDetail}
+            element={<ProposalTemplateDetail />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>
