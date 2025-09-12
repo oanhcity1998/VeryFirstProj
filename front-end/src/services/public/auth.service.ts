@@ -1,15 +1,15 @@
+import {
+  LoginRequest,
+  LoginResponse,
+  LoginResponseData,
+} from "@/models/HRM/auth.model";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const authService = createApi({
-  reducerPath: "authService",
-  baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_BASE_URL,
-  }),
+export const authApi = createApi({
+  reducerPath: "authApi",
+  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_BASE_URL }),
   endpoints: (builder) => ({
-    login: builder.mutation<
-      { uid: number; message: string },
-      { username: string; password: string }
-    >({
+    login: builder.mutation<LoginResponseData, LoginRequest["params"]>({
       query: (credentials) => ({
         url: "/auth/login",
         method: "POST",
@@ -17,15 +17,11 @@ export const authService = createApi({
           jsonrpc: "2.0",
           method: "call",
           params: credentials,
-        },
+        } as LoginRequest,
       }),
-      transformResponse: (response: {
-        jsonrpc: string;
-        id: null;
-        result: { result: { uid: number; message: string } };
-      }) => response.result.result, // Extract nested result
+      transformResponse: (response: LoginResponse) => response.result.result,
     }),
   }),
 });
 
-export const { useLoginMutation } = authService;
+export const { useLoginMutation } = authApi;
