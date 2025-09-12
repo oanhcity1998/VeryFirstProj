@@ -62,6 +62,7 @@ const TableProposalTemplate: React.FC<TableProposalTemplateProps> = ({
       key: "name",
       width: 200,
       align: "center" as const,
+      fixed: "left" as const,
     },
     {
       title: "Loại mẫu",

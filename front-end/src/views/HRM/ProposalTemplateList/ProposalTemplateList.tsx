@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import { Button, Space, Modal, message, Upload, Select, DatePicker } from "antd";
 import { PlusOutlined, DeleteOutlined, InboxOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
@@ -10,37 +10,70 @@ import TableProposalTemplate from "@/components/HRM/TableProposalTemplate/TableP
 const { RangePicker } = DatePicker;
 
 export interface ProposalTemplate {
-  key: string;
-  name: string;
-  type: string;
-  creator: string;
-  createdDate: string;
-  quantity: number;
-  approvalRequired: string;
-  status: "Mới" | "Cũ";
+  key: string; // ID hoặc khóa định danh
+  name: string; // Tên mẫu đề xuất
+  creator: string; // Người tạo
+  createdDate: string; // Ngày tạo, có thể là ISO string
+  quantity: number; // Số lượng đề xuất
+  approvalRequired: "Có" | "Không"; // Bắt buộc phê duyệt
+  status: "Hoạt động" | "Không hoạt động"; // Trạng thái phê duyệt
 }
+
+export const statusProposalTemplateOptions: ProposalTemplate["status"][] = [
+  "Hoạt động",
+  "Không hoạt động",
+];
+export const approvalRequiredProposalTemplateOptions: ProposalTemplate["approvalRequired"][] = [
+  "Có",
+  "Không",
+];
 
 const ProposalTemplateList: React.FC = () => {
   const [data, setData] = useState<ProposalTemplate[]>([
     {
       key: "PT001",
-      name: "Mẫu đề xuất IT",
-      type: "Thiết bị",
+      name: "Mẫu đề xuất mua sắm văn phòng phẩm",
       creator: "Nguyễn Văn A",
-      createdDate: "01/09/2025",
+      createdDate: "2025-09-10",
       quantity: 10,
-      approvalRequired: "05/09/2025",
-      status: "Mới",
+      approvalRequired: "Có",
+      status: "Hoạt động",
     },
     {
       key: "PT002",
-      name: "Mẫu đề xuất văn phòng phẩm",
-      type: "Văn phòng phẩm",
+      name: "Mẫu đề xuất nâng cấp máy chủ",
       creator: "Trần Thị B",
-      createdDate: "28/08/2025",
-      quantity: 50,
-      approvalRequired: "30/08/2025",
-      status: "Cũ",
+      createdDate: "2025-08-25",
+      quantity: 3,
+      approvalRequired: "Có",
+      status: "Hoạt động",
+    },
+    {
+      key: "PT003",
+      name: "Mẫu đề xuất tổ chức sự kiện nội bộ",
+      creator: "Lê Văn C",
+      createdDate: "2025-09-01",
+      quantity: 5,
+      approvalRequired: "Không",
+      status: "Không hoạt động",
+    },
+    {
+      key: "PT004",
+      name: "Mẫu đề xuất mua phần mềm bản quyền",
+      creator: "Phạm Thị D",
+      createdDate: "2025-09-05",
+      quantity: 2,
+      approvalRequired: "Có",
+      status: "Hoạt động",
+    },
+    {
+      key: "PT005",
+      name: "Mẫu đề xuất đào tạo nhân viên",
+      creator: "Ngô Văn E",
+      createdDate: "2025-08-30",
+      quantity: 8,
+      approvalRequired: "Không",
+      status: "Không hoạt động",
     },
   ]);
 
@@ -55,33 +88,31 @@ const ProposalTemplateList: React.FC = () => {
 
   // Filter states
   const [filterName, setFilterName] = useState<string>("");
-  const [filterType, setFilterType] = useState<string | null>(null);
-  const [filterCreator, setFilterCreator] = useState<string | null>(null);
-  const [filterStatus, setFilterStatus] = useState<"Mới" | "Cũ" | null>(null);
-  const [filterDateRange, setFilterDateRange] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>(null);
+  const [filterStatus, setFilterStatus] = useState<ProposalTemplate["status"] | null>(null);
+  const [filterApprovalRequired, setFilterApprovalRequired] = useState<
+    ProposalTemplate["approvalRequired"] | null
+  >(null);
 
   // Apply all filters together
-  const applyFilters = () => {
+  useEffect(() => {
     let filtered = [...data];
 
-    // if (filterName) {
-    //   filtered = filtered.filter((item) =>
-    //     item.name.toLowerCase().includes(filterName.toLowerCase())
-    //   );
-    // }
-    // if (filterType) filtered = filtered.filter((item) => item.type === filterType);
-    // if (filterCreator) filtered = filtered.filter((item) => item.creator === filterCreator);
-    if (filterStatus) filtered = filtered.filter((item) => item.status === filterStatus);
-    if (filterDateRange) {
-      const [start, end] = filterDateRange;
-      filtered = filtered.filter((item) => {
-        const d = dayjs(item.approvalRequired, "DD/MM/YYYY");
-        return d.isSameOrAfter(start, "day") && d.isSameOrBefore(end, "day");
-      });
+    if (filterName) {
+      filtered = filtered.filter((item) =>
+        item.name.toLowerCase().includes(filterName.toLowerCase())
+      );
+    }
+
+    if (filterStatus) {
+      filtered = filtered.filter((item) => item.status === filterStatus);
+    }
+
+    if (filterApprovalRequired) {
+      filtered = filtered.filter((item) => item.approvalRequired === filterApprovalRequired);
     }
 
     setFilteredData(filtered);
-  };
+  }, [data, filterName, filterStatus, filterApprovalRequired]);
 
   // Delete
   const handleDelete = async () => {
@@ -119,7 +150,6 @@ const ProposalTemplateList: React.FC = () => {
       const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
       const requiredFields = [
         "name",
-        "type",
         "creator",
         "createdDate",
         "quantity",
@@ -153,7 +183,7 @@ const ProposalTemplateList: React.FC = () => {
           } else if (key === "quantity" && (isNaN(Number(value)) || Number(value) < 0)) {
             errors.push(`Hàng ${i + 1}, cột "${key}" phải >=0`);
             rowHasError = true;
-          } else if (key === "createdDate" || key === "approvalRequired") {
+          } else if (key === "createdDate") {
             const d = dayjs(value, "DD/MM/YYYY", true);
             if (!d.isValid()) {
               errors.push(`Hàng ${i + 1}, cột "${key}" không hợp lệ`);
@@ -210,9 +240,6 @@ const ProposalTemplateList: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const creatorOptions = [...new Set(data.map((d) => d.creator))];
-  const typeOptions = [...new Set(data.map((d) => d.type))];
-
   return (
     <>
       <div
@@ -234,49 +261,26 @@ const ProposalTemplateList: React.FC = () => {
             style={{ width: 150 }}
             onChange={(e) => {
               setFilterName(e.target.value);
-              applyFilters();
             }}
           />
-          {/*   <Select
-            placeholder="Loại mẫu"
-            style={{ width: 150 }}
-            allowClear
-            options={typeOptions.map((t) => ({ value: t, label: t }))}
-            onChange={(val) => {
-              setFilterType(val);
-              applyFilters();
-            }}
-          />
+
           <Select
-            placeholder="Người tạo"
+            placeholder="Bắt buộc phê duyệt"
             style={{ width: 150 }}
             allowClear
-            options={creatorOptions.map((c) => ({ value: c, label: c }))}
+            options={approvalRequiredProposalTemplateOptions.map((s) => ({ value: s, label: s }))}
             onChange={(val) => {
-              setFilterCreator(val);
-              applyFilters();
-            }}
-          /> */}
-          <RangePicker
-            style={{ width: 250, height: 32 }}
-            format="DD/MM/YYYY"
-            placeholder={["Bắt buộc phê duyệt ngày", "Đến ngày"]}
-            onChange={(dates) => {
-              setFilterDateRange(dates as any);
-              applyFilters();
+              setFilterApprovalRequired(val);
             }}
           />
+
           <Select
             placeholder="Trạng thái"
-            style={{ width: 120 }}
+            style={{ width: 150 }}
             allowClear
-            options={[
-              { value: "Mới", label: "Mới" },
-              { value: "Cũ", label: "Cũ" },
-            ]}
+            options={statusProposalTemplateOptions.map((s) => ({ value: s, label: s }))}
             onChange={(val) => {
-              setFilterStatus(val as "Mới" | "Cũ");
-              applyFilters();
+              setFilterStatus(val);
             }}
           />
 

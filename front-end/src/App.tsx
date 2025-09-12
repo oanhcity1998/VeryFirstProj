@@ -97,7 +97,7 @@ export default function App() {
           <Route path={ROUTES_APP.hrm.assetList} element={<AssetList />} />
           <Route path={ROUTES_APP.hrm.assetDetail} element={<AssetDetail />} />
 
-          {/* Đề xuất nhân sự */}
+          {/* Mẫu đề xuất */}
           <Route path={ROUTES_APP.hrm.proposals} element={<ProposalTemplateList />} />
         </Route>
       </Routes>
