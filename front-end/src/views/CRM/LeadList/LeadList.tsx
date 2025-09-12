@@ -111,7 +111,7 @@ const LeadList = () => {
   return (
     <>
       <div className="leadlist-header">
-        <h2>Danh sách lead</h2>
+        <h2>Danh sách khách hàng tiềm năng</h2>
 
         <Space>
           <Search

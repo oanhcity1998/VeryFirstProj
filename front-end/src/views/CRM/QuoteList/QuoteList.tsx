@@ -3,9 +3,9 @@ import { Button, Space, Typography, Input, Select, Row, Col } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import "./QuoteList.css";
 import { generatePath, useNavigate } from "react-router-dom";
-import ContractTable, { Contract } from "@/components/CRM/TableContract/TableContract";
+import QuoteTable, {Contract} from "@/components/CRM/TableQuote/TableQuote"
 import CreateContractForm from "@/components/CRM/ContractForm/CreateContractForm";
-import ContractDetail from "../ContractDetail/ContractDetail";
+import QuoteDetail from "../QuoteDetail/QuoteDetail";
 import { ROUTES_APP } from "@/app/routes";
 
 const { Search } = Input;
@@ -36,7 +36,7 @@ const QuoteList: React.FC = () => {
 //   };
 
   if (viewDetail) {
-    return <ContractDetail loai={viewDetail.loai} onBack={() => setViewDetail(null)} />;
+    return <QuoteDetail loai={viewDetail.loai} onBack={() => setViewDetail(null)} />;
   }
 
   const handleSave = (data: any) => {
@@ -134,7 +134,7 @@ const QuoteList: React.FC = () => {
 
 
       {/* Table (separated component) */}
-      <ContractTable
+      <QuoteTable
         data={filteredData}
         selectedRowKeys={selectedRowKeys}
         onSelectChange={setSelectedRowKeys}

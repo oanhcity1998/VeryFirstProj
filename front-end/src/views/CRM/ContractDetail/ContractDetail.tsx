@@ -24,7 +24,7 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
   const [previewOpen, setPreviewOpen] = useState(false);
 
   const { id } = useParams(); // lấy contact id từ URL
-  const title = loai === "baogia" ? "Chi tiết báo giá" : "Chi tiết hợp đồng";
+  const title = loai === "baogia" ? "Chi tiết hợp đồng" : "Chi tiết hợp đồng";
 
   const products = [
     { key: 1, name: "Dịch vụ kế toán", type: "Tháng", priceVND: 5000000, priceUSD: 400, vat: 10 },
@@ -134,13 +134,13 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
       <Card title={title} style={{ marginTop: 16 }}>
         <Row gutter={24} className="form-grid">
           <Col span={12}>
-            <FormItem label="Mã báo giá" value="AF25_BG1" />
+            <FormItem label="Mã hợp đồng" value="AF25_BG1" />
           </Col>
           <Col span={12}>
-            <FormItem label="Tên báo giá" value="Báo giá piggy hotel" />
+            <FormItem label="Tên hợp đồng" value="Hợp đồng piggy hotel" />
           </Col>
           <Col span={12}>
-            <FormItem label="Mẫu báo giá" value="Mẫu báo giá 1" />
+            <FormItem label="Mẫu hợp đồng" value="Mẫu hợp đồng 1" />
           </Col>
           <Col span={12}>
             <FormItem label="Ngày tạo" value="20/02/2025" />
@@ -189,7 +189,7 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
         }}
       >
         <Space wrap>
-          <Button>Xem báo giá</Button>
+          <Button>Xem hợp đồng</Button>
           <Button type="primary" onClick={() => setIsModalOpen(true)}>
             {role === "Giám đốc" ? "Duyệt" : "Gửi"}
           </Button>

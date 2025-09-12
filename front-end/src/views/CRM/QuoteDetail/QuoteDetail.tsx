@@ -3,28 +3,33 @@ import { useParams } from "react-router-dom";
 import { Input, Table, Button, Row, Col, Modal, Breadcrumb, Card, Typography, Space } from "antd";
 import { Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
+
 import "./QuoteDetail.css";
+import ReactDOM from "react-dom/client";
+import QuotePDF from "@/components/CRM/QuotePDF/QuotePDF"
 import { ROUTES_APP } from "../../../app/routes";
-import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
-import fontkit from "@pdf-lib/fontkit";
 // import jsPDF from "jspdf";
 // import autoTable from "jspdf-autotable";
 
 const { Title } = Typography;
 
 interface ContractDetailProps {
-  role?: "Nhân viên" | "Giám đốc";
+  role: "Nhân viên" | "Giám đốc";
   loai: "baogia" | "hopdong";
   onBack: () => void;
 }
+
 
 const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai, onBack }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+
 
   const { id } = useParams(); // lấy contact id từ URL
-  const title = loai === "baogia" ? "Chi tiết báo giá" : "Chi tiết hợp đồng";
+  const title = "Chi tiết báo giá";
 
   const products = [
     { key: 1, name: "Dịch vụ kế toán", type: "Tháng", priceVND: 5000000, priceUSD: 400, vat: 10 },
@@ -33,7 +38,6 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
 
   const columns = [
     { title: "Tên sản phẩm", dataIndex: "name", key: "name" },
-    { title: "Loại sản phẩm", dataIndex: "type", key: "type" },
     {
       title: "Giá (VND)",
       dataIndex: "priceVND",
@@ -64,51 +68,6 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
 
   const tenBaoGia = "Piggy hotel";
 
-  // Generate + download PDF immediately
-  const handleGeneratePDF = async () => {
-    const response = await fetch("/05+BAOGIA+-+XIDONG+(1)-ocr.pdf");
-    const existingPdfBytes = await response.arrayBuffer();
-    const pdfDoc = await PDFDocument.load(existingPdfBytes);
-
-    pdfDoc.registerFontkit(fontkit);
-
-    // Load font
-    const fontBytes = await fetch("/fonts/Roboto/static/Roboto-MediumItalic.ttf").then((res) =>
-      res.arrayBuffer()
-    );
-    const customFont = await pdfDoc.embedFont(fontBytes);
-
-    const pages = pdfDoc.getPages();
-    const firstPage = pages[0];
-    const { height } = firstPage.getSize();
-
-    // Cover + replace text
-    firstPage.drawRectangle({
-      x: 115,
-      y: 675 - 3,
-      width: 400,
-      height: 20,
-      color: rgb(246 / 255, 250 / 255, 253 / 255), // #f6fafd
-    });
-
-    firstPage.drawText(`${tenBaoGia}`, {
-      x: 118,
-      y: 676,
-      size: 11,
-      font: customFont,
-      color: rgb(76 / 255, 88 / 255, 92 / 255), // #4c585c
-    });
-
-    const pdfBytes = await pdfDoc.save();
-    const blob = new Blob([pdfBytes as any], { type: "application/pdf" });
-    const url = URL.createObjectURL(blob);
-
-    // Save for preview
-    setPdfUrl(url);
-    setPreviewOpen(true);
-    setIsModalOpen(false);
-  };
-
   const handleDownload = () => {
     if (!pdfUrl) return;
     const link = document.createElement("a");
@@ -117,6 +76,7 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
     link.click();
   };
 
+
   return (
     <div className="quote-detail">
       {/* Header */}
@@ -124,9 +84,9 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
         <Button icon={<ArrowLeftOutlined />} type="text" onClick={onBack} className="back-button" />
         <Breadcrumb className="quote-detail-title" separator=">">
           <Breadcrumb.Item>
-            <Link to={ROUTES_APP.crm.contractList}>Danh sách hợp đồng & cơ hội</Link>
+            <Link to={ROUTES_APP.crm.quoteList}>Danh sách báo giá</Link>
           </Breadcrumb.Item>
-          <Breadcrumb.Item>{title}</Breadcrumb.Item>
+          <Breadcrumb.Item>{title} Piggy hotel </Breadcrumb.Item>
         </Breadcrumb>
       </div>
 
@@ -189,7 +149,7 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
         }}
       >
         <Space wrap>
-          <Button>Xem báo giá</Button>
+          <Button onClick={() => setShowModal(true)}>Xem báo giá</Button>
           <Button type="primary" onClick={() => setIsModalOpen(true)}>
             {role === "Giám đốc" ? "Duyệt" : "Gửi"}
           </Button>
@@ -202,36 +162,29 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
         title="Bạn có muốn gửi hợp đồng này?"
         okText="Gửi"
         cancelText="Huỷ"
-        onOk={handleGeneratePDF}
+        // onOk={}
         onCancel={() => setIsModalOpen(false)}
       />
 
-      {/* Preview modal */}
-      <Modal
-        open={previewOpen}
-        title="Xem trước PDF"
-        onCancel={() => setPreviewOpen(false)}
-        footer={[
-          <Button key="back" onClick={() => setPreviewOpen(false)}>
-            Đóng
-          </Button>,
-          <Button key="download" type="primary" onClick={handleDownload}>
-            Tải xuống
-          </Button>,
-        ]}
-        width="80%"
-        style={{ top: 20 }}
-      >
-        {pdfUrl && (
-          <iframe
-            src={pdfUrl}
-            title="PDF Preview"
-            width="100%"
-            height="600px"
-            style={{ border: "none" }}
-          />
-        )}
-      </Modal>
+     {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            {/* Close button */}
+            <button className="close-btn" onClick={() => setShowModal(false)}>
+              ✕
+            </button>
+
+            {/* Quotation preview with download inside modal */}
+            <QuotePDF
+              companyName="Công Ty TNHH Lắp Đặt Thiết Bị Điện Cơ Xi Đông Việt Nam"
+              auditYear={2024}
+              serviceFee={10900000}
+            />
+          </div>
+        </div>
+      )}
+
+      
     </div>
   );
 };

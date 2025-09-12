@@ -112,15 +112,7 @@ const ContractList: React.FC = () => {
                 <Option value="Đã duyệt">Đã duyệt</Option>
                 <Option value="Huỷ">Huỷ</Option>
               </Select>
-              <Select
-                placeholder="Loại hợp đồng"
-                allowClear
-                style={{ minWidth: 140 }}
-                onChange={(val) => setTypeFilter(val)}
-              >
-                <Option value="Báo giá">Báo giá</Option>
-                <Option value="Hợp đồng">Hợp đồng</Option>
-              </Select>
+
               <Button danger disabled={selectedRowKeys.length === 0} icon={<DeleteOutlined />}>
                 Xoá
               </Button>

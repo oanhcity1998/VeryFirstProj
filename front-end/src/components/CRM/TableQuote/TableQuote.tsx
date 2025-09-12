@@ -30,7 +30,7 @@ interface TableContractProps {
   onEditClick?: (record: Contract) => void; // ✅ add callback
 }
 
-const TableContract: React.FC<TableContractProps> = ({
+const TableQuote: React.FC<TableContractProps> = ({
   data,
   selectedRowKeys,
   onSelectChange,
@@ -40,15 +40,15 @@ const TableContract: React.FC<TableContractProps> = ({
   const navigate = useNavigate();
 
   const columns: ColumnsType<Contract> = [
-    { title: "Mã hợp đồng", dataIndex: "code", key: "code" },
+    { title: "Mã báo giá", dataIndex: "code", key: "code" },
     {
-      title: "Tên hợp đồng",
+      title: "Tên báo giá",
       dataIndex: "name",
       key: "name",
       render: (text, record) => (
         <Link
           className="contract-link"
-          onClick={() => navigate(generatePath(ROUTES_APP.crm.contractDetail, { id: record.id }))}
+          onClick={() => navigate(generatePath(ROUTES_APP.crm.quoteDetail, { id: record.id }))}
         >
           {text}
         </Link>
@@ -109,4 +109,4 @@ const TableContract: React.FC<TableContractProps> = ({
   );
 };
 
-export default TableContract;
+export default TableQuote;
