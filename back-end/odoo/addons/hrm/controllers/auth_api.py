@@ -37,15 +37,12 @@ class AuthAPI(http.Controller):
                 )
 
             if uid:
-                request.session.uid = uid
-                request.session.username = username
-                request.session.expiration = 86400
 
                 session_id = request.session.sid
 
                 # Build success response
                 response = Response(
-                    json.dumps({ "success": True, "message": "Đăng nhập thành công."}, ensure_ascii=False),
+                    json.dumps({ "success": True, "session_id": session_id, "message": "Đăng nhập thành công."}, ensure_ascii=False),
                     content_type='application/json',
                     status=200
                 )
