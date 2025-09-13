@@ -27,6 +27,7 @@ class EmployeeAPI(http.Controller):
                     )
 
             employee = request.env["hr.employee"].sudo().create({
+                "code": data.get("code"),
                 "name": data.get("name"),
                 "birthday": data.get("birthday"),
                 "gender": data.get("gender"),
@@ -101,6 +102,7 @@ class EmployeeAPI(http.Controller):
         for emp in employees:
             data.append({
                 "id": emp.id,
+                "code": emp.code,
                 "name": emp.name,
                 "birthday": str(emp.birthday) if emp.birthday else None,
                 "gender": emp.gender,
@@ -122,12 +124,13 @@ class EmployeeAPI(http.Controller):
                 "contract": [
                     {
                         "id": c.id, 
-                        "x_contract_type": c.x_contract_type, 
-                        "x_contract_term": c.x_contract_term, 
+                        "name": c.name,
+                        "contract_type": c.x_contract_type, 
+                        "contract_term": c.x_contract_term, 
                         "date_start": str(c.date_start) if c.date_start else None, 
                         "date_end": str(c.date_end) if c.date_end else None, 
                         "wage": c.wage, 
-                        "x_bonus": c.x_bonus
+                        "bonus": c.x_bonus
                     } 
                     for c in request.env['hr.contract.custom'].sudo().search([('employee_id', '=', emp.id)])],
             })
@@ -140,12 +143,12 @@ class EmployeeAPI(http.Controller):
         headers=[('Content-Type', 'application/json')]
     )
 
-    #get all employee id
+    #get all employee code
     @http.route('/api/hr/employees/ids', type='http', auth='user', methods=['GET'], csrf=False)
     def get_all_employees(self, **kwargs):
         Employee = request.env['hr.employee'].sudo()
         employees = Employee.search([])
-        data = [{"id": emp.id, "name": emp.name} for emp in employees]
+        data = [{"code": emp.code, "name": emp.name} for emp in employees]
         return request.make_response(
             json.dumps({"data": data}),
             headers=[('Content-Type', 'application/json')]
@@ -166,6 +169,7 @@ class EmployeeAPI(http.Controller):
 
         profile = {
             "id": employee.id,
+            "code": employee.code,
             "name": employee.name,
             "birthday": str(employee.birthday) if employee.birthday else None,
             "gender": employee.gender,
@@ -193,7 +197,8 @@ class EmployeeAPI(http.Controller):
             contracts.append({
                 "id": c.id,
                 "name": c.name,
-                "x_contract_type": c.x_contract_type,
+                "contract_type": c.x_contract_type,
+                "contract_term": c.x_contract_term,
                 "date_start": str(c.date_start) if c.date_start else None,
                 "date_end": str(c.date_end) if c.date_end else None,
                 "wage": c.wage,
@@ -308,7 +313,6 @@ class EmployeeAPI(http.Controller):
             headers=[('Content-Type', 'application/json')],
             status=200
         )
-
 
     @http.route('/api/hr/employees/export-template', type='http', auth='user', methods=['GET'], csrf=False)
     def download_import_template(self, **kwargs):
@@ -467,7 +471,7 @@ class EmployeeAPI(http.Controller):
 
             # Expected columns mapping
             expected_columns = {
-                'A': 'id',
+                'A': 'code',
                 'B': 'name', 
                 'C': 'gender',
                 'D': 'birthday',
@@ -480,8 +484,8 @@ class EmployeeAPI(http.Controller):
                 'K': 'id_issued_place',
                 'L': 'permanent_address',
                 'M': 'temporary_address',
-                'N': 'tax_code',
-                'O': 'social_security_number',
+                'N': 'tax_id',
+                'O': 'insurance_id',
                 'P': 'bank_account',
                 'Q': 'department_name',
                 'R': 'job_name',
@@ -510,19 +514,19 @@ class EmployeeAPI(http.Controller):
                         if col_idx < len(row):
                             value = row[col_idx]
                             if value is not None:
-                                if field_name in ['birthday', 'id_issued_date']:
+                                if field_name in ['birthday', 'id_issued_date', 'start_date', 'end_date']:
                                     # Handle date fields
                                     if isinstance(value, datetime):
                                         employee_data[field_name] = value.strftime('%Y-%m-%d')
                                     elif isinstance(value, str):
-                                        employee_data[field_name] = value
+                                        employee_data[field_name] = value.strip()
                                 else:
                                     employee_data[field_name] = str(value).strip() if value else None
 
                     # Validate required fields
-                    required_fields = ['name', 'birthday', 'gender', 'work_phone', 'work_email', 
+                    required_fields = ['code','name', 'birthday', 'gender', 'work_phone', 'work_email', 
                                     'department_name', 'job_name', 'id_number', 'id_issued_place', 
-                                    'id_issued_date', 'permanent_address']
+                                    'id_issued_date', 'permanent_address','contract_type', 'contract_duration']
                     
                     missing_fields = []
                     for field in required_fields:
@@ -569,20 +573,35 @@ class EmployeeAPI(http.Controller):
                     existing_employee = request.env['hr.employee'].sudo().search([
                         '|',
                         ('work_email', '=', employee_data['work_email']),
-                        ('id_number', '=', employee_data['id_number'])
+                        ('id', '=', employee_data['id'])
                     ], limit=1)
 
                     if existing_employee:
                         results['errors'].append({
                             'row': row_num,
-                            'error': f"Employee with email '{employee_data['work_email']}' or ID number '{employee_data['id_number']}' already exists",
+                            'error': f"Employee with email '{employee_data['work_email']}' or ID number '{employee_data['id']}' already exists",
                             'data': employee_data
                         })
                         results['total_errors'] += 1
                         continue
 
+                    # Create contract type if not exists
+                    contract_type_record = request.env['hr.contract.custom'].sudo().create({
+                        'name': employee_data['contract_type'],
+                        'x_contract_type': employee_data['contract_type'],
+                        'x_contract_term': employee_data.get('contract_duration') or None,
+                        'employee_id': employee_data['id'],
+                        'date_start': employee_data.get('start_date'),
+                        'date_end': employee_data.get('end_date'),
+                        'wage': float(employee_data.get('salary') or 0),
+                        'x_bonus': float(employee_data.get('bonus') or 0)
+                    })
+                
+
+
                     # Create employee
                     employee = request.env['hr.employee'].sudo().create({
+                        'code': employee_data['code'],
                         'name': employee_data['name'],
                         'birthday': employee_data['birthday'],
                         'gender': employee_data['gender'],
@@ -598,6 +617,7 @@ class EmployeeAPI(http.Controller):
                         'tax_id': employee_data.get('tax_id'),
                         'insurance_id': employee_data.get('insurance_id'),
                         'bank_account': employee_data.get('bank_account'),
+                        'active': True
                     })
 
                     results['success'].append({
