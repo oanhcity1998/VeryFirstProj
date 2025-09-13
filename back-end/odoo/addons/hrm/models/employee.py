@@ -5,6 +5,7 @@ import re
 class HrEmployee(models.Model):
     _inherit = "hr.employee"
 
+    code = fields.Char("Employee Code", unique=True, required=True)
     birthday = fields.Date("Birthday", required=True)
     gender = fields.Selection([
         ("Nam", "Nam"),
