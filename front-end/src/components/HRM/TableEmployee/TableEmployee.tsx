@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
 import { Table, Checkbox, Button } from "antd";
 import { generatePath, Link } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
 import "./TableEmployee.css";
 import { ROUTES_APP } from "@/app/routes";
 import { Employee } from "@/models/HRM/employee.model";
+import dayjs from "dayjs";
 
 interface TableEmployeeProps {
   data?: Employee[];
@@ -92,6 +94,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       key: "birthday",
       width: 120,
       align: "center" as const,
+      render: (date: string) => (date ? dayjs(date).format("DD/MM/YYYY") : "-"),
     },
     {
       title: "Số CCCD",
@@ -106,6 +109,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       key: "issued_date_cccd",
       width: 150,
       align: "center" as const,
+      render: (date: string) => (date ? dayjs(date).format("DD/MM/YYYY") : "-"),
     },
     {
       title: "Nơi cấp CCCD",
@@ -172,8 +176,8 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
     },
     {
       title: "Vị trí",
-      dataIndex: "job",
-      key: "job",
+      dataIndex: "job_name",
+      key: "job_name",
       width: 150,
       align: "center" as const,
     },
@@ -200,7 +204,8 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       key: "date_start",
       width: 150,
       align: "center" as const,
-      render: (contract: Employee["contract"]) => contract[0]?.date_start || "-",
+      render: (contract: Employee["contract"]) =>
+        contract[0]?.date_start ? dayjs(contract[0].date_start).format("DD/MM/YYYY") : "-",
     },
     {
       title: "Ngày kết thúc",
@@ -208,7 +213,8 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       key: "date_end",
       width: 150,
       align: "center" as const,
-      render: (contract: Employee["contract"]) => contract[0]?.date_end || "-",
+      render: (contract: Employee["contract"]) =>
+        contract[0]?.date_end ? dayjs(contract[0].date_end).format("DD/MM/YYYY") : "-",
     },
     {
       title: "Mức lương",
@@ -256,6 +262,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       rowClassName={(record: Employee) =>
         selectedRowKeys.includes(record.id.toString()) ? "selected-row" : ""
       }
+      pagination={false}
     />
   );
 };

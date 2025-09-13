@@ -38,7 +38,7 @@ const EmployeeList: React.FC = () => {
     job_id: undefined,
     status: undefined,
     page: 1,
-    limit: 25,
+    limit: 10,
   });
 
   const dispatch = useAppDispatch();
@@ -234,7 +234,7 @@ const EmployeeList: React.FC = () => {
           data: [...employees, ...newEmployees],
           meta: {
             page: meta?.page ?? 1,
-            limit: meta?.limit ?? 25,
+            limit: meta?.limit ?? 10,
             total: (meta?.total ?? 0) + newEmployees.length,
           },
         };
@@ -365,13 +365,25 @@ const EmployeeList: React.FC = () => {
       </div>
 
       {(employees?.length ?? 0) > 0 ? (
-        <TableEmployee
-          data={employees}
-          selectedRowKeys={selectedRowKeys}
-          setSelectedRowKeys={setSelectedRowKeys}
-          loading={isLoading}
-          onEdit={handleEdit}
-        />
+        <>
+          <TableEmployee
+            data={employees}
+            selectedRowKeys={selectedRowKeys}
+            setSelectedRowKeys={setSelectedRowKeys}
+            loading={isLoading}
+            onEdit={handleEdit}
+          />
+          {meta && employees.length > 0 && (
+            <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
+              <Pagination
+                current={meta.page}
+                pageSize={meta.limit}
+                total={meta.total}
+                onChange={handlePageChange}
+              />
+            </div>
+          )}
+        </>
       ) : (
         <div style={{ textAlign: "center", padding: "50px 0", color: "#888" }}>
           <Empty description="Không có nhân viên nào để hiển thị" />
@@ -427,7 +439,7 @@ const EmployeeList: React.FC = () => {
               : [...employees, newEmployee],
             meta: {
               page: meta?.page ?? 1,
-              limit: meta?.limit ?? 25,
+              limit: meta?.limit ?? 10,
               total: editingEmployee ? meta?.total ?? 0 : (meta?.total ?? 0) + 1,
             },
           };
@@ -451,16 +463,6 @@ const EmployeeList: React.FC = () => {
         onClose={() => setFilterOpen(false)}
         onConfirm={handleFilter}
       />
-
-      {meta && (employees?.length ?? 0) > 0 && (
-        <Pagination
-          current={meta.page}
-          pageSize={meta.limit}
-          total={meta.total}
-          onChange={handlePageChange}
-          style={{ marginTop: 16, textAlign: "right" }}
-        />
-      )}
     </>
   );
 };
