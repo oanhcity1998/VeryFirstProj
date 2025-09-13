@@ -2,13 +2,13 @@ export interface Employee {
   id: number;
   name: string;
   birthday: string;
-  gender: string;
+  gender: boolean;
   work_phone: string;
   work_email: string;
   department_id: number;
   department: string;
   job_id: number;
-  job: string;
+  job_name: string;
   status: string;
   cccd: string;
   issued_date_cccd: string;

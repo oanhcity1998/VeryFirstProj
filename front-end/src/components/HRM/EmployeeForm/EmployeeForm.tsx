@@ -10,34 +10,12 @@ import {
   Card,
   InputNumber,
   FormInstance,
+  Select,
+  Checkbox,
 } from "antd";
 import dayjs from "dayjs";
 import "./EmployeeForm.css";
-import { Employee } from "@/views/HRM/EmployeeList/EmployeeList";
-
-// interface Employee {
-//   fullName?: string;
-//   birthDate?: string;
-//   phone?: string;
-//   position?: string;
-//   gender?: string;
-//   email?: string;
-//   department?: string;
-//   idNumber?: string;
-//   issuePlace?: string;
-//   issueDate?: string;
-//   permanentAddress?: string;
-//   temporaryAddress?: string;
-//   personalTaxCode?: string;
-//   socialInsuranceNumber?: string;
-//   bankAccount?: string;
-//   contractType?: string;
-//   contractTerm?: string;
-//   startDate?: string;
-//   endDate?: string;
-//   salary?: string;
-//   bonus?: string;
-// }
+import { Employee } from "@/models/HRM/employee.model"; // Import from employee.model.ts
 
 interface EmployeeFormProps {
   onCancel: () => void;
@@ -66,16 +44,45 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   cancelText = "Hủy",
   saveText = "Lưu",
 }) => {
-  // const [form] = Form.useForm();
-
   useEffect(() => {
     if (employee) {
       form.setFieldsValue({
-        ...employee,
-        birthDate: employee.birthDate ? dayjs(employee.birthDate, "DD/MM/YYYY") : null,
-        issueDate: employee.issueDate ? dayjs(employee.issueDate, "DD/MM/YYYY") : null,
-        startDate: employee.startDate ? dayjs(employee.startDate, "DD/MM/YYYY") : null,
-        endDate: employee.endDate ? dayjs(employee.endDate, "DD/MM/YYYY") : null,
+        id: employee.id,
+        name: employee.name,
+        birthday: employee.birthday ? dayjs(employee.birthday, "YYYY-MM-DD") : null,
+        gender: employee.gender,
+        work_phone: employee.work_phone,
+        work_email: employee.work_email,
+        department_id: employee.department_id,
+        department: employee.department,
+        job_id: employee.job_id,
+        job: employee.job,
+        status: employee.status,
+        cccd: employee.cccd,
+        issued_date_cccd: employee.issued_date_cccd
+          ? dayjs(employee.issued_date_cccd, "YYYY-MM-DD")
+          : null,
+        issued_place_cccd: employee.issued_place_cccd,
+        permanent_address: employee.permanent_address,
+        temporary_address: employee.temporary_address,
+        tax_id: employee.tax_id,
+        insurance_id: employee.insurance_id,
+        bank_account: employee.bank_account,
+        contract: employee.contract[0]
+          ? {
+            id: employee.contract[0].id,
+            x_contract_type: employee.contract[0].x_contract_type,
+            x_contract_term: employee.contract[0].x_contract_term,
+            date_start: employee.contract[0].date_start
+              ? dayjs(employee.contract[0].date_start, "YYYY-MM-DD")
+              : null,
+            date_end: employee.contract[0].date_end
+              ? dayjs(employee.contract[0].date_end, "YYYY-MM-DD")
+              : null,
+            wage: employee.contract[0].wage,
+            x_bonus: employee.contract[0].x_bonus,
+          }
+          : undefined,
       });
     } else {
       form.resetFields();
@@ -83,16 +90,46 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   }, [employee, form]);
 
   const onFinish = (values: any) => {
-    onSave({
-      ...values,
-      birthDate: values.birthDate ? values.birthDate.format("DD/MM/YYYY") : null,
-      issueDate: values.issueDate ? values.issueDate.format("DD/MM/YYYY") : null,
-      startDate: values.startDate ? values.startDate.format("DD/MM/YYYY") : null,
-      endDate: values.endDate ? values.endDate.format("DD/MM/YYYY") : null,
-      salary: values.salary ? values.salary.toString() : null,
-      bonus: values.bonus ? values.bonus.toString() : null,
-    });
-    onCancel();
+    const formattedValues: Employee = {
+      id: values.id || Date.now(), // Generate ID for new employees
+      name: values.name,
+      birthday: values.birthday ? values.birthday.format("YYYY-MM-DD") : "",
+      gender: values.gender,
+      work_phone: values.work_phone,
+      work_email: values.work_email,
+      department_id: values.department_id,
+      department: values.department || "",
+      job_id: values.job_id,
+      job: values.job || "",
+      status: values.status || "Active",
+      cccd: values.cccd,
+      issued_date_cccd: values.issued_date_cccd
+        ? values.issued_date_cccd.format("YYYY-MM-DD")
+        : "",
+      issued_place_cccd: values.issued_place_cccd,
+      permanent_address: values.permanent_address,
+      temporary_address: values.temporary_address || "",
+      tax_id: values.tax_id || "",
+      insurance_id: values.insurance_id || "",
+      bank_account: values.bank_account || "",
+      contract: [
+        {
+          id: values.contract?.id || Date.now(),
+          x_contract_type: values.contract?.x_contract_type || "",
+          x_contract_term: values.contract?.x_contract_term || false,
+          date_start: values.contract?.date_start
+            ? values.contract.date_start.format("YYYY-MM-DD")
+            : "",
+          date_end: values.contract?.date_end
+            ? values.contract.date_end.format("YYYY-MM-DD")
+            : "",
+          wage: values.contract?.wage || 0,
+          x_bonus: values.contract?.x_bonus || 0,
+        },
+      ],
+    };
+    onSave(formattedValues);
+    // onCancel(); // Moved to EmployeeList to ensure consistency
   };
 
   return (
@@ -121,25 +158,35 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             <Card title={infoTitle} bordered className="employee-card">
               <Form.Item
                 label="Họ và tên"
-                name="fullName"
+                name="name"
                 rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
               >
                 <Input placeholder="Nhập họ và tên" />
               </Form.Item>
               <Form.Item
+                label="Giới tính"
+                name="gender"
+                rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]}
+              >
+                <Select placeholder="Chọn giới tính">
+                  <Select.Option value="Male">Nam</Select.Option>
+                  <Select.Option value="Female">Nữ</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
                 label="Ngày sinh"
-                name="birthDate"
+                name="birthday"
                 rules={[{ required: true, message: "Vui lòng chọn ngày sinh!" }]}
               >
                 <DatePicker
-                  format="DD/MM/YYYY"
+                  format="YYYY-MM-DD"
                   style={{ width: "100%" }}
                   placeholder="Chọn ngày sinh"
                 />
               </Form.Item>
               <Form.Item
                 label="Số điện thoại"
-                name="phone"
+                name="work_phone"
                 rules={[
                   { required: true, message: "Vui lòng nhập số điện thoại!" },
                   {
@@ -151,22 +198,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 <Input placeholder="Nhập số điện thoại" />
               </Form.Item>
               <Form.Item
-                label="Vị trí"
-                name="position"
-                rules={[{ required: true, message: "Vui lòng nhập vị trí!" }]}
-              >
-                <Input placeholder="Nhập vị trí công việc" />
-              </Form.Item>
-              <Form.Item
-                label="Giới tính"
-                name="gender"
-                rules={[{ required: true, message: "Vui lòng nhập giới tính!" }]}
-              >
-                <Input placeholder="Nam / Nữ" />
-              </Form.Item>
-              <Form.Item
                 label="Email"
-                name="email"
+                name="work_email"
                 rules={[
                   { required: true, message: "Vui lòng nhập email!" },
                   { type: "email", message: "Email không hợp lệ!" },
@@ -175,11 +208,42 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 <Input placeholder="Nhập email" />
               </Form.Item>
               <Form.Item
+                label="Phòng ban ID"
+                name="department_id"
+                rules={[{ required: true, message: "Vui lòng nhập ID phòng ban!" }]}
+              >
+                <InputNumber min={1} style={{ width: "100%" }} placeholder="Nhập ID phòng ban" />
+              </Form.Item>
+              <Form.Item
                 label="Phòng ban"
                 name="department"
-                rules={[{ required: true, message: "Vui lòng nhập phòng ban!" }]}
+                rules={[{ required: true, message: "Vui lòng nhập tên phòng ban!" }]}
               >
                 <Input placeholder="Nhập tên phòng ban" />
+              </Form.Item>
+              <Form.Item
+                label="Vị trí ID"
+                name="job_id"
+                rules={[{ required: true, message: "Vui lòng nhập ID vị trí!" }]}
+              >
+                <InputNumber min={1} style={{ width: "100%" }} placeholder="Nhập ID vị trí" />
+              </Form.Item>
+              <Form.Item
+                label="Vị trí"
+                name="job"
+                rules={[{ required: true, message: "Vui lòng nhập tên vị trí!" }]}
+              >
+                <Input placeholder="Nhập tên vị trí" />
+              </Form.Item>
+              <Form.Item
+                label="Trạng thái"
+                name="status"
+                rules={[{ required: true, message: "Vui lòng chọn trạng thái!" }]}
+              >
+                <Select placeholder="Chọn trạng thái">
+                  <Select.Option value="Active">Hoạt động</Select.Option>
+                  <Select.Option value="Inactive">Không hoạt động</Select.Option>
+                </Select>
               </Form.Item>
             </Card>
           </Col>
@@ -188,46 +252,46 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             <Card title={extraInfoTitle} bordered className="employee-card">
               <Form.Item
                 label="Số CCCD"
-                name="idNumber"
+                name="cccd"
                 rules={[{ required: true, message: "Vui lòng nhập số CCCD!" }]}
               >
                 <Input placeholder="Nhập số CCCD" />
               </Form.Item>
               <Form.Item
-                label="Nơi cấp"
-                name="issuePlace"
-                rules={[{ required: true, message: "Vui lòng nhập nơi cấp!" }]}
-              >
-                <Input placeholder="Nhập nơi cấp CCCD" />
-              </Form.Item>
-              <Form.Item
-                label="Ngày cấp"
-                name="issueDate"
+                label="Ngày cấp CCCD"
+                name="issued_date_cccd"
                 rules={[{ required: true, message: "Vui lòng chọn ngày cấp!" }]}
               >
                 <DatePicker
-                  format="DD/MM/YYYY"
+                  format="YYYY-MM-DD"
                   style={{ width: "100%" }}
                   placeholder="Chọn ngày cấp"
                 />
               </Form.Item>
               <Form.Item
+                label="Nơi cấp CCCD"
+                name="issued_place_cccd"
+                rules={[{ required: true, message: "Vui lòng nhập nơi cấp!" }]}
+              >
+                <Input placeholder="Nhập nơi cấp CCCD" />
+              </Form.Item>
+              <Form.Item
                 label="Địa chỉ thường trú"
-                name="permanentAddress"
+                name="permanent_address"
                 rules={[{ required: true, message: "Vui lòng nhập địa chỉ thường trú!" }]}
               >
                 <Input placeholder="Nhập địa chỉ thường trú" />
               </Form.Item>
-              <Form.Item label="Địa chỉ tạm trú" name="temporaryAddress">
+              <Form.Item label="Địa chỉ tạm trú" name="temporary_address">
                 <Input placeholder="Nhập địa chỉ tạm trú" />
               </Form.Item>
-              <Form.Item label="Mã số TNCN" name="personalTaxCode">
-                <Input placeholder="Nhập mã số TNCN" />
+              <Form.Item label="Mã số thuế TNCN" name="tax_id">
+                <Input placeholder="Nhập mã số thuế TNCN" />
               </Form.Item>
-              <Form.Item label="Mã số BHXH" name="socialInsuranceNumber">
+              <Form.Item label="Mã số BHXH" name="insurance_id">
                 <Input placeholder="Nhập mã số BHXH" />
               </Form.Item>
-              <Form.Item label="Tài khoản ngân hàng" name="bankAccount">
+              <Form.Item label="Tài khoản ngân hàng" name="bank_account">
                 <Input placeholder="Nhập số tài khoản ngân hàng" />
               </Form.Item>
             </Card>
@@ -236,51 +300,65 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
           <Col span={8}>
             <Card title={contractTitle} bordered className="employee-card">
               <Form.Item
-                label="Loại hợp đồng lao động"
-                name="contractType"
+                label="Loại hợp đồng"
+                name={["contract", "x_contract_type"]}
                 rules={[{ required: true, message: "Vui lòng nhập loại hợp đồng!" }]}
               >
-                <Input placeholder="VD: Hợp đồng xác định thời hạn" />
+                <Input placeholder="Nhập loại hợp đồng" />
               </Form.Item>
-              <Form.Item label="Thời hạn hợp đồng lao động" name="contractTerm">
-                <Input placeholder="VD: 12 tháng" />
+              <Form.Item
+                label="Thời hạn hợp đồng"
+                name={["contract", "x_contract_term"]}
+                valuePropName="checked"
+              >
+                <Checkbox>Có thời hạn</Checkbox>
               </Form.Item>
               <Form.Item
                 label="Ngày bắt đầu"
-                name="startDate"
+                name={["contract", "date_start"]}
                 rules={[{ required: true, message: "Vui lòng chọn ngày bắt đầu!" }]}
               >
                 <DatePicker
-                  format="DD/MM/YYYY"
+                  format="YYYY-MM-DD"
                   style={{ width: "100%" }}
                   placeholder="Chọn ngày bắt đầu"
                 />
               </Form.Item>
               <Form.Item
                 label="Ngày kết thúc"
-                name="endDate"
+                name={["contract", "date_end"]}
                 rules={[{ required: true, message: "Vui lòng chọn ngày kết thúc!" }]}
               >
                 <DatePicker
-                  format="DD/MM/YYYY"
+                  format="YYYY-MM-DD"
                   style={{ width: "100%" }}
                   placeholder="Chọn ngày kết thúc"
                 />
               </Form.Item>
-              <Form.Item label="Mức lương" name="salary">
+              <Form.Item
+                label="Mức lương"
+                name={["contract", "wage"]}
+                rules={[{ required: true, message: "Vui lòng nhập mức lương!" }]}
+              >
                 <InputNumber
+                  min={0}
                   style={{ width: "100%" }}
                   placeholder="Nhập mức lương"
                   formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                  parser={(value) => value!.replace(/,/g, "")}
+                  parser={(value) => value!.replace(/,/g, "") as any}
                 />
               </Form.Item>
-              <Form.Item label="Tiền thưởng" name="bonus">
+              <Form.Item
+                label="Tiền thưởng"
+                name={["contract", "x_bonus"]}
+                rules={[{ required: true, message: "Vui lòng nhập tiền thưởng!" }]}
+              >
                 <InputNumber
+                  min={0}
                   style={{ width: "100%" }}
                   placeholder="Nhập tiền thưởng"
                   formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                  parser={(value) => value!.replace(/,/g, "")}
+                  parser={(value) => value!.replace(/,/g, "") as any}
                 />
               </Form.Item>
             </Card>

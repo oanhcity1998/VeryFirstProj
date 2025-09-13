@@ -1,5 +1,16 @@
-import { EmployeeState } from "@/models/HRM/employee.model";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Employee, EmployeeResponse } from "@/models/HRM/employee.model";
+
+export interface EmployeeState {
+  employees: Employee[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+  } | null;
+  loading: boolean;
+  error: string | null;
+}
 
 const initialState: EmployeeState = {
   employees: [],
@@ -16,8 +27,9 @@ const employeeSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    setEmployees: (state, action: PayloadAction<EmployeeState>) => {
-      state.employees = action.payload.employees;
+    // 👇 nhận đúng EmployeeResponse từ API
+    setEmployees: (state, action: PayloadAction<EmployeeResponse>) => {
+      state.employees = action.payload.data; // lấy từ "data"
       state.meta = action.payload.meta;
       state.loading = false;
       state.error = null;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Modal, Popover, Upload, Space, Form, Pagination } from "antd";
+import { Button, Modal, Popover, Upload, Space, Form, Pagination, Empty } from "antd";
 import {
   PlusOutlined,
   SettingOutlined,
@@ -31,6 +31,7 @@ const EmployeeList: React.FC = () => {
   const [deleting, setDeleting] = useState<boolean>(false);
   const [importOpen, setImportOpen] = useState<boolean>(false);
   const [importing, setImporting] = useState<boolean>(false);
+  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [queryParams, setQueryParams] = useState({
     q: "",
     department_id: undefined,
@@ -43,9 +44,13 @@ const EmployeeList: React.FC = () => {
   const dispatch = useAppDispatch();
   const { employees, meta, error } = useAppSelector((state) => state.employee);
 
+  // Fetch employees using RTK Query
   const { data, isLoading, isError } = useGetEmployeesQuery(queryParams);
 
+  // Sync API data to Redux and log for debugging
   useEffect(() => {
+    console.log("API Data:", data);
+    console.log("Redux Employees:", employees);
     if (data) {
       dispatch(setEmployees(data));
     }
@@ -55,12 +60,60 @@ const EmployeeList: React.FC = () => {
     }
   }, [data, isError, dispatch]);
 
+  // Handle edit employee
+  const handleEdit = (record: Employee) => {
+    setEditingEmployee(record);
+    form.setFieldsValue({
+      id: record.id,
+      name: record.name,
+      birthday: record.birthday ? dayjs(record.birthday, "YYYY-MM-DD") : null,
+      gender: record.gender,
+      work_phone: record.work_phone,
+      work_email: record.work_email,
+      department_id: record.department_id,
+      department: record.department,
+      job_id: record.job_id,
+      job_name: record.job_name,
+      status: record.status,
+      cccd: record.cccd,
+      issued_date_cccd: record.issued_date_cccd
+        ? dayjs(record.issued_date_cccd, "YYYY-MM-DD")
+        : null,
+      issued_place_cccd: record.issued_place_cccd,
+      permanent_address: record.permanent_address,
+      temporary_address: record.temporary_address,
+      tax_id: record.tax_id,
+      insurance_id: record.insurance_id,
+      bank_account: record.bank_account,
+      contract: record.contract[0] || {
+        id: Date.now(),
+        x_contract_type: "",
+        x_contract_term: false,
+        date_start: null,
+        date_end: null,
+        wage: 0,
+        x_bonus: 0,
+      },
+    });
+    setIsModalOpen(true);
+  };
+
+  // Handle delete
   const handleDelete = async () => {
     try {
       setDeleting(true);
       await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call
-      const newData = employees.filter((item) => !selectedRowKeys.includes(item.id.toString()));
-      dispatch(setEmployees({ employees: newData, meta: { ...meta!, total: newData.length } } as EmployeeResponse));
+      const newData = employees.filter(
+        (item) => !selectedRowKeys.includes(item.id.toString())
+      );
+      const newResponse: EmployeeResponse = {
+        data: newData,
+        meta: {
+          ...meta!,
+          total: newData.length,
+        },
+      };
+      dispatch(setEmployees(newResponse));
       toast.success("Đã xóa nhân sự");
     } catch (err) {
       toast.error("Không thể xóa nhân sự");
@@ -71,9 +124,9 @@ const EmployeeList: React.FC = () => {
     }
   };
 
+  // Handle upload
   const handleUpload = async (file: File) => {
     const fileType = file.name.split(".").pop()?.toLowerCase();
-
     if (fileType !== "xlsx" && fileType !== "csv") {
       toast.error("File không hợp lệ. Vui lòng tải lên file .xlsx hoặc .csv.");
       return Upload.LIST_IGNORE;
@@ -140,15 +193,17 @@ const EmployeeList: React.FC = () => {
             rowHasError = true;
           }
           if (key === "contract") {
-            newEmployee.contract = [{
-              id: i,
-              x_contract_type: row[j] as string,
-              x_contract_term: false,
-              date_start: row[j + 1] as string,
-              date_end: row[j + 2] as string,
-              wage: parseFloat(row[j + 3] as string) || 0,
-              x_bonus: parseFloat(row[j + 4] as string) || 0,
-            }];
+            newEmployee.contract = [
+              {
+                id: i,
+                x_contract_type: row[j] as string,
+                x_contract_term: false,
+                date_start: row[j + 1] as string,
+                date_end: row[j + 2] as string,
+                wage: parseFloat(row[j + 3] as string) || 0,
+                x_bonus: parseFloat(row[j + 4] as string) || 0,
+              },
+            ];
             j += 4; // Skip contract fields
           } else {
             newEmployee[key] = value;
@@ -167,15 +222,27 @@ const EmployeeList: React.FC = () => {
         toast.error(
           <div style={{ maxHeight: "200px", overflowY: "auto" }}>
             <p>Có lỗi trong file của bạn:</p>
-            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>{errors.join("\n")}</pre>
+            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
+              {errors.join("\n")}
+            </pre>
           </div>,
           { autoClose: 5000 }
         );
         setImporting(false);
       } else {
-        dispatch(setEmployees({ employees: [...employees, ...newEmployees], meta: { ...meta!, total: employees.length + newEmployees.length } } as EmployeeResponse));
+        const newResponse: EmployeeResponse = {
+          data: [...employees, ...newEmployees],
+          meta: {
+            page: meta?.page ?? 1,
+            limit: meta?.limit ?? 25,
+            total: (meta?.total ?? 0) + newEmployees.length,
+          },
+        };
+        dispatch(setEmployees(newResponse));
         const timestamp = dayjs().format("HH:mm:ss DD/MM/YYYY");
-        console.log(`[Import Log] Tải lên thành công ${newEmployees.length} nhân viên lúc ${timestamp} bởi admin`);
+        console.log(
+          `[Import Log] Tải lên thành công ${newEmployees.length} nhân viên lúc ${timestamp} bởi admin`
+        );
         toast.success(`${newEmployees.length} nhân viên đã được import thành công.`);
         setImportOpen(false);
         setImporting(false);
@@ -186,6 +253,7 @@ const EmployeeList: React.FC = () => {
     return false;
   };
 
+  // Search / Filter / Page
   const handleSearch = (value: string) => {
     setQueryParams({ ...queryParams, q: value, page: 1 });
   };
@@ -205,6 +273,7 @@ const EmployeeList: React.FC = () => {
     setQueryParams({ ...queryParams, page });
   };
 
+  // Render
   return (
     <>
       <div className="employee-list-header">
@@ -253,7 +322,9 @@ const EmployeeList: React.FC = () => {
               <p className="ant-upload-drag-icon">
                 <InboxOutlined />
               </p>
-              <p className="ant-upload-text">Click hoặc kéo thả file vào đây để Import</p>
+              <p className="ant-upload-text">
+                Click hoặc kéo thả file vào đây để Import
+              </p>
               <p className="ant-upload-hint">Chỉ chấp nhận 1 file mỗi lần</p>
             </Dragger>
           </Modal>
@@ -275,28 +346,50 @@ const EmployeeList: React.FC = () => {
             okButtonProps={{ danger: true, loading: deleting }}
             centered
           >
-            <p>Bạn có chắc muốn xóa nhân sự này? Hành động này không thể hoàn tác.</p>
+            <p>
+              Bạn có chắc muốn xóa nhân sự này? Hành động này không thể hoàn tác.
+            </p>
           </Modal>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsModalOpen(true)}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              setEditingEmployee(null);
+              form.resetFields();
+              setIsModalOpen(true);
+            }}
+          >
             Tạo
           </Button>
         </div>
       </div>
 
-      <TableEmployee
-        data={employees as any[]}
-        selectedRowKeys={selectedRowKeys}
-        setSelectedRowKeys={setSelectedRowKeys}
-        loading={isLoading}
-      />
+      {(employees?.length ?? 0) > 0 ? (
+        <TableEmployee
+          data={employees}
+          selectedRowKeys={selectedRowKeys}
+          setSelectedRowKeys={setSelectedRowKeys}
+          loading={isLoading}
+          onEdit={handleEdit}
+        />
+      ) : (
+        <div style={{ textAlign: "center", padding: "50px 0", color: "#888" }}>
+          <Empty description="Không có nhân viên nào để hiển thị" />
+          <p>Hiện tại không có dữ liệu nhân sự. Vui lòng thêm nhân viên mới!</p>
+        </div>
+      )}
 
       <EmployeeForm
         form={form}
         open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
+        onCancel={() => {
+          setIsModalOpen(false);
+          setEditingEmployee(null);
+          form.resetFields();
+        }}
         onSave={(values: Employee) => {
           const newEmployee: Employee = {
-            id: values.id,
+            id: editingEmployee ? editingEmployee.id : Date.now(),
             name: values.name,
             birthday: values.birthday,
             gender: values.gender,
@@ -305,7 +398,7 @@ const EmployeeList: React.FC = () => {
             department_id: values.department_id,
             department: values.department,
             job_id: values.job_id,
-            job: values.job,
+            job_name: values.job_name,
             status: values.status,
             cccd: values.cccd,
             issued_date_cccd: values.issued_date_cccd,
@@ -315,20 +408,37 @@ const EmployeeList: React.FC = () => {
             tax_id: values.tax_id,
             insurance_id: values.insurance_id,
             bank_account: values.bank_account,
-            contract: [{
-              id: Date.now(),
-              x_contract_type: values.contract[0].x_contract_type,
-              x_contract_term: values.contract[0].x_contract_term,
-              date_start: values.contract[0].date_start,
-              date_end: values.contract[0].date_end,
-              wage: values.contract[0].wage,
-              x_bonus: values.contract[0].x_bonus,
-            }],
+            contract: [
+              {
+                id: values.contract[0]?.id || Date.now(),
+                x_contract_type: values.contract[0]?.x_contract_type || "",
+                x_contract_term: values.contract[0]?.x_contract_term || false,
+                date_start: values.contract[0]?.date_start || "",
+                date_end: values.contract[0]?.date_end || "",
+                wage: values.contract[0]?.wage || 0,
+                x_bonus: values.contract[0]?.x_bonus || 0,
+              },
+            ],
           };
-          dispatch(setEmployees({ employees: [...employees, newEmployee], meta: { ...meta!, total: (meta?.total || 0) + 1 } } as EmployeeResponse));
+
+          const newResponse: EmployeeResponse = {
+            data: editingEmployee
+              ? employees.map((emp) => (emp.id === editingEmployee.id ? newEmployee : emp))
+              : [...employees, newEmployee],
+            meta: {
+              page: meta?.page ?? 1,
+              limit: meta?.limit ?? 25,
+              total: editingEmployee ? meta?.total ?? 0 : (meta?.total ?? 0) + 1,
+            },
+          };
+
+          dispatch(setEmployees(newResponse));
+          toast.success(editingEmployee ? "Cập nhật nhân sự thành công" : "Thêm nhân sự thành công");
           setIsModalOpen(false);
+          setEditingEmployee(null);
+          form.resetFields();
         }}
-        modalTitle="Thêm nhân sự"
+        modalTitle={editingEmployee ? "Chỉnh sửa nhân sự" : "Thêm nhân sự"}
         infoTitle="Thông tin nhân sự"
         extraInfoTitle="Thông tin bổ sung"
         contractTitle="Thông tin hợp đồng"
@@ -342,7 +452,7 @@ const EmployeeList: React.FC = () => {
         onConfirm={handleFilter}
       />
 
-      {meta && (
+      {meta && (employees?.length ?? 0) > 0 && (
         <Pagination
           current={meta.page}
           pageSize={meta.limit}

@@ -1,4 +1,4 @@
-import { LoginRequest, LoginResponse } from "@/models/HRM/auth.model";
+import { LoginRequest, LoginResponse } from "@/models/public/auth.model";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const authService = createApi({
