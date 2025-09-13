@@ -9,59 +9,72 @@ from openpyxl import load_workbook
 
 class EmployeeAPI(http.Controller):
 
-    @http.route('/api/hr/employees', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/hr/employees', type='http', auth='user', methods=['POST'], csrf=False)
     def create_employee(self, **kwargs):
         try:
             if request.httprequest.data:
-                data = json.loads(request.httprequest.data.decode("utf-8"))
+                data = json.loads(request.httprequest.data.decode("utf-8"), strict=False)
             else:
                 data = kwargs 
-        except Exception:
-            return {"error": "Invalid JSON body"}
 
-        required_fields = ["name", "birthday", "gender", "work_phone", "work_email", "department_id", "job_id", "id_number", "id_issued_place", "id_issued_date", "permanent_address"]
-        for field in required_fields:
-            if field not in data or not data[field]:
-                return {"error": f"Missing required field: {field}"}
+            required_fields = ["name", "birthday", "gender", "work_phone", "work_email", "department_id", "job_id", "id_number", "id_issued_place", "id_issued_date", "permanent_address"]
+            for field in required_fields:
+                if field not in data or not data[field]:
+                    return request.make_response(
+                        json.dumps({"error": f"Vui lòng nhập field: {field}"}),
+                        headers=[('Content-Type', 'application/json')],
+                        status=400
+                    )
 
-        employee = request.env["hr.employee"].sudo().create({
-            "name": data.get("name"),
-            "birthday": data.get("birthday"),
-            "gender": data.get("gender"),
-            "work_phone": data.get("work_phone"),
-            "work_email": data.get("work_email"),
-            "department_id": data.get("department_id"),
-            "job_id": data.get("job_id"),
-            "id_number": data.get("id_number"),
-            "id_issued_place": data.get("id_issued_place"),
-            "id_issued_date": data.get("id_issued_date"),
-            "permanent_address": data.get("permanent_address"),
-            "temporary_address": data.get("temporary_address"),
-            "tax_id": data.get("tax_id"),
-            "insurance_id": data.get("insurance_id"),
-            "bank_account": data.get("bank_account"),
-        })
-
-        contract_data = data.get("contract")
-        if contract_data:
-            request.env["hr.contract.custom"].sudo().create({
-                "name": contract_data.get("name"),
-                "x_contract_type": contract_data.get("contract_type"),
-                "employee_id": employee.id,
-                "date_start": contract_data.get("date_start"),
-                "date_end": contract_data.get("date_end"),
-                "wage": contract_data.get("wage"),
-                "x_bonus": contract_data.get("bonus")
+            employee = request.env["hr.employee"].sudo().create({
+                "name": data.get("name"),
+                "birthday": data.get("birthday"),
+                "gender": data.get("gender"),
+                "work_phone": data.get("work_phone"),
+                "work_email": data.get("work_email"),
+                "department_id": data.get("department_id"),
+                "job_id": data.get("job_id"),
+                "id_number": data.get("id_number"),
+                "id_issued_place": data.get("id_issued_place"),
+                "id_issued_date": data.get("id_issued_date"),
+                "permanent_address": data.get("permanent_address"),
+                "temporary_address": data.get("temporary_address"),
+                "tax_id": data.get("tax_id"),
+                "insurance_id": data.get("insurance_id"),
+                "bank_account": data.get("bank_account"),
             })
 
-        return {"id": employee.id, "message": "Created successfully"}
+            contract_data = data.get("contract")
+            if contract_data:
+                request.env["hr.contract.custom"].sudo().create({
+                    "name": contract_data.get("name"),
+                    "x_contract_type": contract_data.get("contract_type"),
+                    "employee_id": employee.id,
+                    "date_start": contract_data.get("date_start"),
+                    "date_end": contract_data.get("date_end"),
+                    "wage": contract_data.get("wage"),
+                    "x_bonus": contract_data.get("bonus")
+                })
+
+            return request.make_response(
+                json.dumps({
+                    "message": "Tạo nhân viên thành công",
+                }, ensure_ascii=False),
+                headers=[('Content-Type', 'application/json')]
+            )
+        except Exception as e:
+            return request.make_response(
+                json.dumps({"error": f"Tạo nhân viên thất bại: {str(e)}"}, ensure_ascii=False),
+                headers=[('Content-Type', 'application/json')],
+                status=500
+            )
 
     @http.route('/api/hr/employees', type='http', auth='user', methods=['GET'], csrf=False)
     def list_employees(self, **kwargs):
         q = kwargs.get('q', '').strip()
         department_id = kwargs.get('department_id')
         job_id = kwargs.get('job_id')
-        status = kwargs.get('status', '').lower()
+        gender = kwargs.get('gender', '').lower()
         page = int(kwargs.get('page', 1))
         limit = int(kwargs.get('limit', 25))
 
@@ -70,7 +83,6 @@ class EmployeeAPI(http.Controller):
         if q:
             domain.append('|')
             domain.append(('name', 'ilike', q))
-            domain.append(('id_number', 'ilike', q))
 
         if department_id:
             domain.append(('department_id', '=', int(department_id)))
@@ -78,9 +90,8 @@ class EmployeeAPI(http.Controller):
         if job_id:
             domain.append(('job_id', '=', int(job_id)))
 
-        if status:
-            if status in ['active', 'inactive']:
-                domain.append(('active', '=', True if status == 'active' else False))
+        if gender:
+            domain.append(('gender', '=', gender))
 
         total = request.env['hr.employee'].sudo().search_count(domain)
 
@@ -97,9 +108,9 @@ class EmployeeAPI(http.Controller):
                 "work_phone": emp.work_phone,
                 "work_email": emp.work_email,
                 "department_id": emp.department_id.id if emp.department_id else None,
-                "department": emp.department_id.name if emp.department_id else None,
+                "department_name": emp.department_id.name if emp.department_id else None,
                 "job_id": emp.job_id.id if emp.job_id else None,
-                "job": emp.job_id.name if emp.job_id else None,
+                "job_name": emp.job_id.name if emp.job_id else None,
                 "status": "active" if emp.active else "inactive",
                 "cccd": emp.id_number,
                 "issued_date_cccd": str(emp.id_issued_date) if emp.id_issued_date else None,
@@ -109,7 +120,7 @@ class EmployeeAPI(http.Controller):
                 "tax_id": emp.tax_id,
                 "insurance_id": emp.insurance_id,
                 "bank_account": emp.bank_account,
-                "constract": [ 
+                "contract": [
                     {
                         "id": c.id, 
                         "x_contract_type": c.x_contract_type, 
@@ -130,7 +141,18 @@ class EmployeeAPI(http.Controller):
         headers=[('Content-Type', 'application/json')]
     )
 
-    @http.route('/api/hr/employees/<int:employee_id>', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    #get all employee id
+    @http.route('/api/hr/employees/ids', type='http', auth='user', methods=['GET'], csrf=False)
+    def get_all_employees(self, **kwargs):
+        Employee = request.env['hr.employee'].sudo()
+        employees = Employee.search([])
+        data = [{"id": emp.id, "name": emp.name} for emp in employees]
+        return request.make_response(
+            json.dumps({"data": data}),
+            headers=[('Content-Type', 'application/json')]
+        )
+
+    @http.route('/api/hr/employees/<int:employee_id>', type='http', auth='user', methods=['GET'], csrf=False)
     def get_employee(self, employee_id, **kwargs):
         Employee = request.env['hr.employee'].sudo()
         Contract = request.env['hr.contract.custom'].sudo()
@@ -151,9 +173,9 @@ class EmployeeAPI(http.Controller):
             "work_phone": employee.work_phone,
             "work_email": employee.work_email,
             "department_id": employee.department_id.id if employee.department_id else None,
-            "department": employee.department_id.name if employee.department_id else None,
+            "department_name": employee.department_id.name if employee.department_id else None,
             "job_id": employee.job_id.id if employee.job_id else None,
-            "job": employee.job_id.name if employee.job_id else None,
+            "job_name": employee.job_id.name if employee.job_id else None,
             "id_number": employee.id_number,
             "id_issued_place": employee.id_issued_place,
             "id_issued_date": str(employee.id_issued_date) if employee.id_issued_date else None,
@@ -180,8 +202,10 @@ class EmployeeAPI(http.Controller):
             })
 
         response = {
-            "profile": profile,
-            "contracts": contracts
+            "data": {
+                "profile": profile,
+                "contracts": contracts
+            }   
         }
 
         return request.make_response(
