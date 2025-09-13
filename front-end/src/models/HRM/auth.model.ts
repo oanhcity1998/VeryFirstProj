@@ -1,28 +1,18 @@
 export interface AuthState {
-  uid: number | null;
+  session_id: string | null;
   isAuthenticated: boolean;
   error: string | null;
   loading: boolean;
 }
 
 export interface LoginRequest {
-  jsonrpc: string;
-  method: string;
-  params: {
-    username: string;
-    password: string;
-  };
-}
-
-export interface LoginResponseData {
-  uid: number;
-  message: string;
+  username: string;
+  password: string;
 }
 
 export interface LoginResponse {
-  jsonrpc: string;
-  id: null;
-  result: {
-    result: LoginResponseData;
-  };
+  success: boolean;
+  message: string;
+  session_id: string;
+  uid: number;
 }
