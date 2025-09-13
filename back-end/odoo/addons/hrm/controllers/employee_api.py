@@ -213,7 +213,7 @@ class EmployeeAPI(http.Controller):
             headers=[('Content-Type', 'application/json')]
         )
 
-    @http.route('/api/hr/employees/<int:employee_id>', type='http', auth='user', methods=['PUT'], csrf=False, cors='*')
+    @http.route('/api/hr/employees/<int:employee_id>', type='http', auth='user', methods=['PUT'], csrf=False, )
     def update_employee(self, employee_id, **kwargs):
         Employee = request.env['hr.employee'].sudo()
         employee = Employee.browse(employee_id)
@@ -260,6 +260,10 @@ class EmployeeAPI(http.Controller):
                 updates[field] = new_value
 
         if updates:
+            updates["logs"] = (employee.logs or []) + [{
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "changes": updates
+            }]
             employee.write(updates)
             return request.make_json_response({
                 "success": True,
@@ -275,7 +279,7 @@ class EmployeeAPI(http.Controller):
                 "received_data": data
             }, status=200)
 
-    @http.route('/api/hr/employees/<int:employee_id>', type='http', auth='user', methods=['DELETE'], csrf=False, cors='*')
+    @http.route('/api/hr/employees/<int:employee_id>', type='http', auth='user', methods=['DELETE'], csrf=False, )
     def delete_employee(self, employee_id, **kwargs):
         Employee = request.env['hr.employee'].sudo()
         employee = Employee.search([('id', '=', employee_id)], limit=1)
@@ -302,7 +306,7 @@ class EmployeeAPI(http.Controller):
             status=200
         )
 
-    @http.route('/api/hr/employees/export', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/hr/employees/export', type='http', auth='user', methods=['GET'], csrf=False, )
     def export_employees_excel(self, **kwargs):
         try:
             # Get filter parameters (same as list_employees)
@@ -415,7 +419,7 @@ class EmployeeAPI(http.Controller):
                 status=500
             )
 
-    @http.route('/api/hr/employees/export-template', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/hr/employees/export-template', type='http', auth='user', methods=['GET'], csrf=False, )
     def download_import_template(self, **kwargs):
         try:
             # Create Excel template
@@ -528,7 +532,7 @@ class EmployeeAPI(http.Controller):
                 status=500
             )
 
-    @http.route('/api/hr/employees/import', type='http', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/hr/employees/import', type='http', auth='user', methods=['POST'], csrf=False, )
     def import_employees_excel(self, **kwargs):
         try:
             # Get the uploaded file

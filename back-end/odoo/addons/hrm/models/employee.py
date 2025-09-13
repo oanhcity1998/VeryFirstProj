@@ -23,6 +23,7 @@ class HrEmployee(models.Model):
     bank_account = fields.Char("Bank Account")
     work_email = fields.Char("Work Email", unique=True)
     active = fields.Boolean(default=True)
+    # logs = fields.Json("Logs", default=list)
 
     _sql_constraints = [
         ("x_id_number_unique", "unique(x_id_number)", "ID number must be unique!"),
