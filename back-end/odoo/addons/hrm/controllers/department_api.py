@@ -6,7 +6,7 @@ _logger = logging.getLogger(__name__)
 
 class DepartmentAPI(http.Controller):
 
-    @http.route('/api/hr/departments', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/hr/departments', type='json', auth='user', methods=['POST'], csrf=False)
     def create_department(self, **kwargs):
         try:
             if request.httprequest.data:
@@ -60,7 +60,7 @@ class DepartmentAPI(http.Controller):
         except Exception as e:
             return {"error": f"Failed to create department: {str(e)}"}
 
-    @http.route('/api/hr/departments', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/hr/departments', type='http', auth='user', methods=['GET'], csrf=False)
     def list_departments(self, **kwargs):
         try:
             # Get query parameters
@@ -123,6 +123,28 @@ class DepartmentAPI(http.Controller):
                 status=500
             )
 
+    #Get department Ids and names
+    @http.route('/api/hr/departments/ids', type='http', auth='user', methods=['GET'], csrf=False)
+    def get_department_ids(self, **kwargs):
+        try:
+            departments = request.env['hr.department'].sudo().search([], order='name')
+            data = []
+            for dept in departments:
+                data.append({
+                    "id": dept.id,
+                    "name": dept.name
+                })
+            return request.make_response(
+                json.dumps({"data": data}),
+                headers=[('Content-Type', 'application/json')]
+            )
+        except Exception as e:
+            return request.make_response(
+                json.dumps({"error": str(e)}),
+                headers=[('Content-Type', 'application/json')],
+                status=500
+            )
+    
     @http.route('/api/hr/departments/<int:department_id>', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
     def get_department(self, department_id, **kwargs):
         try:

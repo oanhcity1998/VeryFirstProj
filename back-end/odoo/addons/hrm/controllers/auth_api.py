@@ -5,13 +5,20 @@ import json
 from odoo.exceptions import AccessDenied
 
 _logger = logging.getLogger(__name__)
+ALLOWED_ORIGIN = "http://127.0.0.1:5500"
 
+def cors_headers():
+    return [
+        ('Access-Control-Allow-Origin', ALLOWED_ORIGIN),
+        ('Access-Control-Allow-Credentials', 'true'),
+        ('Access-Control-Allow-Headers', 'Content-Type, Authorization'),
+        ('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'),
+    ]
 class AuthAPI(http.Controller):
 
-    @http.route('/api/auth/login', type='http', auth='none', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/auth/login', type='http', auth='none', methods=['POST','OPTIONS'], csrf=False)
     def login(self, **kwargs):
         try:
-            # Parse JSON body
             try:
                 data = json.loads(request.httprequest.data.decode('utf-8'))
             except Exception:
@@ -39,13 +46,17 @@ class AuthAPI(http.Controller):
             if uid:
 
                 session_id = request.session.sid
-
+                # Set session cookie
+                session_id = request.httprequest.cookies.get('session_id')
+    
                 # Build success response
                 response = Response(
                     json.dumps({ "success": True, "session_id": session_id, "message": "Đăng nhập thành công."}, ensure_ascii=False),
                     content_type='application/json',
                     status=200
                 )
+                
+
 
                 return response
             else:
@@ -65,3 +76,4 @@ class AuthAPI(http.Controller):
                 content_type='application/json',
                 status=500
             )
+
