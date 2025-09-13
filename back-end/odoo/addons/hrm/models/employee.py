@@ -7,9 +7,9 @@ class HrEmployee(models.Model):
 
     birthday = fields.Date("Birthday", required=True)
     gender = fields.Selection([
-        ("male", "Male"),
-        ("female", "Female"),
-        ("other", "Other"),
+        ("Nam", "Nam"),
+        ("Nữ", "Nữ"),
+        ("Khác", "Khác"),
     ], string="Gender", required=True)
 
     id_number = fields.Char("ID/CCCD Number", required=True)
@@ -23,7 +23,7 @@ class HrEmployee(models.Model):
     bank_account = fields.Char("Bank Account")
     work_email = fields.Char("Work Email", unique=True)
     active = fields.Boolean(default=True)
-    # logs = fields.Json("Logs", default=list)
+    logs = fields.Json("Logs", default=list)
 
     _sql_constraints = [
         ("x_id_number_unique", "unique(x_id_number)", "ID number must be unique!"),
