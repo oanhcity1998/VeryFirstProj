@@ -145,7 +145,7 @@ class DepartmentAPI(http.Controller):
                 status=500
             )
     
-    @http.route('/api/hr/departments/<int:department_id>', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/hr/departments/<int:department_id>', type='http', auth='user', methods=['GET'], csrf=False, )
     def get_department(self, department_id, **kwargs):
         try:
             department = request.env['hr.department'].sudo().search([
@@ -192,7 +192,7 @@ class DepartmentAPI(http.Controller):
                 status=500
             )
 
-    @http.route('/api/hr/departments/<int:department_id>', type='http', auth='user', methods=['PUT'], csrf=False, cors='*')
+    @http.route('/api/hr/departments/<int:department_id>', type='http', auth='user', methods=['PUT'], csrf=False, )
     def update_department(self, department_id, **kwargs):
         try:
             # Parse request data
@@ -277,7 +277,7 @@ class DepartmentAPI(http.Controller):
                 status=500
             )
 
-    @http.route('/api/hr/departments/<int:department_id>', type='http', auth='user', methods=['DELETE'], csrf=False, cors='*')
+    @http.route('/api/hr/departments/<int:department_id>', type='http', auth='user', methods=['DELETE'], csrf=False, )
     def delete_department(self, department_id, **kwargs):
         try:
             department = request.env['hr.department'].sudo().search([
@@ -318,7 +318,7 @@ class DepartmentAPI(http.Controller):
                 status=500
             )
 
-    @http.route('/api/hr/departments/export', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/hr/departments/export', type='http', auth='user', methods=['GET'], csrf=False, )
     def export_departments_csv(self, **kwargs):
         try:
             import csv
