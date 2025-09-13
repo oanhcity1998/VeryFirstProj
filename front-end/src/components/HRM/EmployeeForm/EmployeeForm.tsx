@@ -15,7 +15,7 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import "./EmployeeForm.css";
-import { Employee } from "@/models/HRM/employee.model"; // Import from employee.model.ts
+import { Employee } from "@/models/HRM/employee.model";
 
 interface EmployeeFormProps {
   onCancel: () => void;
@@ -29,6 +29,7 @@ interface EmployeeFormProps {
   cancelText?: string;
   saveText?: string;
   form: FormInstance;
+  loading?: boolean;
 }
 
 const EmployeeForm: React.FC<EmployeeFormProps> = ({
@@ -43,20 +44,19 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   contractTitle = "Thông tin hợp đồng",
   cancelText = "Hủy",
   saveText = "Lưu",
+  loading = false,
 }) => {
   useEffect(() => {
     if (employee) {
       form.setFieldsValue({
-        id: employee.id,
         name: employee.name,
+        employee_code: employee.employee_code || "", // New field
         birthday: employee.birthday ? dayjs(employee.birthday, "YYYY-MM-DD") : null,
         gender: employee.gender,
         work_phone: employee.work_phone,
         work_email: employee.work_email,
-        department_id: employee.department_id,
         department: employee.department,
-        job_id: employee.job_id,
-        job: employee.job,
+        job_name: employee.job_name,
         status: employee.status,
         cccd: employee.cccd,
         issued_date_cccd: employee.issued_date_cccd
@@ -68,21 +68,15 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         tax_id: employee.tax_id,
         insurance_id: employee.insurance_id,
         bank_account: employee.bank_account,
-        contract: employee.contract[0]
-          ? {
-            id: employee.contract[0].id,
-            x_contract_type: employee.contract[0].x_contract_type,
-            x_contract_term: employee.contract[0].x_contract_term,
-            date_start: employee.contract[0].date_start
-              ? dayjs(employee.contract[0].date_start, "YYYY-MM-DD")
-              : null,
-            date_end: employee.contract[0].date_end
-              ? dayjs(employee.contract[0].date_end, "YYYY-MM-DD")
-              : null,
-            wage: employee.contract[0].wage,
-            x_bonus: employee.contract[0].x_bonus,
-          }
-          : undefined,
+        contract: employee.contract?.[0] || {
+          id: Date.now(),
+          x_contract_type: "",
+          x_contract_term: false,
+          date_start: null,
+          date_end: null,
+          wage: 0,
+          x_bonus: 0,
+        },
       });
     } else {
       form.resetFields();
@@ -91,16 +85,17 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
 
   const onFinish = (values: any) => {
     const formattedValues: Employee = {
-      id: values.id || Date.now(), // Generate ID for new employees
+      id: values.id || Date.now(), // Still generated here for local use, but not in form
       name: values.name,
+      employee_code: values.employee_code || "", // New field
       birthday: values.birthday ? values.birthday.format("YYYY-MM-DD") : "",
       gender: values.gender,
       work_phone: values.work_phone,
       work_email: values.work_email,
-      department_id: values.department_id,
+      department_id: 0, // Placeholder, to be set by backend
       department: values.department || "",
-      job_id: values.job_id,
-      job: values.job || "",
+      job_id: 0, // Placeholder, to be set by backend
+      job_name: values.job_name || "",
       status: values.status || "Active",
       cccd: values.cccd,
       issued_date_cccd: values.issued_date_cccd
@@ -129,7 +124,6 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       ],
     };
     onSave(formattedValues);
-    // onCancel(); // Moved to EmployeeList to ensure consistency
   };
 
   return (
@@ -146,16 +140,25 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         >
           {cancelText}
         </Button>,
-        <Button key="submit" type="primary" onClick={() => form.submit()}>
+        <Button key="submit" type="primary" onClick={() => form.submit()} loading={loading}>
           {saveText}
         </Button>,
       ]}
       width={1100}
+      style={{ top: 20 }}
+      bodyStyle={{ maxHeight: "80vh", overflowY: "hidden" }}
     >
-      <Form form={form} layout="vertical" onFinish={onFinish}>
+      <Form form={form} layout="vertical" onFinish={onFinish} style={{ padding: "0 16px" }}>
         <Row gutter={16} align="stretch">
           <Col span={8}>
             <Card title={infoTitle} bordered className="employee-card">
+              <Form.Item
+                label="Mã nhân viên"
+                name="employee_code"
+                rules={[{ required: true, message: "Vui lòng nhập mã nhân viên!" }]}
+              >
+                <Input placeholder="Nhập mã nhân viên" />
+              </Form.Item>
               <Form.Item
                 label="Họ và tên"
                 name="name"
@@ -169,8 +172,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]}
               >
                 <Select placeholder="Chọn giới tính">
-                  <Select.Option value="Male">Nam</Select.Option>
-                  <Select.Option value="Female">Nữ</Select.Option>
+                  <Select.Option value="male">Nam</Select.Option>
+                  <Select.Option value="female">Nữ</Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item
@@ -208,13 +211,6 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 <Input placeholder="Nhập email" />
               </Form.Item>
               <Form.Item
-                label="Phòng ban ID"
-                name="department_id"
-                rules={[{ required: true, message: "Vui lòng nhập ID phòng ban!" }]}
-              >
-                <InputNumber min={1} style={{ width: "100%" }} placeholder="Nhập ID phòng ban" />
-              </Form.Item>
-              <Form.Item
                 label="Phòng ban"
                 name="department"
                 rules={[{ required: true, message: "Vui lòng nhập tên phòng ban!" }]}
@@ -222,15 +218,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 <Input placeholder="Nhập tên phòng ban" />
               </Form.Item>
               <Form.Item
-                label="Vị trí ID"
-                name="job_id"
-                rules={[{ required: true, message: "Vui lòng nhập ID vị trí!" }]}
-              >
-                <InputNumber min={1} style={{ width: "100%" }} placeholder="Nhập ID vị trí" />
-              </Form.Item>
-              <Form.Item
                 label="Vị trí"
-                name="job"
+                name="job_name"
                 rules={[{ required: true, message: "Vui lòng nhập tên vị trí!" }]}
               >
                 <Input placeholder="Nhập tên vị trí" />
@@ -241,8 +230,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 rules={[{ required: true, message: "Vui lòng chọn trạng thái!" }]}
               >
                 <Select placeholder="Chọn trạng thái">
-                  <Select.Option value="Active">Hoạt động</Select.Option>
-                  <Select.Option value="Inactive">Không hoạt động</Select.Option>
+                  <Select.Option value="active">Hoạt động</Select.Option>
+                  <Select.Option value="inactive">Không hoạt động</Select.Option>
                 </Select>
               </Form.Item>
             </Card>
