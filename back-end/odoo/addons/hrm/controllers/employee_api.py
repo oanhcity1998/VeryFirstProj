@@ -771,3 +771,52 @@ class EmployeeAPI(http.Controller):
                 headers=[('Content-Type', 'application/json')],
                 status=500
             )
+
+    #delete batch employee by ids
+    @http.route('/api/hr/employees/batch-delete', type='http', auth='user', methods=['POST'], csrf=False, )
+    def batch_delete_employees(self, **kwargs):
+        try:
+            # Lấy JSON body từ request
+            try:
+                data = request.httprequest.get_json(force=True, silent=True) or {}
+            except Exception:
+                data = {}
+
+            employee_ids = data.get('employee_ids', [])
+            if not employee_ids or not isinstance(employee_ids, list):
+                return request.make_response(
+                    json.dumps({"error": "employee_ids is required and must be a list of IDs"}),
+                    headers=[('Content-Type', 'application/json')],
+                    status=400
+                )
+
+            Employee = request.env['hr.employee'].sudo()
+            employees = Employee.search([('id', 'in', employee_ids)])
+
+            if not employees:
+                return request.make_response(
+                    json.dumps({"error": "No matching employees found for the provided IDs"}),
+                    headers=[('Content-Type', 'application/json')],
+                    status=404
+                )
+
+            # Mark employees as inactive
+            employees.write({'active': False})
+
+            return request.make_response(
+                json.dumps({
+                    "message": f"Marked {len(employees)} employees as inactive successfully",
+                    "employee_ids": employees.ids
+                }),
+                headers=[('Content-Type', 'application/json')],
+                status=200
+            )
+        except Exception as e:
+            # Rollback transaction in case of error
+            request.env.cr.rollback()
+            return request.make_response(
+                json.dumps({"error": str(e)}),
+                headers=[('Content-Type', 'application/json')],
+                status=500
+            )
+        
