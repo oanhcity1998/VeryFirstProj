@@ -6,6 +6,8 @@ import xlsxwriter
 import io
 import openpyxl
 from openpyxl import load_workbook
+import logging
+_logger = logging.getLogger(__name__)
 
 class EmployeeAPI(http.Controller):
 
@@ -49,12 +51,13 @@ class EmployeeAPI(http.Controller):
             if contract_data:
                 request.env["hr.contract.custom"].sudo().create({
                     "name": contract_data.get("name"),
-                    "x_contract_type": contract_data.get("contract_type"),
+                    "contract_type": contract_data.get("contract_type"),
+                    "contract_term": contract_data.get("contract_term"),
                     "employee_id": employee.id,
                     "date_start": contract_data.get("date_start"),
                     "date_end": contract_data.get("date_end"),
                     "wage": contract_data.get("wage"),
-                    "x_bonus": contract_data.get("bonus")
+                    "bonus": contract_data.get("bonus")
                 })
 
             return request.make_response(
@@ -64,6 +67,9 @@ class EmployeeAPI(http.Controller):
                 headers=[('Content-Type', 'application/json')]
             )
         except Exception as e:
+            # Rollback transaction in case of error
+            request.env.cr.rollback()
+
             return request.make_response(
                 json.dumps({"error": f"Tạo nhân viên thất bại: {str(e)}"}, ensure_ascii=False),
                 headers=[('Content-Type', 'application/json')],
@@ -75,7 +81,7 @@ class EmployeeAPI(http.Controller):
         q = kwargs.get('q', '')
         department_id = kwargs.get('department_id')
         job_id = kwargs.get('job_id')
-        gender = kwargs.get('gender', '').lower()
+        gender = kwargs.get('gender', '')
         page = int(kwargs.get('page', 1))
         limit = int(kwargs.get('limit', 25))
 
@@ -96,42 +102,43 @@ class EmployeeAPI(http.Controller):
         total = request.env['hr.employee'].sudo().search_count(domain)
 
         offset = (page - 1) * limit
-        employees = request.env['hr.employee'].sudo().search(domain, offset=offset, limit=limit, order='id')
+
+        employees = request.env['hr.employee'].sudo().search(domain, offset=offset, limit=limit, order='code asc')
 
         data = []
         for emp in employees:
             data.append({
                 "id": emp.id,
-                "code": emp.code,
-                "name": emp.name,
+                "code": emp.code or None,
+                "name": emp.name or None,
                 "birthday": str(emp.birthday) if emp.birthday else None,
-                "gender": emp.gender,
-                "work_phone": emp.work_phone,
-                "work_email": emp.work_email,
+                "gender": emp.gender or None,
+                "work_phone": emp.work_phone or None,
+                "work_email": emp.work_email or None,
                 "department_id": emp.department_id.id if emp.department_id else None,
                 "department_name": emp.department_id.name if emp.department_id else None,
                 "job_id": emp.job_id.id if emp.job_id else None,
                 "job_name": emp.job_id.name if emp.job_id else None,
                 "status": "active" if emp.active else "inactive",
-                "cccd": emp.id_number,
+                "cccd": emp.id_number or None,
                 "issued_date_cccd": str(emp.id_issued_date) if emp.id_issued_date else None,
-                "issued_place_cccd": emp.id_issued_place,
-                "permanent_address": emp.permanent_address,
-                "temporary_address": emp.temporary_address,
-                "tax_id": emp.tax_id,
-                "insurance_id": emp.insurance_id,
-                "bank_account": emp.bank_account,
+                "issued_place_cccd": emp.id_issued_place or None,
+                "permanent_address": emp.permanent_address or None,
+                "temporary_address": emp.temporary_address or None,
+                "tax_id": emp.tax_id or None,
+                "insurance_id": emp.insurance_id or None,
+                "bank_account": emp.bank_account or None,
                 "contract": [
                     {
-                        "id": c.id, 
-                        "name": c.name,
-                        "contract_type": c.x_contract_type, 
-                        "contract_term": c.x_contract_term, 
-                        "date_start": str(c.date_start) if c.date_start else None, 
-                        "date_end": str(c.date_end) if c.date_end else None, 
-                        "wage": c.wage, 
-                        "bonus": c.x_bonus
-                    } 
+                        "id": c.id or None,
+                        "name": c.name or None,
+                        "contract_type": c.contract_type or None,
+                        "contract_term": c.contract_term or None,
+                        "date_start": str(c.date_start) if c.date_start else None,
+                        "date_end": str(c.date_end) if c.date_end else None,
+                        "wage": c.wage or None,
+                        "bonus": c.bonus or None
+                    }
                     for c in request.env['hr.contract.custom'].sudo().search([('employee_id', '=', emp.id)])],
             })
 
@@ -148,7 +155,7 @@ class EmployeeAPI(http.Controller):
     def get_all_employees(self, **kwargs):
         Employee = request.env['hr.employee'].sudo()
         employees = Employee.search([])
-        data = [{"code": emp.code, "name": emp.name} for emp in employees]
+        data = [{"code": emp.code or None, "name": emp.name or None} for emp in employees]
         return request.make_response(
             json.dumps({"data": data}),
             headers=[('Content-Type', 'application/json')]
@@ -168,25 +175,25 @@ class EmployeeAPI(http.Controller):
             )
 
         profile = {
-            "id": employee.id,
-            "code": employee.code,
-            "name": employee.name,
+            "id": employee.id or None,
+            "code": employee.code or None,
+            "name": employee.name or None,
             "birthday": str(employee.birthday) if employee.birthday else None,
-            "gender": employee.gender,
-            "work_phone": employee.work_phone,
-            "work_email": employee.work_email,
+            "gender": employee.gender or None,
+            "work_phone": employee.work_phone or None,
+            "work_email": employee.work_email or None,
             "department_id": employee.department_id.id if employee.department_id else None,
             "department_name": employee.department_id.name if employee.department_id else None,
             "job_id": employee.job_id.id if employee.job_id else None,
             "job_name": employee.job_id.name if employee.job_id else None,
-            "id_number": employee.id_number,
-            "id_issued_place": employee.id_issued_place,
+            "id_number": employee.id_number or None,
+            "id_issued_place": employee.id_issued_place or None,
             "id_issued_date": str(employee.id_issued_date) if employee.id_issued_date else None,
-            "permanent_address": employee.permanent_address,
-            "temporary_address": employee.temporary_address,
-            "tax_id": employee.tax_id,
-            "insurance_id": employee.insurance_id,
-            "bank_account": employee.bank_account,
+            "permanent_address": employee.permanent_address or None,
+            "temporary_address": employee.temporary_address or None,
+            "tax_id": employee.tax_id or None,
+            "insurance_id": employee.insurance_id or None,
+            "bank_account": employee.bank_account or None,
             "status": "active" if employee.active else "inactive",
             "created_at": str(employee.create_date) if employee.create_date else None,
             "updated_at": str(employee.write_date) if employee.write_date else None
@@ -195,14 +202,14 @@ class EmployeeAPI(http.Controller):
         contracts = []
         for c in Contract.search([('employee_id', '=', employee.id)]):
             contracts.append({
-                "id": c.id,
-                "name": c.name,
-                "contract_type": c.x_contract_type,
-                "contract_term": c.x_contract_term,
+                "id": c.id or None,
+                "name": c.name or None,
+                "contract_type": c.contract_type or None,
+                "contract_term": c.contract_term or None,
                 "date_start": str(c.date_start) if c.date_start else None,
                 "date_end": str(c.date_end) if c.date_end else None,
-                "wage": c.wage,
-                "bonus": c.x_bonus,
+                "wage": c.wage or None,
+                "bonus": c.bonus or None,
             })
 
         response = {
@@ -285,6 +292,8 @@ class EmployeeAPI(http.Controller):
                 }, status=200)
 
         except Exception as e:
+            # Rollback transaction in case of error
+            request.env.cr.rollback()
             return request.make_json_response({"error": str(e)}, status=500)
 
     @http.route('/api/hr/employees/<int:employee_id>', type='http', auth='user', methods=['DELETE'], csrf=False, )
@@ -323,7 +332,7 @@ class EmployeeAPI(http.Controller):
 
             departments = [d.name for d in Department.search([]) if d.name]
             jobs = [j.name for j in Job.search([]) if j.name]
-            contract_types = list({c.x_contract_type for c in Contract.search([]) if c.x_contract_type})
+            contract_types = list({c.contract_type for c in Contract.search([]) if c.contract_type})
 
             if not contract_types:
                 contract_types = [
@@ -355,22 +364,22 @@ class EmployeeAPI(http.Controller):
                 ('Ngày Sinh (YYYY-MM-DD)', True),
                 ('Điện Thoại', True),
                 ('Email', True),
-                ('Ngày vào làm', True),
-                ('Ngày nghỉ việc', False),
+                ('Ngày Vào Làm (YYYY-MM-DD)', True),
+                ('Ngày Nghỉ Việc (YYYY-MM-DD)', False),
                 ('Số CCCD', True),
-                ('Ngày Cấp CCCD', True),
+                ('Ngày Cấp CCCD (YYYY-MM-DD)', True),
                 ('Nơi Cấp CCCD', True),
                 ('Địa Chỉ Thường Trú', True),
                 ('Địa Chỉ Tạm Trú', False),
                 ('Mã số thuế TNCN', False),
                 ('Mã số BHXH', False),
-                ('Tài khoản ngân hàng', False),
-                ('Phòng ban', True),
-                ('Chức vụ', True),
-                ('Loại hợp đồng', True),
-                ('Thời hạn hợp đồng', True),
-                ('Mức lương', False),
-                ('Tiền thưởng', False)
+                ('Tài Khoản Ngân Hàng', False),
+                ('Phòng Ban', True),
+                ('Chức Vụ', True),
+                ('Loại Hợp Đồng', True),
+                ('Thời Hạn Hợp Đồng', True),
+                ('Mức Lương', False),
+                ('Tiền Thưởng', False)
             ]
 
             for col, (title, req) in enumerate(headers):
@@ -471,28 +480,28 @@ class EmployeeAPI(http.Controller):
 
             # Expected columns mapping
             expected_columns = {
-                'A': 'code',
-                'B': 'name', 
-                'C': 'gender',
-                'D': 'birthday',
-                'E': 'work_phone',
-                'F': 'work_email',
-                'G': 'start_date',
-                'H': 'end_date',
-                'I': 'id_number',
-                'J': 'id_issued_date',
-                'K': 'id_issued_place',
-                'L': 'permanent_address',
-                'M': 'temporary_address',
-                'N': 'tax_id',
-                'O': 'insurance_id',
-                'P': 'bank_account',
-                'Q': 'department_name',
-                'R': 'job_name',
-                'S': 'contract_type',
-                'T': 'contract_duration',
-                'U': 'salary',
-                'V': 'bonus'
+                'A': 'Mã Nhân Viên',
+                'B': 'Tên Nhân Viên', 
+                'C': 'Giới Tính',
+                'D': 'Ngày Sinh (YYYY-MM-DD)',
+                'E': 'Điện Thoại',
+                'F': 'Email',
+                'G': 'Ngày Vào Làm (YYYY-MM-DD)',
+                'H': 'Ngày Nghỉ Việc (YYYY-MM-DD)',
+                'I': 'Số CCCD',
+                'J': 'Ngày Cấp CCCD (YYYY-MM-DD)',
+                'K': 'Nơi Cấp CCCD',
+                'L': 'Địa Chỉ Thường Trú',
+                'M': 'Địa Chỉ Tạm Trú',
+                'N': 'Mã Số Thuế TNCN',
+                'O': 'Mã Số BHXH',
+                'P': 'Tài Khoản Ngân Hàng',
+                'Q': 'Phòng Ban',
+                'R': 'Chức Vụ',
+                'S': 'Loại Hợp Đồng',
+                'T': 'Thời Hạn Hợp Đồng',
+                'U': 'Mức Lương',
+                'V': 'Tiền Thưởng'
             }
 
             results = {
@@ -524,10 +533,10 @@ class EmployeeAPI(http.Controller):
                                     employee_data[field_name] = str(value).strip() if value else None
 
                     # Validate required fields
-                    required_fields = ['code','name', 'birthday', 'gender', 'work_phone', 'work_email', 
-                                    'department_name', 'job_name', 'id_number', 'id_issued_place', 
-                                    'id_issued_date', 'permanent_address','contract_type', 'contract_duration']
-                    
+                    required_fields = ['Mã Nhân Viên', 'Tên Nhân Viên', 'Ngày Sinh (YYYY-MM-DD)', 'Giới Tính', 'Điện Thoại', 'Email',
+                                       'Phòng Ban', 'Chức Vụ', 'Số CCCD', 'Nơi Cấp CCCD',
+                                       'Ngày Cấp CCCD (YYYY-MM-DD)', 'Địa Chỉ Thường Trú', 'Loại Hợp Đồng', 'Thời Hạn Hợp Đồng']
+
                     missing_fields = []
                     for field in required_fields:
                         if not employee_data.get(field):
@@ -544,7 +553,7 @@ class EmployeeAPI(http.Controller):
 
                     # Find department and job by name
                     department = request.env['hr.department'].sudo().search([
-                        ('name', '=', employee_data['department_name'])
+                        ('name', '=', employee_data['Phòng Ban'])
                     ], limit=1)
                     
                     if not department:
@@ -557,7 +566,7 @@ class EmployeeAPI(http.Controller):
                         continue
 
                     job = request.env['hr.job'].sudo().search([
-                        ('name', '=', employee_data['job_name'])
+                        ('name', '=', employee_data['Chức Vụ'])
                     ], limit=1)
                     
                     if not job:
@@ -572,52 +581,51 @@ class EmployeeAPI(http.Controller):
                     # Check if employee with same email or id_number already exists
                     existing_employee = request.env['hr.employee'].sudo().search([
                         '|',
-                        ('work_email', '=', employee_data['work_email']),
-                        ('id', '=', employee_data['id'])
+                        ('code', '=', employee_data['Mã Nhân Viên']),
+                        ('id_number', '=', employee_data['Số CCCD']),
                     ], limit=1)
 
                     if existing_employee:
                         results['errors'].append({
                             'row': row_num,
-                            'error': f"Employee with email '{employee_data['work_email']}' or ID number '{employee_data['id']}' already exists",
+                            'error': f"Mã Nhân Viên '{employee_data['Mã Nhân Viên']}' or Số CCCD '{employee_data['Số CCCD']}' already exists",
                             'data': employee_data
                         })
                         results['total_errors'] += 1
                         continue
 
-                    # Create contract type if not exists
-                    contract_type_record = request.env['hr.contract.custom'].sudo().create({
-                        'name': employee_data['contract_type'],
-                        'x_contract_type': employee_data['contract_type'],
-                        'x_contract_term': employee_data.get('contract_duration') or None,
-                        'employee_id': employee_data['id'],
-                        'date_start': employee_data.get('start_date'),
-                        'date_end': employee_data.get('end_date'),
-                        'wage': float(employee_data.get('salary') or 0),
-                        'x_bonus': float(employee_data.get('bonus') or 0)
-                    })
-                
-
-
                     # Create employee
                     employee = request.env['hr.employee'].sudo().create({
-                        'code': employee_data['code'],
-                        'name': employee_data['name'],
-                        'birthday': employee_data['birthday'],
-                        'gender': employee_data['gender'],
-                        'work_phone': employee_data['work_phone'],
-                        'work_email': employee_data['work_email'],
+                        'code': employee_data['Mã Nhân Viên'],
+                        'name': employee_data['Tên Nhân Viên'],
+                        'birthday': employee_data['Ngày Sinh (YYYY-MM-DD)'],
+                        'gender': employee_data['Giới Tính'],
+                        'work_phone': employee_data['Điện Thoại'],
+                        'work_email': employee_data['Email'],
                         'department_id': department.id,
                         'job_id': job.id,
-                        'id_number': employee_data['id_number'],
-                        'id_issued_place': employee_data['id_issued_place'],
-                        'id_issued_date': employee_data['id_issued_date'],
-                        'permanent_address': employee_data['permanent_address'],
-                        'temporary_address': employee_data.get('temporary_address'),
-                        'tax_id': employee_data.get('tax_id'),
-                        'insurance_id': employee_data.get('insurance_id'),
-                        'bank_account': employee_data.get('bank_account'),
+                        'id_number': employee_data['Số CCCD'],
+                        'id_issued_place': employee_data['Nơi Cấp CCCD'],
+                        'id_issued_date': employee_data['Ngày Cấp CCCD (YYYY-MM-DD)'],
+                        'permanent_address': employee_data['Địa Chỉ Thường Trú'],
+                        'temporary_address': employee_data.get('Địa Chỉ Tạm Trú'),
+                        'tax_id': employee_data.get('Mã số thuế TNCN'),
+                        'insurance_id': employee_data.get('Mã số BHXH'),
+                        'bank_account': employee_data.get('Tài Khoản Ngân Hàng'),
                         'active': True
+                    })
+
+                    # Create contract type if not exists
+
+                    contract_type_record = request.env['hr.contract.custom'].sudo().create({
+                        'name': employee_data['Loại Hợp Đồng'],
+                        'contract_type': employee_data['Loại Hợp Đồng'],
+                        'contract_term': employee_data.get('Thời Hạn Hợp Đồng') or None,
+                        'employee_id': employee.id,
+                        'date_start': employee_data.get('Ngày Vào Làm (YYYY-MM-DD)'),
+                        'date_end': employee_data.get('Ngày Nghỉ Việc (YYYY-MM-DD)') or None,
+                        'wage': employee_data.get('Mức Lương') or 0,
+                        'bonus': employee_data.get('Tiền Thưởng') or 0,
                     })
 
                     results['success'].append({
@@ -629,6 +637,7 @@ class EmployeeAPI(http.Controller):
                     results['total_created'] += 1
 
                 except Exception as e:
+                    _logger.exception(f"Error processing row {row_num}: {str(e)}")
                     results['errors'].append({
                         'row': row_num,
                         'error': str(e),
@@ -642,11 +651,123 @@ class EmployeeAPI(http.Controller):
             )
 
         except Exception as e:
+            # Rollback transaction in case of error
+            request.env.cr.rollback()
             return request.make_response(
                 json.dumps({"error": f"Import failed: {str(e)}"}),
                 headers=[('Content-Type', 'application/json')],
                 status=500
             )
 
+    @http.route('/api/hr/employees/export', type='http', auth='user', methods=['GET'], csrf=False)
+    def export_employees(self, **kwargs):
+        try:
+            q = kwargs.get('q', '')
+            department_id = kwargs.get('department_id')
+            job_id = kwargs.get('job_id')
+            gender = kwargs.get('gender', '').lower()
 
-    
+            domain = []
+            if q:
+                domain.append(('name', 'ilike', q))
+            if department_id:
+                domain.append(('department_id', '=', int(department_id)))
+            if job_id:
+                domain.append(('job_id', '=', int(job_id)))
+            if gender:
+                domain.append(('gender', '=', gender))
+
+            Employee = request.env['hr.employee'].sudo()
+            Contract = request.env['hr.contract.custom'].sudo()
+            employees = Employee.search(domain, order='code asc')
+
+            # Collect contract data in batch
+            contracts = Contract.search([('employee_id', 'in', employees.ids)])
+            contracts_by_emp = {}
+            for c in contracts:
+                contracts_by_emp.setdefault(c.employee_id.id, []).append(c)
+
+            output = io.BytesIO()
+            workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+
+            # Sheet 1: Employees
+            emp_ws = workbook.add_worksheet('Employees')
+            header_fmt = workbook.add_format({
+                'bold': True, 'bg_color': '#1E88E5', 'font_color': 'white',
+                'border': 1, 'align': 'center', 'valign': 'vcenter'
+            })
+            text_wrap = workbook.add_format({'text_wrap': True, 'valign': 'top'})
+
+            headers = [
+                'Mã Nhân Viên',
+                'Tên Nhân Viên', 
+                'Giới Tính',
+                'Ngày Sinh (YYYY-MM-DD)',
+                'Điện Thoại',
+                'Email',
+                'Ngày Vào Làm (YYYY-MM-DD)',
+                'Ngày Nghỉ Việc (YYYY-MM-DD)',
+                'Số CCCD',
+                'Ngày Cấp CCCD (YYYY-MM-DD)',
+                'Nơi Cấp CCCD',
+                'Địa Chỉ Thường Trú',
+                'Địa Chỉ Tạm Trú',
+                'Mã Số Thuế TNCN',
+                'Mã Số BHXH',
+                'Tài Khoản Ngân Hàng',
+                'Phòng Ban',
+                'Chức Vụ',
+                'Loại Hợp Đồng',
+                'Thời Hạn Hợp Đồng',
+                'Mức Lương',
+                'Tiền Thưởng'
+            ]
+            for col, h in enumerate(headers):
+                emp_ws.write(0, col, h, header_fmt)
+                emp_ws.set_column(col, col, 20)
+
+            for row_idx, emp in enumerate(employees, start=1):
+                emp_ws.write(row_idx, 0, emp.code or '')
+                emp_ws.write(row_idx, 1, emp.name or '')
+                emp_ws.write(row_idx, 2, emp.gender or '')
+                emp_ws.write(row_idx, 3, emp.birthday and emp.birthday.strftime('%Y-%m-%d') or '')
+                emp_ws.write(row_idx, 4, emp.work_phone or '')
+                emp_ws.write(row_idx, 5, emp.work_email or '')
+                #get contract start and end date
+                contract = contracts_by_emp.get(emp.id, [])
+
+                emp_ws.write(row_idx, 6, (contract and contract[0].date_start.strftime('%Y-%m-%d')) or '')
+                emp_ws.write(row_idx, 7, ((contract and contract[0].date_end) or '').strftime('%Y-%m-%d') if (contract and contract[0].date_end) else '')
+                emp_ws.write(row_idx, 8, emp.id_number or '')
+                emp_ws.write(row_idx, 9, str(emp.id_issued_date or '') or '')
+                emp_ws.write(row_idx, 10, emp.id_issued_place or '')
+                emp_ws.write(row_idx, 11, emp.permanent_address or '', text_wrap)
+                emp_ws.write(row_idx, 12, emp.temporary_address or '', text_wrap)
+                emp_ws.write(row_idx, 13, emp.tax_id or '')
+                emp_ws.write(row_idx, 14, emp.insurance_id or '')
+                emp_ws.write(row_idx, 15, emp.bank_account or '')
+                emp_ws.write(row_idx, 16, emp.department_id.name or '')
+                emp_ws.write(row_idx, 17, emp.job_id.name or '')
+                emp_ws.write(row_idx, 18, contract and contract[0].contract_type or '')
+                emp_ws.write(row_idx, 19, contract and contract[0].contract_term or '')
+                emp_ws.write(row_idx, 20, contract and contract[0].wage or 0)
+                emp_ws.write(row_idx, 21, contract and contract[0].bonus or 0)
+
+            workbook.close()
+            output.seek(0)
+
+            filename = f"employees_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+            return request.make_response(
+                output.read(),
+                headers=[
+                    ('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
+                    ('Content-Disposition', f'attachment; filename="{filename}"')
+                ]
+            )
+        except Exception as e:
+            _logger.exception("Employee export failed")
+            return request.make_response(
+                json.dumps({'error': str(e)}),
+                headers=[('Content-Type', 'application/json')],
+                status=500
+            )

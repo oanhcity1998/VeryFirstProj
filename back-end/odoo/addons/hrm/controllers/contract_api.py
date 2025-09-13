@@ -21,12 +21,12 @@ class ContractAPI(http.Controller):
         for c in Contract.search([('employee_id', '=', employee.id)]):
             contracts.append({
                 "id": c.id,
-                "x_contract_type": c.x_contract_type,
-                "x_contract_term": c.x_contract_term,
+                "contract_type": c.contract_type,
+                "contract_term": c.contract_term,
                 "date_start": str(c.date_start) if c.date_start else None,
                 "date_end": str(c.date_end) if c.date_end else None,
                 "wage": c.wage,
-                "x_bonus": c.x_bonus,
+                "bonus": c.bonus,
                 "state": c.state,
             })
 
@@ -59,7 +59,7 @@ class ContractAPI(http.Controller):
                 status=400
             )
 
-        required_fields = ["x_contract_type", "x_contract_term", "date_start", "date_end", "wage", "x_bonus"]
+        required_fields = ["contract_type", "contract_term", "date_start", "date_end", "wage", "bonus"]
         for field in required_fields:
             if field not in data:
                 return request.make_response(
@@ -72,12 +72,12 @@ class ContractAPI(http.Controller):
             contract = Contract.sudo().create({
                 "employee_id": employee.id,
                 "name": f"HĐ cho {employee.name}",
-                "x_contract_type": data.get("x_contract_type"),
-                "x_contract_term": data.get("x_contract_term"),
+                "contract_type": data.get("contract_type"),
+                "contract_term": data.get("contract_term"),
                 "date_start": data.get("date_start"),
                 "date_end": data.get("date_end"),
                 "wage": float(data.get("wage") or 0),
-                "x_bonus": float(data.get("x_bonus") or 0),
+                "bonus": float(data.get("bonus") or 0),
                 "state": "draft",
             })
         except Exception as e:
