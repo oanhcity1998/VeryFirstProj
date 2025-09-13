@@ -44,13 +44,14 @@ const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({ open, onClo
     >
       <Form layout="vertical" form={form}>
         <Form.Item
-          label="Mã nhân viên"
-          name="employeeCode"
-          rules={[{ required: true, message: "Vui lòng chọn mã nhân viên!" }]}
+          label="Phòng ban"
+          name="department"
+          rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
         >
-          <Select placeholder="Chọn mã nhân viên">
-            <Option value="nv01">NV01</Option>
-            <Option value="nv02">NV02</Option>
+          <Select placeholder="Chọn phòng ban">
+            <Option value="IT">IT</Option>
+            <Option value="HR">Nhân sự</Option>
+            <Option value="Finance">Tài chính</Option>
           </Select>
         </Form.Item>
 
@@ -60,19 +61,21 @@ const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({ open, onClo
           rules={[{ required: true, message: "Vui lòng chọn vị trí!" }]}
         >
           <Select placeholder="Chọn vị trí">
-            <Option value="dev">Developer</Option>
-            <Option value="hr">HR</Option>
+            <Option value="Developer">Developer</Option>
+            <Option value="HR Manager">HR Manager</Option>
+            <Option value="Accountant">Accountant</Option>
           </Select>
         </Form.Item>
 
         <Form.Item
-          label="Phòng ban"
-          name="department"
-          rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
+          label="Loại hợp đồng"
+          name="contractType"
+          rules={[{ required: true, message: "Vui lòng chọn loại hợp đồng!" }]}
         >
-          <Select placeholder="Chọn phòng ban">
-            <Option value="it">IT</Option>
-            <Option value="finance">Tài chính</Option>
+          <Select placeholder="Chọn loại hợp đồng">
+            <Option value="Hợp đồng thử việc">Hợp đồng thử việc</Option>
+            <Option value="Hợp đồng xác định thời hạn">Hợp đồng xác định thời hạn</Option>
+            <Option value="Hợp đồng không xác định thời hạn">Hợp đồng không xác định thời hạn</Option>
           </Select>
         </Form.Item>
 
@@ -82,8 +85,19 @@ const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({ open, onClo
           rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]}
         >
           <Select placeholder="Chọn giới tính">
-            <Option value="male">Nam</Option>
-            <Option value="female">Nữ</Option>
+            <Option value="Nam">Nam</Option>
+            <Option value="Nữ">Nữ</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          label="Mã nhân viên"
+          name="employeeCode"
+          rules={[{ required: true, message: "Vui lòng chọn mã nhân viên!" }]}
+        >
+          <Select placeholder="Chọn mã nhân viên">
+            <Option value="nv01">NV01</Option>
+            <Option value="nv02">NV02</Option>
           </Select>
         </Form.Item>
       </Form>

@@ -16,9 +16,9 @@ import EmployeeForm from "@/components/HRM/EmployeeForm/EmployeeForm";
 import FilterDrawerEmployee from "@/components/HRM/FilterEmployee/FilterDrawerEmployee";
 import { useAppDispatch, useAppSelector } from "@/app/store";
 import { toast } from "react-toastify";
-import { useGetEmployeesQuery } from "@/services/HRM/employee.service";
+import { useCreateEmployeeMutation, useGetEmployeesQuery, useDeleteEmployeeMutation } from "@/services/HRM/employee.service";
 import { setEmployees, setError } from "@/redux/HRM/slices/employeeSlice";
-import { Employee, EmployeeResponse } from "@/models/HRM/employee.model";
+import { Employee, EmployeeCreateRequest, EmployeeResponse } from "@/models/HRM/employee.model";
 
 const { Dragger } = Upload;
 
@@ -44,77 +44,69 @@ const EmployeeList: React.FC = () => {
   const dispatch = useAppDispatch();
   const { employees, meta, error } = useAppSelector((state) => state.employee);
 
-  // Fetch employees using RTK Query
   const { data, isLoading, isError } = useGetEmployeesQuery(queryParams);
+  const [createEmployee, { isLoading: isCreating, isError: isCreateError }] = useCreateEmployeeMutation();
+  const [deleteEmployee, { isLoading: isDeleting }] = useDeleteEmployeeMutation();
 
-  // Sync API data to Redux and log for debugging
   useEffect(() => {
-    console.log("API Data:", data);
-    console.log("Redux Employees:", employees);
-    if (data) {
-      dispatch(setEmployees(data));
+    if (data) dispatch(setEmployees(data));
+    if (isError || isCreateError) {
+      dispatch(setError("Failed to fetch or create employees"));
+      toast.error("Failed to fetch or create employees");
     }
-    if (isError) {
-      dispatch(setError("Failed to fetch employees"));
-      toast.error("Failed to fetch employees");
-    }
-  }, [data, isError, dispatch]);
+  }, [data, isError, isCreateError, dispatch]);
 
-  // Handle edit employee
   const handleEdit = (record: Employee) => {
-    setEditingEmployee(record);
-    form.setFieldsValue({
-      id: record.id,
+    const mappedEmployee: EmployeeCreateRequest = {
       name: record.name,
-      birthday: record.birthday ? dayjs(record.birthday, "YYYY-MM-DD") : null,
+      code: record.code,
+      birthday: record.birthday,
       gender: record.gender,
       work_phone: record.work_phone,
       work_email: record.work_email,
-      department_id: record.department_id,
-      department: record.department,
-      job_id: record.job_id,
-      job_name: record.job_name,
-      status: record.status,
-      cccd: record.cccd,
-      issued_date_cccd: record.issued_date_cccd
-        ? dayjs(record.issued_date_cccd, "YYYY-MM-DD")
-        : null,
-      issued_place_cccd: record.issued_place_cccd,
+      department_id: record.department_id && record.department_id > 0 ? record.department_id : 1,
+      job_id: record.job_id && record.job_id > 0 ? record.job_id : 1,
+      id_number: record.cccd,
+      id_issued_place: record.issued_place_cccd,
+      id_issued_date: record.issued_date_cccd,
       permanent_address: record.permanent_address,
-      temporary_address: record.temporary_address,
-      tax_id: record.tax_id,
-      insurance_id: record.insurance_id,
-      bank_account: record.bank_account,
-      contract: record.contract[0] || {
-        id: Date.now(),
-        x_contract_type: "",
-        x_contract_term: false,
-        date_start: null,
-        date_end: null,
-        wage: 0,
-        x_bonus: 0,
+      temporary_address: record.temporary_address || "",
+      tax_id: record.tax_id || "",
+      insurance_id: record.insurance_id || "",
+      bank_account: record.bank_account || "",
+      contract: {
+        name: record.contract[0]?.name || "",
+        contract_type: (record.contract[0]?.contract_type as "Hợp đồng thử việc" | "Hợp đồng xác định thời hạn" | "Hợp đồng không xác định thời hạn") || "",
+        date_start: record.contract[0]?.date_start || "",
+        date_end: record.contract[0]?.date_end || "",
+        wage: record.contract[0]?.wage || 0,
+        bonus: record.contract[0]?.bonus || 0,
       },
-    });
+    };
+    setEditingEmployee(record);
+    form.setFieldsValue(mappedEmployee);
     setIsModalOpen(true);
   };
 
-  // Handle delete
   const handleDelete = async () => {
     try {
       setDeleting(true);
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call
-      const newData = employees.filter(
-        (item) => !selectedRowKeys.includes(item.id.toString())
-      );
-      const newResponse: EmployeeResponse = {
-        data: newData,
-        meta: {
-          ...meta!,
-          total: newData.length,
-        },
-      };
-      dispatch(setEmployees(newResponse));
-      toast.success("Đã xóa nhân sự");
+      const promises = selectedRowKeys.map((id) => deleteEmployee(parseInt(id)).unwrap());
+      const results = await Promise.all(promises);
+
+      // Check results for any errors
+      const hasError = results.some((result) => "error" in result);
+      if (!hasError) {
+        const newData = employees.filter((item) => !selectedRowKeys.includes(item.id.toString()));
+        const newResponse: EmployeeResponse = {
+          data: newData,
+          meta: { ...meta!, total: newData.length },
+        };
+        dispatch(setEmployees(newResponse));
+        toast.success("Xóa nhân sự thành công");
+      } else {
+        throw new Error("Có lỗi xảy ra khi xóa nhân sự");
+      }
     } catch (err) {
       toast.error("Không thể xóa nhân sự");
     } finally {
@@ -124,7 +116,6 @@ const EmployeeList: React.FC = () => {
     }
   };
 
-  // Handle upload
   const handleUpload = async (file: File) => {
     const fileType = file.name.split(".").pop()?.toLowerCase();
     if (fileType !== "xlsx" && fileType !== "csv") {
@@ -143,7 +134,7 @@ const EmployeeList: React.FC = () => {
       const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
       const requiredFields = [
-        "id",
+        "code",
         "name",
         "gender",
         "birthday",
@@ -151,20 +142,19 @@ const EmployeeList: React.FC = () => {
         "work_email",
         "department_id",
         "job_id",
-        "status",
-        "cccd",
-        "issued_date_cccd",
-        "issued_place_cccd",
+        "id_number",
+        "id_issued_date",
+        "id_issued_place",
         "permanent_address",
         "temporary_address",
         "tax_id",
         "insurance_id",
         "bank_account",
-        "x_contract_type",
+        "contract_type",
         "date_start",
         "date_end",
         "wage",
-        "x_bonus",
+        "bonus",
       ];
 
       const headerRow = (json[0] as string[]) || [];
@@ -196,15 +186,16 @@ const EmployeeList: React.FC = () => {
             newEmployee.contract = [
               {
                 id: i,
-                x_contract_type: row[j] as string,
-                x_contract_term: false,
+                name: "",
+                contract_type: row[j] as string,
+                contract_term: false,
                 date_start: row[j + 1] as string,
                 date_end: row[j + 2] as string,
                 wage: parseFloat(row[j + 3] as string) || 0,
-                x_bonus: parseFloat(row[j + 4] as string) || 0,
+                bonus: parseFloat(row[j + 4] as string) || 0,
               },
             ];
-            j += 4; // Skip contract fields
+            j += 4;
           } else {
             newEmployee[key] = value;
           }
@@ -212,7 +203,7 @@ const EmployeeList: React.FC = () => {
 
         if (rowHasError) continue;
 
-        newEmployee.id = parseInt(newEmployee.id as string, 10);
+        newEmployee.id = parseInt(newEmployee.id as string, 10) || Date.now();
         newEmployee.department_id = parseInt(newEmployee.department_id as string, 10) || 0;
         newEmployee.job_id = parseInt(newEmployee.job_id as string, 10) || 0;
         newEmployees.push(newEmployee as Employee);
@@ -222,9 +213,7 @@ const EmployeeList: React.FC = () => {
         toast.error(
           <div style={{ maxHeight: "200px", overflowY: "auto" }}>
             <p>Có lỗi trong file của bạn:</p>
-            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
-              {errors.join("\n")}
-            </pre>
+            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>{errors.join("\n")}</pre>
           </div>,
           { autoClose: 5000 }
         );
@@ -232,17 +221,11 @@ const EmployeeList: React.FC = () => {
       } else {
         const newResponse: EmployeeResponse = {
           data: [...employees, ...newEmployees],
-          meta: {
-            page: meta?.page ?? 1,
-            limit: meta?.limit ?? 10,
-            total: (meta?.total ?? 0) + newEmployees.length,
-          },
+          meta: { page: meta?.page ?? 1, limit: meta?.limit ?? 10, total: (meta?.total ?? 0) + newEmployees.length },
         };
         dispatch(setEmployees(newResponse));
         const timestamp = dayjs().format("HH:mm:ss DD/MM/YYYY");
-        console.log(
-          `[Import Log] Tải lên thành công ${newEmployees.length} nhân viên lúc ${timestamp} bởi admin`
-        );
+        console.log(`[Import Log] Tải lên thành công ${newEmployees.length} nhân viên lúc ${timestamp} bởi admin`);
         toast.success(`${newEmployees.length} nhân viên đã được import thành công.`);
         setImportOpen(false);
         setImporting(false);
@@ -253,7 +236,6 @@ const EmployeeList: React.FC = () => {
     return false;
   };
 
-  // Search / Filter / Page
   const handleSearch = (value: string) => {
     setQueryParams({ ...queryParams, q: value, page: 1 });
   };
@@ -273,31 +255,37 @@ const EmployeeList: React.FC = () => {
     setQueryParams({ ...queryParams, page });
   };
 
-  // Render
+  const handleSave = async (values: EmployeeCreateRequest) => {
+    try {
+      const payload = {
+        ...values,
+        department_id: values.department_id && values.department_id > 0 ? values.department_id : 1,
+        job_id: values.job_id && values.job_id > 0 ? values.job_id : 1,
+      };
+      const response = await createEmployee(payload).unwrap();
+      dispatch(setEmployees(response));
+      toast.success(editingEmployee ? "Cập nhật nhân sự thành công" : "Thêm nhân sự thành công");
+    } catch (err) {
+      toast.error("Không thể thêm hoặc cập nhật nhân sự");
+    } finally {
+      setIsModalOpen(false);
+      setEditingEmployee(null);
+      form.resetFields();
+    }
+  };
+
   return (
     <>
       <div className="employee-list-header">
         <h2>Danh sách nhân sự</h2>
         <div className="employee-list-actions">
-          <Search
-            className="employee-search-bar"
-            placeholder="Tìm kiếm theo họ và tên"
-            allowClear
-            onSearch={handleSearch}
-            name="search"
-          />
-          <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>
-            Bộ lọc
-          </Button>
+          <Search className="employee-search-bar" placeholder="Tìm kiếm theo họ và tên" allowClear onSearch={handleSearch} name="search" />
+          <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>Bộ lọc</Button>
           <Popover
             content={
               <Space direction="vertical">
-                <Button type="text" onClick={() => setImportOpen(true)}>
-                  Import
-                </Button>
-                <Button type="text" onClick={() => console.log("Export clicked")}>
-                  Export
-                </Button>
+                <Button type="text" onClick={() => setImportOpen(true)}>Import</Button>
+                <Button type="text" onClick={() => console.log("Export clicked")}>Export</Button>
               </Space>
             }
             trigger="click"
@@ -312,30 +300,13 @@ const EmployeeList: React.FC = () => {
             footer={null}
             centered
           >
-            <Dragger
-              name="file"
-              multiple={false}
-              beforeUpload={handleUpload}
-              showUploadList={false}
-              disabled={importing}
-            >
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">
-                Click hoặc kéo thả file vào đây để Import
-              </p>
+            <Dragger name="file" multiple={false} beforeUpload={handleUpload} showUploadList={false} disabled={importing}>
+              <p className="ant-upload-drag-icon"><InboxOutlined /></p>
+              <p className="ant-upload-text">Click hoặc kéo thả file vào đây để Import</p>
               <p className="ant-upload-hint">Chỉ chấp nhận 1 file mỗi lần</p>
             </Dragger>
           </Modal>
-          <Button
-            danger
-            icon={<DeleteOutlined />}
-            disabled={selectedRowKeys.length === 0}
-            onClick={() => setDeleteOpen(true)}
-          >
-            Xóa
-          </Button>
+          <Button danger icon={<DeleteOutlined />} disabled={selectedRowKeys.length === 0} onClick={() => setDeleteOpen(true)}>Xóa</Button>
           <Modal
             open={deleteOpen}
             title="Xác nhận xóa"
@@ -343,24 +314,12 @@ const EmployeeList: React.FC = () => {
             onCancel={() => setDeleteOpen(false)}
             okText="Xóa"
             cancelText="Hủy"
-            okButtonProps={{ danger: true, loading: deleting }}
+            okButtonProps={{ danger: true, loading: deleting || isDeleting }}
             centered
           >
-            <p>
-              Bạn có chắc muốn xóa nhân sự này? Hành động này không thể hoàn tác.
-            </p>
+            <p>Bạn có chắc muốn xóa nhân sự này? Hành động này không thể hoàn tác.</p>
           </Modal>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => {
-              setEditingEmployee(null);
-              form.resetFields();
-              setIsModalOpen(true);
-            }}
-          >
-            Tạo
-          </Button>
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditingEmployee(null); form.resetFields(); setIsModalOpen(true); }}>Tạo</Button>
         </div>
       </div>
 
@@ -370,7 +329,7 @@ const EmployeeList: React.FC = () => {
             data={employees}
             selectedRowKeys={selectedRowKeys}
             setSelectedRowKeys={setSelectedRowKeys}
-            loading={isLoading}
+            loading={isLoading || isCreating || isDeleting}
             onEdit={handleEdit}
           />
           {meta && employees.length > 0 && (
@@ -394,68 +353,16 @@ const EmployeeList: React.FC = () => {
       <EmployeeForm
         form={form}
         open={isModalOpen}
-        onCancel={() => {
-          setIsModalOpen(false);
-          setEditingEmployee(null);
-          form.resetFields();
-        }}
-        onSave={(values: Employee) => {
-          const newEmployee: Employee = {
-            id: editingEmployee ? editingEmployee.id : Date.now(),
-            name: values.name,
-            birthday: values.birthday,
-            gender: values.gender,
-            work_phone: values.work_phone,
-            work_email: values.work_email,
-            department_id: values.department_id,
-            department: values.department,
-            job_id: values.job_id,
-            job_name: values.job_name,
-            status: values.status,
-            cccd: values.cccd,
-            issued_date_cccd: values.issued_date_cccd,
-            issued_place_cccd: values.issued_place_cccd,
-            permanent_address: values.permanent_address,
-            temporary_address: values.temporary_address,
-            tax_id: values.tax_id,
-            insurance_id: values.insurance_id,
-            bank_account: values.bank_account,
-            contract: [
-              {
-                id: values.contract[0]?.id || Date.now(),
-                x_contract_type: values.contract[0]?.x_contract_type || "",
-                x_contract_term: values.contract[0]?.x_contract_term || false,
-                date_start: values.contract[0]?.date_start || "",
-                date_end: values.contract[0]?.date_end || "",
-                wage: values.contract[0]?.wage || 0,
-                x_bonus: values.contract[0]?.x_bonus || 0,
-              },
-            ],
-          };
-
-          const newResponse: EmployeeResponse = {
-            data: editingEmployee
-              ? employees.map((emp) => (emp.id === editingEmployee.id ? newEmployee : emp))
-              : [...employees, newEmployee],
-            meta: {
-              page: meta?.page ?? 1,
-              limit: meta?.limit ?? 10,
-              total: editingEmployee ? meta?.total ?? 0 : (meta?.total ?? 0) + 1,
-            },
-          };
-
-          dispatch(setEmployees(newResponse));
-          toast.success(editingEmployee ? "Cập nhật nhân sự thành công" : "Thêm nhân sự thành công");
-          setIsModalOpen(false);
-          setEditingEmployee(null);
-          form.resetFields();
-        }}
+        onCancel={() => { setIsModalOpen(false); setEditingEmployee(null); form.resetFields(); }}
+        onSave={handleSave}
+        employee={editingEmployee ? editingEmployee : null}
         modalTitle={editingEmployee ? "Chỉnh sửa nhân sự" : "Thêm nhân sự"}
         infoTitle="Thông tin nhân sự"
         extraInfoTitle="Thông tin bổ sung"
         contractTitle="Thông tin hợp đồng"
         cancelText="Hủy"
         saveText="Lưu"
+        loading={isCreating}
       />
 
       <FilterDrawerEmployee

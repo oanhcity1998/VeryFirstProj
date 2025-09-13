@@ -11,7 +11,6 @@ import {
   InputNumber,
   FormInstance,
   Select,
-  Checkbox,
 } from "antd";
 import dayjs from "dayjs";
 import "./EmployeeForm.css";
@@ -50,7 +49,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
     if (employee) {
       form.setFieldsValue({
         name: employee.name,
-        employee_code: employee.employee_code || "", // New field
+        code: employee.code || "", // New field
         birthday: employee.birthday ? dayjs(employee.birthday, "YYYY-MM-DD") : null,
         gender: employee.gender,
         work_phone: employee.work_phone,
@@ -70,12 +69,12 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         bank_account: employee.bank_account,
         contract: employee.contract?.[0] || {
           id: Date.now(),
-          x_contract_type: "",
-          x_contract_term: false,
+          contract_type: "",
+          contract_term: false,
           date_start: null,
           date_end: null,
           wage: 0,
-          x_bonus: 0,
+          bonus: 0,
         },
       });
     } else {
@@ -87,7 +86,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
     const formattedValues: Employee = {
       id: values.id || Date.now(), // Still generated here for local use, but not in form
       name: values.name,
-      employee_code: values.employee_code || "", // New field
+      code: values.employee_code || "", // New field
       birthday: values.birthday ? values.birthday.format("YYYY-MM-DD") : "",
       gender: values.gender,
       work_phone: values.work_phone,
@@ -97,7 +96,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       job_id: 0, // Placeholder, to be set by backend
       job_name: values.job_name || "",
       status: values.status || "Active",
-      cccd: values.cccd,
+      id_number: values.cccd,
       issued_date_cccd: values.issued_date_cccd
         ? values.issued_date_cccd.format("YYYY-MM-DD")
         : "",
@@ -110,8 +109,9 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       contract: [
         {
           id: values.contract?.id || Date.now(),
-          x_contract_type: values.contract?.x_contract_type || "",
-          x_contract_term: values.contract?.x_contract_term || false,
+          name: values.contract?.name || "",
+          contract_type: values.contract?.contract_type || "",
+          contract_term: values.contract?.contract_term || false,
           date_start: values.contract?.date_start
             ? values.contract.date_start.format("YYYY-MM-DD")
             : "",
@@ -119,7 +119,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             ? values.contract.date_end.format("YYYY-MM-DD")
             : "",
           wage: values.contract?.wage || 0,
-          x_bonus: values.contract?.x_bonus || 0,
+          bonus: values.contract?.bonus || 0,
         },
       ],
     };
@@ -172,8 +172,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]}
               >
                 <Select placeholder="Chọn giới tính">
-                  <Select.Option value="male">Nam</Select.Option>
-                  <Select.Option value="female">Nữ</Select.Option>
+                  <Select.Option value="Nam">Nam</Select.Option>
+                  <Select.Option value="Nữ">Nữ</Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item
@@ -182,8 +182,8 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 rules={[{ required: true, message: "Vui lòng chọn ngày sinh!" }]}
               >
                 <DatePicker
-                  format="YYYY-MM-DD"
-                  style={{ width: "100%" }}
+                  format="DD/MM/YYYY"
+                  style={{ width: "100%", height: 30 }}
                   placeholder="Chọn ngày sinh"
                 />
               </Form.Item>
@@ -213,25 +213,23 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               <Form.Item
                 label="Phòng ban"
                 name="department"
-                rules={[{ required: true, message: "Vui lòng nhập tên phòng ban!" }]}
+                rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
               >
-                <Input placeholder="Nhập tên phòng ban" />
+                <Select placeholder="Chọn phòng ban">
+                  <Select.Option value="IT">IT</Select.Option>
+                  <Select.Option value="HR">Nhân sự</Select.Option>
+                  <Select.Option value="Finance">Tài chính</Select.Option>
+                </Select>
               </Form.Item>
               <Form.Item
                 label="Vị trí"
                 name="job_name"
-                rules={[{ required: true, message: "Vui lòng nhập tên vị trí!" }]}
+                rules={[{ required: true, message: "Vui lòng chọn vị trí!" }]}
               >
-                <Input placeholder="Nhập tên vị trí" />
-              </Form.Item>
-              <Form.Item
-                label="Trạng thái"
-                name="status"
-                rules={[{ required: true, message: "Vui lòng chọn trạng thái!" }]}
-              >
-                <Select placeholder="Chọn trạng thái">
-                  <Select.Option value="active">Hoạt động</Select.Option>
-                  <Select.Option value="inactive">Không hoạt động</Select.Option>
+                <Select placeholder="Chọn vị trí">
+                  <Select.Option value="Developer">Developer</Select.Option>
+                  <Select.Option value="HR Manager">HR Manager</Select.Option>
+                  <Select.Option value="Accountant">Accountant</Select.Option>
                 </Select>
               </Form.Item>
             </Card>
@@ -241,7 +239,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             <Card title={extraInfoTitle} bordered className="employee-card">
               <Form.Item
                 label="Số CCCD"
-                name="cccd"
+                name="id_number"
                 rules={[{ required: true, message: "Vui lòng nhập số CCCD!" }]}
               >
                 <Input placeholder="Nhập số CCCD" />
@@ -252,9 +250,9 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 rules={[{ required: true, message: "Vui lòng chọn ngày cấp!" }]}
               >
                 <DatePicker
-                  format="YYYY-MM-DD"
-                  style={{ width: "100%" }}
+                  format="DD/MM/YYYY"
                   placeholder="Chọn ngày cấp"
+                  style={{ width: "100%", height: 30 }}
                 />
               </Form.Item>
               <Form.Item
@@ -290,17 +288,21 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             <Card title={contractTitle} bordered className="employee-card">
               <Form.Item
                 label="Loại hợp đồng"
-                name={["contract", "x_contract_type"]}
-                rules={[{ required: true, message: "Vui lòng nhập loại hợp đồng!" }]}
+                name={["contract", "contract_type"]}
+                rules={[{ required: true, message: "Vui lòng chọn loại hợp đồng!" }]}
               >
-                <Input placeholder="Nhập loại hợp đồng" />
+                <Select placeholder="Chọn loại hợp đồng">
+                  <Select.Option value="Hợp đồng thử việc">Hợp đồng thử việc</Select.Option>
+                  <Select.Option value="Hợp đồng xác định thời hạn">Hợp đồng xác định thời hạn</Select.Option>
+                  <Select.Option value="Hợp đồng không xác định thời hạn">Hợp đồng không xác định thời hạn</Select.Option>
+                </Select>
               </Form.Item>
               <Form.Item
                 label="Thời hạn hợp đồng"
-                name={["contract", "x_contract_term"]}
-                valuePropName="checked"
+                name={["contract", "contract_term"]}
+                rules={[{ required: true, message: "Vui lòng nhập thời hạn hợp đồng!" }]}
               >
-                <Checkbox>Có thời hạn</Checkbox>
+                <Input placeholder="Nhập thời hạn hợp đồng (VD: 12 tháng, không xác định...)" />
               </Form.Item>
               <Form.Item
                 label="Ngày bắt đầu"
@@ -308,20 +310,19 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 rules={[{ required: true, message: "Vui lòng chọn ngày bắt đầu!" }]}
               >
                 <DatePicker
-                  format="YYYY-MM-DD"
-                  style={{ width: "100%" }}
+                  format="DD/MM/YYYY"
+                  style={{ width: "100%", height: 30 }}
                   placeholder="Chọn ngày bắt đầu"
                 />
               </Form.Item>
               <Form.Item
                 label="Ngày kết thúc"
                 name={["contract", "date_end"]}
-                rules={[{ required: true, message: "Vui lòng chọn ngày kết thúc!" }]}
               >
                 <DatePicker
-                  format="YYYY-MM-DD"
-                  style={{ width: "100%" }}
-                  placeholder="Chọn ngày kết thúc"
+                  format="DD/MM/YYYY"
+                  style={{ width: "100%", height: 30 }}
+                  placeholder="Chọn ngày kết thúc (không bắt buộc)"
                 />
               </Form.Item>
               <Form.Item
@@ -339,7 +340,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               </Form.Item>
               <Form.Item
                 label="Tiền thưởng"
-                name={["contract", "x_bonus"]}
+                name={["contract", "bonus"]}
                 rules={[{ required: true, message: "Vui lòng nhập tiền thưởng!" }]}
               >
                 <InputNumber

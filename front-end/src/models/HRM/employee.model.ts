@@ -1,16 +1,16 @@
 export interface Employee {
   id: number;
-  code: string;
+  code: string | boolean;
   name: string;
   birthday: string;
   gender: "Nam" | "Nữ";
   work_phone: string;
   work_email: string;
   department_id: number;
-  department: string;
+  department_name: string;
   job_id: number;
   job_name: string;
-  status: string;
+  status: "active" | "inactive" | string;
   cccd: string;
   issued_date_cccd: string;
   issued_place_cccd: string;
@@ -25,7 +25,7 @@ export interface Employee {
 export interface Contract {
   id: number;
   name: string;
-  contract_type: string;
+  contract_type: string; // "fixed_term" | "permanent" | ...
   contract_term: boolean;
   date_start: string;
   date_end: string;
@@ -39,6 +39,20 @@ export interface EmployeeResponse {
     page: number;
     limit: number;
     total: number;
+  };
+  error?: string;
+}
+
+export interface EmployeeDetailResponse {
+  data: {
+    profile: Omit<Employee, "contract"> & {
+      id_number?: string;
+      id_issued_place?: string;
+      id_issued_date?: string;
+      created_at: string;
+      updated_at: string;
+    };
+    contracts: Contract[];
   };
   error?: string;
 }
@@ -65,7 +79,7 @@ export interface EmployeeQueryParams {
 
 export interface EmployeeCreateRequest {
   name: string;
-  code: string;
+  code: string | boolean;
   birthday: string;
   gender: "Nam" | "Nữ";
   work_phone: string;

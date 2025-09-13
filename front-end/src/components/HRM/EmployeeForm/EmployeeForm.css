@@ -57,3 +57,18 @@
 .ant-row {
   align-items: stretch !important;
 }
+
+/* Fix chiều cao DatePicker = Input */
+.ant-picker.custom-date {
+  height: 40px !important;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 11px;
+  box-sizing: border-box;
+}
+
+.ant-picker-input>input {
+  height: 38px !important;
+  line-height: 38px !important;
+}
