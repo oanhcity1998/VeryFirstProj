@@ -1,10 +1,21 @@
-import { EmployeeState } from "@/models/HRM/employee.model";
+// src/redux/HRM/slices/employeeSlice.ts
+
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Employee } from "@/models/HRM/employee.model";
+
+interface EmployeeState {
+  employees: Employee[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+  } | null;
+  error: string | null;
+}
 
 const initialState: EmployeeState = {
   employees: [],
   meta: null,
-  loading: false,
   error: null,
 };
 
@@ -12,22 +23,19 @@ const employeeSlice = createSlice({
   name: "employee",
   initialState,
   reducers: {
-    setLoading: (state) => {
-      state.loading = true;
-      state.error = null;
-    },
-    setEmployees: (state, action: PayloadAction<EmployeeState>) => {
-      state.employees = action.payload.employees;
-      state.meta = action.payload.meta;
-      state.loading = false;
-      state.error = null;
+    setEmployees: (state, action: PayloadAction<EmployeeResponse>) => {
+      state.employees = action.payload.data || [];
+      state.meta = action.payload.meta || null;
+      state.error = action.payload.error || null;
     },
     setError: (state, action: PayloadAction<string>) => {
-      state.loading = false;
       state.error = action.payload;
+    },
+    clearError: (state) => {
+      state.error = null;
     },
   },
 });
 
-export const { setLoading, setEmployees, setError } = employeeSlice.actions;
+export const { setEmployees, setError, clearError } = employeeSlice.actions;
 export default employeeSlice.reducer;

@@ -19,7 +19,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth"],
+  whitelist: ["auth", "employee"],
   // whitelist: ["auth"], // sau này có thể chỉ định slice cần lưu
 };
 

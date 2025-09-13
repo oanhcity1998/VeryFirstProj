@@ -4,7 +4,7 @@ from odoo.http import request
 
 class JobAPI(http.Controller):
 
-    @http.route('/api/hr/jobs', type='json', auth='user', methods=['POST'], csrf=False, cors='*')
+    @http.route('/api/hr/jobs', type='json', auth='user', methods=['POST'], csrf=False)
     def create_job(self, **kwargs):
         try:
             if request.httprequest.data:
@@ -62,7 +62,7 @@ class JobAPI(http.Controller):
         except Exception as e:
             return {"error": f"Failed to create job: {str(e)}"}
 
-    @http.route('/api/hr/jobs', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/hr/jobs', type='http', auth='user', methods=['GET'], csrf=False)
     def list_jobs(self, **kwargs):
         try:
             # Get query parameters
@@ -139,7 +139,25 @@ class JobAPI(http.Controller):
                 status=500
             )
 
-    @http.route('/api/hr/jobs/<int:job_id>', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    #Get job id and name
+    @http.route('/api/hr/jobs/ids', type='http', auth='user', methods=['GET'], csrf=False)
+    def get_job_ids(self, **kwargs):
+        try:
+            jobs = request.env['hr.job'].sudo().search([])
+            data = [{"id": job.id, "name": job.name} for job in jobs]
+            return request.make_response(
+                json.dumps({"data": data}),
+                headers=[('Content-Type', 'application/json')]
+            )
+        except Exception as e:
+            return request.make_response(
+                json.dumps({"error": str(e)}),
+                headers=[('Content-Type', 'application/json')],
+                status=500
+            )
+        
+
+    @http.route('/api/hr/jobs/<int:job_id>', type='http', auth='user', methods=['GET'], csrf=False)
     def get_job(self, job_id, **kwargs):
         try:
             job = request.env['hr.job'].sudo().search([
@@ -189,7 +207,7 @@ class JobAPI(http.Controller):
                 status=500
             )
 
-    @http.route('/api/hr/jobs/<int:job_id>', type='http', auth='user', methods=['PUT'], csrf=False, cors='*')
+    @http.route('/api/hr/jobs/<int:job_id>', type='http', auth='user', methods=['PUT'], csrf=False)
     def update_job(self, job_id, **kwargs):
         try:
             # Parse request data
@@ -280,7 +298,7 @@ class JobAPI(http.Controller):
                 status=500
             )
 
-    @http.route('/api/hr/jobs/<int:job_id>', type='http', auth='user', methods=['DELETE'], csrf=False, cors='*')
+    @http.route('/api/hr/jobs/<int:job_id>', type='http', auth='user', methods=['DELETE'], csrf=False)
     def delete_job(self, job_id, **kwargs):
         try:
             job = request.env['hr.job'].sudo().search([
@@ -325,7 +343,7 @@ class JobAPI(http.Controller):
                 status=500
             )
 
-    @http.route('/api/hr/jobs/export', type='http', auth='user', methods=['GET'], csrf=False, cors='*')
+    @http.route('/api/hr/jobs/export', type='http', auth='user', methods=['GET'], csrf=False)
     def export_jobs_csv(self, **kwargs):
         try:
             import csv

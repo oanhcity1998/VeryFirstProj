@@ -26,6 +26,13 @@ services:
       - odoo-data:/var/lib/odoo
       # mount source code addons vào container để dev trực tiếp
       - ./odoo/addons:/mnt/extra-addons
+  nginx:
+    image: nginx:1.27
+    depends_on: [odoo]
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
 
 volumes:
   odoo-db-data:
