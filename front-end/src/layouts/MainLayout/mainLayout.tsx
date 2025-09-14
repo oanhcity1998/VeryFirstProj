@@ -8,7 +8,6 @@ import {
   Badge,
   message,
   Dropdown,
-  Menu,
 } from "antd";
 import {
   MenuUnfoldOutlined,
@@ -24,11 +23,11 @@ import SidebarMenuHRM from "@/components/HRM/SiderBar-HRM/SidebarMenu-HRM";
 import SidebarMenu from "@/components/CRM/SideBar/SidebarMenu";
 
 const { Header, Sider, Content } = Layout;
-const { Search } = Input;
 
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [isHRM, setIsHRM] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -36,6 +35,7 @@ const MainLayout = () => {
     setIsHRM(location.pathname.startsWith("/hrm"));
   }, [location.pathname]);
 
+  // Apps menu (CRM/HRM)
   const appsMenu = {
     items: [
       {
@@ -49,7 +49,6 @@ const MainLayout = () => {
         onClick: () => {
           setIsHRM(false);
           navigate(ROUTES_APP.crm.homeCRM);
-          console.log("CRM clicked");
         },
       },
       {
@@ -63,12 +62,12 @@ const MainLayout = () => {
         onClick: () => {
           setIsHRM(true);
           navigate(ROUTES_APP.hrm.homeHRM);
-          console.log("HRM clicked");
         },
       },
     ],
   };
 
+  // Avatar menu (profile/logout)
   const avatarMenu = {
     items: [
       {
@@ -107,6 +106,7 @@ const MainLayout = () => {
 
       <Layout>
         <Header className="main-header">
+          {/* Left */}
           <div className="header-left">
             <Button
               type="text"
@@ -116,11 +116,16 @@ const MainLayout = () => {
             />
           </div>
 
+          {/* Right */}
           <div className="header-actions">
+            {/* Apps button (grid style) */}
             <Dropdown
               menu={appsMenu}
               placement="bottomRight"
               trigger={["click"]}
+              dropdownRender={(menu) => (
+                <div className="apps-menu">{menu}</div>
+              )}
             >
               <Button
                 type="text"
@@ -128,17 +133,18 @@ const MainLayout = () => {
               />
             </Dropdown>
 
+            {/* Notification button  */}
             <Badge count={3} offset={[0, 5]}>
               <BellOutlined className="bell-icon" />
             </Badge>
 
+            {/* Avatar dropdown (list style) */}
             <Dropdown
               menu={avatarMenu}
               placement="bottomRight"
               trigger={["click"]}
-              overlayClassName="avatar-dropdown"
             >
-              <Avatar style={{ cursor: "pointer" }} icon={<UserOutlined />} />
+              <Avatar style={{ cursor: "pointer" }}>U</Avatar>
             </Dropdown>
           </div>
         </Header>

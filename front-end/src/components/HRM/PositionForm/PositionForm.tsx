@@ -1,15 +1,7 @@
 import { useEffect } from "react";
 import { Modal, Form, Input, Button, InputNumber } from "antd";
-import dayjs from "dayjs";
 import "./PositionForm.css";
-
-interface Position {
-  id?: string;
-  positionName?: string;
-  priority?: number;
-  note?: string;
-  expiration?: string;
-}
+import { Position } from "@/models/HRM/position.model";
 
 interface PositionFormProps {
   onCancel: () => void;
@@ -19,6 +11,7 @@ interface PositionFormProps {
   modalTitle?: string;
   cancelText?: string;
   saveText?: string;
+  loading?: boolean;
 }
 
 const PositionForm: React.FC<PositionFormProps> = ({
@@ -29,16 +22,18 @@ const PositionForm: React.FC<PositionFormProps> = ({
   modalTitle = "Thêm mới",
   cancelText = "Hủy",
   saveText = "Lưu",
+  loading = false,
 }) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
     if (position) {
       form.setFieldsValue({
-        ...position,
-        expiration: position.expiration
-          ? dayjs(position.expiration, "DD/MM/YYYY")
-          : null,
+        id: position.id,
+        name: position.name,
+        code: position.code,
+        priority_level: position.priority_level,
+        note: position.note,
       });
     } else {
       form.resetFields();
@@ -47,12 +42,12 @@ const PositionForm: React.FC<PositionFormProps> = ({
 
   const onFinish = (values: any) => {
     onSave({
-      ...values,
-      expiration: values.expiration
-        ? values.expiration.format("DD/MM/YYYY")
-        : null,
+      id: position?.id || Date.now(), // Temporary ID for create
+      name: values.name,
+      code: values.code || null,
+      priority_level: values.priority_level || null,
+      note: values.note || null,
     });
-    onCancel();
   };
 
   return (
@@ -61,10 +56,16 @@ const PositionForm: React.FC<PositionFormProps> = ({
       open={open}
       onCancel={onCancel}
       footer={[
-        <Button key="cancel" danger onClick={onCancel}>
+        <Button key="cancel" danger onClick={onCancel} disabled={loading}>
           {cancelText}
         </Button>,
-        <Button key="submit" type="primary" onClick={() => form.submit()}>
+        <Button
+          key="submit"
+          type="primary"
+          loading={loading}
+          disabled={loading}
+          onClick={() => form.submit()}
+        >
           {saveText}
         </Button>,
       ]}
@@ -73,36 +74,23 @@ const PositionForm: React.FC<PositionFormProps> = ({
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <div className="form-section">
           <h3>Thông tin chức vụ</h3>
-
-          <Form.Item
-            label="Mã chức vụ"
-            name="id"
-            rules={[{ required: true, message: "Vui lòng nhập mã chức vụ!" }]}
-          >
-            <Input placeholder="Nhập mã chức vụ (VD: GD82334)" />
-          </Form.Item>
-
           <Form.Item
             label="Tên chức vụ"
-            name="positionName"
+            name="name"
             rules={[{ required: true, message: "Vui lòng nhập tên chức vụ!" }]}
           >
             <Input placeholder="Nhập tên chức vụ" />
           </Form.Item>
-
-          <Form.Item
-            label="Độ ưu tiên"
-            name="priority"
-            rules={[{ required: true, message: "Vui lòng nhập độ ưu tiên!" }]}
-          >
+          <Form.Item label="Mã chức vụ" name="code">
+            <Input placeholder="Nhập mã chức vụ (VD: GD82334)" />
+          </Form.Item>
+          <Form.Item label="Độ ưu tiên" name="priority_level">
             <InputNumber
               min={0}
-              max={5}
               style={{ width: "100%" }}
               placeholder="Nhập độ ưu tiên (0-5)"
             />
           </Form.Item>
-
           <Form.Item label="Ghi chú" name="note">
             <Input.TextArea
               placeholder="Nhập ghi chú"

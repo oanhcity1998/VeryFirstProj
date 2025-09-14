@@ -1,15 +1,20 @@
-import {
-  Employee,
-  EmployeeCreateRequest,
-  EmployeeQueryParams,
-  EmployeeResponse,
-} from "@/models/HRM/employee.model";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  EmployeeCreateResponse,
+  EmployeeDetailResponse,
+  EmployeeQueryParams,
+  EmployeeRequest,
+  EmployeeResponse,
+  EmployeeUpdateResponse,
+} from "@/models/HRM/employee.model";
 
-// Define tags for caching and invalidation
 const tags = {
   employees: "Employees",
 };
+
+const handleError = (response: { status: number; data: any }) => ({
+  error: response.data?.error || `Lỗi server (status: ${response.status})`,
+});
 
 export const employeeService = createApi({
   reducerPath: "employeeService",
@@ -17,7 +22,7 @@ export const employeeService = createApi({
     baseUrl: `${import.meta.env.VITE_API_BASE_URL}/hr`,
     credentials: "include",
   }),
-  tagTypes: [tags.employees], // Enable caching tags for invalidation
+  tagTypes: [tags.employees],
   endpoints: (builder) => ({
     getEmployees: builder.query<EmployeeResponse, EmployeeQueryParams>({
       query: (params) => ({
@@ -27,73 +32,130 @@ export const employeeService = createApi({
           department_id: params.department_id,
           job_id: params.job_id,
           status: params.status,
-          page: params.page ?? 1, // Default to 1 if undefined
-          limit: params.limit ?? 10, // Default to 10 if undefined
+          page: params.page ?? 1,
+          limit: params.limit ?? 10,
         },
       }),
       providesTags: (result) =>
         result
           ? [
               { type: tags.employees, id: "LIST" },
-              ...result.data.map((employee: any) => ({
+              ...result.data.map((employee) => ({
                 type: tags.employees,
                 id: employee.id,
               })),
             ]
-          : [{ type: tags.employees, id: "LIST" }], // Provide tags for caching
+          : [{ type: tags.employees, id: "LIST" }],
     }),
-    createEmployee: builder.mutation<EmployeeResponse, EmployeeCreateRequest>({
+    createEmployee: builder.mutation<EmployeeCreateResponse, EmployeeRequest>({
       query: (employee) => ({
         url: "employees",
         method: "POST",
-        body: employee,
+        body: {
+          ...employee,
+          contract: employee.contract || [],
+        },
       }),
-      // Transform response to ensure consistency
-      transformResponse: (response: EmployeeResponse) => response,
-      transformErrorResponse: (response: {
-        status: number;
-        data: { error: string };
-      }) =>
-        ({
-          error: response.data.error,
-        } as EmployeeResponse),
-      // Invalidate cache on successful creation
+      transformResponse: (response: EmployeeCreateResponse) => response,
+      transformErrorResponse: handleError,
       invalidatesTags: [{ type: tags.employees, id: "LIST" }],
     }),
-    getEmployeeById: builder.query<EmployeeResponse, number>({
+    getEmployeeById: builder.query<EmployeeDetailResponse, number>({
       query: (id) => `employees/${id}`,
-      transformResponse: (response: { data: Employee }) =>
-        ({
-          data: [response.data],
-        } as EmployeeResponse),
-      transformErrorResponse: (response: {
-        status: number;
-        data: { error: string };
-      }) =>
-        ({
-          error: response.data.error,
-        } as EmployeeResponse),
+      transformResponse: (response: { data: EmployeeDetailResponse }) =>
+        response.data,
+      transformErrorResponse: handleError,
       providesTags: (result, error, id) =>
         result
           ? [{ type: tags.employees, id }]
           : [{ type: tags.employees, id }],
+    }),
+    updateEmployee: builder.mutation<
+      EmployeeUpdateResponse,
+      { id: number; data: EmployeeRequest }
+    >({
+      query: ({ id, data }) => ({
+        url: `employees/${id}`,
+        method: "PUT",
+        body: {
+          ...data,
+          contract: data.contract || [],
+        },
+      }),
+      transformResponse: (response: EmployeeUpdateResponse) => response,
+      transformErrorResponse: handleError,
+      invalidatesTags: (result, error, { id }) => [
+        { type: tags.employees, id },
+        { type: tags.employees, id: "LIST" },
+      ],
     }),
     deleteEmployee: builder.mutation<{ message?: string }, number>({
       query: (id) => ({
         url: `employees/${id}`,
         method: "DELETE",
       }),
-      // Transform response to handle success message or empty response
-      transformResponse: (response: { message?: string }, meta, arg) =>
-        response,
-      transformErrorResponse: (response: {
-        status: number;
-        data: { error: string };
-      }) => ({
-        error: response.data.error,
+      transformResponse: (response: { message?: string }) => response,
+      transformErrorResponse: handleError,
+      invalidatesTags: (result, error, id) => [
+        { type: tags.employees, id },
+        { type: tags.employees, id: "LIST" },
+      ],
+    }),
+    exportTemplate: builder.mutation<Blob, void>({
+      query: () => ({
+        url: "employees/export-template",
+        method: "GET",
+        responseHandler: async (response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const blob = await response.blob();
+          if (blob.size === 0) {
+            throw new Error("File Excel trả về rỗng");
+          }
+          return blob;
+        },
       }),
-      // Invalidate cache on successful deletion
-      invalidatesTags: (result, error, id) => [{ type: tags.employees, id }],
+      transformResponse: (response: Blob) => response,
+      transformErrorResponse: handleError,
+    }),
+    importEmployees: builder.mutation<
+      { message?: string; errors?: string[] },
+      FormData
+    >({
+      query: (formData) => ({
+        url: "employees/import",
+        method: "POST",
+        body: formData,
+      }),
+      transformErrorResponse: handleError,
+      invalidatesTags: [{ type: tags.employees, id: "LIST" }],
+    }),
+    exportEmployees: builder.mutation<Blob, EmployeeQueryParams>({
+      query: (params) => ({
+        url: "employees/export",
+        method: "GET",
+        params: {
+          q: params.q,
+          department_id: params.department_id,
+          job_id: params.job_id,
+          status: params.status,
+          page: params.page ?? 1,
+          limit: params.limit ?? 100,
+        },
+        responseHandler: async (response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const blob = await response.blob();
+          if (blob.size === 0) {
+            throw new Error("File Excel trả về rỗng");
+          }
+          return blob;
+        },
+      }),
+      transformResponse: (response: Blob) => response,
+      transformErrorResponse: handleError,
     }),
   }),
 });
@@ -102,5 +164,9 @@ export const {
   useGetEmployeesQuery,
   useCreateEmployeeMutation,
   useGetEmployeeByIdQuery,
+  useUpdateEmployeeMutation,
   useDeleteEmployeeMutation,
+  useExportTemplateMutation,
+  useImportEmployeesMutation,
+  useExportEmployeesMutation,
 } = employeeService;

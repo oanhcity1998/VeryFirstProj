@@ -1,6 +1,6 @@
 export interface Employee {
   id: number;
-  code: string | boolean;
+  code: string;
   name: string;
   birthday: string;
   gender: "Nam" | "Nữ";
@@ -11,9 +11,9 @@ export interface Employee {
   job_id: number;
   job_name: string;
   status: "active" | "inactive" | string;
-  cccd: string;
-  issued_date_cccd: string;
-  issued_place_cccd: string;
+  id_number: string;
+  id_issued_place: string;
+  id_issued_date: string;
   permanent_address: string;
   temporary_address: string;
   tax_id: string;
@@ -26,7 +26,7 @@ export interface Contract {
   id: number;
   name: string;
   contract_type: string; // "fixed_term" | "permanent" | ...
-  contract_term: boolean;
+  contract_term: string;
   date_start: string;
   date_end: string;
   wage: number;
@@ -77,32 +77,45 @@ export interface EmployeeQueryParams {
   limit?: number;
 }
 
-export interface EmployeeCreateRequest {
-  name: string;
-  code: string | boolean;
-  birthday: string;
-  gender: "Nam" | "Nữ";
-  work_phone: string;
-  work_email: string;
-  department_id: number;
-  job_id: number;
-  id_number: string;
-  id_issued_place: string;
-  id_issued_date: string;
-  permanent_address: string;
-  temporary_address: string;
-  tax_id: string;
-  insurance_id: string;
-  bank_account: string;
-  contract: {
-    name: string;
-    contract_type:
-      | "Hợp đồng thử việc"
-      | "Hợp đồng xác định thời hạn"
-      | "Hợp đồng không xác định thời hạn";
-    date_start: string;
-    date_end: string;
-    wage: number;
-    bonus: number;
+export interface EmployeeCreateResponse {
+  message?: string;
+  error?: string;
+}
+
+export type ContractType =
+  | "Hợp đồng lao động xác định thời hạn"
+  | "Hợp đồng lao động không xác định thời hạn";
+
+export interface EmployeeRequest {
+  name?: string;
+  code?: string;
+  birthday?: string;
+  gender?: "Nam" | "Nữ";
+  work_phone?: string;
+  work_email?: string;
+  department_id?: number;
+  job_id?: number;
+  id_number?: string;
+  id_issued_place?: string;
+  id_issued_date?: string;
+  permanent_address?: string;
+  temporary_address?: string;
+  tax_id?: string;
+  insurance_id?: string;
+  bank_account?: string;
+  contract?: Contract[];
+}
+
+export interface EmployeeUpdateResponse {
+  success?: boolean;
+  updated_fields?: Partial<Employee>;
+  ignored_fields?: Record<string, any>;
+  unchanged_fields?: {
+    [key: string]: {
+      reason: string;
+      old_value: any;
+      new_value: any;
+    };
   };
+  error?: string;
 }

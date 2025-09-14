@@ -15,6 +15,8 @@ import {
 import dayjs from "dayjs";
 import "./EmployeeForm.css";
 import { Employee } from "@/models/HRM/employee.model";
+import { useGetDepartmentsQuery } from "@/services/HRM/department.service";
+import { useGetJobsQuery } from "@/services/HRM/position.service";
 
 interface EmployeeFormProps {
   onCancel: () => void;
@@ -45,83 +47,84 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   saveText = "Lưu",
   loading = false,
 }) => {
+  const { data: departmentData } = useGetDepartmentsQuery();
+  const { data: jobData } = useGetJobsQuery();
+
   useEffect(() => {
+    console.log("Employee prop in form:", employee); // Debug
     if (employee) {
       form.setFieldsValue({
         name: employee.name,
-        code: employee.code || "", // New field
+        code: employee.code || "",
         birthday: employee.birthday ? dayjs(employee.birthday, "YYYY-MM-DD") : null,
         gender: employee.gender,
         work_phone: employee.work_phone,
         work_email: employee.work_email,
-        department: employee.department,
-        job_name: employee.job_name,
+        department_id: employee.department_id || undefined,
+        job_id: employee.job_id || undefined,
         status: employee.status,
-        cccd: employee.cccd,
-        issued_date_cccd: employee.issued_date_cccd
-          ? dayjs(employee.issued_date_cccd, "YYYY-MM-DD")
-          : null,
-        issued_place_cccd: employee.issued_place_cccd,
+        id_number: employee.id_number,
+        id_issued_date: employee.id_issued_date ? dayjs(employee.id_issued_date, "YYYY-MM-DD") : null,
+        id_issued_place: employee.id_issued_place,
         permanent_address: employee.permanent_address,
         temporary_address: employee.temporary_address,
         tax_id: employee.tax_id,
         insurance_id: employee.insurance_id,
         bank_account: employee.bank_account,
-        contract: employee.contract?.[0] || {
-          id: Date.now(),
-          contract_type: "",
-          contract_term: false,
-          date_start: null,
-          date_end: null,
-          wage: 0,
-          bonus: 0,
+        contract: {
+          name: employee.contract?.[0]?.name || "",
+          contract_type: employee.contract?.[0]?.contract_type || "",
+          contract_term: employee.contract?.[0]?.contract_term || "",
+          date_start: employee.contract?.[0]?.date_start
+            ? dayjs(employee.contract[0].date_start, "YYYY-MM-DD")
+            : null,
+          date_end: employee.contract?.[0]?.date_end
+            ? dayjs(employee.contract[0].date_end, "YYYY-MM-DD")
+            : null,
+          wage: employee.contract?.[0]?.wage || 0,
+          bonus: employee.contract?.[0]?.bonus || 0,
         },
       });
     } else {
       form.resetFields();
     }
-  }, [employee, form]);
+  }, [employee, form, departmentData, jobData]);
 
   const onFinish = (values: any) => {
+    console.log("Form values on submit:", values); // Debug
     const formattedValues: Employee = {
-      id: values.id || Date.now(), // Still generated here for local use, but not in form
+      id: values.id || Date.now(),
       name: values.name,
-      code: values.employee_code || "", // New field
+      code: values.code || "",
       birthday: values.birthday ? values.birthday.format("YYYY-MM-DD") : "",
       gender: values.gender,
       work_phone: values.work_phone,
       work_email: values.work_email,
-      department_id: 0, // Placeholder, to be set by backend
-      department: values.department || "",
-      job_id: 0, // Placeholder, to be set by backend
-      job_name: values.job_name || "",
-      status: values.status || "Active",
-      id_number: values.cccd,
-      issued_date_cccd: values.issued_date_cccd
-        ? values.issued_date_cccd.format("YYYY-MM-DD")
-        : "",
-      issued_place_cccd: values.issued_place_cccd,
+      department_id: values.department_id || 0,
+      department_name: departmentData?.data.find((d) => d.id === values.department_id)?.name || "",
+      job_id: values.job_id || 0,
+      job_name: jobData?.data.find((j) => j.id === values.job_id)?.name || "",
+      status: values.status || "active",
+      id_number: values.id_number,
+      id_issued_date: values.id_issued_date ? values.id_issued_date.format("YYYY-MM-DD") : "",
+      id_issued_place: values.id_issued_place,
       permanent_address: values.permanent_address,
       temporary_address: values.temporary_address || "",
       tax_id: values.tax_id || "",
       insurance_id: values.insurance_id || "",
       bank_account: values.bank_account || "",
-      contract: [
-        {
-          id: values.contract?.id || Date.now(),
-          name: values.contract?.name || "",
-          contract_type: values.contract?.contract_type || "",
-          contract_term: values.contract?.contract_term || false,
-          date_start: values.contract?.date_start
-            ? values.contract.date_start.format("YYYY-MM-DD")
-            : "",
-          date_end: values.contract?.date_end
-            ? values.contract.date_end.format("YYYY-MM-DD")
-            : "",
-          wage: values.contract?.wage || 0,
-          bonus: values.contract?.bonus || 0,
-        },
-      ],
+      contract: values.contract
+        ? [{
+          id: employee?.contract?.[0]?.id || Date.now(),
+          name: values.contract.name || "",
+          contract_type: values.contract.contract_type || "",
+          contract_term: values.contract.contract_term || "",
+          date_start: values.contract.date_start ? values.contract.date_start.format("YYYY-MM-DD") : "",
+          date_end: values.contract.date_end ? values.contract.date_end.format("YYYY-MM-DD") : "",
+          wage: values.contract.wage || 0,
+          bonus: values.contract.bonus || 0,
+        }]
+        : [],
     };
     onSave(formattedValues);
   };
@@ -146,7 +149,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       ]}
       width={1100}
       style={{ top: 20 }}
-      bodyStyle={{ maxHeight: "80vh", overflowY: "hidden" }}
+      bodyStyle={{ maxHeight: "80vh", overflowY: "auto" }}
     >
       <Form form={form} layout="vertical" onFinish={onFinish} style={{ padding: "0 16px" }}>
         <Row gutter={16} align="stretch">
@@ -154,7 +157,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             <Card title={infoTitle} bordered className="employee-card">
               <Form.Item
                 label="Mã nhân viên"
-                name="employee_code"
+                name="code"
                 rules={[{ required: true, message: "Vui lòng nhập mã nhân viên!" }]}
               >
                 <Input placeholder="Nhập mã nhân viên" />
@@ -212,24 +215,36 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               </Form.Item>
               <Form.Item
                 label="Phòng ban"
-                name="department"
+                name="department_id"
                 rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
               >
-                <Select placeholder="Chọn phòng ban">
-                  <Select.Option value="IT">IT</Select.Option>
-                  <Select.Option value="HR">Nhân sự</Select.Option>
-                  <Select.Option value="Finance">Tài chính</Select.Option>
+                <Select
+                  placeholder="Chọn phòng ban"
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode as HTMLElement}
+                  style={{ width: "100%" }}
+                >
+                  {departmentData?.data.map((dept) => (
+                    <Select.Option key={dept.id} value={dept.id}>
+                      {dept.name}
+                    </Select.Option>
+                  ))}
                 </Select>
               </Form.Item>
               <Form.Item
                 label="Vị trí"
-                name="job_name"
+                name="job_id"
                 rules={[{ required: true, message: "Vui lòng chọn vị trí!" }]}
               >
-                <Select placeholder="Chọn vị trí">
-                  <Select.Option value="Developer">Developer</Select.Option>
-                  <Select.Option value="HR Manager">HR Manager</Select.Option>
-                  <Select.Option value="Accountant">Accountant</Select.Option>
+                <Select
+                  placeholder="Chọn vị trí"
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode as HTMLElement}
+                  style={{ width: "100%" }}
+                >
+                  {jobData?.data.map((job) => (
+                    <Select.Option key={job.id} value={job.id}>
+                      {job.name}
+                    </Select.Option>
+                  ))}
                 </Select>
               </Form.Item>
             </Card>
@@ -246,7 +261,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               </Form.Item>
               <Form.Item
                 label="Ngày cấp CCCD"
-                name="issued_date_cccd"
+                name="id_issued_date"
                 rules={[{ required: true, message: "Vui lòng chọn ngày cấp!" }]}
               >
                 <DatePicker
@@ -257,7 +272,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               </Form.Item>
               <Form.Item
                 label="Nơi cấp CCCD"
-                name="issued_place_cccd"
+                name="id_issued_place"
                 rules={[{ required: true, message: "Vui lòng nhập nơi cấp!" }]}
               >
                 <Input placeholder="Nhập nơi cấp CCCD" />
@@ -287,14 +302,19 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
           <Col span={8}>
             <Card title={contractTitle} bordered className="employee-card">
               <Form.Item
+                label="Tên hợp đồng"
+                name={["contract", "name"]}
+              >
+                <Input placeholder="Nhập tên hợp đồng" />
+              </Form.Item>
+              <Form.Item
                 label="Loại hợp đồng"
                 name={["contract", "contract_type"]}
                 rules={[{ required: true, message: "Vui lòng chọn loại hợp đồng!" }]}
               >
                 <Select placeholder="Chọn loại hợp đồng">
-                  <Select.Option value="Hợp đồng thử việc">Hợp đồng thử việc</Select.Option>
-                  <Select.Option value="Hợp đồng xác định thời hạn">Hợp đồng xác định thời hạn</Select.Option>
-                  <Select.Option value="Hợp đồng không xác định thời hạn">Hợp đồng không xác định thời hạn</Select.Option>
+                  <Select.Option value="Hợp đồng lao động xác định thời hạn">Hợp đồng lao động xác định thời hạn</Select.Option>
+                  <Select.Option value="Hợp đồng lao động không xác định thời hạn">Hợp đồng lao động không xác định thời hạn</Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item

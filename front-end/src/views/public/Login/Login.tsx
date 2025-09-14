@@ -1,10 +1,8 @@
-import { useState, useEffect } from "react";
-import { Card, Input, Button, Form, Typography, message } from "antd";
+import { useState } from "react";
+import { Card, Input, Button, Form, Typography } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "@/services/public/auth.service";
-import { useAppDispatch } from "@/app/store";
-import { setCredentials, setError } from "@/redux/public/slices/authSlice";
 import "./Login.css";
 import { ROUTES_APP } from "@/app/routes";
 import useToast from "@/hooks/useToast";
@@ -14,17 +12,8 @@ const { Title, Text } = Typography;
 export default function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [login, { isLoading, error }] = useLoginMutation();
+  const [login, { isLoading }] = useLoginMutation();
   const { success, error: toastError } = useToast();
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (error) {
-      setLoading(false);
-      dispatch(setError("Email hoặc mật khẩu không hợp lệ"));
-      message.error("Email hoặc mật khẩu không hợp lệ");
-    }
-  }, [error, dispatch]);
 
   const onFinish = async (values: any) => {
     try {
@@ -34,11 +23,12 @@ export default function Login() {
         password: values.password,
       }).unwrap();
 
-      dispatch(setCredentials({ uid: response.uid }));
       success("Đăng nhập thành công!");
       navigate(ROUTES_APP.home);
-    } catch (err) {
-      toastError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
+    } catch (err: any) {
+      toastError(
+        `Đăng nhập thất bại: ${err.message || "Email hoặc mật khẩu không hợp lệ"}`
+      );
     } finally {
       setLoading(false);
     }
@@ -58,7 +48,7 @@ export default function Login() {
           <Form.Item
             name="email"
             rules={[{ required: true, message: "Vui lòng nhập Email!" }]}
-            style={{ marginBottom: 24 }} // thêm khoảng cách dưới field
+            style={{ marginBottom: 24 }}
           >
             <Input
               prefix={<UserOutlined />}
@@ -80,7 +70,6 @@ export default function Login() {
               className="login-input"
             />
           </Form.Item>
-
 
           <Form.Item>
             <Button

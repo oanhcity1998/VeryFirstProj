@@ -1,5 +1,9 @@
 import { Drawer, Form, Button, Select } from "antd";
 import "./FilterDrawerEmployee.css";
+import { useGetEmployeesQuery } from "@/services/HRM/employee.service";
+import { useGetDepartmentsQuery } from "@/services/HRM/department.service";
+import { useGetJobsQuery } from "@/services/HRM/position.service";
+
 
 const { Option } = Select;
 
@@ -9,8 +13,20 @@ interface FilterDrawerEmployeeProps {
   onConfirm: (values: any) => void;
 }
 
-const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({ open, onClose, onConfirm }) => {
+const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({
+  open,
+  onClose,
+  onConfirm,
+}) => {
   const [form] = Form.useForm();
+
+  // Lấy dữ liệu từ API
+  const { data: employeesData, isLoading: employeesLoading } =
+    useGetEmployeesQuery({ limit: 1000 });
+  const { data: departmentsData, isLoading: departmentsLoading } =
+    useGetDepartmentsQuery({ limit: 1000 });
+  const { data: jobsData, isLoading: jobsLoading } =
+    useGetJobsQuery({ limit: 1000 });
 
   const handleConfirm = () => {
     form
@@ -26,7 +42,7 @@ const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({ open, onClo
 
   return (
     <Drawer
-      title="Thông tin nhân sự"
+      title="Bộ lọc nhân sự"
       placement="right"
       open={open}
       onClose={onClose}
@@ -43,61 +59,53 @@ const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({ open, onClo
       }
     >
       <Form layout="vertical" form={form}>
-        <Form.Item
-          label="Phòng ban"
-          name="department"
-          rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
-        >
-          <Select placeholder="Chọn phòng ban">
-            <Option value="IT">IT</Option>
-            <Option value="HR">Nhân sự</Option>
-            <Option value="Finance">Tài chính</Option>
+        {/* Phòng ban */}
+        <Form.Item label="Phòng ban" name="department_id">
+          <Select placeholder="Chọn phòng ban" loading={departmentsLoading}>
+            {departmentsData?.data.map((dep) => (
+              <Option key={dep.id} value={dep.id}>
+                {dep.name}
+              </Option>
+            ))}
           </Select>
         </Form.Item>
 
-        <Form.Item
-          label="Vị trí"
-          name="position"
-          rules={[{ required: true, message: "Vui lòng chọn vị trí!" }]}
-        >
-          <Select placeholder="Chọn vị trí">
-            <Option value="Developer">Developer</Option>
-            <Option value="HR Manager">HR Manager</Option>
-            <Option value="Accountant">Accountant</Option>
+        {/* Vị trí */}
+        <Form.Item label="Vị trí" name="job_id">
+          <Select placeholder="Chọn vị trí" loading={jobsLoading}>
+            {jobsData?.data.map((job) => (
+              <Option key={job.id} value={job.id}>
+                {job.name}
+              </Option>
+            ))}
           </Select>
         </Form.Item>
 
-        <Form.Item
-          label="Loại hợp đồng"
-          name="contractType"
-          rules={[{ required: true, message: "Vui lòng chọn loại hợp đồng!" }]}
-        >
+        {/* Loại hợp đồng */}
+        <Form.Item label="Loại hợp đồng" name="contractType">
           <Select placeholder="Chọn loại hợp đồng">
-            <Option value="Hợp đồng thử việc">Hợp đồng thử việc</Option>
-            <Option value="Hợp đồng xác định thời hạn">Hợp đồng xác định thời hạn</Option>
-            <Option value="Hợp đồng không xác định thời hạn">Hợp đồng không xác định thời hạn</Option>
+            <Option value="trial">Hợp đồng thử việc</Option>
+            <Option value="fixed_term">Hợp đồng xác định thời hạn</Option>
+            <Option value="indefinite">Hợp đồng không xác định thời hạn</Option>
           </Select>
         </Form.Item>
 
-        <Form.Item
-          label="Giới tính"
-          name="gender"
-          rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]}
-        >
+        {/* Giới tính */}
+        <Form.Item label="Giới tính" name="gender">
           <Select placeholder="Chọn giới tính">
-            <Option value="Nam">Nam</Option>
-            <Option value="Nữ">Nữ</Option>
+            <Option value="male">Nam</Option>
+            <Option value="female">Nữ</Option>
           </Select>
         </Form.Item>
 
-        <Form.Item
-          label="Mã nhân viên"
-          name="employeeCode"
-          rules={[{ required: true, message: "Vui lòng chọn mã nhân viên!" }]}
-        >
-          <Select placeholder="Chọn mã nhân viên">
-            <Option value="nv01">NV01</Option>
-            <Option value="nv02">NV02</Option>
+        {/* Mã nhân viên */}
+        <Form.Item label="Mã nhân viên" name="employee_id">
+          <Select placeholder="Chọn mã nhân viên" loading={employeesLoading}>
+            {employeesData?.data.map((emp: any) => (
+              <Option key={emp.id} value={emp.id}>
+                {emp.code} - {emp.fullName}
+              </Option>
+            ))}
           </Select>
         </Form.Item>
       </Form>

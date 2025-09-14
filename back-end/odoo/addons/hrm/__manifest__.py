@@ -1,7 +1,7 @@
 {
     'name': 'HRM',
-    'version': '1.0',
-    'depends': ['base', 'hr'],
+    'version': '1.1',
+    'depends': ['hr'],
     'data': [],
     'installable': True,
     'application': True,

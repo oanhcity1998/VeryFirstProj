@@ -3,24 +3,24 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import authReducer from "@/redux/public/slices/authSlice";
-import employeeReducer from "@/redux/HRM/slices/employeeSlice";
-import { employeeService } from "@/services/HRM/employee.service";
 
-// Tạo rootReducer rỗng (chưa có slice nào)
+import { employeeService } from "@/services/HRM/employee.service";
+import { departmentService } from "@/services/HRM/department.service";
+import { jobService } from "@/services/HRM/position.service";
+
+// Root reducer (chỉ còn slice thật sự cần và service)
 const rootReducer = combineReducers({
-  auth: authReducer,
-  employee: employeeReducer,
   [authService.reducerPath]: authService.reducer,
   [employeeService.reducerPath]: employeeService.reducer,
+  [departmentService.reducerPath]: departmentService.reducer,
+  [jobService.reducerPath]: jobService.reducer,
 });
 
-// Cấu hình persist
+// Persist config (chỉ cần auth)
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth", "employee"],
-  // whitelist: ["auth"], // sau này có thể chỉ định slice cần lưu
+  whitelist: ["auth"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -34,7 +34,9 @@ export const store = configureStore({
       },
     })
       .concat(authService.middleware)
-      .concat(employeeService.middleware),
+      .concat(employeeService.middleware)
+      .concat(departmentService.middleware)
+      .concat(jobService.middleware),
 });
 
 export const persistor = persistStore(store);
