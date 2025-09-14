@@ -1,6 +1,8 @@
 import {
   Employee,
   EmployeeCreateRequest,
+  EmployeeCreateResponse,
+  EmployeeDetailResponse,
   EmployeeQueryParams,
   EmployeeResponse,
 } from "@/models/HRM/employee.model";
@@ -42,30 +44,31 @@ export const employeeService = createApi({
             ]
           : [{ type: tags.employees, id: "LIST" }], // Provide tags for caching
     }),
-    createEmployee: builder.mutation<EmployeeResponse, EmployeeCreateRequest>({
+    createEmployee: builder.mutation<
+      EmployeeCreateResponse,
+      EmployeeCreateRequest
+    >({
       query: (employee) => ({
         url: "employees",
         method: "POST",
         body: employee,
       }),
       // Transform response to ensure consistency
-      transformResponse: (response: EmployeeResponse) => response,
+      transformResponse: (response: EmployeeCreateResponse) => response,
       transformErrorResponse: (response: {
         status: number;
         data: { error: string };
       }) =>
         ({
           error: response.data.error,
-        } as EmployeeResponse),
+        } as EmployeeCreateResponse),
       // Invalidate cache on successful creation
       invalidatesTags: [{ type: tags.employees, id: "LIST" }],
     }),
-    getEmployeeById: builder.query<EmployeeResponse, number>({
+    getEmployeeById: builder.query<EmployeeDetailResponse, number>({
       query: (id) => `employees/${id}`,
-      transformResponse: (response: { data: Employee }) =>
-        ({
-          data: [response.data],
-        } as EmployeeResponse),
+      transformResponse: (response: { data: EmployeeDetailResponse }) =>
+        response.data,
       transformErrorResponse: (response: {
         status: number;
         data: { error: string };

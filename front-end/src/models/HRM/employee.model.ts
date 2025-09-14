@@ -1,6 +1,6 @@
 export interface Employee {
   id: number;
-  code: string | boolean;
+  code: string;
   name: string;
   birthday: string;
   gender: "Nam" | "Nữ";
@@ -11,9 +11,9 @@ export interface Employee {
   job_id: number;
   job_name: string;
   status: "active" | "inactive" | string;
-  cccd: string;
-  issued_date_cccd: string;
-  issued_place_cccd: string;
+  id_number: string;
+  id_issued_place: string;
+  id_issued_date: string;
   permanent_address: string;
   temporary_address: string;
   tax_id: string;
@@ -26,7 +26,7 @@ export interface Contract {
   id: number;
   name: string;
   contract_type: string; // "fixed_term" | "permanent" | ...
-  contract_term: boolean;
+  contract_term: string;
   date_start: string;
   date_end: string;
   wage: number;
@@ -97,12 +97,17 @@ export interface EmployeeCreateRequest {
   contract: {
     name: string;
     contract_type:
-      | "Hợp đồng thử việc"
-      | "Hợp đồng xác định thời hạn"
-      | "Hợp đồng không xác định thời hạn";
+      | "Hợp đồng lao động xác định thời hạn"
+      | "Hợp đồng lao động không xác định thời hạn";
+    contract_term: string;
     date_start: string;
     date_end: string;
     wage: number;
     bonus: number;
   };
+}
+
+export interface EmployeeCreateResponse {
+  message?: string;
+  error?: string;
 }

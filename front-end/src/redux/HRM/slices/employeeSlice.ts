@@ -1,7 +1,7 @@
 // src/redux/HRM/slices/employeeSlice.ts
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Employee } from "@/models/HRM/employee.model";
+import { Employee, EmployeeResponse } from "@/models/HRM/employee.model";
 
 interface EmployeeState {
   employees: Employee[];

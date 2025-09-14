@@ -57,7 +57,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       dataIndex: "code",
       key: "code",
       fixed: "left",
-      width: 120,
+      width: 150, // Increased for longer codes
       align: "center",
     },
     {
@@ -65,7 +65,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       dataIndex: "name",
       key: "name",
       fixed: "left",
-      width: 150,
+      width: 200, // Increased for longer names
       align: "center",
       render: (text: string, record: Employee) => (
         <Link to={generatePath(ROUTES_APP.hrm.employeeDetail, { id: record.id.toString() })}>
@@ -77,71 +77,71 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       title: "Giới tính",
       dataIndex: "gender",
       key: "gender",
-      width: 100,
+      width: 120, // Increased to fit "Nam" or "Nữ" comfortably
       align: "center",
     },
     {
       title: "Ngày sinh",
       dataIndex: "birthday",
       key: "birthday",
-      width: 120,
+      width: 150, // Increased for date format
       align: "center",
-      render: (date: string) => (date ? dayjs(date, "DD/MM/YYYY").format("DD/MM/YYYY") : "-"),
+      render: (date: string) => (date ? dayjs(date).format("DD/MM/YYYY") : "-"),
     },
     {
       title: "Số CCCD",
-      dataIndex: "cccd",
-      key: "cccd",
-      width: 150,
+      dataIndex: "id_number",
+      key: "id_number",
+      width: 180, // Increased for longer ID numbers
       align: "center",
     },
     {
       title: "Địa chỉ thường trú",
       dataIndex: "permanent_address",
       key: "permanent_address",
-      width: 200,
+      width: 250, // Increased to prevent wrapping
       align: "center",
     },
     {
       title: "Địa chỉ tạm trú",
       dataIndex: "temporary_address",
       key: "temporary_address",
-      width: 200,
+      width: 250, // Increased to prevent wrapping
       align: "center",
     },
     {
       title: "Mã số thuế TNCN",
       dataIndex: "tax_id",
       key: "tax_id",
-      width: 150,
+      width: 180, // Increased for longer tax IDs
       align: "center",
     },
     {
       title: "Tài khoản ngân hàng",
       dataIndex: "bank_account",
       key: "bank_account",
-      width: 150,
+      width: 200, // Increased for longer account numbers
       align: "center",
     },
     {
       title: "Phòng ban",
-      dataIndex: "department",
-      key: "department",
-      width: 120,
+      dataIndex: "department_name",
+      key: "department_name",
+      width: 180, // Increased for longer department names
       align: "center",
     },
     {
       title: "Vị trí",
       dataIndex: "job_name",
       key: "job_name",
-      width: 150,
+      width: 200, // Increased for longer job titles
       align: "center",
     },
     {
       title: "Loại hợp đồng",
       dataIndex: "contract",
       key: "contract_type",
-      width: 150,
+      width: 200, // Increased for longer contract types
       align: "center",
       render: (contract: Employee["contract"]) => contract[0]?.contract_type || "-",
     },
@@ -163,7 +163,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       dataSource={data}
       loading={loading}
       rowKey="id"
-      scroll={{ x: 1500, y: 600 }}
+      scroll={{ x: 2000, y: 600 }} // Increased x to accommodate wider columns
       sticky={{ offsetHeader: 64 }}
       rowClassName={(record: Employee) => (selectedRowKeys.includes(record.id.toString()) ? "selected-row" : "")}
       pagination={false}

@@ -66,9 +66,9 @@ const EmployeeList: React.FC = () => {
       work_email: record.work_email,
       department_id: record.department_id && record.department_id > 0 ? record.department_id : 1,
       job_id: record.job_id && record.job_id > 0 ? record.job_id : 1,
-      id_number: record.cccd,
-      id_issued_place: record.issued_place_cccd,
-      id_issued_date: record.issued_date_cccd,
+      id_number: record.id_number,
+      id_issued_place: record.id_issued_place,
+      id_issued_date: record.id_issued_date,
       permanent_address: record.permanent_address,
       temporary_address: record.temporary_address || "",
       tax_id: record.tax_id || "",
@@ -76,7 +76,8 @@ const EmployeeList: React.FC = () => {
       bank_account: record.bank_account || "",
       contract: {
         name: record.contract[0]?.name || "",
-        contract_type: (record.contract[0]?.contract_type as "Hợp đồng thử việc" | "Hợp đồng xác định thời hạn" | "Hợp đồng không xác định thời hạn") || "",
+        contract_type: (record.contract[0]?.contract_type as "Hợp đồng lao động xác định thời hạn" | "Hợp đồng lao động không xác định thời hạn") || "",
+        contract_term: record.contract[0]?.contract_term || "",
         date_start: record.contract[0]?.date_start || "",
         date_end: record.contract[0]?.date_end || "",
         wage: record.contract[0]?.wage || 0,
@@ -188,7 +189,7 @@ const EmployeeList: React.FC = () => {
                 id: i,
                 name: "",
                 contract_type: row[j] as string,
-                contract_term: false,
+                contract_term: "",
                 date_start: row[j + 1] as string,
                 date_end: row[j + 2] as string,
                 wage: parseFloat(row[j + 3] as string) || 0,
@@ -262,17 +263,22 @@ const EmployeeList: React.FC = () => {
         department_id: values.department_id && values.department_id > 0 ? values.department_id : 1,
         job_id: values.job_id && values.job_id > 0 ? values.job_id : 1,
       };
+
       const response = await createEmployee(payload).unwrap();
       dispatch(setEmployees(response));
+
       toast.success(editingEmployee ? "Cập nhật nhân sự thành công" : "Thêm nhân sự thành công");
-    } catch (err) {
-      toast.error("Không thể thêm hoặc cập nhật nhân sự");
-    } finally {
+
+      // ✅ Chỉ đóng modal khi thành công
       setIsModalOpen(false);
       setEditingEmployee(null);
       form.resetFields();
+
+    } catch (err) {
+      toast.error("Không thể thêm hoặc cập nhật nhân sự");
     }
   };
+
 
   return (
     <>

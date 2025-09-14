@@ -9,8 +9,8 @@ class HrContract(models.Model):
     name = fields.Char("Contract Name", required=True)
     employee_id = fields.Many2one("hr.employee", string="Employee", required=True, ondelete="cascade")
     contract_type = fields.Selection([
-        ("HĐLĐ xác định thời hạn", "HĐLĐ xác định thời hạn"),
-        ("HĐLĐ không xác định thời hạn", "HĐLĐ không xác định thời hạn")
+        ("Hợp đồng lao động xác định thời hạn", "Hợp đồng lao động xác định thời hạn"),
+        ("Hợp đồng lao động không xác định thời hạn", "Hợp đồng lao động không xác định thời hạn")
     ], string="Contract Type", required=True)
     contract_term = fields.Char("Contract Term")
     date_start = fields.Date("Start Date")
