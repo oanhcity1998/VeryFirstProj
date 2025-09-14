@@ -272,8 +272,8 @@ class DepartmentAPI(http.Controller):
                 update_data['name'] = data['name']
             if 'code' in data:
                 update_data['code'] = data['code']
-            if 'manager_id' in data:
-                update_data['manager_id'] = int(data['manager_id']) if data['manager_id'] else False
+            if 'employee_id' in data:
+                update_data['manager_id'] = int(data['employee_id']) if data['employee_id'] else False
             if 'note' in data:
                 update_data['note'] = data['note']
 
