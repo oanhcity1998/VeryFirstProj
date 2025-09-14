@@ -245,8 +245,13 @@ class EmployeeAPI(http.Controller):
                 data = {}
 
             allowed_fields = [
-                'name', 'work_email', 'work_phone',
-                'birthday', 'gender', 'contract'
+                'code', 'name', 'work_email', 'work_phone',
+                'birthday', 'gender', 'contract',
+                'department_id', 'job_id',
+                'id_number', 'id_issued_place', 'id_issued_date',
+                'permanent_address', 'temporary_address',
+                'tax_id', 'insurance_id', 'bank_account'
+
             ]
 
             updates = {}
