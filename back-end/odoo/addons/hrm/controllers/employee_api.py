@@ -47,7 +47,7 @@ class EmployeeAPI(http.Controller):
                 "bank_account": data.get("bank_account"),
             })
 
-            contract_data = data.get("contract")
+            contract_data = data.get("contract")[0] if data.get("contract") and isinstance(data.get("contract"), list) and len(data.get("contract")) > 0 else None
             if contract_data:
                 request.env["hr.contract.custom"].sudo().create({
                     "name": contract_data.get("name"),
@@ -160,7 +160,7 @@ class EmployeeAPI(http.Controller):
     def get_all_employees(self, **kwargs):
         Employee = request.env['hr.employee'].sudo()
         employees = Employee.search([])
-        data = [{"code": emp.code or None, "name": emp.name or None} for emp in employees]
+        data = [{"id": emp.id or None, "code": emp.code or None, "name": emp.name or None} for emp in employees]
         return request.make_response(
             json.dumps({"data": data}),
             headers=[('Content-Type', 'application/json')]
@@ -256,6 +256,7 @@ class EmployeeAPI(http.Controller):
             ]
 
             updates = {}
+            updates_contract = {}
             ignored_fields = {}
             unchanged_fields = {}
 
@@ -264,6 +265,7 @@ class EmployeeAPI(http.Controller):
                     new_value = data[field]
                     old_value = None
                     if(field == 'contract'):
+                        new_value = data[field][0] if isinstance(data[field], list) and len(data[field]) > 0 else None
                         old_value = request.env['hr.contract.custom'].sudo().search([('employee_id', '=', employee.id)], limit=1)
                     else:
                         old_value = employee[field]
@@ -296,6 +298,7 @@ class EmployeeAPI(http.Controller):
                                     if c_new_value not in (None, "", False) and str(c_old_value) != str(c_new_value):
                                         contract_updates[c_field] = c_new_value
                             if contract_updates:
+                                updates_contract = contract_updates
                                 contract.write(contract_updates)
                         else:
                             # Create new contract if none exists
@@ -315,12 +318,12 @@ class EmployeeAPI(http.Controller):
             if updates:
                 employee.logs = (employee.logs or []) + [{
                     "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "changes": updates
+                    "changes": {**updates, **updates_contract}
                 }]
                 employee.write(updates)
                 return request.make_json_response({
                     "success": True,
-                    "updated_fields": updates,
+                    "updated_fields": {**updates, **updates_contract},
                     "ignored_fields": ignored_fields,
                     "unchanged_fields": unchanged_fields
                 }, status=200)
