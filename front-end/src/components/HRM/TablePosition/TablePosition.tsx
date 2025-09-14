@@ -1,21 +1,14 @@
-import { useState } from "react";
 import { Table, Checkbox, Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import "./TablePosition.css";
-
-interface Position {
-  key: string;
-  id: string;
-  positionName: string;
-  priority: number;
-  note?: string;
-}
+import { Job } from "@/models/HRM/job.model";
 
 interface TablePositionProps {
-  data?: Position[];
+  data?: Job[];
   selectedRowKeys?: string[];
   setSelectedRowKeys: (keys: string[]) => void;
-  onEdit?: (record: Position) => void;
+  onEdit?: (record: Job) => void;
+  loading?: boolean;
 }
 
 const TablePosition: React.FC<TablePositionProps> = ({
@@ -23,17 +16,11 @@ const TablePosition: React.FC<TablePositionProps> = ({
   selectedRowKeys = [],
   setSelectedRowKeys,
   onEdit,
+  loading = false,
 }) => {
-  const allKeys = data.map((item) => item.key);
+  const allKeys = data.map((item) => item.id.toString());
   const isAllChecked = selectedRowKeys.length === data.length;
-  const isIndeterminate =
-    selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
-
-  const [positionData, setPositionData] = useState<Position[]>([...data]);
-
-  const handleEdit = (record: Position) => {
-    if (onEdit) onEdit(record);
-  };
+  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
 
   const columns = [
     {
@@ -41,12 +28,9 @@ const TablePosition: React.FC<TablePositionProps> = ({
         <Checkbox
           indeterminate={isIndeterminate}
           checked={isAllChecked}
-          onChange={(e: { target: { checked: boolean } }) => {
-            if (e.target.checked) {
-              setSelectedRowKeys(allKeys);
-            } else {
-              setSelectedRowKeys([]);
-            }
+          onChange={(e) => {
+            if (e.target.checked) setSelectedRowKeys(allKeys);
+            else setSelectedRowKeys([]);
           }}
         />
       ),
@@ -54,15 +38,15 @@ const TablePosition: React.FC<TablePositionProps> = ({
       width: 60,
       fixed: "left" as const,
       align: "center" as const,
-      render: (_: any, record: Position) => (
+      render: (_: any, record: Job) => (
         <Checkbox
-          checked={selectedRowKeys.includes(record.key)}
-          onChange={(e: { target: { checked: boolean } }) => {
+          checked={selectedRowKeys.includes(record.id.toString())}
+          onChange={(e) => {
             if (e.target.checked) {
-              setSelectedRowKeys([...selectedRowKeys, record.key]);
+              setSelectedRowKeys([...selectedRowKeys, record.id.toString()]);
             } else {
               setSelectedRowKeys(
-                selectedRowKeys.filter((key) => key !== record.key)
+                selectedRowKeys.filter((key) => key !== record.id.toString())
               );
             }
           }}
@@ -71,25 +55,27 @@ const TablePosition: React.FC<TablePositionProps> = ({
     },
     {
       title: "Mã chức vụ",
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "code",
+      key: "code",
       fixed: "left" as const,
       width: 120,
       align: "center" as const,
+      render: (code: string | null) => code || "-",
     },
     {
       title: "Tên chức vụ",
-      dataIndex: "positionName",
-      key: "positionName",
+      dataIndex: "name",
+      key: "name",
       width: 200,
       align: "center" as const,
     },
     {
       title: "Độ ưu tiên",
-      dataIndex: "priority",
-      key: "priority",
+      dataIndex: "priority_level",
+      key: "priority_level",
       width: 100,
       align: "center" as const,
+      render: (priority: number | null) => priority ?? "-",
     },
     {
       title: "Ghi chú",
@@ -97,6 +83,7 @@ const TablePosition: React.FC<TablePositionProps> = ({
       key: "note",
       width: 200,
       align: "center" as const,
+      render: (note: string | null) => note || "-",
     },
     {
       title: "",
@@ -104,13 +91,13 @@ const TablePosition: React.FC<TablePositionProps> = ({
       fixed: "right" as const,
       width: 80,
       align: "center" as const,
-      render: (_: any, record: Position) => (
+      render: (_: any, record: Job) => (
         <Button
           type="link"
           icon={<EditOutlined />}
-          onClick={() => handleEdit(record)}
+          onClick={() => onEdit?.(record)}
           className="position-edit-icon"
-        ></Button>
+        />
       ),
     },
   ];
@@ -119,16 +106,13 @@ const TablePosition: React.FC<TablePositionProps> = ({
     <Table
       className="position-table"
       columns={columns}
-      dataSource={positionData}
-      pagination={{
-        position: ["bottomCenter"],
-        pageSize: 10,
-        showSizeChanger: false,
-      }}
-      rowKey="key"
+      dataSource={data}
+      loading={loading}
+      pagination={false}
+      rowKey="id"
       scroll={{ x: 800, y: 600 }}
-      rowClassName={(record: Position) =>
-        selectedRowKeys.includes(record.key) ? "selected-row" : ""
+      rowClassName={(record: Job) =>
+        selectedRowKeys.includes(record.id.toString()) ? "selected-row" : ""
       }
     />
   );

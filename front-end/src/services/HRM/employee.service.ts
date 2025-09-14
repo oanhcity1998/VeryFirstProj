@@ -1,10 +1,10 @@
 import {
-  Employee,
-  EmployeeCreateRequest,
   EmployeeCreateResponse,
   EmployeeDetailResponse,
   EmployeeQueryParams,
+  EmployeeRequest,
   EmployeeResponse,
+  EmployeeUpdateResponse,
 } from "@/models/HRM/employee.model";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -44,10 +44,7 @@ export const employeeService = createApi({
             ]
           : [{ type: tags.employees, id: "LIST" }], // Provide tags for caching
     }),
-    createEmployee: builder.mutation<
-      EmployeeCreateResponse,
-      EmployeeCreateRequest
-    >({
+    createEmployee: builder.mutation<EmployeeCreateResponse, EmployeeRequest>({
       query: (employee) => ({
         url: "employees",
         method: "POST",
@@ -81,6 +78,28 @@ export const employeeService = createApi({
           ? [{ type: tags.employees, id }]
           : [{ type: tags.employees, id }],
     }),
+    updateEmployee: builder.mutation<
+      EmployeeUpdateResponse,
+      { id: number; data: EmployeeRequest }
+    >({
+      query: ({ id, data }) => ({
+        url: `employees/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      transformResponse: (response: EmployeeUpdateResponse) => response,
+      transformErrorResponse: (response: {
+        status: number;
+        data: { error: string };
+      }) =>
+        ({
+          error: response.data.error,
+        } as EmployeeUpdateResponse),
+      invalidatesTags: (result, error, { id }) => [
+        { type: tags.employees, id },
+      ],
+    }),
+
     deleteEmployee: builder.mutation<{ message?: string }, number>({
       query: (id) => ({
         url: `employees/${id}`,
@@ -105,5 +124,6 @@ export const {
   useGetEmployeesQuery,
   useCreateEmployeeMutation,
   useGetEmployeeByIdQuery,
+  useUpdateEmployeeMutation,
   useDeleteEmployeeMutation,
 } = employeeService;

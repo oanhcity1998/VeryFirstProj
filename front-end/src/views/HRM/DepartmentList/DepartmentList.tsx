@@ -1,96 +1,33 @@
-import { useState } from "react";
-import { Button, Space, Modal, message, Upload, Select } from "antd";
-import { PlusOutlined, DeleteFilled, InboxOutlined, DeleteOutlined } from "@ant-design/icons";
+import { useState, useEffect } from "react";
+import { Button, Modal, Upload, Select, Pagination } from "antd";
+import { PlusOutlined, InboxOutlined, DeleteOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import dayjs from "dayjs";
+import { toast } from "react-toastify";
 import "./DepartmentList.css";
 import Search from "antd/es/input/Search";
-import DepartmentForm from "@/components/HRM/DepartmentForm/DepartmentForm";
 import TableDepartment from "@/components/HRM/TableDepartment/TableDepartment";
+import DepartmentForm from "@/components/HRM/DepartmentForm/DepartmentForm";
+import { useAppDispatch, useAppSelector } from "@/app/store";
+import { setDepartments, addDepartment, updateDepartment, deleteDepartments, setError } from "@/redux/HRM/slices/departmentSlice";
+import {
+  useGetDepartmentsQuery,
+  useCreateDepartmentMutation,
+  useUpdateDepartmentMutation,
+  useDeleteDepartmentMutation,
+} from "@/services/HRM/department.service";
+import { Department } from "@/models/HRM/department.model";
 
-
-interface Department {
-  key: string;
-  id: string;
-  departmentName: string;
-  head: string;
-  note?: string;
-}
+const { Dragger } = Upload;
 
 const DepartmentList: React.FC = () => {
-  const [data, setData] = useState<Department[]>([
-    {
-      key: "DP001",
-      id: "DP001",
-      departmentName: "Phòng Nhân sự",
-      head: "Nguyễn Văn A",
-      note: "Quản lý tuyển dụng và đào tạo",
-    },
-    {
-      key: "DP002",
-      id: "DP002",
-      departmentName: "Phòng Kế toán",
-      head: "Trần Thị B",
-      note: "Quản lý tài chính doanh nghiệp",
-    },
-    {
-      key: "DP003",
-      id: "DP003",
-      departmentName: "Phòng Kỹ thuật",
-      head: "Lê Văn C",
-      note: "Phát triển sản phẩm công nghệ",
-    },
-    {
-      key: "DP004",
-      id: "DP004",
-      departmentName: "Phòng Marketing",
-      head: "Phạm Thị D",
-      note: "Quản lý chiến dịch quảng cáo",
-    },
-    {
-      key: "DP005",
-      id: "DP005",
-      departmentName: "Phòng Kinh doanh",
-      head: "Hoàng Văn E",
-      note: "Phát triển thị trường",
-    },
-    {
-      key: "DP006",
-      id: "DP006",
-      departmentName: "Phòng Hành chính",
-      head: "Nguyễn Thị F",
-      note: "Quản lý văn phòng",
-    },
-    {
-      key: "DP007",
-      id: "DP007",
-      departmentName: "Phòng Pháp chế",
-      head: "Trần Văn G",
-      note: "Xử lý các vấn đề pháp lý",
-    },
-    {
-      key: "DP008",
-      id: "DP008",
-      departmentName: "Phòng IT",
-      head: "Lê Thị H",
-      note: "Hỗ trợ kỹ thuật CNTT",
-    },
-    {
-      key: "DP009",
-      id: "DP009",
-      departmentName: "Phòng Sản xuất",
-      head: "Phạm Văn I",
-      note: "Quản lý dây chuyền sản xuất",
-    },
-    {
-      key: "DP010",
-      id: "DP010",
-      departmentName: "Phòng Chăm sóc khách hàng",
-      head: "Hoàng Thị K",
-      note: "Hỗ trợ khách hàng",
-    },
-  ]);
-
+  const dispatch = useAppDispatch();
+  const { departments, meta, error } = useAppSelector((state) => state.department);
+  const [queryParams, setQueryParams] = useState({
+    q: "",
+    page: 1,
+    limit: 5,
+  });
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -98,18 +35,55 @@ const DepartmentList: React.FC = () => {
   const [importOpen, setImportOpen] = useState<boolean>(false);
   const [importing, setImporting] = useState<boolean>(false);
   const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
-  const [filteredData, setFilteredData] = useState<Department[]>(data);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  const { data, isLoading, isError } = useGetDepartmentsQuery(queryParams);
+  const [createDepartment, { isLoading: isCreating }] = useCreateDepartmentMutation();
+  const [updateDepartment, { isLoading: isUpdating }] = useUpdateDepartmentMutation();
+  const [deleteDepartment, { isLoading: isDeleting }] = useDeleteDepartmentMutation();
+
+  useEffect(() => {
+    if (data) {
+      dispatch(setDepartments(data));
+    }
+    if (isError) {
+      dispatch(setError("Failed to fetch departments"));
+      toast.error("Không thể tải danh sách phòng ban");
+    }
+  }, [data, isError, dispatch]);
 
   const handleDelete = async () => {
     try {
       setDeleting(true);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      const newData = data.filter((item) => !selectedRowKeys.includes(item.key));
-      setData(newData);
-      setFilteredData(newData);
-      message.success("Đã xóa phòng ban");
+      const ids = selectedRowKeys.map((key) => parseInt(key));
+      const promises = ids.map((id) => deleteDepartment(id).unwrap());
+      const results = await Promise.allSettled(promises);
+
+      const errors = results
+        .map((result, index) => {
+          if (result.status === "rejected") {
+            return `Không thể xóa phòng ban ID ${ids[index]}: ${result.reason.error || "Lỗi không xác định"}`;
+          }
+          return null;
+        })
+        .filter((error) => error !== null);
+
+      if (errors.length > 0) {
+        toast.error(
+          <div style={{ maxHeight: "200px", overflowY: "auto" }}>
+            <p>Có lỗi khi xóa phòng ban:</p>
+            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
+              {errors.join("\n")}
+            </pre>
+          </div>,
+          { autoClose: 5000 }
+        );
+      } else {
+        dispatch(deleteDepartments(ids));
+        toast.success("Đã xóa phòng ban thành công");
+      }
     } catch (err) {
-      message.error("Không thể xóa phòng ban");
+      toast.error("Không thể xóa phòng ban");
     } finally {
       setDeleting(false);
       setDeleteOpen(false);
@@ -120,7 +94,7 @@ const DepartmentList: React.FC = () => {
   const handleUpload = async (file: File) => {
     const fileType = file.name.split(".").pop()?.toLowerCase();
     if (fileType !== "xlsx" && fileType !== "csv") {
-      message.error("File không hợp lệ. Vui lòng tải lên file .xlsx hoặc .csv.");
+      toast.error("File không hợp lệ. Vui lòng tải lên file .xlsx hoặc .csv.");
       return Upload.LIST_IGNORE;
     }
 
@@ -134,14 +108,14 @@ const DepartmentList: React.FC = () => {
       const worksheet = workbook.Sheets[worksheetName];
       const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-      const requiredFields = ["id", "departmentName", "head", "note"];
+      const requiredFields = ["name", "code", "manager_id", "note"];
       const headerRow = (json[0] as string[]) || [];
       const newDepartments: Department[] = [];
       const errors: string[] = [];
 
       const missingHeaders = requiredFields.filter((field) => !headerRow.includes(field));
       if (missingHeaders.length > 0) {
-        message.error(`File thiếu các cột bắt buộc: ${missingHeaders.join(", ")}`);
+        toast.error(`File thiếu các cột bắt buộc: ${missingHeaders.join(", ")}`);
         setImporting(false);
         setImportOpen(false);
         return;
@@ -155,40 +129,48 @@ const DepartmentList: React.FC = () => {
         for (let j = 0; j < headerRow.length; j++) {
           const key = headerRow[j] as keyof Department;
           const value = row[j];
-          if (!value && requiredFields.includes(key)) {
-            errors.push(`Lỗi tại hàng ${i + 1}, cột "${key}": Dữ liệu bị trống.`);
+          if (!value && key === "name") {
+            errors.push(`Lỗi tại hàng ${i + 1}, cột "name": Dữ liệu bị trống.`);
             rowHasError = true;
           }
-          newDepartment[key] = value;
+          if (key === "manager_id") {
+            newDepartment[key] = value ? parseInt(value) : null;
+          } else {
+            newDepartment[key] = value ?? null;
+          }
         }
 
-        if (rowHasError) {
-          continue;
-        }
+        if (rowHasError) continue;
 
-        newDepartment.key = `DP-imported-${Date.now()}-${i}`;
+        newDepartment.id = Date.now() + i; // Temporary ID for local state
         newDepartments.push(newDepartment as Department);
       }
 
       if (errors.length > 0) {
-        const errorMessages = errors.join("\n");
-        message.error(
+        toast.error(
           <div style={{ maxHeight: "200px", overflowY: "auto" }}>
             <p>Có lỗi trong file của bạn:</p>
-            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>{errorMessages}</pre>
+            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>{errors.join("\n")}</pre>
           </div>,
-          5
+          { autoClose: 5000 }
         );
         setImporting(false);
       } else {
-        setData((prevData) => [...prevData, ...newDepartments]);
-        setFilteredData((prevData) => [...prevData, ...newDepartments]);
-        const timestamp = dayjs().format("HH:mm:ss DD/MM/YYYY");
-        const currentUser = "admin";
-        console.log(
-          `[Import Log] Tải lên thành công ${newDepartments.length} phòng ban lúc ${timestamp} bởi ${currentUser}`
-        );
-        message.success(`${newDepartments.length} phòng ban đã được import thành công.`);
+        newDepartments.forEach(async (dept) => {
+          try {
+            const response = await createDepartment({
+              name: dept.name,
+              code: dept.code,
+              manager_id: dept.manager_id,
+              note: dept.note,
+            }).unwrap();
+            dispatch(addDepartment(response.data!));
+            toast.success(`Đã thêm phòng ban ${dept.name} thành công`);
+          } catch (err) {
+            toast.error(`Không thể import phòng ban: ${dept.name}`);
+          }
+        });
+        toast.success(`${newDepartments.length} phòng ban đã được import thành công.`);
         setImportOpen(false);
         setImporting(false);
       }
@@ -198,47 +180,75 @@ const DepartmentList: React.FC = () => {
     return false;
   };
 
-  const handleSave = (values: Department) => {
-    if (selectedDepartment) {
-      const updatedData = data.map((item) =>
-        item.key === selectedDepartment.key ? { ...item, ...values } : item
-      );
-      setData(updatedData);
-      setFilteredData(updatedData);
-      message.success("Cập nhật phòng ban thành công");
-    } else {
-      const newDepartment: Department = {
-        key: `DP${Date.now()}`,
-        id: values.id,
-        departmentName: values.departmentName,
-        head: values.head,
-        note: values.note,
-      };
-      setData([...data, newDepartment]);
-      setFilteredData([...filteredData, newDepartment]);
-      message.success("Thêm phòng ban thành công");
+  const handleSave = async (values: Department) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      if (selectedDepartment) {
+        console.log("Update payload:", {
+          id: selectedDepartment.id,
+          data: {
+            name: values.name,
+            code: values.code,
+            manager_id: values.manager_id,
+            note: values.note,
+          },
+        });
+        const response = await updateDepartment({
+          id: selectedDepartment.id,
+          data: {
+            name: values.name,
+            code: values.code,
+            manager_id: values.manager_id,
+            note: values.note,
+          },
+        }).unwrap();
+        dispatch(updateDepartment(response.data!));
+        toast.success("Cập nhật phòng ban thành công");
+      } else {
+        const response = await createDepartment({
+          name: values.name,
+          code: values.code,
+          manager_id: values.manager_id,
+          note: values.note,
+        }).unwrap();
+        dispatch(addDepartment(response.data!));
+        toast.success("Thêm phòng ban thành công");
+      }
+      setIsModalOpen(false);
+      setSelectedDepartment(null);
+    } catch (err: any) {
+      console.error("Update/Create error:", err);
+      toast.error(`Không thể ${selectedDepartment ? "cập nhật" : "thêm"} phòng ban: ${err.data?.error || "Lỗi không xác định"}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleEdit = (record: Department) => {
+    console.log("Selected department for edit:", record); // Debug selected department
     setSelectedDepartment(record);
     setIsModalOpen(true);
   };
 
-  const handleFilterByHead = (head: string) => {
-    const filtered = data.filter((item) => item.head === head);
-    setFilteredData(filtered);
-    message.info(`Đang hiển thị phòng ban với trưởng phòng: ${head}`);
+  const handleSearch = (value: string) => {
+    setQueryParams({ ...queryParams, q: value, page: 1 });
   };
 
-  const handleFilterByDepartmentName = (departmentName: string) => {
-    const filtered = data.filter((item) => item.departmentName === departmentName);
-    setFilteredData(filtered);
-    message.info(`Đang hiển thị phòng ban: ${departmentName}`);
+  const handleFilterByHead = (manager_name: string) => {
+    const filtered = departments.filter((item) => item.manager_name === manager_name);
+    dispatch(setDepartments({ data: filtered, meta: { page: 1, limit: filtered.length, total: filtered.length, pages: 1 } }));
+    toast.info(`Đang hiển thị phòng ban với trưởng phòng: ${manager_name}`);
   };
 
-  const headOptions = [...new Set(data.map((item) => item.head))];
-  const departmentNameOptions = [...new Set(data.map((item) => item.departmentName))];
+  const handleFilterByDepartmentName = (name: string) => {
+    const filtered = departments.filter((item) => item.name === name);
+    dispatch(setDepartments({ data: filtered, meta: { page: 1, limit: filtered.length, total: filtered.length, pages: 1 } }));
+    toast.info(`Đang hiển thị phòng ban: ${name}`);
+  };
+
+  const headOptions = [...new Set(departments.map((item) => item.manager_name).filter((name): name is string => name !== null))];
+  const departmentNameOptions = [...new Set(departments.map((item) => item.name))];
 
   return (
     <>
@@ -249,6 +259,7 @@ const DepartmentList: React.FC = () => {
             className="department-search-bar"
             placeholder="Tìm kiếm theo tên phòng ban"
             allowClear
+            onSearch={handleSearch}
             name="search"
           />
           <Select
@@ -259,6 +270,7 @@ const DepartmentList: React.FC = () => {
               value: name,
               label: name,
             }))}
+            allowClear
           />
           <Select
             placeholder="Lọc theo trưởng phòng"
@@ -268,6 +280,7 @@ const DepartmentList: React.FC = () => {
               value: head,
               label: head,
             }))}
+            allowClear
           />
           <Modal
             open={importOpen}
@@ -276,7 +289,7 @@ const DepartmentList: React.FC = () => {
             footer={null}
             centered
           >
-            <Upload.Dragger
+            <Dragger
               name="file"
               multiple={false}
               beforeUpload={handleUpload}
@@ -288,7 +301,7 @@ const DepartmentList: React.FC = () => {
               </p>
               <p className="ant-upload-text">Click hoặc kéo thả file vào đây để Import</p>
               <p className="ant-upload-hint">Chỉ chấp nhận 1 file mỗi lần</p>
-            </Upload.Dragger>
+            </Dragger>
           </Modal>
           <Button
             danger
@@ -305,7 +318,7 @@ const DepartmentList: React.FC = () => {
             onCancel={() => setDeleteOpen(false)}
             okText="Xóa"
             cancelText="Hủy"
-            okButtonProps={{ danger: true, loading: deleting }}
+            okButtonProps={{ danger: true, loading: deleting || isDeleting }}
             centered
           >
             <p>Bạn có chắc muốn xóa phòng ban này? Hành động này không thể hoàn tác.</p>
@@ -324,11 +337,24 @@ const DepartmentList: React.FC = () => {
       </div>
 
       <TableDepartment
-        data={filteredData}
+        data={departments}
         selectedRowKeys={selectedRowKeys}
         setSelectedRowKeys={setSelectedRowKeys}
         onEdit={handleEdit}
+        loading={isLoading || isCreating || isUpdating || isDeleting}
       />
+
+      {meta && departments.length > 0 && (
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
+          <Pagination
+            current={meta.page}
+            pageSize={meta.limit}
+            total={meta.total}
+            onChange={(page) => setQueryParams({ ...queryParams, page })}
+            showSizeChanger={false}
+          />
+        </div>
+      )}
 
       <DepartmentForm
         open={isModalOpen}
@@ -336,11 +362,12 @@ const DepartmentList: React.FC = () => {
           setIsModalOpen(false);
           setSelectedDepartment(null);
         }}
-        onSave={handleSave as any}
+        onSave={handleSave}
         department={selectedDepartment}
         modalTitle={selectedDepartment ? "Cập nhật phòng ban" : "Thêm phòng ban"}
         cancelText="Hủy"
         saveText="Lưu"
+        loading={isSubmitting || isCreating || isUpdating}
       />
     </>
   );

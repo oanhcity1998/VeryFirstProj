@@ -1,114 +1,89 @@
-import { useState } from "react";
-import { Button, Modal, message, Upload, Select } from "antd";
+import { useState, useEffect } from "react";
+import { Button, Modal, Upload, Select, Pagination } from "antd";
 import { PlusOutlined, InboxOutlined, DeleteOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import dayjs from "dayjs";
+import { toast } from "react-toastify";
 import "./PositionList.css";
 import Search from "antd/es/input/Search";
 import TablePosition from "@/components/HRM/TablePosition/TablePosition";
 import PositionForm from "@/components/HRM/PositionForm/PositionForm";
+import { useAppDispatch, useAppSelector } from "@/app/store";
+import { setJobs, addJob, updateJob, deleteJobs, setError } from "@/redux/HRM/slices/jobSlice";
+import {
+  useGetJobsQuery,
+  useCreateJobMutation,
+  useUpdateJobMutation,
+  useDeleteJobMutation,
+} from "@/services/HRM/job.service";
+import { Job } from "@/models/HRM/job.model";
 
-interface Position {
-  key: string;
-  id: string;
-  positionName: string;
-  priority: number;
-  note?: string;
-}
+const { Dragger } = Upload;
 
 const PositionList: React.FC = () => {
-  const [data, setData] = useState<Position[]>([
-    {
-      key: "GD82334",
-      id: "GD82334",
-      positionName: "Head of Content Operations",
-      priority: 0,
-      note: "Expires on 03 Jun, 2023",
-    },
-    {
-      key: "GD80938",
-      id: "GD80938",
-      positionName: "Design Lead",
-      priority: 0,
-      note: "Expires on 14 Mar, 2023",
-    },
-    {
-      key: "GD82278",
-      id: "GD82278",
-      positionName: "Senior Interaction Designer",
-      priority: 2,
-      note: "Enrol (Expired on 30 Dec, 2021)",
-    },
-    {
-      key: "GD88645",
-      id: "GD88645",
-      positionName: "Full Stack Software Engineer",
-      priority: 1,
-      note: "Expires on 01 Jun, 2023",
-    },
-    {
-      key: "GD87123",
-      id: "GD87123",
-      positionName: "Interaction Designer",
-      priority: 2,
-      note: "Enrol (Expired on 26 Aug, 2022)",
-    },
-    {
-      key: "GD80044",
-      id: "GD80044",
-      positionName: "Engineering Lead (Backend)",
-      priority: 0,
-      note: "Enrol (Expired on 11 Apr, 2022)",
-    },
-    {
-      key: "GD89369",
-      id: "GD89369",
-      positionName: "Data Analyst Lead",
-      priority: 5,
-      note: "Expires on 01 Jun, 2023",
-    },
-    {
-      key: "GD82295",
-      id: "GD82295",
-      positionName: "Product Analyst",
-      priority: 2,
-      note: "Expires on 03 Jun, 2023",
-    },
-    {
-      key: "GD86110",
-      id: "GD86110",
-      positionName: "Product Executive",
-      priority: 4,
-      note: "Expired on 26 Aug, 2022",
-    },
-    {
-      key: "GD84497",
-      id: "GD84497",
-      positionName: "Senior Product Manager",
-      priority: 3,
-      note: "Expires on 03 Jun, 2023",
-    },
-  ]);
-
+  const dispatch = useAppDispatch();
+  const { jobs, meta, error } = useAppSelector((state) => state.job);
+  const [queryParams, setQueryParams] = useState({
+    q: "",
+    page: 1,
+    limit: 10,
+  });
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
   const [importOpen, setImportOpen] = useState<boolean>(false);
   const [importing, setImporting] = useState<boolean>(false);
-  const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
-  const [filteredData, setFilteredData] = useState<Position[]>(data);
+  const [selectedPosition, setSelectedPosition] = useState<Job | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false); // Prevent double submissions
+
+  const { data, isLoading, isError } = useGetJobsQuery(queryParams);
+  const [createJob, { isLoading: isCreating }] = useCreateJobMutation();
+  const [updateJob, { isLoading: isUpdating }] = useUpdateJobMutation();
+  const [deleteJob, { isLoading: isDeleting }] = useDeleteJobMutation();
+
+  useEffect(() => {
+    if (data) {
+      dispatch(setJobs(data));
+    }
+    if (isError) {
+      dispatch(setError("Failed to fetch jobs"));
+      toast.error("Không thể tải danh sách chức vụ");
+    }
+  }, [data, isError, dispatch]);
 
   const handleDelete = async () => {
     try {
       setDeleting(true);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      const newData = data.filter((item) => !selectedRowKeys.includes(item.key));
-      setData(newData);
-      setFilteredData(newData);
-      message.success("Đã xóa chức vụ");
+      const ids = selectedRowKeys.map((key) => parseInt(key));
+      const promises = ids.map((id) => deleteJob(id).unwrap());
+      const results = await Promise.allSettled(promises);
+
+      const errors = results
+        .map((result, index) => {
+          if (result.status === "rejected") {
+            return `Không thể xóa chức vụ ID ${ids[index]}: ${result.reason.error || "Lỗi không xác định"}`;
+          }
+          return null;
+        })
+        .filter((error) => error !== null);
+
+      if (errors.length > 0) {
+        toast.error(
+          <div style={{ maxHeight: "200px", overflowY: "auto" }}>
+            <p>Có lỗi khi xóa chức vụ:</p>
+            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
+              {errors.join("\n")}
+            </pre>
+          </div>,
+          { autoClose: 5000 }
+        );
+      } else {
+        dispatch(deleteJobs(ids));
+        toast.success("Đã xóa chức vụ thành công");
+      }
     } catch (err) {
-      message.error("Không thể xóa chức vụ");
+      toast.error("Không thể xóa chức vụ");
     } finally {
       setDeleting(false);
       setDeleteOpen(false);
@@ -119,7 +94,7 @@ const PositionList: React.FC = () => {
   const handleUpload = async (file: File) => {
     const fileType = file.name.split(".").pop()?.toLowerCase();
     if (fileType !== "xlsx" && fileType !== "csv") {
-      message.error("File không hợp lệ. Vui lòng tải lên file .xlsx hoặc .csv.");
+      toast.error("File không hợp lệ. Vui lòng tải lên file .xlsx hoặc .csv.");
       return Upload.LIST_IGNORE;
     }
 
@@ -133,14 +108,14 @@ const PositionList: React.FC = () => {
       const worksheet = workbook.Sheets[worksheetName];
       const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-      const requiredFields = ["id", "positionName", "priority", "note"];
+      const requiredFields = ["name", "code", "priority_level", "note"];
       const headerRow = (json[0] as string[]) || [];
-      const newPositions: Position[] = [];
+      const newJobs: Job[] = [];
       const errors: string[] = [];
 
       const missingHeaders = requiredFields.filter((field) => !headerRow.includes(field));
       if (missingHeaders.length > 0) {
-        message.error(`File thiếu các cột bắt buộc: ${missingHeaders.join(", ")}`);
+        toast.error(`File thiếu các cột bắt buộc: ${missingHeaders.join(", ")}`);
         setImporting(false);
         setImportOpen(false);
         return;
@@ -148,46 +123,54 @@ const PositionList: React.FC = () => {
 
       for (let i = 1; i < json.length; i++) {
         const row = json[i] as any[];
-        const newPosition: Partial<Position> = {};
+        const newJob: Partial<Job> = {};
         let rowHasError = false;
 
         for (let j = 0; j < headerRow.length; j++) {
-          const key = headerRow[j] as keyof Position;
+          const key = headerRow[j] as keyof Job;
           const value = row[j];
-          if (!value && requiredFields.includes(key)) {
-            errors.push(`Lỗi tại hàng ${i + 1}, cột "${key}": Dữ liệu bị trống.`);
+          if (!value && key === "name") {
+            errors.push(`Lỗi tại hàng ${i + 1}, cột "name": Dữ liệu bị trống.`);
             rowHasError = true;
           }
-          newPosition[key] = value;
+          if (key === "priority_level") {
+            newJob[key] = value ? parseInt(value) : null;
+          } else {
+            newJob[key] = value ?? null;
+          }
         }
 
-        if (rowHasError) {
-          continue;
-        }
+        if (rowHasError) continue;
 
-        newPosition.key = `GD-imported-${Date.now()}-${i}`;
-        newPositions.push(newPosition as Position);
+        newJob.id = Date.now() + i; // Temporary ID for local state
+        newJobs.push(newJob as Job);
       }
 
       if (errors.length > 0) {
-        const errorMessages = errors.join("\n");
-        message.error(
+        toast.error(
           <div style={{ maxHeight: "200px", overflowY: "auto" }}>
             <p>Có lỗi trong file của bạn:</p>
-            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>{errorMessages}</pre>
+            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>{errors.join("\n")}</pre>
           </div>,
-          5
+          { autoClose: 5000 }
         );
         setImporting(false);
       } else {
-        setData((prevData) => [...prevData, ...newPositions]);
-        setFilteredData((prevData) => [...prevData, ...newPositions]);
-        const timestamp = dayjs().format("HH:mm:ss DD/MM/YYYY");
-        const currentUser = "admin";
-        console.log(
-          `[Import Log] Tải lên thành công ${newPositions.length} chức vụ lúc ${timestamp} bởi ${currentUser}`
-        );
-        message.success(`${newPositions.length} chức vụ đã được import thành công.`);
+        newJobs.forEach(async (job) => {
+          try {
+            const response = await createJob({
+              name: job.name,
+              code: job.code,
+              priority_level: job.priority_level,
+              note: job.note,
+            }).unwrap();
+            dispatch(addJob(response.data!));
+            toast.success(`Đã thêm chức vụ ${job.name} thành công`);
+          } catch (err) {
+            toast.error(`Không thể import chức vụ: ${job.name}`);
+          }
+        });
+        toast.success(`${newJobs.length} chức vụ đã được import thành công.`);
         setImportOpen(false);
         setImporting(false);
       }
@@ -197,40 +180,58 @@ const PositionList: React.FC = () => {
     return false;
   };
 
-  const handleSave = (values: Position) => {
-    if (selectedPosition) {
-      const updatedData = data.map((item) =>
-        item.key === selectedPosition.key ? { ...item, ...values } : item
-      );
-      setData(updatedData);
-      setFilteredData(updatedData);
-      message.success("Cập nhật chức vụ thành công");
-    } else {
-      const newPosition: Position = {
-        key: `GD${Date.now()}`,
-        id: values.id,
-        positionName: values.positionName,
-        priority: values.priority,
-        note: values.note,
-      };
-      setData([...data, newPosition]);
-      setFilteredData([...filteredData, newPosition]);
-      message.success("Thêm chức vụ thành công");
+  const handleSave = async (values: Job) => {
+    if (isSubmitting) return; // Prevent double submission
+    setIsSubmitting(true);
+    try {
+      if (selectedPosition) {
+        const response = await updateJob({
+          id: selectedPosition.id,
+          data: {
+            name: values.name,
+            code: values.code,
+            priority_level: values.priority_level,
+            note: values.note,
+          },
+        }).unwrap();
+        dispatch(updateJob(response.data!));
+        toast.success("Cập nhật chức vụ thành công");
+      } else {
+        const response = await createJob({
+          name: values.name,
+          code: values.code,
+          priority_level: values.priority_level,
+          note: values.note,
+        }).unwrap();
+        dispatch(addJob(response.data!));
+        toast.success("Thêm chức vụ thành công");
+      }
+      setIsModalOpen(false);
+      setSelectedPosition(null);
+    } catch (err: any) {
+      console.error("Update/Create error:", err); // Log error for debugging
+      toast.error(`Không thể ${selectedPosition ? "cập nhật" : "thêm"} chức vụ: ${err.data?.error || "Lỗi không xác định"}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleEdit = (record: Position) => {
+  const handleEdit = (record: Job) => {
     setSelectedPosition(record);
     setIsModalOpen(true);
   };
 
-  const handleFilterById = (id: string) => {
-    const filtered = data.filter((item) => item.id === id);
-    setFilteredData(filtered);
-    message.info(`Đang hiển thị chức vụ với mã: ${id}`);
+  const handleSearch = (value: string) => {
+    setQueryParams({ ...queryParams, q: value, page: 1 });
   };
 
-  const idOptions = [...new Set(data.map((item) => item.id))];
+  const handleFilterById = (id: string) => {
+    const filtered = jobs.filter((item) => item.id.toString() === id);
+    dispatch(setJobs({ data: filtered, meta: { page: 1, limit: filtered.length, total: filtered.length, pages: 1 } }));
+    toast.info(`Đang hiển thị chức vụ với mã: ${id}`);
+  };
+
+  const idOptions = [...new Set(jobs.map((item) => item.id.toString()))];
 
   return (
     <>
@@ -241,6 +242,7 @@ const PositionList: React.FC = () => {
             className="position-search-bar"
             placeholder="Tìm kiếm theo tên chức vụ"
             allowClear
+            onSearch={handleSearch}
             name="search"
           />
           <Select
@@ -251,6 +253,7 @@ const PositionList: React.FC = () => {
               value: id,
               label: id,
             }))}
+            allowClear
           />
           <Modal
             open={importOpen}
@@ -259,7 +262,7 @@ const PositionList: React.FC = () => {
             footer={null}
             centered
           >
-            <Upload.Dragger
+            <Dragger
               name="file"
               multiple={false}
               beforeUpload={handleUpload}
@@ -271,7 +274,7 @@ const PositionList: React.FC = () => {
               </p>
               <p className="ant-upload-text">Click hoặc kéo thả file vào đây để Import</p>
               <p className="ant-upload-hint">Chỉ chấp nhận 1 file mỗi lần</p>
-            </Upload.Dragger>
+            </Dragger>
           </Modal>
           <Button
             danger
@@ -288,7 +291,7 @@ const PositionList: React.FC = () => {
             onCancel={() => setDeleteOpen(false)}
             okText="Xóa"
             cancelText="Hủy"
-            okButtonProps={{ danger: true, loading: deleting }}
+            okButtonProps={{ danger: true, loading: deleting || isDeleting }}
             centered
           >
             <p>Bạn có chắc muốn xóa chức vụ này? Hành động này không thể hoàn tác.</p>
@@ -307,11 +310,24 @@ const PositionList: React.FC = () => {
       </div>
 
       <TablePosition
-        data={filteredData}
+        data={jobs}
         selectedRowKeys={selectedRowKeys}
         setSelectedRowKeys={setSelectedRowKeys}
         onEdit={handleEdit}
+        loading={isLoading || isCreating || isUpdating || isDeleting}
       />
+
+      {meta && jobs.length > 0 && (
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
+          <Pagination
+            current={meta.page}
+            pageSize={meta.limit}
+            total={meta.total}
+            onChange={(page) => setQueryParams({ ...queryParams, page })}
+            showSizeChanger={false}
+          />
+        </div>
+      )}
 
       <PositionForm
         open={isModalOpen}
@@ -319,11 +335,12 @@ const PositionList: React.FC = () => {
           setIsModalOpen(false);
           setSelectedPosition(null);
         }}
-        onSave={handleSave as any}
+        onSave={handleSave}
         position={selectedPosition}
         modalTitle={selectedPosition ? "Cập nhật chức vụ" : "Thêm chức vụ"}
         cancelText="Hủy"
         saveText="Lưu"
+        loading={isSubmitting || isCreating || isUpdating}
       />
     </>
   );

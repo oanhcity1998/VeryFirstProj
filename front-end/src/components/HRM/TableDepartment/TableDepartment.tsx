@@ -1,21 +1,14 @@
-import { useState } from "react";
 import { Table, Checkbox, Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import "./TableDepartment.css";
-
-interface Department {
-    key: string;
-    id: string;
-    departmentName: string;
-    head: string;
-    note?: string;
-}
+import { Department } from "@/models/HRM/department.model";
 
 interface TableDepartmentProps {
     data?: Department[];
     selectedRowKeys?: string[];
     setSelectedRowKeys: (keys: string[]) => void;
     onEdit?: (record: Department) => void;
+    loading?: boolean;
 }
 
 const TableDepartment: React.FC<TableDepartmentProps> = ({
@@ -23,17 +16,11 @@ const TableDepartment: React.FC<TableDepartmentProps> = ({
     selectedRowKeys = [],
     setSelectedRowKeys,
     onEdit,
+    loading = false,
 }) => {
-    const allKeys = data.map((item) => item.key);
+    const allKeys = data.map((item) => item.id.toString());
     const isAllChecked = selectedRowKeys.length === data.length;
-    const isIndeterminate =
-        selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
-
-    const [departmentData, setDepartmentData] = useState<Department[]>([...data]);
-
-    const handleEdit = (record: Department) => {
-        if (onEdit) onEdit(record);
-    };
+    const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
 
     const columns = [
         {
@@ -41,12 +28,9 @@ const TableDepartment: React.FC<TableDepartmentProps> = ({
                 <Checkbox
                     indeterminate={isIndeterminate}
                     checked={isAllChecked}
-                    onChange={(e: { target: { checked: boolean } }) => {
-                        if (e.target.checked) {
-                            setSelectedRowKeys(allKeys);
-                        } else {
-                            setSelectedRowKeys([]);
-                        }
+                    onChange={(e) => {
+                        if (e.target.checked) setSelectedRowKeys(allKeys);
+                        else setSelectedRowKeys([]);
                     }}
                 />
             ),
@@ -56,13 +40,13 @@ const TableDepartment: React.FC<TableDepartmentProps> = ({
             align: "center" as const,
             render: (_: any, record: Department) => (
                 <Checkbox
-                    checked={selectedRowKeys.includes(record.key)}
-                    onChange={(e: { target: { checked: boolean } }) => {
+                    checked={selectedRowKeys.includes(record.id.toString())}
+                    onChange={(e) => {
                         if (e.target.checked) {
-                            setSelectedRowKeys([...selectedRowKeys, record.key]);
+                            setSelectedRowKeys([...selectedRowKeys, record.id.toString()]);
                         } else {
                             setSelectedRowKeys(
-                                selectedRowKeys.filter((key) => key !== record.key)
+                                selectedRowKeys.filter((key) => key !== record.id.toString())
                             );
                         }
                     }}
@@ -71,25 +55,35 @@ const TableDepartment: React.FC<TableDepartmentProps> = ({
         },
         {
             title: "Mã phòng ban",
-            dataIndex: "id",
-            key: "id",
+            dataIndex: "code",
+            key: "code",
             fixed: "left" as const,
             width: 120,
             align: "center" as const,
+            render: (code: string | null) => code || "-",
         },
         {
             title: "Tên phòng ban",
-            dataIndex: "departmentName",
-            key: "departmentName",
+            dataIndex: "name",
+            key: "name",
             width: 200,
             align: "center" as const,
         },
         {
             title: "Trưởng phòng",
-            dataIndex: "head",
-            key: "head",
+            dataIndex: "manager_name",
+            key: "manager_name",
             width: 150,
             align: "center" as const,
+            render: (manager_name: string | null) => manager_name || "-",
+        },
+        {
+            title: "Số nhân viên",
+            dataIndex: "employee_count",
+            key: "employee_count",
+            width: 100,
+            align: "center" as const,
+            render: (count: number | undefined) => count ?? "-",
         },
         {
             title: "Ghi chú",
@@ -97,6 +91,7 @@ const TableDepartment: React.FC<TableDepartmentProps> = ({
             key: "note",
             width: 200,
             align: "center" as const,
+            render: (note: string | null) => note || "-",
         },
         {
             title: "",
@@ -108,9 +103,12 @@ const TableDepartment: React.FC<TableDepartmentProps> = ({
                 <Button
                     type="link"
                     icon={<EditOutlined />}
-                    onClick={() => handleEdit(record)}
+                    onClick={() => {
+                        console.log("Edit clicked for record:", record); // Debug edit click
+                        onEdit?.(record);
+                    }}
                     className="department-edit-icon"
-                ></Button>
+                />
             ),
         },
     ];
@@ -119,16 +117,13 @@ const TableDepartment: React.FC<TableDepartmentProps> = ({
         <Table
             className="department-table"
             columns={columns}
-            dataSource={departmentData}
-            pagination={{
-                position: ["bottomCenter"],
-                pageSize: 10,
-                showSizeChanger: false,
-            }}
-            rowKey="key"
+            dataSource={data}
+            loading={loading}
+            pagination={false}
+            rowKey="id"
             scroll={{ x: 800, y: 600 }}
             rowClassName={(record: Department) =>
-                selectedRowKeys.includes(record.key) ? "selected-row" : ""
+                selectedRowKeys.includes(record.id.toString()) ? "selected-row" : ""
             }
         />
     );

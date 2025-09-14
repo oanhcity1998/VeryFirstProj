@@ -16,9 +16,14 @@ import EmployeeForm from "@/components/HRM/EmployeeForm/EmployeeForm";
 import FilterDrawerEmployee from "@/components/HRM/FilterEmployee/FilterDrawerEmployee";
 import { useAppDispatch, useAppSelector } from "@/app/store";
 import { toast } from "react-toastify";
-import { useCreateEmployeeMutation, useGetEmployeesQuery, useDeleteEmployeeMutation } from "@/services/HRM/employee.service";
+import {
+  useCreateEmployeeMutation,
+  useGetEmployeesQuery,
+  useDeleteEmployeeMutation,
+  useUpdateEmployeeMutation, // Add this import
+} from "@/services/HRM/employee.service";
 import { setEmployees, setError } from "@/redux/HRM/slices/employeeSlice";
-import { Employee, EmployeeCreateRequest, EmployeeResponse } from "@/models/HRM/employee.model";
+import { Employee, EmployeeRequest, EmployeeResponse } from "@/models/HRM/employee.model";
 
 const { Dragger } = Upload;
 
@@ -46,15 +51,16 @@ const EmployeeList: React.FC = () => {
 
   const { data, isLoading, isError } = useGetEmployeesQuery(queryParams);
   const [createEmployee, { isLoading: isCreating, isError: isCreateError }] = useCreateEmployeeMutation();
+  const [updateEmployee, { isLoading: isUpdating, isError: isUpdateError }] = useUpdateEmployeeMutation(); // Add update mutation
   const [deleteEmployee, { isLoading: isDeleting }] = useDeleteEmployeeMutation();
 
   useEffect(() => {
     if (data) dispatch(setEmployees(data));
-    if (isError || isCreateError) {
-      dispatch(setError("Failed to fetch or create employees"));
-      toast.error("Failed to fetch or create employees");
+    if (isError || isCreateError || isUpdateError) {
+      dispatch(setError("Failed to fetch, create, or update employees"));
+      toast.error("Failed to fetch, create, or update employees");
     }
-  }, [data, isError, isCreateError, dispatch]);
+  }, [data, isError, isCreateError, isUpdateError, dispatch]);
 
   const handleEdit = (record: Employee) => {
     const mappedEmployee: EmployeeCreateRequest = {
@@ -95,7 +101,6 @@ const EmployeeList: React.FC = () => {
       const promises = selectedRowKeys.map((id) => deleteEmployee(parseInt(id)).unwrap());
       const results = await Promise.all(promises);
 
-      // Check results for any errors
       const hasError = results.some((result) => "error" in result);
       if (!hasError) {
         const newData = employees.filter((item) => !selectedRowKeys.includes(item.id.toString()));
@@ -256,42 +261,97 @@ const EmployeeList: React.FC = () => {
     setQueryParams({ ...queryParams, page });
   };
 
-  const handleSave = async (values: EmployeeCreateRequest) => {
+  const handleSave = async (values: EmployeeRequest) => {
     try {
-      const payload = {
-        ...values,
-        department_id: values.department_id && values.department_id > 0 ? values.department_id : 1,
-        job_id: values.job_id && values.job_id > 0 ? values.job_id : 1,
-      };
+      let response;
 
-      const response = await createEmployee(payload).unwrap();
+      // Danh sách các trường bắt buộc khi tạo mới
+      const requiredFields = [
+        "name",
+        "code",
+        "birthday",
+        "gender",
+        "work_phone",
+        "work_email",
+        "department_id",
+        "job_id",
+        "id_number",
+        "id_issued_place",
+        "id_issued_date",
+        "permanent_address",
+        "contract.contract_type",
+        "contract.date_start",
+        "contract.wage",
+        "contract.bonus",
+      ];
+
+      if (!editingEmployee) {
+        // Kiểm tra các trường bắt buộc khi tạo mới
+        const missingFields = requiredFields.filter((field) => {
+          if (field.startsWith("contract.")) {
+            const contractField = field.split(".")[1];
+            return !values.contract || values.contract[contractField as keyof EmployeeRequest["contract"]] === undefined;
+          }
+          return values[field as keyof EmployeeRequest] === undefined;
+        });
+
+        if (missingFields.length > 0) {
+          toast.error(`Vui lòng điền các trường bắt buộc: ${missingFields.join(", ")}`);
+          return;
+        }
+      }
+
+      if (editingEmployee) {
+        // Cập nhật nhân sự
+        response = await updateEmployee({
+          id: editingEmployee.id,
+          data: values,
+        }).unwrap();
+        toast.success("Cập nhật nhân sự thành công");
+      } else {
+        // Tạo nhân sự mới
+        const payload: EmployeeRequest = {
+          ...values,
+          department_id: values.department_id && values.department_id > 0 ? values.department_id : 1,
+          job_id: values.job_id && values.job_id > 0 ? values.job_id : 1,
+        };
+        response = await createEmployee(payload).unwrap();
+        toast.success("Thêm nhân sự thành công");
+      }
+
       dispatch(setEmployees(response));
-
-      toast.success(editingEmployee ? "Cập nhật nhân sự thành công" : "Thêm nhân sự thành công");
-
-      // ✅ Chỉ đóng modal khi thành công
       setIsModalOpen(false);
       setEditingEmployee(null);
       form.resetFields();
-
     } catch (err) {
       toast.error("Không thể thêm hoặc cập nhật nhân sự");
     }
   };
-
 
   return (
     <>
       <div className="employee-list-header">
         <h2>Danh sách nhân sự</h2>
         <div className="employee-list-actions">
-          <Search className="employee-search-bar" placeholder="Tìm kiếm theo họ và tên" allowClear onSearch={handleSearch} name="search" />
-          <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>Bộ lọc</Button>
+          <Search
+            className="employee-search-bar"
+            placeholder="Tìm kiếm theo họ và tên"
+            allowClear
+            onSearch={handleSearch}
+            name="search"
+          />
+          <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>
+            Bộ lọc
+          </Button>
           <Popover
             content={
               <Space direction="vertical">
-                <Button type="text" onClick={() => setImportOpen(true)}>Import</Button>
-                <Button type="text" onClick={() => console.log("Export clicked")}>Export</Button>
+                <Button type="text" onClick={() => setImportOpen(true)}>
+                  Import
+                </Button>
+                <Button type="text" onClick={() => console.log("Export clicked")}>
+                  Export
+                </Button>
               </Space>
             }
             trigger="click"
@@ -306,13 +366,30 @@ const EmployeeList: React.FC = () => {
             footer={null}
             centered
           >
-            <Dragger name="file" multiple={false} beforeUpload={handleUpload} showUploadList={false} disabled={importing}>
-              <p className="ant-upload-drag-icon"><InboxOutlined /></p>
-              <p className="ant-upload-text">Click hoặc kéo thả file vào đây để Import</p>
+            <Dragger
+              name="file"
+              multiple={false}
+              beforeUpload={handleUpload}
+              showUploadList={false}
+              disabled={importing}
+            >
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">
+                Click hoặc kéo thả file vào đây để Import
+              </p>
               <p className="ant-upload-hint">Chỉ chấp nhận 1 file mỗi lần</p>
             </Dragger>
           </Modal>
-          <Button danger icon={<DeleteOutlined />} disabled={selectedRowKeys.length === 0} onClick={() => setDeleteOpen(true)}>Xóa</Button>
+          <Button
+            danger
+            icon={<DeleteOutlined />}
+            disabled={selectedRowKeys.length === 0}
+            onClick={() => setDeleteOpen(true)}
+          >
+            Xóa
+          </Button>
           <Modal
             open={deleteOpen}
             title="Xác nhận xóa"
@@ -325,7 +402,17 @@ const EmployeeList: React.FC = () => {
           >
             <p>Bạn có chắc muốn xóa nhân sự này? Hành động này không thể hoàn tác.</p>
           </Modal>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditingEmployee(null); form.resetFields(); setIsModalOpen(true); }}>Tạo</Button>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              setEditingEmployee(null);
+              form.resetFields();
+              setIsModalOpen(true);
+            }}
+          >
+            Tạo
+          </Button>
         </div>
       </div>
 
@@ -335,7 +422,7 @@ const EmployeeList: React.FC = () => {
             data={employees}
             selectedRowKeys={selectedRowKeys}
             setSelectedRowKeys={setSelectedRowKeys}
-            loading={isLoading || isCreating || isDeleting}
+            loading={isLoading || isCreating || isUpdating || isDeleting}
             onEdit={handleEdit}
           />
           {meta && employees.length > 0 && (
@@ -359,7 +446,11 @@ const EmployeeList: React.FC = () => {
       <EmployeeForm
         form={form}
         open={isModalOpen}
-        onCancel={() => { setIsModalOpen(false); setEditingEmployee(null); form.resetFields(); }}
+        onCancel={() => {
+          setIsModalOpen(false);
+          setEditingEmployee(null);
+          form.resetFields();
+        }}
         onSave={handleSave}
         employee={editingEmployee ? editingEmployee : null}
         modalTitle={editingEmployee ? "Chỉnh sửa nhân sự" : "Thêm nhân sự"}
@@ -368,7 +459,7 @@ const EmployeeList: React.FC = () => {
         contractTitle="Thông tin hợp đồng"
         cancelText="Hủy"
         saveText="Lưu"
-        loading={isCreating}
+        loading={isCreating || isUpdating} // Update loading state to include isUpdating
       />
 
       <FilterDrawerEmployee

@@ -96,7 +96,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
     const formattedValues: Employee = {
       id: values.id || Date.now(), // Still generated here for local use, but not in form
       name: values.name,
-      code: values.employee_code || "", // New field
+      code: values.code || "", // New field
       birthday: values.birthday ? values.birthday.format("YYYY-MM-DD") : "",
       gender: values.gender,
       work_phone: values.work_phone,
@@ -162,7 +162,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             <Card title={infoTitle} bordered className="employee-card">
               <Form.Item
                 label="Mã nhân viên"
-                name="employee_code"
+                name="code"
                 rules={[{ required: true, message: "Vui lòng nhập mã nhân viên!" }]}
               >
                 <Input placeholder="Nhập mã nhân viên" />

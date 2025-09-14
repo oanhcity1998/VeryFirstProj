@@ -77,37 +77,53 @@ export interface EmployeeQueryParams {
   limit?: number;
 }
 
-export interface EmployeeCreateRequest {
-  name: string;
-  code: string | boolean;
-  birthday: string;
-  gender: "Nam" | "Nữ";
-  work_phone: string;
-  work_email: string;
-  department_id: number;
-  job_id: number;
-  id_number: string;
-  id_issued_place: string;
-  id_issued_date: string;
-  permanent_address: string;
-  temporary_address: string;
-  tax_id: string;
-  insurance_id: string;
-  bank_account: string;
-  contract: {
-    name: string;
-    contract_type:
-      | "Hợp đồng lao động xác định thời hạn"
-      | "Hợp đồng lao động không xác định thời hạn";
-    contract_term: string;
-    date_start: string;
-    date_end: string;
-    wage: number;
-    bonus: number;
+export interface EmployeeCreateResponse {
+  message?: string;
+  error?: string;
+}
+
+export type ContractType =
+  | "Hợp đồng lao động xác định thời hạn"
+  | "Hợp đồng lao động không xác định thời hạn";
+
+export interface EmployeeRequest {
+  name?: string;
+  code?: string;
+  birthday?: string;
+  gender?: "Nam" | "Nữ";
+  work_phone?: string;
+  work_email?: string;
+  department_id?: number;
+  job_id?: number;
+  id_number?: string;
+  id_issued_place?: string;
+  id_issued_date?: string;
+  permanent_address?: string;
+  temporary_address?: string;
+  tax_id?: string;
+  insurance_id?: string;
+  bank_account?: string;
+  contract?: {
+    name?: string;
+    contract_type?: ContractType;
+    contract_term?: string;
+    date_start?: string;
+    date_end?: string;
+    wage?: number;
+    bonus?: number;
   };
 }
 
-export interface EmployeeCreateResponse {
-  message?: string;
+export interface EmployeeUpdateResponse {
+  success?: boolean;
+  updated_fields?: Partial<Employee>;
+  ignored_fields?: Record<string, any>;
+  unchanged_fields?: {
+    [key: string]: {
+      reason: string;
+      old_value: any;
+      new_value: any;
+    };
+  };
   error?: string;
 }
