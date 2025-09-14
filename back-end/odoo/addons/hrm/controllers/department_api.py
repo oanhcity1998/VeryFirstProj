@@ -6,7 +6,7 @@ _logger = logging.getLogger(__name__)
 
 class DepartmentAPI(http.Controller):
 
-    @http.route('/api/hr/departments', type='json', auth='user', methods=['POST'], csrf=False)
+    @http.route('/api/hr/departments', type='http', auth='user', methods=['POST'], csrf=False)
     def create_department(self, **kwargs):
         try:
             if request.httprequest.data:
@@ -14,13 +14,21 @@ class DepartmentAPI(http.Controller):
             else:
                 data = kwargs
         except Exception:
-            return {"error": "Invalid JSON body"}
+            return request.make_response(
+                json.dumps({"error": "Invalid JSON body"}),
+                headers=[('Content-Type', 'application/json')],
+                status=400
+            )
 
         # Validate required fields
         required_fields = ["name", "code"]
         for field in required_fields:
             if field not in data or not data[field]:
-                return {"error": f"Missing required field: {field}"}
+                return request.make_response(
+                    json.dumps({"error": f"Missing required field: {field}"}),
+                    headers=[('Content-Type', 'application/json')],
+                    status=400
+                )
 
         # Check if department code already exists
         existing_dept = request.env['hr.department'].sudo().search([
@@ -28,37 +36,54 @@ class DepartmentAPI(http.Controller):
         ], limit=1)
         
         if existing_dept:
-            return {"error": f"Department with code '{data.get('code')}' already exists"}
+            return request.make_response(
+                json.dumps({"error": f"Department with code '{data.get('code')}' already exists"}),
+                headers=[('Content-Type', 'application/json')],
+                status=400
+            )
 
         # Validate manager_id if provided
         manager_id = data.get('manager_id')
         if manager_id:
-            manager = request.env['hr.employee'].sudo().search([('id', '=', manager_id)], limit=1)
-            if not manager:
-                return {"error": f"Manager with ID {manager_id} not found"}
+            manager = request.env['hr.employee'].sudo().browse(int(manager_id))
+            if not manager.exists():
+                return request.make_response(
+                    json.dumps({"error": f"Manager with ID {manager_id} not found"}),
+                    headers=[('Content-Type', 'application/json')],
+                    status=404
+                )
 
         try:
             department = request.env['hr.department'].sudo().create({
                 'name': data.get('name'),
                 'code': data.get('code'),
-                'manager_id': manager_id,
+                'manager_id': int(manager_id),
                 'note': data.get('note'),
             })
             
-            return {
-                "id": department.id,
-                "message": "Department created successfully",
-                "data": {
-                    "id": department.id,
-                    "name": department.name,
-                    "code": department.code,
-                    "manager_id": department.manager_id.id if department.manager_id else None,
-                    "manager_name": department.manager_id.name if department.manager_id else None,
-                    "note": department.note
-                }
-            }
+            return request.make_response(
+                json.dumps({
+                    "message": "Department created successfully",
+                    "data": {
+                        "id": department.id,
+                        "name": department.name,
+                        "code": department.code,
+                        "manager_id": department.manager_id.id if department.manager_id else None,
+                        "manager_name": department.manager_id.name or None,
+                        "note": department.note
+                    }
+                }),
+                headers=[('Content-Type', 'application/json')]
+            )
         except Exception as e:
-            return {"error": f"Failed to create department: {str(e)}"}
+            # Rollback is automatic in Odoo if an exception is raised
+            _logger.error(f"Error creating department: {str(e)}")
+            request.env.cr.rollback()
+            return request.make_response(
+                json.dumps({"error": f"Failed to create department: {str(e)}"}),
+                headers=[('Content-Type', 'application/json')],
+                status=500
+            )
 
     @http.route('/api/hr/departments', type='http', auth='user', methods=['GET'], csrf=False)
     def list_departments(self, **kwargs):
@@ -72,11 +97,11 @@ class DepartmentAPI(http.Controller):
             if q:
                 domain.append('|')
                 domain.append('|')
+                domain.append('|')
                 domain.append(('name', 'ilike', q))
                 domain.append(('code', 'ilike', q))
                 domain.append(('note', 'ilike', q))
                 domain.append(('manager_id.name', 'ilike', q))
-                _logger.info("Search query: %s", q)
 
             # Get total count
             total = request.env['hr.department'].sudo().search_count(domain)
@@ -94,12 +119,12 @@ class DepartmentAPI(http.Controller):
             data = []
             for dept in departments:
                 data.append({
-                    "id": dept.id,
-                    "name": dept.name,
-                    "code": dept.code,
+                    "id": dept.id or None,
+                    "name": dept.name or None,
+                    "code": dept.code or None,
                     "manager_id": dept.manager_id.id if dept.manager_id else None,
                     "manager_name": dept.manager_id.name if dept.manager_id else None,
-                    "note": dept.note,
+                    "note": dept.note or None,
                     "employee_count": len(dept.member_ids) if dept.member_ids else 0
                 })
 
@@ -131,8 +156,8 @@ class DepartmentAPI(http.Controller):
             data = []
             for dept in departments:
                 data.append({
-                    "id": dept.id,
-                    "name": dept.name
+                    "id": dept.id or None,
+                    "name": dept.name or None,
                 })
             return request.make_response(
                 json.dumps({"data": data}),
@@ -170,14 +195,13 @@ class DepartmentAPI(http.Controller):
                 })
 
             data = {
-                "id": department.id,
-                "name": department.name,
-                "code": department.code,
+                "id": department.id or None,
+                "name": department.name or None,
+                "code": department.code or None,
                 "manager_id": department.manager_id.id if department.manager_id else None,
                 "manager_name": department.manager_id.name if department.manager_id else None,
-                "note": department.note,
+                "note": department.note or None,
                 "employee_count": len(employees),
-                "employees": employees
             }
 
             return request.make_response(
@@ -249,7 +273,7 @@ class DepartmentAPI(http.Controller):
             if 'code' in data:
                 update_data['code'] = data['code']
             if 'manager_id' in data:
-                update_data['manager_id'] = data['manager_id']
+                update_data['manager_id'] = int(data['manager_id']) if data['manager_id'] else False
             if 'note' in data:
                 update_data['note'] = data['note']
 
@@ -259,12 +283,12 @@ class DepartmentAPI(http.Controller):
                 json.dumps({
                     "message": "Department updated successfully",
                     "data": {
-                        "id": department.id,
-                        "name": department.name,
-                        "code": department.code,
+                        "id": department.id or None,
+                        "name": department.name or None,
+                        "code": department.code or None,
                         "manager_id": department.manager_id.id if department.manager_id else None,
                         "manager_name": department.manager_id.name if department.manager_id else None,
-                        "note": department.note
+                        "note": department.note or None
                     }
                 }),
                 headers=[('Content-Type', 'application/json')]
@@ -318,60 +342,4 @@ class DepartmentAPI(http.Controller):
                 status=500
             )
 
-    @http.route('/api/hr/departments/export', type='http', auth='user', methods=['GET'], csrf=False, )
-    def export_departments_csv(self, **kwargs):
-        try:
-            import csv
-            import io
-
-            # Get query parameter for filtering
-            q = kwargs.get('q', '').strip()
-            
-            # Build domain
-            domain = []
-            if q:
-                domain.append('|')
-                domain.append('|')
-                domain.append(('name', 'ilike', q))
-                domain.append(('code', 'ilike', q))
-                domain.append(('note', 'ilike', q))
-
-            departments = request.env['hr.department'].sudo().search(domain, order='name')
-
-            # Create CSV
-            output = io.StringIO()
-            writer = csv.writer(output)
-            
-            # Write headers
-            headers = ['ID', 'Name', 'Code', 'Manager Name', 'Note', 'Employee Count']
-            writer.writerow(headers)
-            
-            # Write data
-            for dept in departments:
-                writer.writerow([
-                    dept.id,
-                    dept.name or '',
-                    dept.code or '',
-                    dept.manager_id.name if dept.manager_id else '',
-                    dept.note or '',
-                    len(dept.member_ids) if dept.member_ids else 0
-                ])
-
-            from datetime import datetime
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"departments_export_{timestamp}.csv"
-
-            return request.make_response(
-                output.getvalue(),
-                headers=[
-                    ('Content-Type', 'text/csv'),
-                    ('Content-Disposition', f'attachment; filename="{filename}"')
-                ]
-            )
-
-        except Exception as e:
-            return request.make_response(
-                json.dumps({"error": str(e)}),
-                headers=[('Content-Type', 'application/json')],
-                status=500
-            )
+    
