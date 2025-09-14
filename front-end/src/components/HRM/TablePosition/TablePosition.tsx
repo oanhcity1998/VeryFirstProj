@@ -1,7 +1,7 @@
 import { Table, Checkbox, Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import "./TablePosition.css";
-import { Job } from "@/models/HRM/job.model";
+import { Job } from "@/models/HRM/position.model";
 
 interface TablePositionProps {
   data?: Job[];

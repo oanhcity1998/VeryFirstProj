@@ -103,15 +103,7 @@ export interface EmployeeRequest {
   tax_id?: string;
   insurance_id?: string;
   bank_account?: string;
-  contract?: {
-    name?: string;
-    contract_type?: ContractType;
-    contract_term?: string;
-    date_start?: string;
-    date_end?: string;
-    wage?: number;
-    bonus?: number;
-  };
+  contract?: Contract[];
 }
 
 export interface EmployeeUpdateResponse {

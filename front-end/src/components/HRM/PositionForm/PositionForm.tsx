@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Modal, Form, Input, Button, InputNumber } from "antd";
 import "./PositionForm.css";
-import { Job } from "@/models/HRM/job.model";
+import { Position } from "@/models/HRM/position.model";
 
 interface PositionFormProps {
   onCancel: () => void;
-  onSave: (values: Job) => void;
-  position?: Job | null;
+  onSave: (values: Position) => void;
+  position?: Position | null;
   open: boolean;
   modalTitle?: string;
   cancelText?: string;
   saveText?: string;
-  loading?: boolean; // Add loading prop
+  loading?: boolean;
 }
 
 const PositionForm: React.FC<PositionFormProps> = ({
@@ -42,13 +42,12 @@ const PositionForm: React.FC<PositionFormProps> = ({
 
   const onFinish = (values: any) => {
     onSave({
-      id: position?.id || values.id || Date.now(), // Temporary ID for create
+      id: position?.id || Date.now(), // Temporary ID for create
       name: values.name,
       code: values.code || null,
       priority_level: values.priority_level || null,
       note: values.note || null,
     });
-    onCancel();
   };
 
   return (
@@ -63,9 +62,9 @@ const PositionForm: React.FC<PositionFormProps> = ({
         <Button
           key="submit"
           type="primary"
-          onClick={() => form.submit()}
           loading={loading}
           disabled={loading}
+          onClick={() => form.submit()}
         >
           {saveText}
         </Button>,
@@ -75,7 +74,6 @@ const PositionForm: React.FC<PositionFormProps> = ({
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <div className="form-section">
           <h3>Thông tin chức vụ</h3>
-
           <Form.Item
             label="Tên chức vụ"
             name="name"
@@ -83,11 +81,9 @@ const PositionForm: React.FC<PositionFormProps> = ({
           >
             <Input placeholder="Nhập tên chức vụ" />
           </Form.Item>
-
           <Form.Item label="Mã chức vụ" name="code">
             <Input placeholder="Nhập mã chức vụ (VD: GD82334)" />
           </Form.Item>
-
           <Form.Item label="Độ ưu tiên" name="priority_level">
             <InputNumber
               min={0}
@@ -95,7 +91,6 @@ const PositionForm: React.FC<PositionFormProps> = ({
               placeholder="Nhập độ ưu tiên (0-5)"
             />
           </Form.Item>
-
           <Form.Item label="Ghi chú" name="note">
             <Input.TextArea
               placeholder="Nhập ghi chú"

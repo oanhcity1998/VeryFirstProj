@@ -1,4 +1,4 @@
-export interface Job {
+export interface Position {
   id: number;
   name: string;
   code: string | null;
@@ -6,8 +6,8 @@ export interface Job {
   note: string | null;
 }
 
-export interface JobResponse {
-  data: Job[];
+export interface PositionResponse {
+  data: Position[];
   meta: {
     page: number;
     limit: number;
@@ -17,33 +17,33 @@ export interface JobResponse {
   error?: string;
 }
 
-export interface JobCreateRequest {
+export interface PositionCreateRequest {
   name: string;
   code?: string | null;
   priority_level?: number | null;
   note?: string | null;
 }
 
-export interface JobCreateResponse {
+export interface PositionCreateResponse {
   message?: string;
-  data?: Job;
+  data?: Position;
   error?: string;
 }
 
-export interface JobUpdateRequest {
+export interface PositionUpdateRequest {
   name?: string;
   code?: string | null;
   priority_level?: number | null;
   note?: string | null;
 }
 
-export interface JobUpdateResponse {
+export interface PositionUpdateResponse {
   message?: string;
-  data?: Job;
+  data?: Position;
   error?: string;
 }
 
-export interface JobDeleteResponse {
+export interface PositionDeleteResponse {
   message?: string;
   error?: string;
 }

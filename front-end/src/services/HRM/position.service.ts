@@ -1,12 +1,12 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
-  JobResponse,
-  JobCreateRequest,
-  JobCreateResponse,
-  JobUpdateRequest,
-  JobUpdateResponse,
-  JobDeleteResponse,
-} from "@/models/HRM/job.model";
+  PositionCreateRequest,
+  PositionCreateResponse,
+  PositionDeleteResponse,
+  PositionResponse,
+  PositionUpdateRequest,
+  PositionUpdateResponse,
+} from "@/models/HRM/position.model";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const tags = {
   jobs: "Jobs",
@@ -21,10 +21,10 @@ export const jobService = createApi({
   tagTypes: [tags.jobs],
   endpoints: (builder) => ({
     getJobs: builder.query<
-      JobResponse,
-      { q?: string; page?: number; limit?: number }
+      PositionResponse,
+      { q?: string; page?: number; limit?: number } | void
     >({
-      query: ({ q, page, limit }) => ({
+      query: ({ q, page, limit } = {}) => ({
         url: "jobs",
         params: { q, page: page ?? 1, limit: limit ?? 10 },
       }),
@@ -36,7 +36,8 @@ export const jobService = createApi({
             ]
           : [{ type: tags.jobs, id: "LIST" }],
     }),
-    createJob: builder.mutation<JobCreateResponse, JobCreateRequest>({
+
+    createJob: builder.mutation<PositionCreateResponse, PositionCreateRequest>({
       query: (job) => ({
         url: "jobs",
         method: "POST",
@@ -45,8 +46,8 @@ export const jobService = createApi({
       invalidatesTags: [{ type: tags.jobs, id: "LIST" }],
     }),
     updateJob: builder.mutation<
-      JobUpdateResponse,
-      { id: number; data: JobUpdateRequest }
+      PositionUpdateResponse,
+      { id: number; data: PositionUpdateRequest }
     >({
       query: ({ id, data }) => ({
         url: `jobs/${id}`,
@@ -55,7 +56,7 @@ export const jobService = createApi({
       }),
       invalidatesTags: (result, error, { id }) => [{ type: tags.jobs, id }],
     }),
-    deleteJob: builder.mutation<JobDeleteResponse, number>({
+    deleteJob: builder.mutation<PositionDeleteResponse, number>({
       query: (id) => ({
         url: `jobs/${id}`,
         method: "DELETE",

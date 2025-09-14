@@ -22,9 +22,9 @@ export const departmentService = createApi({
   endpoints: (builder) => ({
     getDepartments: builder.query<
       DepartmentResponse,
-      { q?: string; page?: number; limit?: number }
+      { q?: string; page?: number; limit?: number } | void
     >({
-      query: ({ q, page, limit }) => ({
+      query: ({ q, page, limit } = {}) => ({
         url: "departments",
         params: { q, page: page ?? 1, limit: limit ?? 5 },
       }),
@@ -39,6 +39,7 @@ export const departmentService = createApi({
             ]
           : [{ type: tags.departments, id: "LIST" }],
     }),
+
     createDepartment: builder.mutation<
       DepartmentCreateResponse,
       DepartmentCreateRequest

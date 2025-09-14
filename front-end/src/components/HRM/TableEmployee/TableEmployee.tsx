@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Table, Checkbox, Button } from "antd";
+import { Table, Checkbox, Button, Tooltip } from "antd";
 import { generatePath, Link } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
 import "./TableEmployee.css";
@@ -57,7 +57,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       dataIndex: "code",
       key: "code",
       fixed: "left",
-      width: 150, // Increased for longer codes
+      width: 150,
       align: "center",
     },
     {
@@ -65,7 +65,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       dataIndex: "name",
       key: "name",
       fixed: "left",
-      width: 200, // Increased for longer names
+      width: 200,
       align: "center",
       render: (text: string, record: Employee) => (
         <Link to={generatePath(ROUTES_APP.hrm.employeeDetail, { id: record.id.toString() })}>
@@ -77,14 +77,14 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       title: "Giới tính",
       dataIndex: "gender",
       key: "gender",
-      width: 120, // Increased to fit "Nam" or "Nữ" comfortably
+      width: 120,
       align: "center",
     },
     {
       title: "Ngày sinh",
       dataIndex: "birthday",
       key: "birthday",
-      width: 150, // Increased for date format
+      width: 150,
       align: "center",
       render: (date: string) => (date ? dayjs(date).format("DD/MM/YYYY") : "-"),
     },
@@ -92,58 +92,74 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       title: "Số CCCD",
       dataIndex: "id_number",
       key: "id_number",
-      width: 180, // Increased for longer ID numbers
+      width: 180,
       align: "center",
     },
     {
       title: "Địa chỉ thường trú",
       dataIndex: "permanent_address",
       key: "permanent_address",
-      width: 250, // Increased to prevent wrapping
+      width: 250,
       align: "center",
     },
     {
       title: "Địa chỉ tạm trú",
       dataIndex: "temporary_address",
       key: "temporary_address",
-      width: 250, // Increased to prevent wrapping
+      width: 250,
       align: "center",
     },
     {
       title: "Mã số thuế TNCN",
       dataIndex: "tax_id",
       key: "tax_id",
-      width: 180, // Increased for longer tax IDs
+      width: 180,
       align: "center",
     },
     {
       title: "Tài khoản ngân hàng",
       dataIndex: "bank_account",
       key: "bank_account",
-      width: 200, // Increased for longer account numbers
+      width: 200,
       align: "center",
     },
     {
       title: "Phòng ban",
       dataIndex: "department_name",
       key: "department_name",
-      width: 180, // Increased for longer department names
+      width: 180,
       align: "center",
     },
     {
       title: "Vị trí",
       dataIndex: "job_name",
       key: "job_name",
-      width: 200, // Increased for longer job titles
+      width: 200,
       align: "center",
     },
     {
       title: "Loại hợp đồng",
       dataIndex: "contract",
       key: "contract_type",
-      width: 200, // Increased for longer contract types
+      width: 200,
       align: "center",
-      render: (contract: Employee["contract"]) => contract[0]?.contract_type || "-",
+      render: (contract: Employee["contract"]) => (
+        <Tooltip
+          title={
+            contract.length > 0 ? (
+              <ul>
+                {contract.map((c, index) => (
+                  <li key={index}>{c.contract_type}</li>
+                ))}
+              </ul>
+            ) : (
+              "-"
+            )
+          }
+        >
+          {contract.length > 0 ? contract.map((c) => c.contract_type).join(", ") : "-"}
+        </Tooltip>
+      ),
     },
     {
       title: "",
@@ -152,7 +168,15 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       width: 80,
       align: "center",
       render: (_: any, record: Employee) => (
-        <Button type="link" icon={<EditOutlined />} onClick={() => onEdit?.(record)} className="employee-edit-icon" />
+        <Button
+          type="link"
+          icon={<EditOutlined />}
+          onClick={() => {
+            console.log("Edit clicked for record:", record); // Debug
+            onEdit?.(record);
+          }}
+          className="employee-edit-icon"
+        />
       ),
     },
   ];
@@ -163,7 +187,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       dataSource={data}
       loading={loading}
       rowKey="id"
-      scroll={{ x: 2000, y: 600 }} // Increased x to accommodate wider columns
+      scroll={{ x: 2000, y: 600 }}
       sticky={{ offsetHeader: 64 }}
       rowClassName={(record: Employee) => (selectedRowKeys.includes(record.id.toString()) ? "selected-row" : "")}
       pagination={false}

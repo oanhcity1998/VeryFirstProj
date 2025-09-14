@@ -16,8 +16,7 @@ import dayjs from "dayjs";
 import "./EmployeeForm.css";
 import { Employee } from "@/models/HRM/employee.model";
 import { useGetDepartmentsQuery } from "@/services/HRM/department.service";
-import { useGetJobsQuery } from "@/services/HRM/job.service";
-
+import { useGetJobsQuery } from "@/services/HRM/position.service";
 
 interface EmployeeFormProps {
   onCancel: () => void;
@@ -52,10 +51,11 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   const { data: jobData } = useGetJobsQuery();
 
   useEffect(() => {
+    console.log("Employee prop in form:", employee); // Debug
     if (employee) {
       form.setFieldsValue({
         name: employee.name,
-        code: employee.code || "", // New field
+        code: employee.code || "",
         birthday: employee.birthday ? dayjs(employee.birthday, "YYYY-MM-DD") : null,
         gender: employee.gender,
         work_phone: employee.work_phone,
@@ -64,16 +64,14 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         job_id: employee.job_id || undefined,
         status: employee.status,
         id_number: employee.id_number,
-        id_issued_date: employee.id_issued_date
-          ? dayjs(employee.id_issued_date, "YYYY-MM-DD")
-          : null,
+        id_issued_date: employee.id_issued_date ? dayjs(employee.id_issued_date, "YYYY-MM-DD") : null,
         id_issued_place: employee.id_issued_place,
         permanent_address: employee.permanent_address,
         temporary_address: employee.temporary_address,
         tax_id: employee.tax_id,
         insurance_id: employee.insurance_id,
         bank_account: employee.bank_account,
-        contract: employee.contract?.[0] || {
+        contract: {
           name: employee.contract?.[0]?.name || "",
           contract_type: employee.contract?.[0]?.contract_type || "",
           contract_term: employee.contract?.[0]?.contract_term || "",
@@ -93,10 +91,11 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   }, [employee, form, departmentData, jobData]);
 
   const onFinish = (values: any) => {
+    console.log("Form values on submit:", values); // Debug
     const formattedValues: Employee = {
-      id: values.id || Date.now(), // Still generated here for local use, but not in form
+      id: values.id || Date.now(),
       name: values.name,
-      code: values.code || "", // New field
+      code: values.code || "",
       birthday: values.birthday ? values.birthday.format("YYYY-MM-DD") : "",
       gender: values.gender,
       work_phone: values.work_phone,
@@ -105,31 +104,27 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       department_name: departmentData?.data.find((d) => d.id === values.department_id)?.name || "",
       job_id: values.job_id || 0,
       job_name: jobData?.data.find((j) => j.id === values.job_id)?.name || "",
-      status: values.status || "Active",
+      status: values.status || "active",
       id_number: values.id_number,
-      id_issued_date: values.id_issued_date
-        ? values.id_issued_date.format("YYYY-MM-DD")
-        : "",
+      id_issued_date: values.id_issued_date ? values.id_issued_date.format("YYYY-MM-DD") : "",
       id_issued_place: values.id_issued_place,
       permanent_address: values.permanent_address,
       temporary_address: values.temporary_address || "",
       tax_id: values.tax_id || "",
       insurance_id: values.insurance_id || "",
       bank_account: values.bank_account || "",
-      contract:
-      {
-        name: values.contract?.name || "",
-        contract_type: values.contract?.contract_type || "",
-        contract_term: values.contract?.contract_term || false,
-        date_start: values.contract?.date_start
-          ? values.contract.date_start.format("YYYY-MM-DD")
-          : "",
-        date_end: values.contract?.date_end
-          ? values.contract.date_end.format("YYYY-MM-DD")
-          : "",
-        wage: values.contract?.wage || 0,
-        bonus: values.contract?.bonus || 0,
-      },
+      contract: values.contract
+        ? [{
+          id: employee?.contract?.[0]?.id || Date.now(),
+          name: values.contract.name || "",
+          contract_type: values.contract.contract_type || "",
+          contract_term: values.contract.contract_term || "",
+          date_start: values.contract.date_start ? values.contract.date_start.format("YYYY-MM-DD") : "",
+          date_end: values.contract.date_end ? values.contract.date_end.format("YYYY-MM-DD") : "",
+          wage: values.contract.wage || 0,
+          bonus: values.contract.bonus || 0,
+        }]
+        : [],
     };
     onSave(formattedValues);
   };
@@ -154,7 +149,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       ]}
       width={1100}
       style={{ top: 20 }}
-      bodyStyle={{ maxHeight: "80vh", overflowY: "hidden" }}
+      bodyStyle={{ maxHeight: "80vh", overflowY: "auto" }}
     >
       <Form form={form} layout="vertical" onFinish={onFinish} style={{ padding: "0 16px" }}>
         <Row gutter={16} align="stretch">
@@ -235,7 +230,6 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                   ))}
                 </Select>
               </Form.Item>
-
               <Form.Item
                 label="Vị trí"
                 name="job_id"
@@ -253,7 +247,6 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                   ))}
                 </Select>
               </Form.Item>
-
             </Card>
           </Col>
 
@@ -308,6 +301,12 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
 
           <Col span={8}>
             <Card title={contractTitle} bordered className="employee-card">
+              <Form.Item
+                label="Tên hợp đồng"
+                name={["contract", "name"]}
+              >
+                <Input placeholder="Nhập tên hợp đồng" />
+              </Form.Item>
               <Form.Item
                 label="Loại hợp đồng"
                 name={["contract", "contract_type"]}

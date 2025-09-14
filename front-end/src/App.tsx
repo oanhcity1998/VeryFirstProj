@@ -14,7 +14,6 @@ import ContractList from "./views/CRM/ContractList/ContractList";
 import ContractDetailWrapper from "./views/CRM/ContractDetail/ContractDetailWrapper";
 import QuoteList from "./views/CRM/QuoteList/QuoteList";
 import QuoteDetailWrapper from "./views/CRM/QuoteDetail/QuoteDetailWrapper";
-import EmployeeList from "./views/HRM/EmployeeList/EmployeeList";
 import EmployeeDetail from "./views/HRM/EmployeeDetail/EmployeeDetail";
 import PositionList from "./views/HRM/PositionList/PositionList";
 import ContactDetail from "./views/CRM/ContactDetail/ContactDetail";
@@ -31,6 +30,7 @@ import DebtReportDetail from "./views/CRM/DebtReportDetail/DebtReportDetail";
 import ProposalTemplateList from "./views/HRM/ProposalTemplateList/ProposalTemplateList";
 import ProposalTemplateDetail from "./views/CRM/ProposalTemplateDetail/ProposalTemplateDetail";
 import Login from "./views/public/Login/Login";
+import EmployeeList from "./views/HRM/EmployeeList/EmployeeList";
 
 export default function App() {
   return (
