@@ -82,6 +82,7 @@ class EmployeeAPI(http.Controller):
         department_id = kwargs.get('department_id')
         job_id = kwargs.get('job_id')
         gender = kwargs.get('gender', '')
+        contract_type = kwargs.get('contract_type', '')
         page = int(kwargs.get('page', 1))
         limit = int(kwargs.get('limit', 25))
 
@@ -98,6 +99,10 @@ class EmployeeAPI(http.Controller):
 
         if gender:
             domain.append(('gender', '=', gender))
+        
+        if contract_type:
+            employee_ids = request.env['hr.contract.custom'].sudo().search([('contract_type', '=', contract_type)]).mapped('employee_id').ids
+            domain.append(('id', 'in', employee_ids))
 
         total = request.env['hr.employee'].sudo().search_count(domain)
 
@@ -241,7 +246,7 @@ class EmployeeAPI(http.Controller):
 
             allowed_fields = [
                 'name', 'work_email', 'work_phone',
-                'birthday', 'gender',
+                'birthday', 'gender', 'contract'
             ]
 
             updates = {}
@@ -268,8 +273,33 @@ class EmployeeAPI(http.Controller):
                             "new_value": new_value
                         }
                         continue
-
-                    updates[field] = new_value
+                    if(field == 'contract' and isinstance(new_value, dict)):
+                        contract_data = new_value
+                        contract = request.env['hr.contract.custom'].sudo().search([('employee_id', '=', employee.id)], limit=1)
+                        if contract:
+                            contract_updates = {}
+                            for c_field in ['name', 'contract_type', 'contract_term', 'date_start', 'date_end', 'wage', 'bonus']:
+                                if c_field in contract_data:
+                                    c_new_value = contract_data[c_field]
+                                    c_old_value = contract[c_field]
+                                    if c_new_value not in (None, "", False) and str(c_old_value) != str(c_new_value):
+                                        contract_updates[c_field] = c_new_value
+                            if contract_updates:
+                                contract.write(contract_updates)
+                        else:
+                            # Create new contract if none exists
+                            request.env['hr.contract.custom'].sudo().create({
+                                "employee_id": employee.id,
+                                "name": contract_data.get("name"),
+                                "contract_type": contract_data.get("contract_type"),
+                                "contract_term": contract_data.get("contract_term"),
+                                "date_start": contract_data.get("date_start"),
+                                "date_end": contract_data.get("date_end"),
+                                "wage": contract_data.get("wage"),
+                                "bonus": contract_data.get("bonus")
+                            })
+                    else:
+                        updates[field] = new_value
 
             if updates:
                 employee.logs = (employee.logs or []) + [{
