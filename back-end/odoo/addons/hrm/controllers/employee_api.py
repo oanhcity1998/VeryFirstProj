@@ -246,11 +246,12 @@ class EmployeeAPI(http.Controller):
 
             allowed_fields = [
                 'code', 'name', 'work_email', 'work_phone',
-                'birthday', 'gender', 'contract',
+                'birthday', 'gender', 
                 'department_id', 'job_id',
                 'id_number', 'id_issued_place', 'id_issued_date',
                 'permanent_address', 'temporary_address',
-                'tax_id', 'insurance_id', 'bank_account'
+                'tax_id', 'insurance_id', 'bank_account',
+                'contract',
 
             ]
 
@@ -261,7 +262,11 @@ class EmployeeAPI(http.Controller):
             for field in allowed_fields:
                 if field in data:
                     new_value = data[field]
-                    old_value = employee[field]
+                    old_value = None
+                    if(field == 'contract'):
+                        old_value = request.env['hr.contract.custom'].sudo().search([('employee_id', '=', employee.id)], limit=1)
+                    else:
+                        old_value = employee[field]
 
                     if new_value in (None, "", False):
                         ignored_fields[field] = {
@@ -278,9 +283,10 @@ class EmployeeAPI(http.Controller):
                             "new_value": new_value
                         }
                         continue
-                    if(field == 'contract' and isinstance(new_value, dict)):
+                    if(field == 'contract'):
                         contract_data = new_value
-                        contract = request.env['hr.contract.custom'].sudo().search([('employee_id', '=', employee.id)], limit=1)
+                        contract = old_value
+                        print(contract_data)
                         if contract:
                             contract_updates = {}
                             for c_field in ['name', 'contract_type', 'contract_term', 'date_start', 'date_end', 'wage', 'bonus']:
@@ -328,6 +334,7 @@ class EmployeeAPI(http.Controller):
 
         except Exception as e:
             # Rollback transaction in case of error
+            _logger.exception(f"Error updating employee {employee_id}: {str(e)}")
             request.env.cr.rollback()
             return request.make_json_response({"error": str(e)}, status=500)
 
