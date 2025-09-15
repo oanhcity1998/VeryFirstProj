@@ -342,4 +342,50 @@ class DepartmentAPI(http.Controller):
                 status=500
             )
 
-    
+    #Delete multiple departments
+    @http.route('/api/hr/departments', type='http', auth='user', methods=['DELETE'], csrf=False, )
+    def delete_multiple_departments(self, **kwargs):
+        try:
+            department_ids = json.loads(request.httprequest.data.decode("utf-8")).get("ids", [])
+            if not department_ids:
+                return request.make_response(
+                    json.dumps({"error": "No department IDs provided"}),
+                    headers=[('Content-Type', 'application/json')],
+                    status=400
+                )
+
+            departments = request.env['hr.department'].sudo().search([('id', 'in', department_ids)])
+            if not departments:
+                return request.make_response(
+                    json.dumps({"error": "No departments found"}),
+                    headers=[('Content-Type', 'application/json')],
+                    status=404
+                )
+
+            # Check if any department has employees
+            for department in departments:
+                if department.member_ids:
+                    return request.make_response(
+                        json.dumps({
+                            "error": f"Cannot delete department '{department.name}'. It has {len(department.member_ids)} employees assigned."
+                        }),
+                        headers=[('Content-Type', 'application/json')],
+                        status=400
+                    )
+
+            # Delete departments
+            departments.unlink()
+
+            return request.make_response(
+                json.dumps({
+                    "message": f"Deleted {len(departments)} departments successfully"
+                }),
+                headers=[('Content-Type', 'application/json')]
+            )
+
+        except Exception as e:
+            return request.make_response(
+                json.dumps({"error": str(e)}),
+                headers=[('Content-Type', 'application/json')],
+                status=500
+            )
