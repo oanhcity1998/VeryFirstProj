@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Button, Modal, Upload, Select, Pagination, Popover, Space, Empty, Spin } from "antd";
 import {
   PlusOutlined,
@@ -24,17 +25,19 @@ import { Position } from "@/models/HRM/position.model";
 const { Dragger } = Upload;
 
 const PositionList: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [queryParams, setQueryParams] = useState({
-    q: "",
-    page: 1,
-    limit: 10,
+    q: searchParams.get("q") || "",
+    code: searchParams.get("code") || undefined, // Separate param for Select filter
+    page: searchParams.get("page") ? Number(searchParams.get("page")) : 1,
+    limit: searchParams.get("limit") ? Number(searchParams.get("limit")) : 10,
   });
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [importOpen, setImportOpen] = useState<boolean>(false);
   const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
-  const [jobs, setJobs] = useState<Position[] | null>(null); // Add state for jobs
+  const [jobs, setJobs] = useState<Position[] | null>(null);
   const [meta, setMeta] = useState<{ page: number; limit: number; total: number; pages: number } | null>(null);
 
   const { data, isLoading, isError, refetch } = useGetJobsQuery(queryParams);
@@ -42,7 +45,15 @@ const PositionList: React.FC = () => {
   const [updateJob, { isLoading: isUpdating }] = useUpdateJobMutation();
   const [deleteJob, { isLoading: isDeleting }] = useDeleteJobMutation();
 
-  // Handle data fetching and state updates
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (queryParams.q) params.set("q", queryParams.q);
+    if (queryParams.code) params.set("code", queryParams.code);
+    params.set("page", queryParams.page.toString());
+    params.set("limit", queryParams.limit.toString());
+    setSearchParams(params);
+  }, [queryParams, setSearchParams]);
+
   useEffect(() => {
     if (data) {
       const cleanList = Array.isArray(data.data)
@@ -62,12 +73,12 @@ const PositionList: React.FC = () => {
     }
   }, [data, isError]);
 
-  // Reset meta but not jobs when queryParams change
   useEffect(() => {
-    setMeta(null);
-  }, [queryParams]);
+    if (isError) {
+      toast.error("Không thể tải danh sách chức vụ");
+    }
+  }, [isError]);
 
-  // Handle delete
   const handleDelete = async () => {
     try {
       const ids = selectedRowKeys.map((key) => parseInt(key));
@@ -82,7 +93,6 @@ const PositionList: React.FC = () => {
     }
   };
 
-  // Handle import file excel/csv
   const handleUpload = async (file: File) => {
     const fileType = file.name.split(".").pop()?.toLowerCase();
     if (fileType !== "xlsx" && fileType !== "csv") {
@@ -131,7 +141,6 @@ const PositionList: React.FC = () => {
     return false;
   };
 
-  // Handle create/update
   const handleSave = async (values: Position) => {
     try {
       if (selectedPosition) {
@@ -158,6 +167,10 @@ const PositionList: React.FC = () => {
     setQueryParams({ ...queryParams, q: value, page: 1 });
   };
 
+  const handlePageChange = (page: number, pageSize: number) => {
+    setQueryParams({ ...queryParams, page, limit: pageSize });
+  };
+
   const showLoading = isLoading || jobs === null;
 
   return (
@@ -169,23 +182,39 @@ const PositionList: React.FC = () => {
             className="position-search-bar"
             placeholder="Tìm kiếm theo tên chức vụ"
             allowClear
+            value={queryParams.q}
+            onChange={(e) => handleSearch(e.target.value)}
             onSearch={handleSearch}
+            style={{ width: 250 }} // Standardize width
           />
           <Select
             placeholder="Lọc theo mã chức vụ"
-            style={{ width: 250 }}
-            onChange={(code) => setQueryParams({ ...queryParams, q: code })}
+            value={queryParams.code} // Bind to queryParams.code
+            onChange={(code) => setQueryParams({ ...queryParams, code, page: 1 })}
             options={(jobs || []).map((item) => ({
               value: item.code,
               label: item.code,
             }))}
             allowClear
+            style={{ width: 250 }} // Standardize width
           />
           <Modal
             open={importOpen}
             title="Import dữ liệu chức vụ"
             onCancel={() => setImportOpen(false)}
-            footer={null}
+            footer={[
+              <Button key="cancel" onClick={() => setImportOpen(false)}>
+                Hủy
+              </Button>,
+              <Button
+                key="submit"
+                type="primary"
+                loading={isCreating}
+                disabled={isCreating}
+              >
+                Tải lên
+              </Button>,
+            ]}
             centered
             width={600}
             bodyStyle={{ padding: "24px" }}
@@ -255,8 +284,9 @@ const PositionList: React.FC = () => {
                 current={meta.page}
                 pageSize={meta.limit}
                 total={meta.total}
-                onChange={(page) => setQueryParams({ ...queryParams, page })}
-                showSizeChanger={false}
+                onChange={handlePageChange}
+                showSizeChanger
+                pageSizeOptions={["10", "20", "50"]}
               />
             </div>
           )}
@@ -285,4 +315,4 @@ const PositionList: React.FC = () => {
   );
 };
 
-export default PositionList
+export default PositionList;
