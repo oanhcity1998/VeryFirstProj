@@ -121,7 +121,7 @@ const DepartmentForm: React.FC<DepartmentFormProps> = ({
           <Form.Item label="Ghi chú" name="note">
             <Input.TextArea
               placeholder="Nhập ghi chú"
-              autoSize={{ minRows: 3, maxRows: 5 }}
+              autoSize={{ minRows: 5, maxRows: 10 }}
             />
           </Form.Item>
         </div>

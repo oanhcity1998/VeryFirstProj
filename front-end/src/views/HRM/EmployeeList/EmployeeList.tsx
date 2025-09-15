@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Modal, Popover, Upload, Space, Form, Pagination, Empty } from "antd";
+import { Button, Modal, Popover, Upload, Space, Form, Pagination, Empty, Spin } from "antd";
 import {
   PlusOutlined,
   SettingOutlined,
@@ -21,6 +21,7 @@ import {
   useGetEmployeesQuery,
   useDeleteEmployeeMutation,
   useUpdateEmployeeMutation,
+  useBatchDeleteEmployeesMutation,
   useExportTemplateMutation,
   useImportEmployeesMutation,
   useExportEmployeesMutation,
@@ -43,7 +44,7 @@ const EmployeeList: React.FC = () => {
   const [exporting, setExporting] = useState<boolean>(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [employees, setEmployeesState] = useState<Employee[]>([]);
+  const [employees, setEmployees] = useState<Employee[] | null>(null);
   const [meta, setMeta] = useState<{ page: number; limit: number; total: number; pages: number } | null>(null);
 
   const [queryParams, setQueryParams] = useState({
@@ -55,23 +56,39 @@ const EmployeeList: React.FC = () => {
     limit: 10,
   });
 
-  const { data, isLoading, isError } = useGetEmployeesQuery(queryParams);
+  const { data, isLoading, isError, refetch } = useGetEmployeesQuery(queryParams);
   const [createEmployee, { isLoading: isCreating, isError: isCreateError }] = useCreateEmployeeMutation();
   const [updateEmployee, { isLoading: isUpdating, isError: isUpdateError }] = useUpdateEmployeeMutation();
-  const [deleteEmployee, { isLoading: isDeleting }] = useDeleteEmployeeMutation();
+  const [deleteEmployee] = useDeleteEmployeeMutation();
+  const [batchDeleteEmployees, { isLoading: isBatchDeleting }] = useBatchDeleteEmployeesMutation();
   const [exportTemplate, { isLoading: isExportingTemplate }] = useExportTemplateMutation();
   const [importEmployees, { isLoading: isImporting }] = useImportEmployeesMutation();
   const [exportEmployees, { isLoading: isExportingEmployees }] = useExportEmployeesMutation();
 
   useEffect(() => {
     if (data) {
-      setEmployeesState(data.data || []);
-      setMeta(data.meta || null);
-    }
-    if (isError || isCreateError || isUpdateError) {
-      toast.error("Không thể tải, thêm hoặc cập nhật nhân sự");
+      // Lọc bỏ phần tử null/undefined và phần tử không có id hợp lệ
+      const cleanList = Array.isArray(data.data)
+        ? data.data.filter((item) => item && item.id !== undefined && item.id !== null)
+        : [];
+      setEmployees(cleanList);
+      if (data.meta) {
+        setMeta({
+          page: data.meta.page,
+          limit: data.meta.limit,
+          total: data.meta.total,
+          pages: data.meta.page !== undefined ? data.meta.page : 1,
+        });
+      } else {
+        setMeta(null);
+      }
     }
   }, [data, isError, isCreateError, isUpdateError]);
+
+  // Không setEmployees(null) khi queryParams đổi, chỉ reset meta để giữ loading đúng
+  useEffect(() => {
+    setMeta(null);
+  }, [queryParams]);
 
   const handleEdit = (record: Employee) => {
     console.log("Editing employee:", record);
@@ -109,22 +126,28 @@ const EmployeeList: React.FC = () => {
   };
 
   const handleDelete = async () => {
+    if (selectedRowKeys.length === 0) return;
+
     try {
       setDeleting(true);
-      const promises = selectedRowKeys.map((id) => deleteEmployee(parseInt(id)).unwrap());
-      const results = await Promise.all(promises);
+      const employeeIds = selectedRowKeys.map((id) => parseInt(id));
+      const response = await batchDeleteEmployees(employeeIds).unwrap();
 
-      const hasError = results.some((result) => "error" in result);
-      if (!hasError) {
-        const newData = employees.filter((item) => !selectedRowKeys.includes(item.id.toString()));
-        setEmployeesState(newData);
-        setMeta((prev) => prev ? { ...prev, total: newData.length } : null);
-        toast.success("Xóa nhân sự thành công");
-      } else {
-        throw new Error("Có lỗi xảy ra khi xóa nhân sự");
+      if (response.error) {
+        throw new Error(response.error);
       }
-    } catch (err) {
-      toast.error("Không thể xóa nhân sự");
+
+      const newData = (employees || []).filter((item) => !selectedRowKeys.includes(item.id.toString()));
+      setEmployees(newData);
+      setMeta((prev) => (prev ? { ...prev, total: newData.length } : null));
+      toast.success("Xóa nhân sự thành công");
+    } catch (err: any) {
+      console.error("Batch delete error:", {
+        message: err.message,
+        status: err.status,
+        data: err.data,
+      });
+      toast.error(`Không thể xóa nhân sự: ${err.message || "Lỗi không xác định"}`);
     } finally {
       setDeleting(false);
       setDeleteOpen(false);
@@ -199,7 +222,7 @@ const EmployeeList: React.FC = () => {
         saveAs(response, "employee_template.xlsx");
         toast.success("Tải mẫu Excel thành công");
       } else {
-        generateExcel(response.data || [], "employee_template.xlsx");
+        generateExcel((response as { data?: Employee[] }).data || [], "employee_template.xlsx");
         toast.success("Tải mẫu Excel thành công");
       }
     } catch (err: any) {
@@ -217,41 +240,31 @@ const EmployeeList: React.FC = () => {
   const handleImport = async (file: File) => {
     const fileType = file.name.split(".").pop()?.toLowerCase();
     if (fileType !== "xlsx" && fileType !== "csv") {
-      toast.error("File không hợp lệ. Vui lòng tải lên file .xlsx hoặc .csv.");
+      toast.error("File không hợp lệ. Vui lòng tải file .xlsx hoặc .csv.");
       return Upload.LIST_IGNORE;
     }
-
     setImporting(true);
     const formData = new FormData();
     formData.append("file", file);
-
     try {
       const response = await importEmployees(formData).unwrap();
       if (response.errors && response.errors.length > 0) {
-        toast.error(
-          <div style={{ maxHeight: "200px", overflowY: "auto" }}>
-            <p>Có lỗi trong file của bạn:</p>
-            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
-              {response.errors.join("\n")}
-            </pre>
-          </div>,
-          { autoClose: 5000 }
-        );
+        toast.error("Có lỗi trong file của bạn");
       } else {
         toast.success(response.message || "Import nhân sự thành công");
-        // Refetch data after successful import
-        const updatedData = await useGetEmployeesQuery(queryParams).refetch().unwrap();
-        setEmployeesState(updatedData.data || []);
-        setMeta(updatedData.meta || null);
+        const result = await refetch();
+        if ((result as any).data) {
+          const updated = (result as any).data;
+          setEmployees(updated.data || []);
+          setMeta(updated.meta || null);
+        }
       }
       setImportOpen(false);
     } catch (err: any) {
-      console.error("Import error:", {
-        message: err.message,
-        status: err.status,
-        data: err.data,
-      });
-      toast.error("Không thể import nhân sự: " + (err.message || "Lỗi không xác định"));
+      toast.error(
+        "Không thể import nhân sự: " +
+        (err.message || "Lỗi không xác định")
+      );
     } finally {
       setImporting(false);
     }
@@ -269,7 +282,10 @@ const EmployeeList: React.FC = () => {
         saveAs(response, `employees_export_${dayjs().format("YYYYMMDD_HHmmss")}.xlsx`);
         toast.success("Xuất danh sách nhân sự thành công");
       } else {
-        generateExcel(response.data || [], `employees_export_${dayjs().format("YYYYMMDD_HHmmss")}.xlsx`);
+        generateExcel(
+          (response as { data?: Employee[] }).data || [],
+          `employees_export_${dayjs().format("YYYYMMDD_HHmmss")}.xlsx`
+        );
         toast.success("Xuất danh sách nhân sự thành công");
       }
     } catch (err: any) {
@@ -344,17 +360,12 @@ const EmployeeList: React.FC = () => {
       }
 
       if (editingEmployee) {
-        console.log("Update payload:", { id: editingEmployee.id, data: values });
-        const response = await updateEmployee({
+        await updateEmployee({
           id: editingEmployee.id,
           data: values,
         }).unwrap();
-        setEmployeesState((prev) =>
-          prev.map((emp) =>
-            emp.id === editingEmployee.id ? { ...emp, ...response } : emp
-          )
-        );
         toast.success("Cập nhật nhân sự thành công");
+        refetch();
       } else {
         const payload: EmployeeRequest = {
           ...values,
@@ -362,11 +373,9 @@ const EmployeeList: React.FC = () => {
           job_id: values.job_id && values.job_id > 0 ? values.job_id : 1,
           contract: values.contract || [],
         };
-        console.log("Create payload:", payload);
-        const response = await createEmployee(payload).unwrap();
-        setEmployeesState((prev) => [...prev, response as Employee]);
-        setMeta((prev) => prev ? { ...prev, total: prev.total + 1 } : null);
+        await createEmployee(payload).unwrap();
         toast.success("Thêm nhân sự thành công");
+        refetch();
       }
       setIsModalOpen(false);
       setEditingEmployee(null);
@@ -378,6 +387,9 @@ const EmployeeList: React.FC = () => {
       setIsSubmitting(false);
     }
   };
+
+  const showLoading = isLoading || employees === null;
+
 
   return (
     <>
@@ -491,10 +503,10 @@ const EmployeeList: React.FC = () => {
             onCancel={() => setDeleteOpen(false)}
             okText="Xóa"
             cancelText="Hủy"
-            okButtonProps={{ danger: true, loading: deleting || isDeleting }}
+            okButtonProps={{ danger: true, loading: deleting || isBatchDeleting }}
             centered
           >
-            <p>Bạn có chắc muốn xóa nhân sự này? Hành động này không thể hoàn tác.</p>
+            <p>Bạn có chắc muốn xóa {selectedRowKeys.length} nhân sự này? Hành động này không thể hoàn tác.</p>
           </Modal>
           <Button
             type="primary"
@@ -510,17 +522,27 @@ const EmployeeList: React.FC = () => {
         </div>
       </div>
 
-      {(employees?.length ?? 0) > 0 ? (
+      {showLoading ? (
+        <div style={{ textAlign: "center", padding: "50px 0" }}>
+          <Spin size="large" />
+        </div>
+      ) : employees && employees.length > 0 ? (
         <>
           <TableEmployee
-            data={employees}
+            data={employees || []}
             selectedRowKeys={selectedRowKeys}
             setSelectedRowKeys={setSelectedRowKeys}
-            loading={isLoading || isCreating || isUpdating || isDeleting}
+            loading={isCreating || isUpdating || isBatchDeleting}
             onEdit={handleEdit}
           />
-          {meta && employees.length > 0 && (
-            <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
+          {meta && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: 16,
+              }}
+            >
               <Pagination
                 current={meta.page}
                 pageSize={meta.limit}
@@ -533,7 +555,10 @@ const EmployeeList: React.FC = () => {
       ) : (
         <div style={{ textAlign: "center", padding: "50px 0", color: "#888" }}>
           <Empty description="Không có nhân viên nào để hiển thị" />
-          <p>Hiện tại không có dữ liệu nhân sự. Vui lòng thêm nhân viên mới!</p>
+          <p>
+            Hiện tại không có dữ liệu nhân sự. Vui lòng thêm nhân viên
+            mới!
+          </p>
         </div>
       )}
 

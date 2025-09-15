@@ -101,6 +101,23 @@ export const employeeService = createApi({
         { type: tags.employees, id: "LIST" },
       ],
     }),
+    batchDeleteEmployees: builder.mutation<
+      { message?: string; error?: string },
+      number[]
+    >({
+      query: (employee_ids) => ({
+        url: "employees/batch-delete",
+        method: "POST",
+        body: { employee_ids },
+      }),
+      transformResponse: (response: { message?: string; error?: string }) =>
+        response,
+      transformErrorResponse: handleError,
+      invalidatesTags: (result, error, employee_ids) => [
+        { type: tags.employees, id: "LIST" },
+        ...employee_ids.map((id) => ({ type: tags.employees, id })),
+      ],
+    }),
     exportTemplate: builder.mutation<Blob, void>({
       query: () => ({
         url: "employees/export-template",
@@ -166,6 +183,7 @@ export const {
   useGetEmployeeByIdQuery,
   useUpdateEmployeeMutation,
   useDeleteEmployeeMutation,
+  useBatchDeleteEmployeesMutation,
   useExportTemplateMutation,
   useImportEmployeesMutation,
   useExportEmployeesMutation,

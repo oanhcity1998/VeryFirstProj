@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Modal, Upload, Select, Pagination } from "antd";
+import { Button, Modal, Upload, Select, Pagination, Empty, Spin } from "antd";
 import { PlusOutlined, InboxOutlined, DeleteOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import { toast } from "react-toastify";
@@ -29,15 +29,40 @@ const DepartmentList: React.FC = () => {
   const [importOpen, setImportOpen] = useState<boolean>(false);
   const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [departments, setDepartments] = useState<Department[] | null>(null); // Add state for departments
+  const [meta, setMeta] = useState<{ page: number; limit: number; total: number; pages: number } | null>(null);
 
   const { data, isLoading, isError, refetch } = useGetDepartmentsQuery(queryParams);
   const [createDepartment, { isLoading: isCreating }] = useCreateDepartmentMutation();
   const [updateDepartment, { isLoading: isUpdating }] = useUpdateDepartmentMutation();
   const [deleteDepartment, { isLoading: isDeleting }] = useDeleteDepartmentMutation();
 
-  const departments = data?.data || [];
-  const meta = data?.meta;
+  // Handle data fetching and state updates
+  useEffect(() => {
+    if (data) {
+      const cleanList = Array.isArray(data.data)
+        ? data.data.filter((item) => item && item.id !== undefined && item.id !== null)
+        : [];
+      setDepartments(cleanList);
+      if (data.meta) {
+        setMeta({
+          page: data.meta.page,
+          limit: data.meta.limit,
+          total: data.meta.total,
+          pages: data.meta.page !== undefined ? data.meta.page : 1,
+        });
+      } else {
+        setMeta(null);
+      }
+    }
+  }, [data, isError]);
 
+  // Reset meta but not departments when queryParams change
+  useEffect(() => {
+    setMeta(null);
+  }, [queryParams]);
+
+  // Error handling
   useEffect(() => {
     if (isError) {
       toast.error("Không thể tải danh sách phòng ban");
@@ -100,8 +125,7 @@ const DepartmentList: React.FC = () => {
     setQueryParams({ ...queryParams, q: value, page: 1 });
   };
 
-  const headOptions = [...new Set(departments.map((item) => item.manager_name).filter((n): n is string => !!n))];
-  const departmentNameOptions = [...new Set(departments.map((item) => item.name))];
+  const showLoading = isLoading || departments === null;
 
   return (
     <>
@@ -118,14 +142,16 @@ const DepartmentList: React.FC = () => {
             placeholder="Lọc theo tên phòng ban"
             style={{ width: 250 }}
             onChange={(name) => setQueryParams({ ...queryParams, q: name, page: 1 })}
-            options={departmentNameOptions.map((name) => ({ value: name, label: name }))}
+            options={(departments || []).map((item) => ({ value: item.name, label: item.name }))}
             allowClear
           />
           <Select
             placeholder="Lọc theo trưởng phòng"
             style={{ width: 250 }}
             onChange={(head) => setQueryParams({ ...queryParams, q: head, page: 1 })}
-            options={headOptions.map((head) => ({ value: head, label: head }))}
+            options={(departments || [])
+              .filter((item) => item.manager_name)
+              .map((item) => ({ value: item.manager_name, label: item.manager_name }))}
             allowClear
           />
           <Button
@@ -161,23 +187,35 @@ const DepartmentList: React.FC = () => {
         </div>
       </div>
 
-      <TableDepartment
-        data={departments}
-        selectedRowKeys={selectedRowKeys}
-        setSelectedRowKeys={setSelectedRowKeys}
-        onEdit={handleEdit}
-        loading={isLoading || isCreating || isUpdating || isDeleting}
-      />
-
-      {meta && departments.length > 0 && (
-        <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
-          <Pagination
-            current={meta.page}
-            pageSize={meta.limit}
-            total={meta.total}
-            onChange={(page) => setQueryParams({ ...queryParams, page })}
-            showSizeChanger={false}
+      {showLoading ? (
+        <div style={{ textAlign: "center", padding: "50px 0" }}>
+          <Spin size="large" />
+        </div>
+      ) : departments && departments.length > 0 ? (
+        <>
+          <TableDepartment
+            data={departments}
+            selectedRowKeys={selectedRowKeys}
+            setSelectedRowKeys={setSelectedRowKeys}
+            onEdit={handleEdit}
+            loading={isCreating || isUpdating || isDeleting}
           />
+          {meta && (
+            <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
+              <Pagination
+                current={meta.page}
+                pageSize={meta.limit}
+                total={meta.total}
+                onChange={(page) => setQueryParams({ ...queryParams, page })}
+                showSizeChanger={false}
+              />
+            </div>
+          )}
+        </>
+      ) : (
+        <div style={{ textAlign: "center", padding: "50px 0", color: "#888" }}>
+          <Empty description="Không có phòng ban nào để hiển thị" />
+          <p>Hiện tại không có dữ liệu phòng ban. Vui lòng thêm phòng ban mới!</p>
         </div>
       )}
 

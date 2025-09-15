@@ -36,6 +36,7 @@ export const store = configureStore({
       .concat(authService.middleware)
       .concat(employeeService.middleware)
       .concat(departmentService.middleware)
+
       .concat(jobService.middleware),
 });
 

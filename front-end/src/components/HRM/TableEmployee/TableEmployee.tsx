@@ -22,9 +22,13 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
   loading = false,
   onEdit,
 }) => {
-  const allKeys = data.map((item) => item.id.toString());
-  const isAllChecked = selectedRowKeys.length === data.length;
-  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
+  // Đảm bảo data luôn là mảng Employee hợp lệ, không có phần tử null/undefined và id hợp lệ
+  const safeData: Employee[] = Array.isArray(data)
+    ? data.filter((item) => item && item.id !== undefined && item.id !== null)
+    : [];
+  const allKeys = safeData.map((item) => item.id.toString());
+  const isAllChecked = selectedRowKeys.length === safeData.length;
+  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < safeData.length;
 
   const columns = [
     {
@@ -184,12 +188,15 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
   return (
     <Table
       columns={columns}
-      dataSource={data}
+      dataSource={safeData}
       loading={loading}
       rowKey="id"
       scroll={{ x: 2000, y: 600 }}
       sticky={{ offsetHeader: 64 }}
-      rowClassName={(record: Employee) => (selectedRowKeys.includes(record.id.toString()) ? "selected-row" : "")}
+      rowClassName={(record: Employee) => {
+        const key = record?.id?.toString?.() ?? "";
+        return selectedRowKeys.includes(key) ? "selected-row" : "";
+      }}
       pagination={false}
     />
   );

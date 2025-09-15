@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { Form, Row, Col, Card, Input, DatePicker, Breadcrumb } from "antd";
+import { Form, Row, Col, Card, Input, DatePicker, Breadcrumb, Spin } from "antd";
 import dayjs from "dayjs";
 import "./EmployeeDetail.css";
 import { ROUTES_APP } from "../../../app/routes";
@@ -65,8 +65,21 @@ const EmployeeDetail: React.FC = () => {
     }
   }, [data, isError, form, navigate, id]);
 
-  if (isLoading) return <div>Đang tải...</div>;
-  if (isError || !data) return <div>Không tìm thấy nhân viên</div>;
+  if (isLoading) {
+    return (
+      <div style={{ textAlign: "center", padding: "50px 0" }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <div style={{ textAlign: "center", padding: "50px 0", color: "#888" }}>
+        Không tìm thấy nhân viên
+      </div>
+    );
+  }
 
   const { profile } = data;
 
