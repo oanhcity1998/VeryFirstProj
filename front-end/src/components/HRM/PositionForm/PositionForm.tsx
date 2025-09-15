@@ -75,16 +75,24 @@ const PositionForm: React.FC<PositionFormProps> = ({
         <div className="form-section">
           <h3>Thông tin chức vụ</h3>
           <Form.Item
+            label="Mã chức vụ"
+            name="code"
+            rules={[{ required: true, message: "Vui lòng nhập mã chức vụ!" }]}
+          >
+            <Input placeholder="Nhập mã chức vụ (VD: GD82334)" />
+          </Form.Item>
+          <Form.Item
             label="Tên chức vụ"
             name="name"
             rules={[{ required: true, message: "Vui lòng nhập tên chức vụ!" }]}
           >
             <Input placeholder="Nhập tên chức vụ" />
           </Form.Item>
-          <Form.Item label="Mã chức vụ" name="code">
-            <Input placeholder="Nhập mã chức vụ (VD: GD82334)" />
-          </Form.Item>
-          <Form.Item label="Độ ưu tiên" name="priority_level">
+          <Form.Item
+            label="Độ ưu tiên"
+            name="priority_level"
+            rules={[{ type: 'number', min: 0, max: 5, message: 'Độ ưu tiên phải từ 0 đến 5' }]}
+          >
             <InputNumber
               min={0}
               style={{ width: "100%" }}

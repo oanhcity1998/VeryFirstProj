@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Button, Modal, Upload, Select, Pagination, Empty, Spin } from "antd";
 import { PlusOutlined, InboxOutlined, DeleteOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
@@ -18,10 +19,13 @@ import { Department } from "@/models/HRM/department.model";
 const { Dragger } = Upload;
 
 const DepartmentList: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [queryParams, setQueryParams] = useState({
-    q: "",
-    page: 1,
-    limit: 5,
+    q: searchParams.get("q") || "",
+    department_name: searchParams.get("department_name") || undefined,
+    manager_name: searchParams.get("manager_name") || undefined,
+    page: searchParams.get("page") ? Number(searchParams.get("page")) : 1,
+    limit: searchParams.get("limit") ? Number(searchParams.get("limit")) : 5,
   });
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -29,7 +33,7 @@ const DepartmentList: React.FC = () => {
   const [importOpen, setImportOpen] = useState<boolean>(false);
   const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [departments, setDepartments] = useState<Department[] | null>(null); // Add state for departments
+  const [departments, setDepartments] = useState<Department[] | null>(null);
   const [meta, setMeta] = useState<{ page: number; limit: number; total: number; pages: number } | null>(null);
 
   const { data, isLoading, isError, refetch } = useGetDepartmentsQuery(queryParams);
@@ -37,7 +41,16 @@ const DepartmentList: React.FC = () => {
   const [updateDepartment, { isLoading: isUpdating }] = useUpdateDepartmentMutation();
   const [deleteDepartment, { isLoading: isDeleting }] = useDeleteDepartmentMutation();
 
-  // Handle data fetching and state updates
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (queryParams.q) params.set("q", queryParams.q);
+    if (queryParams.department_name) params.set("department_name", queryParams.department_name);
+    if (queryParams.manager_name) params.set("manager_name", queryParams.manager_name);
+    params.set("page", queryParams.page.toString());
+    params.set("limit", queryParams.limit.toString());
+    setSearchParams(params);
+  }, [queryParams, setSearchParams]);
+
   useEffect(() => {
     if (data) {
       const cleanList = Array.isArray(data.data)
@@ -57,12 +70,6 @@ const DepartmentList: React.FC = () => {
     }
   }, [data, isError]);
 
-  // Reset meta but not departments when queryParams change
-  useEffect(() => {
-    setMeta(null);
-  }, [queryParams]);
-
-  // Error handling
   useEffect(() => {
     if (isError) {
       toast.error("Không thể tải danh sách phòng ban");
@@ -125,6 +132,10 @@ const DepartmentList: React.FC = () => {
     setQueryParams({ ...queryParams, q: value, page: 1 });
   };
 
+  const handlePageChange = (page: number, pageSize: number) => {
+    setQueryParams({ ...queryParams, page, limit: pageSize });
+  };
+
   const showLoading = isLoading || departments === null;
 
   return (
@@ -136,23 +147,28 @@ const DepartmentList: React.FC = () => {
             className="department-search-bar"
             placeholder="Tìm kiếm theo tên phòng ban"
             allowClear
+            value={queryParams.q}
+            onChange={(e) => handleSearch(e.target.value)}
             onSearch={handleSearch}
+            style={{ width: 250 }} // Standardize width
           />
           <Select
             placeholder="Lọc theo tên phòng ban"
-            style={{ width: 250 }}
-            onChange={(name) => setQueryParams({ ...queryParams, q: name, page: 1 })}
+            value={queryParams.department_name} // Bind to queryParams.department_name
+            onChange={(name) => setQueryParams({ ...queryParams, department_name: name, page: 1 })}
             options={(departments || []).map((item) => ({ value: item.name, label: item.name }))}
             allowClear
+            style={{ width: 250 }} // Standardize width
           />
           <Select
             placeholder="Lọc theo trưởng phòng"
-            style={{ width: 250 }}
-            onChange={(head) => setQueryParams({ ...queryParams, q: head, page: 1 })}
+            value={queryParams.manager_name} // Bind to queryParams.manager_name
+            onChange={(head) => setQueryParams({ ...queryParams, manager_name: head, page: 1 })}
             options={(departments || [])
               .filter((item) => item.manager_name)
               .map((item) => ({ value: item.manager_name, label: item.manager_name }))}
             allowClear
+            style={{ width: 250 }} // Standardize width
           />
           <Button
             danger
@@ -206,8 +222,9 @@ const DepartmentList: React.FC = () => {
                 current={meta.page}
                 pageSize={meta.limit}
                 total={meta.total}
-                onChange={(page) => setQueryParams({ ...queryParams, page })}
-                showSizeChanger={false}
+                onChange={handlePageChange}
+                showSizeChanger
+                pageSizeOptions={["5", "10", "20"]}
               />
             </div>
           )}

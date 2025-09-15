@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams, Link } from "react-router-dom";
 import { Button, Modal, Popover, Upload, Space, Form, Pagination, Empty, Spin } from "antd";
 import {
   PlusOutlined,
@@ -26,7 +27,7 @@ import {
   useImportEmployeesMutation,
   useExportEmployeesMutation,
 } from "@/services/HRM/employee.service";
-import { Employee, EmployeeRequest, EmployeeResponse } from "@/models/HRM/employee.model";
+import { Employee, EmployeeRequest } from "@/models/HRM/employee.model";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 
@@ -34,6 +35,7 @@ const { Dragger } = Upload;
 
 const EmployeeList: React.FC = () => {
   const [form] = Form.useForm();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -48,12 +50,15 @@ const EmployeeList: React.FC = () => {
   const [meta, setMeta] = useState<{ page: number; limit: number; total: number; pages: number } | null>(null);
 
   const [queryParams, setQueryParams] = useState({
-    q: "",
-    department_id: undefined,
-    job_id: undefined,
-    status: undefined,
-    page: 1,
-    limit: 10,
+    q: searchParams.get("q") || "",
+    department_id: searchParams.get("department_id") ? Number(searchParams.get("department_id")) : undefined,
+    job_id: searchParams.get("job_id") ? Number(searchParams.get("job_id")) : undefined,
+    status: searchParams.get("status") || undefined,
+    contractType: searchParams.get("contractType") || undefined,
+    gender: searchParams.get("gender") || undefined,
+    employee_id: searchParams.get("employee_id") ? Number(searchParams.get("employee_id")) : undefined,
+    page: searchParams.get("page") ? Number(searchParams.get("page")) : 1,
+    limit: searchParams.get("limit") ? Number(searchParams.get("limit")) : 10,
   });
 
   const { data, isLoading, isError, refetch } = useGetEmployeesQuery(queryParams);
@@ -67,7 +72,6 @@ const EmployeeList: React.FC = () => {
 
   useEffect(() => {
     if (data) {
-      // Lọc bỏ phần tử null/undefined và phần tử không có id hợp lệ
       const cleanList = Array.isArray(data.data)
         ? data.data.filter((item) => item && item.id !== undefined && item.id !== null)
         : [];
@@ -85,9 +89,21 @@ const EmployeeList: React.FC = () => {
     }
   }, [data, isError, isCreateError, isUpdateError]);
 
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (queryParams.q) params.set("q", queryParams.q);
+    if (queryParams.department_id) params.set("department_id", queryParams.department_id.toString());
+    if (queryParams.job_id) params.set("job_id", queryParams.job_id.toString());
+    if (queryParams.status) params.set("status", queryParams.status);
+    if (queryParams.contractType) params.set("contractType", queryParams.contractType);
+    if (queryParams.gender) params.set("gender", queryParams.gender);
+    if (queryParams.employee_id) params.set("employee_id", queryParams.employee_id.toString());
+    params.set("page", queryParams.page.toString());
+    params.set("limit", queryParams.limit.toString());
+    setSearchParams(params);
+  }, [queryParams, setSearchParams]);
 
   const handleEdit = (record: Employee) => {
-    console.log("Editing employee:", record);
     setEditingEmployee(record);
     form.setFieldsValue({
       name: record.name,
@@ -123,16 +139,13 @@ const EmployeeList: React.FC = () => {
 
   const handleDelete = async () => {
     if (selectedRowKeys.length === 0) return;
-
     try {
       setDeleting(true);
       const employeeIds = selectedRowKeys.map((id) => parseInt(id));
       const response = await batchDeleteEmployees(employeeIds).unwrap();
-
       if (response.error) {
         throw new Error(response.error);
       }
-
       const newData = (employees || []).filter((item) => !selectedRowKeys.includes(item.id.toString()));
       setEmployees(newData);
       setMeta((prev) => (prev ? { ...prev, total: newData.length } : null));
@@ -257,10 +270,7 @@ const EmployeeList: React.FC = () => {
       }
       setImportOpen(false);
     } catch (err: any) {
-      toast.error(
-        "Không thể import nhân sự: " +
-        (err.message || "Lỗi không xác định")
-      );
+      toast.error("Không thể import nhân sự: " + (err.message || "Lỗi không xác định"));
     } finally {
       setImporting(false);
     }
@@ -278,10 +288,7 @@ const EmployeeList: React.FC = () => {
         saveAs(response, `employees_export_${dayjs().format("YYYYMMDD_HHmmss")}.xlsx`);
         toast.success("Xuất danh sách nhân sự thành công");
       } else {
-        generateExcel(
-          (response as { data?: Employee[] }).data || [],
-          `employees_export_${dayjs().format("YYYYMMDD_HHmmss")}.xlsx`
-        );
+        generateExcel((response as { data?: Employee[] }).data || [], `employees_export_${dayjs().format("YYYYMMDD_HHmmss")}.xlsx`);
         toast.success("Xuất danh sách nhân sự thành công");
       }
     } catch (err: any) {
@@ -306,13 +313,16 @@ const EmployeeList: React.FC = () => {
       department_id: values.department_id || undefined,
       job_id: values.job_id || undefined,
       status: values.status || undefined,
+      contractType: values.contractType || undefined,
+      gender: values.gender || undefined,
+      employee_id: values.employee_id || undefined,
       page: 1,
     });
     setFilterOpen(false);
   };
 
-  const handlePageChange = (page: number) => {
-    setQueryParams({ ...queryParams, page });
+  const handlePageChange = (page: number, pageSize: number) => {
+    setQueryParams({ ...queryParams, page, limit: pageSize });
   };
 
   const handleSave = async (values: EmployeeRequest) => {
@@ -386,7 +396,6 @@ const EmployeeList: React.FC = () => {
 
   const showLoading = isLoading || employees === null;
 
-
   return (
     <>
       <div className="employee-list-header">
@@ -396,8 +405,10 @@ const EmployeeList: React.FC = () => {
             className="employee-search-bar"
             placeholder="Tìm kiếm theo họ và tên"
             allowClear
+            value={queryParams.q}
+            onChange={(e) => handleSearch(e.target.value)}
             onSearch={handleSearch}
-            name="search"
+            style={{ width: 250 }} // Standardize width
           />
           <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>
             Bộ lọc
@@ -532,18 +543,14 @@ const EmployeeList: React.FC = () => {
             onEdit={handleEdit}
           />
           {meta && (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                marginTop: 16,
-              }}
-            >
+            <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
               <Pagination
                 current={meta.page}
                 pageSize={meta.limit}
                 total={meta.total}
                 onChange={handlePageChange}
+                showSizeChanger
+                pageSizeOptions={["10", "20", "50"]}
               />
             </div>
           )}
@@ -551,10 +558,7 @@ const EmployeeList: React.FC = () => {
       ) : (
         <div style={{ textAlign: "center", padding: "50px 0", color: "#888" }}>
           <Empty description="Không có nhân viên nào để hiển thị" />
-          <p>
-            Hiện tại không có dữ liệu nhân sự. Vui lòng thêm nhân viên
-            mới!
-          </p>
+          <p>Hiện tại không có dữ liệu nhân sự. Vui lòng thêm nhân viên mới!</p>
         </div>
       )}
 
@@ -581,6 +585,7 @@ const EmployeeList: React.FC = () => {
         open={filterOpen}
         onClose={() => setFilterOpen(false)}
         onConfirm={handleFilter}
+        queryParams={queryParams} // Pass queryParams to initialize form
       />
     </>
   );
