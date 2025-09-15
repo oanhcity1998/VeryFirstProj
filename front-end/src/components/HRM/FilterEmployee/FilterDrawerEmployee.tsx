@@ -128,8 +128,8 @@ const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({
         {/* Giới tính */}
         <Form.Item label="Giới tính" name="gender">
           <Select placeholder="Chọn giới tính" allowClear>
-            <Option value="male">Nam</Option>
-            <Option value="female">Nữ</Option>
+            <Option value="Nam">Nam</Option>
+            <Option value="Nữ">Nữ</Option>
           </Select>
         </Form.Item>
 

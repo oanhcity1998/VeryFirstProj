@@ -33,6 +33,7 @@ export const employeeService = createApi({
           job_id: params.job_id,
           status: params.status,
           page: params.page ?? 1,
+          gender: params.gender,
           limit: params.limit ?? 10,
         },
       }),

@@ -73,6 +73,7 @@ export interface EmployeeQueryParams {
   department_id?: number;
   job_id?: number;
   status?: string;
+  gender?: "Nam" | "Nữ";
   page?: number;
   limit?: number;
 }
