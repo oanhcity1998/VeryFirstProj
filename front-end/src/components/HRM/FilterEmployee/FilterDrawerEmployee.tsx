@@ -4,7 +4,6 @@ import { useGetEmployeesQuery } from "@/services/HRM/employee.service";
 import { useGetDepartmentsQuery } from "@/services/HRM/department.service";
 import { useGetJobsQuery } from "@/services/HRM/position.service";
 
-
 const { Option } = Select;
 
 interface FilterDrawerEmployeeProps {
@@ -20,14 +19,12 @@ const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({
 }) => {
   const [form] = Form.useForm();
 
-  // Lấy dữ liệu từ API
-  const { data: employeesData, isLoading: employeesLoading } =
-    useGetEmployeesQuery({ limit: 1000 });
-  const { data: departmentsData, isLoading: departmentsLoading } =
-    useGetDepartmentsQuery({ limit: 1000 });
-  const { data: jobsData, isLoading: jobsLoading } =
-    useGetJobsQuery({ limit: 1000 });
+  // Fetch data from APIs
+  const { data: employeesData, isLoading: employeesLoading } = useGetEmployeesQuery({ limit: 1000 });
+  const { data: departmentsData, isLoading: departmentsLoading } = useGetDepartmentsQuery({ limit: 1000 });
+  const { data: jobsData, isLoading: jobsLoading } = useGetJobsQuery({ limit: 1000 });
 
+  // Handle form submission
   const handleConfirm = () => {
     form
       .validateFields()
@@ -40,6 +37,11 @@ const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({
       });
   };
 
+  // Handle form reset
+  const handleClearAll = () => {
+    form.resetFields();
+  };
+
   return (
     <Drawer
       title="Bộ lọc nhân sự"
@@ -49,8 +51,11 @@ const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({
       width={350}
       footer={
         <div className="filter-footer">
-          <Button danger onClick={onClose}>
-            Huỷ
+          <Button danger onClick={handleClearAll}>
+            Xóa tất cả
+          </Button>
+          <Button onClick={onClose}>
+            Hủy
           </Button>
           <Button type="primary" onClick={handleConfirm}>
             Xác nhận
@@ -61,7 +66,11 @@ const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({
       <Form layout="vertical" form={form}>
         {/* Phòng ban */}
         <Form.Item label="Phòng ban" name="department_id">
-          <Select placeholder="Chọn phòng ban" loading={departmentsLoading}>
+          <Select
+            placeholder="Chọn phòng ban"
+            loading={departmentsLoading}
+            allowClear // Add clear button
+          >
             {departmentsData?.data.map((dep) => (
               <Option key={dep.id} value={dep.id}>
                 {dep.name}
@@ -72,7 +81,11 @@ const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({
 
         {/* Vị trí */}
         <Form.Item label="Vị trí" name="job_id">
-          <Select placeholder="Chọn vị trí" loading={jobsLoading}>
+          <Select
+            placeholder="Chọn vị trí"
+            loading={jobsLoading}
+            allowClear // Add clear button
+          >
             {jobsData?.data.map((job) => (
               <Option key={job.id} value={job.id}>
                 {job.name}
@@ -83,7 +96,10 @@ const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({
 
         {/* Loại hợp đồng */}
         <Form.Item label="Loại hợp đồng" name="contractType">
-          <Select placeholder="Chọn loại hợp đồng">
+          <Select
+            placeholder="Chọn loại hợp đồng"
+            allowClear // Add clear button
+          >
             <Option value="trial">Hợp đồng thử việc</Option>
             <Option value="fixed_term">Hợp đồng xác định thời hạn</Option>
             <Option value="indefinite">Hợp đồng không xác định thời hạn</Option>
@@ -92,7 +108,10 @@ const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({
 
         {/* Giới tính */}
         <Form.Item label="Giới tính" name="gender">
-          <Select placeholder="Chọn giới tính">
+          <Select
+            placeholder="Chọn giới tính"
+            allowClear // Add clear button
+          >
             <Option value="male">Nam</Option>
             <Option value="female">Nữ</Option>
           </Select>
@@ -100,10 +119,14 @@ const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({
 
         {/* Mã nhân viên */}
         <Form.Item label="Mã nhân viên" name="employee_id">
-          <Select placeholder="Chọn mã nhân viên" loading={employeesLoading}>
+          <Select
+            placeholder="Chọn mã nhân viên"
+            loading={employeesLoading}
+            allowClear // Add clear button
+          >
             {employeesData?.data.map((emp: any) => (
               <Option key={emp.id} value={emp.id}>
-                {emp.code} - {emp.fullName}
+                {emp.code} - {emp.name} {/* Fixed: Use emp.name instead of emp.fullName */}
               </Option>
             ))}
           </Select>
