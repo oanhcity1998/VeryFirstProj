@@ -322,4 +322,73 @@ class JobAPI(http.Controller):
                 status=500
             )
 
-    
+    # delete multiple jobs
+    @http.route('/api/hr/jobs', type='http', auth='user', methods=['DELETE'], csrf=False)
+    def delete_multiple_jobs(self, **kwargs):
+        try:
+            # Parse request data
+            try:
+                data = json.loads(request.httprequest.data.decode('utf-8'))
+                job_ids = data.get('job_ids', [])
+                if not isinstance(job_ids, list) or not all(isinstance(i, int) for i in job_ids):
+                    raise ValueError
+            except:
+                return request.make_response(
+                    json.dumps({"error": "Invalid JSON body or job_ids"}),
+                    headers=[('Content-Type', 'application/json')],
+                    status=400
+                )
+
+            if not job_ids:
+                return request.make_response(
+                    json.dumps({"error": "No job IDs provided"}),
+                    headers=[('Content-Type', 'application/json')],
+                    status=400
+                )
+
+            jobs = request.env['hr.job'].sudo().search([
+                ('id', 'in', job_ids)
+            ])
+
+            if not jobs:
+                return request.make_response(
+                    json.dumps({"error": "No matching jobs found"}),
+                    headers=[('Content-Type', 'application/json')],
+                    status=404
+                )
+
+            undeleted_jobs = []
+            for job in jobs:
+                employee_count = request.env['hr.employee'].sudo().search_count([
+                    ('job_id', '=', job.id)
+                ])
+                if employee_count > 0:
+                    undeleted_jobs.append({
+                        "id": job.id,
+                        "name": job.name,
+                        "employee_count": employee_count
+                    })
+                else:
+                    job.unlink()
+
+            if undeleted_jobs:
+                return request.make_response(
+                    json.dumps({
+                        "error": "Some jobs could not be deleted because they have employees assigned",
+                        "undeleted_jobs": undeleted_jobs
+                    }),
+                    headers=[('Content-Type', 'application/json')],
+                    status=400
+                )
+
+            return request.make_response(
+                json.dumps({"message": "Jobs deleted successfully"}),
+                headers=[('Content-Type', 'application/json')]
+            )
+
+        except Exception as e:
+            return request.make_response(
+                json.dumps({"error": str(e)}),
+                headers=[('Content-Type', 'application/json')],
+                status=500
+            )

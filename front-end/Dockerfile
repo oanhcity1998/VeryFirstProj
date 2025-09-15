@@ -11,5 +11,5 @@ COPY . .
 RUN yarn build
 
 EXPOSE 3000
-
-CMD ["yarn", "dev", "--port", "3000"]
+RUN yarn global add serve
+CMD ["serve", "-s", "dist", "-l", "3000"]
