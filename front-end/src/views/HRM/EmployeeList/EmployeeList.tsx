@@ -85,10 +85,6 @@ const EmployeeList: React.FC = () => {
     }
   }, [data, isError, isCreateError, isUpdateError]);
 
-  // Không setEmployees(null) khi queryParams đổi, chỉ reset meta để giữ loading đúng
-  useEffect(() => {
-    setMeta(null);
-  }, [queryParams]);
 
   const handleEdit = (record: Employee) => {
     console.log("Editing employee:", record);

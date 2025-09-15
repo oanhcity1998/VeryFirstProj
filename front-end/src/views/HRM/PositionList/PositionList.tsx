@@ -181,25 +181,6 @@ const PositionList: React.FC = () => {
             }))}
             allowClear
           />
-          <Popover
-            content={
-              <Space direction="vertical" style={{ width: "100%" }}>
-                <Button
-                  type="text"
-                  onClick={() => setImportOpen(true)}
-                  disabled={isCreating}
-                  icon={<UploadOutlined />}
-                  block
-                >
-                  Nhập chức vụ
-                </Button>
-              </Space>
-            }
-            trigger="click"
-            placement="bottom"
-          >
-            <Button icon={<SettingOutlined />}>Cài đặt</Button>
-          </Popover>
           <Modal
             open={importOpen}
             title="Import dữ liệu chức vụ"

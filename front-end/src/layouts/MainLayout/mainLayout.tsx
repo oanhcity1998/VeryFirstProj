@@ -89,7 +89,7 @@ const MainLayout = () => {
   };
 
   return (
-    <Layout className="main-layout" style={{ minHeight: "100vh" }}>
+    <Layout className="main-layout" style={{ minHeight: "140vh" }}>
       <Sider
         theme="dark"
         collapsible
