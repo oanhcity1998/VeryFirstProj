@@ -691,7 +691,7 @@ class EmployeeAPI(http.Controller):
                     results['total_errors'] += 1
 
             return request.make_response(
-                json.dumps(results),
+                json.dumps(results, ensure_ascii=False),
                 headers=[('Content-Type', 'application/json')]
             )
 
@@ -699,7 +699,7 @@ class EmployeeAPI(http.Controller):
             # Rollback transaction in case of error
             request.env.cr.rollback()
             return request.make_response(
-                json.dumps({"error": f"Import failed: {str(e)}"}),
+                json.dumps({"error": f"Import failed: {str(e)}"}, ensure_ascii=False),
                 headers=[('Content-Type', 'application/json')],
                 status=500
             )
