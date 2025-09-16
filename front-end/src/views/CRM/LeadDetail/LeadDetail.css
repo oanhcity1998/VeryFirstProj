@@ -90,3 +90,30 @@
   color: #555;
 }
 
+/* Make buttons inside xác định popover equal width */
+.popover-buttons {
+  width: 115px; /* adjust as you like */
+  
+}
+
+.popover-buttons .ant-btn {
+  text-align: center;
+  display: block;
+  width: 100%;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;       /* spacing between items */
+  margin-bottom: 16px;
+}
+
+.option-row .option-label {
+  margin: 0;       /* remove default h3 margin */
+  min-width: 120px; /* keeps labels aligned */
+  font-size: 16px;
+  font-weight: 600;
+}
+
+

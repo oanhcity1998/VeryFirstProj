@@ -1,15 +1,18 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Button, Modal, Select, Pagination, Empty, Spin, Form } from "antd";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { Button, Modal, Select, Pagination, Empty } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import Search from "antd/es/input/Search";
 import TableLead from "@/components/CRM/TableLead/TableLead";
 import LeadForm from "@/components/CRM/LeadForm/LeadForm";
+import { ROUTES_APP } from "@/app/routes";
 import "@/index.css";
 
+const { Option } = Select;
+
 interface Lead {
-  id: number;
+  id: string;
   leadName: string;
   contactName: string;
   email: string;
@@ -17,10 +20,11 @@ interface Lead {
   priority: string;
   owner: string;
   status: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const LeadList: React.FC = () => {
-  const [form] = Form.useForm();
   const [searchParams, setSearchParams] = useSearchParams();
   const [queryParams, setQueryParams] = useState({
     q: searchParams.get("q") || "",
@@ -31,7 +35,7 @@ const LeadList: React.FC = () => {
   });
   const [data, setData] = useState<Lead[]>([
     {
-      id: 1,
+      id: "1",
       leadName: "Khách tiềm năng 1",
       contactName: "Nguyễn Thùy Linh",
       email: "thuy@example.com",
@@ -39,6 +43,8 @@ const LeadList: React.FC = () => {
       priority: "Cao",
       owner: "Văn A",
       status: "Khách hàng mới",
+      createdAt: "2025-09-01",
+      updatedAt: "2025-09-10",
     },
   ]);
   const [meta, setMeta] = useState<{ page: number; limit: number; total: number; pages: number }>({
@@ -50,8 +56,9 @@ const LeadList: React.FC = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [openForm, setOpenForm] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -66,14 +73,14 @@ const LeadList: React.FC = () => {
   const handleSave = async (values: Lead) => {
     try {
       if (selectedLead) {
-        setData((prev) =>
-          prev.map((item) => (item.id === selectedLead.id ? { ...item, ...values } : item))
-        );
+        setData((prev) => prev.map((item) => (item.id === selectedLead.id ? values : item)));
         toast.success("Cập nhật khách hàng tiềm năng thành công");
       } else {
         const newLead: Lead = {
-          id: Date.now(),
+          id: String(Date.now()),
           ...values,
+          createdAt: new Date().toISOString().split("T")[0],
+          updatedAt: new Date().toISOString().split("T")[0],
         };
         setData((prev) => [...prev, newLead]);
         setMeta((prev) => ({
@@ -83,7 +90,7 @@ const LeadList: React.FC = () => {
         }));
         toast.success("Thêm khách hàng tiềm năng thành công");
       }
-      setIsModalOpen(false);
+      setOpenForm(false);
       setSelectedLead(null);
     } catch (err: any) {
       toast.error(`Không thể ${selectedLead ? "cập nhật" : "thêm"} khách hàng tiềm năng`);
@@ -93,7 +100,7 @@ const LeadList: React.FC = () => {
   const handleDelete = async () => {
     try {
       setDeleting(true);
-      setData((prev) => prev.filter((item) => !selectedRowKeys.includes(item.id.toString())));
+      setData((prev) => prev.filter((item) => !selectedRowKeys.includes(item.id)));
       setMeta((prev) => ({
         ...prev,
         total: prev.total - selectedRowKeys.length,
@@ -111,7 +118,11 @@ const LeadList: React.FC = () => {
 
   const handleEdit = (record: Lead) => {
     setSelectedLead(record);
-    setIsModalOpen(true);
+    setOpenForm(true);
+  };
+
+  const handleRowClick = (record: Lead) => {
+    navigate(ROUTES_APP.crm.leadDetail.replace(":id", record.id));
   };
 
   const handleSearch = (value: string) => {
@@ -191,15 +202,15 @@ const LeadList: React.FC = () => {
             okButtonProps={{ danger: true, loading: deleting }}
             centered
           >
-            <p>Bạn có chắc muốn xóa khách hàng tiềm năng này? Hành động này không thể hoàn tác.</p>
+            <p>Bạn có chắc muốn xóa {selectedRowKeys.length} khách hàng tiềm năng đã chọn?</p>
           </Modal>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsModalOpen(true)}>
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpenForm(true)}>
             Tạo
           </Button>
         </div>
       </div>
 
-      {data.length === 0 ? (
+      {filteredData.length === 0 ? (
         <div className="empty-message">
           <Empty description="Không có khách hàng tiềm năng nào để hiển thị" />
           <p>Hiện tại không có dữ liệu khách hàng tiềm năng. Vui lòng thêm mới!</p>
@@ -211,36 +222,34 @@ const LeadList: React.FC = () => {
             selectedRowKeys={selectedRowKeys}
             setSelectedRowKeys={setSelectedRowKeys}
             onEdit={handleEdit}
+            onRowClick={handleRowClick}
             loading={false}
           />
-          {meta && (
-            <div className="pagination-container">
-              <Pagination
-                current={meta.page}
-                pageSize={meta.limit}
-                total={meta.total}
-                onChange={handlePageChange}
-                showSizeChanger
-                pageSizeOptions={["5", "10", "20"]}
-              />
-            </div>
-          )}
+          <div className="pagination-container">
+            <Pagination
+              current={meta.page}
+              pageSize={meta.limit}
+              total={meta.total}
+              onChange={handlePageChange}
+              showSizeChanger
+              pageSizeOptions={["5", "10", "20"]}
+            />
+          </div>
         </>
       )}
 
       <LeadForm
-        open={isModalOpen}
+        open={openForm}
         onCancel={() => {
-          setIsModalOpen(false);
+          setOpenForm(false);
           setSelectedLead(null);
         }}
         onSave={handleSave}
         lead={selectedLead}
-        modalTitle={selectedLead ? "Cập nhật khách hàng tiềm năng" : "Thêm khách hàng tiềm năng"}
+        modalTitle={selectedLead ? "Chỉnh sửa khách hàng tiềm năng" : "Thêm khách hàng tiềm năng"}
         cancelText="Hủy"
-        saveText={selectedLead ? "Lưu thay đổi" : "Xác nhận"}
+        saveText={selectedLead ? "Xác nhận" : "Xác nhận"}
         loading={false}
-        form={form}
       />
     </>
   );

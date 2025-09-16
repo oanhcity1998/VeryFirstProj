@@ -1,10 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { Modal, Button, Row, Col, Input, Select, Table, Card, Form, DatePicker } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import React, { useEffect } from "react";
+import { Modal, Button, Row, Col, Input, Select, Card, Form, DatePicker, InputNumber } from "antd";
 import dayjs from "dayjs";
 import "@/index.css";
 
 const { Option } = Select;
+
+// Mock serviceOpportunityOptions
+export const serviceOpportunityOptions: Product[] = [
+  {
+    id: 1,
+    productName: "Dịch vụ A",
+    productType: "Thiết bị văn phòng",
+    priceVND: 10000000,
+    priceUSD: 400,
+    vat: 10,
+    afterVatVND: 11000000,
+    afterVatUSD: 440,
+  },
+  {
+    id: 2,
+    productName: "Dịch vụ B",
+    productType: "Vật tư tiêu hao",
+    priceVND: 5000000,
+    priceUSD: 200,
+    vat: 8,
+    afterVatVND: 5400000,
+    afterVatUSD: 216,
+  },
+];
+
+// Mock opportunityStages
+export const opportunityStages = ["Mới", "Đạt yêu cầu", "Đàm phán", "Đóng"] as const;
 
 interface Product {
   id: number;
@@ -18,7 +44,7 @@ interface Product {
 }
 
 interface Opportunity {
-  id: number;
+  id: string;
   name: string;
   contactName: string;
   company: string;
@@ -42,7 +68,6 @@ interface OpportunityFormProps {
   saveText?: string;
   loading?: boolean;
   initialValues?: Opportunity | null;
-  form: any;
 }
 
 const OpportunityForm: React.FC<OpportunityFormProps> = ({
@@ -50,214 +75,80 @@ const OpportunityForm: React.FC<OpportunityFormProps> = ({
   open,
   onCancel,
   onSave,
-  modalTitle = "Thêm cơ hội",
+  modalTitle,
   cardTitle = "Thông tin cơ hội",
   cancelText = "Hủy",
-  saveText = "Xác nhận",
+  saveText = mode === "create" ? "Xác nhận" : "Lưu thay đổi",
   loading = false,
   initialValues,
-  form,
 }) => {
-  const [services, setServices] = useState<Product[]>(
-    initialValues?.service || []
-  );
+  const [form] = Form.useForm();
 
   useEffect(() => {
-    if (initialValues) {
+    if (initialValues && open) {
       form.setFieldsValue({
-        name: initialValues.name || "",
-        contactName: initialValues.contactName || "",
-        company: initialValues.company || "",
-        expectedValue: initialValues.expectedValue || undefined,
+        name: initialValues.name,
+        contactName: initialValues.contactName,
+        company: initialValues.company,
+        expectedValue: initialValues.expectedValue,
         expectedCloseDate: initialValues.expectedCloseDate
           ? dayjs(initialValues.expectedCloseDate, "YYYY-MM-DD")
           : null,
-        probability: initialValues.probability || undefined,
-        priority: initialValues.priority || undefined,
-        owner: initialValues.owner || "",
-        stage: initialValues.stage || undefined,
+        service: initialValues.service?.map((s) => s.id),
+        probability: initialValues.probability,
+        priority: initialValues.priority,
+        owner: initialValues.owner,
+        stage: initialValues.stage,
       });
-      setServices(initialValues.service || []);
-    } else {
+    } else if (open) {
       form.resetFields();
-      setServices([]);
     }
-  }, [initialValues, form]);
+  }, [initialValues, open, form]);
 
-  const handleDelete = (id: number) => {
-    setServices(services.filter((s) => s.id !== id));
-  };
+  const handleOk = () => {
+    form.validateFields().then((values) => {
+      const selectedProducts = values.service?.map((id: number) =>
+        serviceOpportunityOptions.find((p) => p.id === id)
+      ) || [];
 
-  const handleAddService = () => {
-    const newId = services.length > 0 ? Math.max(...services.map((s) => s.id)) + 1 : 1;
-    setServices([
-      ...services,
-      {
-        id: newId,
-        productName: "",
-        productType: "Thiết bị văn phòng",
-        priceVND: 0,
-        priceUSD: 0,
-        vat: 10,
-        afterVatVND: 0,
-        afterVatUSD: 0,
-      },
-    ]);
-  };
-
-  const handleSave = async () => {
-    try {
-      const values = await form.validateFields();
-      if (services.length === 0) {
-        form.setFields([
-          {
-            name: "service",
-            errors: ["Vui lòng thêm ít nhất một dịch vụ!"],
-          },
-        ]);
-        return;
-      }
-      onSave({
-        ...values,
-        id: initialValues?.id || Date.now(),
+      const payload: Opportunity = {
+        id: initialValues?.id || String(Date.now()),
+        name: values.name,
+        contactName: values.contactName,
+        company: values.company,
+        expectedValue: values.expectedValue,
         expectedCloseDate: values.expectedCloseDate
           ? values.expectedCloseDate.format("YYYY-MM-DD")
           : "",
-        service: services.map((s) => ({
-          ...s,
-          afterVatVND: (s.priceVND * (100 + s.vat)) / 100,
-          afterVatUSD: (s.priceUSD * (100 + s.vat)) / 100,
-        })),
-      });
-    } catch (error) {
-      console.error("Validation failed:", error);
-    }
-  };
+        service: selectedProducts,
+        probability: values.probability,
+        priority: values.priority,
+        owner: values.owner,
+        stage: values.stage,
+      };
 
-  const columns = [
-    {
-      title: "Tên dịch vụ",
-      dataIndex: "productName",
-      key: "productName",
-      render: (_: any, record: Product, index: number) => (
-        <Input
-          value={record.productName}
-          onChange={(e) => {
-            const newServices = [...services];
-            newServices[index].productName = e.target.value;
-            setServices(newServices);
-          }}
-          placeholder="Nhập tên dịch vụ"
-        />
-      ),
-    },
-    {
-      title: "Loại dịch vụ",
-      dataIndex: "productType",
-      key: "productType",
-      render: (_: any, record: Product, index: number) => (
-        <Select
-          value={record.productType}
-          onChange={(value) => {
-            const newServices = [...services];
-            newServices[index].productType = value;
-            setServices(newServices);
-          }}
-          style={{ width: "100%" }}
-        >
-          <Option value="Thiết bị văn phòng">Thiết bị văn phòng</Option>
-          <Option value="Vật tư tiêu hao">Vật tư tiêu hao</Option>
-        </Select>
-      ),
-    },
-    {
-      title: "Giá (VND)",
-      dataIndex: "priceVND",
-      key: "priceVND",
-      render: (_: any, record: Product, index: number) => (
-        <Input
-          type="number"
-          value={record.priceVND}
-          onChange={(e) => {
-            const newServices = [...services];
-            newServices[index].priceVND = Number(e.target.value);
-            setServices(newServices);
-          }}
-          placeholder="Nhập giá VND"
-        />
-      ),
-    },
-    {
-      title: "Giá (USD)",
-      dataIndex: "priceUSD",
-      key: "priceUSD",
-      render: (_: any, record: Product, index: number) => (
-        <Input
-          type="number"
-          value={record.priceUSD}
-          onChange={(e) => {
-            const newServices = [...services];
-            newServices[index].priceUSD = Number(e.target.value);
-            setServices(newServices);
-          }}
-          placeholder="Nhập giá USD"
-        />
-      ),
-    },
-    {
-      title: "VAT",
-      dataIndex: "vat",
-      key: "vat",
-      render: (_: any, record: Product, index: number) => (
-        <Input
-          type="number"
-          value={record.vat}
-          onChange={(e) => {
-            const newServices = [...services];
-            newServices[index].vat = Number(e.target.value);
-            setServices(newServices);
-          }}
-          placeholder="Nhập VAT (%)"
-        />
-      ),
-    },
-    {
-      title: "Giá sau VAT (VND)",
-      key: "afterVatVND",
-      render: (_: any, record: Product) =>
-        ((record.priceVND * (100 + record.vat)) / 100).toLocaleString("vi-VN"),
-    },
-    {
-      title: "Giá sau VAT (USD)",
-      key: "afterVatUSD",
-      render: (_: any, record: Product) =>
-        ((record.priceUSD * (100 + record.vat)) / 100).toLocaleString("en-US"),
-    },
-    {
-      title: "Hành động",
-      key: "action",
-      render: (_: any, record: Product) => (
-        <Button danger type="text" onClick={() => handleDelete(record.id)}>
-          ❌
-        </Button>
-      ),
-    },
-  ];
+      onSave(payload);
+      if (mode === "create") {
+        form.resetFields();
+      }
+    });
+  };
 
   return (
     <Modal
-      title={<h2>{modalTitle}</h2>}
+      title={<h2>{modalTitle || (mode === "create" ? "Thêm cơ hội" : "Chỉnh sửa cơ hội")}</h2>}
       open={open}
       onCancel={onCancel}
       footer={[
         <Button key="cancel" onClick={onCancel} disabled={loading}>
           {cancelText}
         </Button>,
-        <Button key="save" type="primary" onClick={handleSave} loading={loading}>
+        <Button key="save" type="primary" onClick={handleOk} loading={loading}>
           {saveText}
         </Button>,
       ]}
-      width={1000}
+      width={800}
+      destroyOnClose
     >
       <Form form={form} layout="vertical" labelAlign="left">
         <Card title={cardTitle} className="card-section">
@@ -280,16 +171,25 @@ const OpportunityForm: React.FC<OpportunityFormProps> = ({
               <Form.Item
                 label="Công ty"
                 name="company"
-                rules={[{ required: true, message: "Vui lòng nhập công ty!" }]}
+                rules={[{ required: true, message: "Vui lòng nhập tên công ty!" }]}
               >
-                <Input placeholder="Nhập công ty" />
+                <Input placeholder="Nhập tên công ty" />
               </Form.Item>
               <Form.Item
                 label="Giá trị dự kiến (VND)"
                 name="expectedValue"
-                rules={[{ required: true, message: "Vui lòng nhập giá trị dự kiến!" }]}
+                rules={[
+                  { required: true, message: "Vui lòng nhập giá trị dự kiến!" },
+                  { type: "number", min: 0, message: "Giá trị dự kiến phải lớn hơn hoặc bằng 0!" },
+                ]}
               >
-                <Input type="number" placeholder="Nhập giá trị dự kiến" />
+                <InputNumber
+                  style={{ width: "100%" }}
+                  min={0}
+                  step={1000000}
+                  formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                  parser={(value) => value?.replace(/\D/g, "") as any}
+                />
               </Form.Item>
               <Form.Item
                 label="Ngày chốt dự kiến"
@@ -303,16 +203,24 @@ const OpportunityForm: React.FC<OpportunityFormProps> = ({
               <Form.Item
                 label="Xác suất (%)"
                 name="probability"
-                rules={[{ required: true, message: "Vui lòng nhập xác suất!" }]}
+                rules={[
+                  { required: true, message: "Vui lòng nhập xác suất!" },
+                  { type: "number", min: 0, max: 100, message: "Xác suất phải từ 0 đến 100!" },
+                ]}
               >
-                <Input type="number" placeholder="Nhập xác suất" min={0} max={100} />
+                <InputNumber
+                  style={{ width: "100%" }}
+                  min={0}
+                  max={100}
+                  placeholder="Nhập xác suất"
+                />
               </Form.Item>
               <Form.Item
                 label="Ưu tiên"
                 name="priority"
                 rules={[{ required: true, message: "Vui lòng chọn mức ưu tiên!" }]}
               >
-                <Select style={{ width: "100%" }} placeholder="Chọn mức ưu tiên">
+                <Select placeholder="Chọn mức ưu tiên">
                   <Option value="High">Cao</Option>
                   <Option value="Medium">Trung bình</Option>
                   <Option value="Low">Thấp</Option>
@@ -330,37 +238,31 @@ const OpportunityForm: React.FC<OpportunityFormProps> = ({
                 name="stage"
                 rules={[{ required: true, message: "Vui lòng chọn giai đoạn!" }]}
               >
-                <Select style={{ width: "100%" }} placeholder="Chọn giai đoạn">
-                  <Option value="Mới">Mới</Option>
-                  <Option value="Đạt yêu cầu">Đạt yêu cầu</Option>
-                  <Option value="Đàm phán">Đàm phán</Option>
-                  <Option value="Đóng">Đóng</Option>
+                <Select placeholder="Chọn giai đoạn">
+                  {opportunityStages.map((stage) => (
+                    <Option key={stage} value={stage}>
+                      {stage}
+                    </Option>
+                  ))}
                 </Select>
+              </Form.Item>
+              <Form.Item
+                label="Sản phẩm dự kiến"
+                name="service"
+                rules={[{ required: true, message: "Vui lòng chọn ít nhất một sản phẩm!" }]}
+              >
+                <Select
+                  mode="multiple"
+                  placeholder="Chọn sản phẩm"
+                  allowClear
+                  options={serviceOpportunityOptions.map((p) => ({
+                    label: p.productName,
+                    value: p.id,
+                  }))}
+                />
               </Form.Item>
             </Col>
           </Row>
-        </Card>
-
-        <Card className="card-section">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 16,
-            }}
-          >
-            <h3 style={{ margin: 0 }}>Danh sách dịch vụ</h3>
-            <Button type="primary" onClick={handleAddService}>
-              <PlusOutlined /> Thêm dịch vụ
-            </Button>
-          </div>
-          <Form.Item
-            name="service"
-            rules={[{ validator: () => (services.length > 0 ? Promise.resolve() : Promise.reject(new Error("Vui lòng thêm ít nhất một dịch vụ!"))) }]}
-          >
-            <Table dataSource={services} columns={columns} pagination={false} bordered size="small" />
-          </Form.Item>
         </Card>
       </Form>
     </Modal>

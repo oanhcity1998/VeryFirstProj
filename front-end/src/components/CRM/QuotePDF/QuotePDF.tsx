@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { useReactToPrint } from "react-to-print";
+import html2pdf from "html2pdf.js";
 import "./QuotePDF.css";
 
 type QuotePDFProps = {
@@ -85,13 +85,27 @@ const QuoteDocument = React.forwardRef<HTMLDivElement, QuotePDFProps>(
 
       <h4>3. Phí dịch vụ và phương thức thanh toán</h4>
       <h5>Service fee and payment method</h5>
-      <p>Dựa vào kinh nghiệm kiểm toán đối với các khách hàng tương tự và sự hiểu biết của chúng tôi về tính chất và phạm vi công việc, phí dịch vụ của chúng tôi được ước tính dựa trên thời gian cần thiết thực hiện dịch vụ và nhân sự thực hiện dịch vụ cũng như cấp bậc năng lực, kinh nghiệm và kỹ năng hoàn thành công việc. </p>
-      <p>Based on our audit experience with similar clients and our understanding ofthe mature and scope ofour work, our service charges are estimated based on the time required to perform the service and the personel permone the service as well as the level ofcompetence, experience, and skills needed to get the job done </p>
-      <p><strong>a. Phí dịch vụ/ServiceFee</strong></p>
-      <p>b. Phi dịch vụ cho các dịch nêu trên chưa bao gồm thuế GTGT là : {serviceFee.toLocaleString()} VND</p>
+      <p>
+        Dựa vào kinh nghiệm kiểm toán đối với các khách hàng tương tự và sự hiểu biết của chúng tôi về tính chất
+        và phạm vi công việc, phí dịch vụ của chúng tôi được ước tính dựa trên thời gian cần thiết thực hiện dịch vụ
+        và nhân sự thực hiện dịch vụ cũng như cấp bậc năng lực, kinh nghiệm và kỹ năng hoàn thành công việc.
+      </p>
+      <p>
+        Based on our audit experience with similar clients and our understanding of the nature and scope of our work,
+        our service charges are estimated based on the time required to perform the service and the personnel performing
+        the service as well as the level of competence, experience, and skills needed to get the job done.
+      </p>
+      <p><strong>a. Phí dịch vụ / Service Fee</strong></p>
+      <p>b. Phí dịch vụ cho các dịch vụ nêu trên chưa bao gồm thuế GTGT là: {serviceFee.toLocaleString()} VND</p>
       <p>Service fee for the above services excluding VAT is: {serviceFee.toLocaleString()} VND</p>
-      <p>Phí dịch vụ đã bao gồm chi phí đi lại, ăn ở, phụ phí khác và chưa bao gồm thuế GTGT (Thuế GTGT sẽ theo quy định tại thời điểm xuất hoá đơn)</p>
-      <p>Service fee includes travel costs, accommodation, other fees and not include VAT (VAT will be according to regulations at the time ofinvoice issuance).</p>
+      <p>
+        Phí dịch vụ đã bao gồm chi phí đi lại, ăn ở, phụ phí khác và chưa bao gồm thuế GTGT
+        (Thuế GTGT sẽ theo quy định tại thời điểm xuất hoá đơn).
+      </p>
+      <p>
+        Service fee includes travel costs, accommodation, other fees and not include VAT
+        (VAT will be according to regulations at the time of invoice issuance).
+      </p>
       <p><strong>Điều khoản thanh toán</strong></p>
       <p><strong>Term of payment</strong></p>
       <ul>
@@ -100,21 +114,27 @@ const QuoteDocument = React.forwardRef<HTMLDivElement, QuotePDFProps>(
         <li>Thanh toán lần 2: 50% còn lại ngay sau khi Báo cáo Kiểm toán được bàn giao.</li>
         <li>2nd payment: 50% after delivery of the Auditing Report.</li>
       </ul>
-      <p>Phí kiểm toán sẽ được thanh toán bằng cách chuyển khoản trực tiếp vào tài khoản Công Ty chúng tôi</p>
-      <p>Auditfees will be paid by direct deposit to our Company bank account.</p>
-      <p>Công Ty chúng tôi sẽ phát hành hoá đơn GTGT cho Quý Công Ty khi hoàn thành việc cung cấp dịch vụ, phù hợp với quy định của pháp luật thuế hiện hành</p>
-      <p>Our Company will issue VAT invoices to your Company upon completion ofthe provision ofservices, in accordance with the provisions ofthe current tax laws.</p>
+      <p>Phí kiểm toán sẽ được thanh toán bằng cách chuyển khoản trực tiếp vào tài khoản Công Ty chúng tôi.</p>
+      <p>Audit fees will be paid by direct deposit to our Company bank account.</p>
+      <p>
+        Công Ty chúng tôi sẽ phát hành hoá đơn GTGT cho Quý Công Ty khi hoàn thành việc cung cấp dịch vụ,
+        phù hợp với quy định của pháp luật thuế hiện hành.
+      </p>
+      <p>
+        Our Company will issue VAT invoices to your Company upon completion of the provision of services,
+        in accordance with the provisions of the current tax laws.
+      </p>
 
       <h4>4. Nhóm thực hiện dịch vụ kiểm toán</h4>
-      <h4>The group perfoms the audit</h4>
+      <h5>The group performs the audit</h5>
       <ul>
         <li>01 Thành viên Ban Tổng Giám đốc phụ trách chung / 01 Board Member in charge</li>
         <li>01 Kiểm toán viên Trưởng đoàn kiểm toán / 01 Audit team leader</li>
         <li>03 Trợ lý kiểm toán thực hiện kiểm toán / 03 Audit assistants</li>
       </ul>
 
-      <h4><strong>5. Các vấn đề khác</strong></h4>
-      <h4><strong>Other issues</strong></h4>
+      <h4>5. Các vấn đề khác</h4>
+      <h5>Other issues</h5>
       <p>
         Nếu Quý Công ty chưa hài lòng về bất cứ khía cạnh nào trong dịch vụ của chúng tôi,
         xin vui lòng thông báo ngay cho chúng tôi.
@@ -122,7 +142,6 @@ const QuoteDocument = React.forwardRef<HTMLDivElement, QuotePDFProps>(
       <p>If you are not satisfied with any aspect of our service, please notify us immediately.</p>
 
       <div className="signature">
-        
         <p>Rất mong được hợp tác với Quý Công Ty.</p>
         <p>Looking forward to cooperating with you.</p>
         <p>Kính chào/ Best regards,</p>
@@ -136,16 +155,25 @@ QuoteDocument.displayName = "QuoteDocument";
 const QuotePDF: React.FC<QuotePDFProps> = (props) => {
   const componentRef = useRef<HTMLDivElement>(null);
 
-  const handlePrint = useReactToPrint({
-    contentRef: componentRef,
-    documentTitle: "baogia-kiemtoan",
-  });
+  const handleDownload = () => {
+    if (componentRef.current) {
+      const opt = {
+        margin:       0.5,
+        filename:     `baogia-${props.auditYear}.pdf`,
+        image:        { type: "jpeg", quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: "in", format: "a4", orientation: "portrait" }
+      };
+
+      html2pdf().set(opt).from(componentRef.current).save();
+    }
+  };
 
   return (
     <div className="quote-wrapper">
       <QuoteDocument ref={componentRef} {...props} />
       <div className="download-bar">
-        <button className="download-btn" onClick={handlePrint}>
+        <button className="download-btn" onClick={handleDownload}>
           Download PDF
         </button>
       </div>

@@ -1,49 +1,26 @@
-import React, { useState } from "react";
-import { Button, Input, Select } from "antd";
+import { useState, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { Button, Modal, Select, Pagination, Empty, Row, Col, Space } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
-import "./QuoteList.css";
-import { useNavigate } from "react-router-dom";
-import QuoteTable, { Contract } from "@/components/CRM/TableQuote/TableQuote"
-import QuoteDetail from "../QuoteDetail/QuoteDetail";
-import '@/index.css';
+import { toast } from "react-toastify";
+import Search from "antd/es/input/Search";
+import TableContract, { Contract } from "@/components/CRM/TableContract/TableContract";
 import ContractForm from "@/components/CRM/ContractForm/ContractForm";
-const { Search } = Input;
+import { ROUTES_APP } from "@/app/routes";
+import "@/index.css";
+
 const { Option } = Select;
-type ViewDetail = {
-  loai: "baogia" | "hopdong";
-  record: Contract;
-} | null;
 
 const QuoteList: React.FC = () => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [searchText, setSearchText] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string | undefined>();
-  const [typeFilter, setTypeFilter] = useState<string | undefined>();
-  const [openForm, setOpenForm] = useState(false);
-  const [viewDetail, setViewDetail] = useState<ViewDetail>(null);
-  const [editRecord, setEditRecord] = useState<Contract | null>(null);
-
-  const navigate = useNavigate();
-
-  //   // ContractList.tsx
-  //   const handleRowClick = (record: Contract) => {
-  //     navigate(
-  //       `${generatePath(ROUTES_APP.crm.contractDetail, { id: record.id })}?loai=${
-  //         record.type === "Báo giá" ? "baogia" : "hopdong"
-  //       }`
-  //     );
-  //   };
-
-  if (viewDetail) {
-    return <QuoteDetail loai={viewDetail.loai} onBack={() => setViewDetail(null)} />;
-  }
-
-  const handleSave = (data: any) => {
-    console.log("Dữ liệu hợp đồng mới:", data);
-    setOpenForm(false);
-  };
-
-  const data: Contract[] = [
+  const [urlSearchParams, setUrlSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useState({
+    q: urlSearchParams.get("q") || "",
+    status: urlSearchParams.get("status") || undefined,
+    type: urlSearchParams.get("type") || undefined,
+    page: urlSearchParams.get("page") ? Number(urlSearchParams.get("page")) : 1,
+    limit: urlSearchParams.get("limit") ? Number(urlSearchParams.get("limit")) : 5,
+  });
+  const [data, setData] = useState<Contract[]>([
     {
       id: "1",
       code: "AF25_BG1",
@@ -70,36 +47,130 @@ const QuoteList: React.FC = () => {
       approvedAt: "30/05/2025",
       status: "Đã duyệt",
     },
-  ];
+  ]);
+  const [meta, setMeta] = useState<{ page: number; limit: number; total: number; pages: number }>({
+    page: 1,
+    limit: 5,
+    total: 2,
+    pages: 1,
+  });
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [openForm, setOpenForm] = useState(false);
+  const [editRecord, setEditRecord] = useState<Contract | null>(null);
+  const navigate = useNavigate();
 
-  // filter logic
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchParams.q) params.set("q", searchParams.q);
+    if (searchParams.status) params.set("status", searchParams.status);
+    if (searchParams.type) params.set("type", searchParams.type);
+    params.set("page", searchParams.page.toString());
+    params.set("limit", searchParams.limit.toString());
+    setUrlSearchParams(params);
+  }, [searchParams, setUrlSearchParams]);
+
+  const handleSave = (data: Contract) => {
+    try {
+      if (editRecord) {
+        setData((prev) => prev.map((item) => (item.id === editRecord.id ? data : item)));
+        toast.success("Cập nhật báo giá/hợp đồng thành công");
+      } else {
+        const newContract: Contract = {
+          id: String(Date.now()),
+          ...data,
+          createdAt: new Date().toISOString().split("T")[0],
+          approvedAt: "",
+          status: "Chờ duyệt",
+        };
+        setData((prev) => [...prev, newContract]);
+        setMeta((prev) => ({
+          ...prev,
+          total: prev.total + 1,
+          pages: Math.ceil((prev.total + 1) / prev.limit),
+        }));
+        toast.success("Thêm báo giá/hợp đồng thành công");
+      }
+      setOpenForm(false);
+      setEditRecord(null);
+    } catch (err: any) {
+      toast.error(`Không thể ${editRecord ? "cập nhật" : "thêm"} báo giá/hợp đồng`);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      setDeleting(true);
+      setData((prev) => prev.filter((item) => !selectedRowKeys.includes(item.id)));
+      setMeta((prev) => ({
+        ...prev,
+        total: prev.total - selectedRowKeys.length,
+        pages: Math.ceil((prev.total - selectedRowKeys.length) / prev.limit),
+      }));
+      toast.success(`Đã xóa ${selectedRowKeys.length} báo giá/hợp đồng thành công`);
+      setSelectedRowKeys([]);
+      setDeleteOpen(false);
+    } catch (err) {
+      toast.error("Không thể xóa báo giá/hợp đồng");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleEdit = (record: Contract) => {
+    setEditRecord(record);
+    setOpenForm(true);
+  };
+
+  const handleRowClick = (record: Contract) => {
+    navigate(
+      `${ROUTES_APP.crm.contractDetail.replace(":id", record.id)}?loai=${record.type === "Báo giá" ? "baogia" : "hopdong"
+      }`
+    );
+  };
+
+  const handleSearch = (value: string) => {
+    setSearchParams({ ...searchParams, q: value, page: 1 });
+  };
+
+  const handlePageChange = (page: number, pageSize: number) => {
+    setSearchParams({ ...searchParams, page, limit: pageSize });
+  };
+
   const filteredData = data.filter((item) => {
     const matchesSearch =
-      item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.customer.toLowerCase().includes(searchText.toLowerCase());
-
-    const matchesStatus = statusFilter ? item.status === statusFilter : true;
-    const matchesType = typeFilter ? item.type === typeFilter : true;
-
+      item.name.toLowerCase().includes(searchParams.q.toLowerCase()) ||
+      item.customer.toLowerCase().includes(searchParams.q.toLowerCase());
+    const matchesStatus = searchParams.status ? item.status === searchParams.status : true;
+    const matchesType = searchParams.type ? item.type === searchParams.type : true;
     return matchesSearch && matchesStatus && matchesType;
   });
+
+  const paginatedData = filteredData.slice(
+    (searchParams.page - 1) * searchParams.limit,
+    searchParams.page * searchParams.limit
+  );
 
   return (
     <>
       <div className="list-header">
-        <h2>Danh sách báo giá</h2>
+        <h2>Danh sách báo giá & hợp đồng</h2>
         <div className="list-actions">
           <Search
-            placeholder="Tìm kiếm theo hợp đồng"
+            placeholder="Tìm kiếm theo tên hoặc khách hàng"
             allowClear
-            onSearch={(val) => setSearchText(val)}
-            style={{ minWidth: 180, maxWidth: 240, width: "100%" }}
+            value={searchParams.q}
+            onChange={(e) => handleSearch(e.target.value)}
+            onSearch={handleSearch}
+            className="search-bar"
           />
           <Select
             className="filter-bar"
             placeholder="Trạng thái"
+            value={searchParams.status}
+            onChange={(val) => setSearchParams({ ...searchParams, status: val, page: 1 })}
             allowClear
-            onChange={(val) => setStatusFilter(val)}
           >
             <Option value="Chờ duyệt">Chờ duyệt</Option>
             <Option value="Đã duyệt">Đã duyệt</Option>
@@ -107,46 +178,83 @@ const QuoteList: React.FC = () => {
           </Select>
           <Select
             className="filter-bar"
-            placeholder="Loại hợp đồng"
+            placeholder="Loại"
+            value={searchParams.type}
+            onChange={(val) => setSearchParams({ ...searchParams, type: val, page: 1 })}
             allowClear
-            onChange={(val) => setTypeFilter(val)}
           >
             <Option value="Báo giá">Báo giá</Option>
             <Option value="Hợp đồng">Hợp đồng</Option>
           </Select>
-          <Button danger disabled={selectedRowKeys.length === 0} icon={<DeleteOutlined />}>
-            Xoá
+          <Button
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => setDeleteOpen(true)}
+            disabled={selectedRowKeys.length === 0}
+          >
+            Xóa
           </Button>
+          <Modal
+            open={deleteOpen}
+            title="Xác nhận xóa"
+            onOk={handleDelete}
+            onCancel={() => setDeleteOpen(false)}
+            okText="Xóa"
+            cancelText="Hủy"
+            okButtonProps={{ danger: true, loading: deleting }}
+            centered
+          >
+            <p>Bạn có chắc muốn xóa {selectedRowKeys.length} báo giá/hợp đồng đã chọn?</p>
+          </Modal>
           <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpenForm(true)}>
             Tạo
           </Button>
         </div>
       </div>
 
-      {/* Table (separated component) */}
-      <QuoteTable
-        data={filteredData}
-        selectedRowKeys={selectedRowKeys}
-        onSelectChange={setSelectedRowKeys}
-        onEditClick={(record) => setEditRecord(record)}
-      />
 
-      {/* Form modal */}
-      <ContractForm
-        open={openForm}
-        onCancel={() => setOpenForm(false)}
-        onSave={handleSave}
-      />
+
+      {filteredData.length === 0 ? (
+        <div className="empty-message">
+          <Empty description="Không có báo giá hoặc hợp đồng nào để hiển thị" />
+          <p>Hiện tại không có dữ liệu. Vui lòng thêm mới!</p>
+        </div>
+      ) : (
+        <>
+          <TableContract
+            data={paginatedData}
+            selectedRowKeys={selectedRowKeys}
+            setSelectedRowKeys={setSelectedRowKeys}
+            onEdit={handleEdit}
+            onRowClick={handleRowClick}
+            loading={false}
+          />
+          <div className="pagination-container">
+            <Pagination
+              current={meta.page}
+              pageSize={meta.limit}
+              total={meta.total}
+              onChange={handlePageChange}
+              showSizeChanger
+              pageSizeOptions={["5", "10", "20"]}
+            />
+          </div>
+        </>
+      )}
 
       <ContractForm
-        open={!!editRecord}
-        onCancel={() => setEditRecord(null)}
-        onSave={(data) => {
-          console.log("Edited data:", data);
+        open={openForm || !!editRecord}
+        mode={editRecord ? "edit" : "create"}
+        onCancel={() => {
+          setOpenForm(false);
           setEditRecord(null);
         }}
-        title="Chỉnh sửa báo giá & hợp đồng" // ✅ new title
-        initialValues={editRecord || undefined} // ✅ pass record data
+        onSave={handleSave}
+        initialValues={editRecord}
+        modalTitle={editRecord ? "Chỉnh sửa báo giá & hợp đồng" : "Thêm báo giá & hợp đồng"}
+        cancelText="Hủy"
+        saveText={editRecord ? "Xác nhận" : "Xác nhận"}
+        loading={false}
       />
     </>
   );

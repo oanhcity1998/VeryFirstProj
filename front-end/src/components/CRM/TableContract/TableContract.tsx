@@ -1,7 +1,9 @@
 import { Table, Checkbox, Button, Typography, Tooltip } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import { useNavigate, generatePath } from "react-router-dom";
+import { ColumnsType } from "antd/es/table";
 import { ROUTES_APP } from "@/app/routes";
+import "@/index.css";
 
 const { Link } = Typography;
 
@@ -47,55 +49,57 @@ const TableContract: React.FC<TableContractProps> = ({
   loading = false,
 }) => {
   const navigate = useNavigate();
-  const allKeys = data.map((item) => item.id.toString());
-  const isAllChecked = selectedRowKeys.length === data.length;
+  const allKeys = data.map((item) => item.id);
+  const isAllChecked = selectedRowKeys.length === data.length && data.length > 0;
   const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
 
-  const columns = [
+  const columns: ColumnsType<Contract> = [
     {
       title: (
         <Checkbox
           indeterminate={isIndeterminate}
           checked={isAllChecked}
           onChange={(e) => {
-            if (e.target.checked) setSelectedRowKeys(allKeys);
-            else setSelectedRowKeys([]);
+            if (e.target.checked) {
+              setSelectedRowKeys(allKeys);
+            } else {
+              setSelectedRowKeys([]);
+            }
           }}
+          disabled={data.length === 0}
         />
       ),
       dataIndex: "option",
       width: 60,
-      fixed: "left" as const,
-      align: "center" as const,
+      fixed: "left",
+      align: "center",
       render: (_: any, record: Contract) => (
         <Checkbox
-          checked={selectedRowKeys.includes(record.id.toString())}
+          checked={selectedRowKeys.includes(record.id)}
           onChange={(e) => {
             if (e.target.checked) {
-              setSelectedRowKeys([...selectedRowKeys, record.id.toString()]);
+              setSelectedRowKeys([...selectedRowKeys, record.id]);
             } else {
-              setSelectedRowKeys(
-                selectedRowKeys.filter((key) => key !== record.id.toString())
-              );
+              setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.id));
             }
           }}
         />
       ),
     },
     {
-      title: "Mã báo giá & hợp đồng",
+      title: "Mã hợp đồng",
       dataIndex: "code",
       key: "code",
-      fixed: "left" as const,
       width: 150,
-      align: "center" as const,
+      align: "center",
+      fixed: "left",
     },
     {
-      title: "Tên báo giá & hợp đồng",
+      title: "Tên hợp đồng",
       dataIndex: "name",
       key: "name",
       width: 200,
-      align: "center" as const,
+      align: "center",
       render: (text: string, record: Contract) => (
         <Link
           onClick={() =>
@@ -114,21 +118,21 @@ const TableContract: React.FC<TableContractProps> = ({
       dataIndex: "type",
       key: "type",
       width: 120,
-      align: "center" as const,
+      align: "center",
     },
     {
       title: "Khách hàng",
       dataIndex: "customer",
       key: "customer",
       width: 150,
-      align: "center" as const,
+      align: "center",
     },
     {
       title: "Tổng giá trị (VND)",
       dataIndex: "total",
       key: "total",
       width: 150,
-      align: "center" as const,
+      align: "center",
       render: (value?: number) =>
         typeof value === "number" ? value.toLocaleString("vi-VN") : "0",
     },
@@ -137,42 +141,42 @@ const TableContract: React.FC<TableContractProps> = ({
       dataIndex: "owner",
       key: "owner",
       width: 150,
-      align: "center" as const,
+      align: "center",
     },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
       width: 120,
-      align: "center" as const,
+      align: "center",
     },
     {
       title: "Người duyệt",
       dataIndex: "approver",
       key: "approver",
       width: 150,
-      align: "center" as const,
+      align: "center",
     },
     {
       title: "Ngày duyệt",
       dataIndex: "approvedAt",
       key: "approvedAt",
       width: 120,
-      align: "center" as const,
+      align: "center",
     },
     {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
       width: 120,
-      align: "center" as const,
+      align: "center",
     },
     {
       title: "",
       key: "action",
-      fixed: "right" as const,
       width: 80,
-      align: "center" as const,
+      fixed: "right",
+      align: "center",
       render: (_: any, record: Contract) => (
         <Tooltip title="Chỉnh sửa">
           <Button
@@ -199,7 +203,7 @@ const TableContract: React.FC<TableContractProps> = ({
       rowKey="id"
       scroll={{ x: 1200 }}
       rowClassName={(record: Contract) =>
-        selectedRowKeys.includes(record.id.toString()) ? "selected-row" : ""
+        selectedRowKeys.includes(record.id) ? "selected-row" : ""
       }
       onRow={(record) => ({
         onClick: () => onRowClick?.(record),

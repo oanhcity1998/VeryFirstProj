@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Button, Modal, Select, Pagination, Empty, Form } from "antd";
+import { Button, Modal, Select, Pagination, Empty } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import Search from "antd/es/input/Search";
-import { TableOpportunity } from "@/components/CRM/TableOpportunity/TableOpportunity";
 import OpportunityForm from "@/components/CRM/OpportunityForm/OpportunityForm";
-import { ROUTES_APP } from "../../../app/routes";
+import { ROUTES_APP } from "@/app/routes";
 import "@/index.css";
+import { TableOpportunity } from "@/components/CRM/TableOpportunity/TableOpportunity";
 
 const { Option } = Select;
 
@@ -23,7 +23,7 @@ export interface Product {
 }
 
 export interface Opportunity {
-  id: number;
+  id: string; // Đổi thành string để đồng bộ
   name: string;
   contactName: string;
   company: string;
@@ -36,36 +36,38 @@ export interface Opportunity {
   stage: "Mới" | "Đạt yêu cầu" | "Đàm phán" | "Đóng";
 }
 
-const dataSource: Opportunity[] = [
+export const serviceOpportunityOptions: Product[] = [
   {
     id: 1,
+    productName: "Máy in HP 107w",
+    productType: "Thiết bị văn phòng",
+    priceVND: 5000000,
+    priceUSD: 210,
+    vat: 10,
+    afterVatVND: 5500000,
+    afterVatUSD: 231,
+  },
+  {
+    id: 2,
+    productName: "Giấy A4 Double A",
+    productType: "Vật tư tiêu hao",
+    priceVND: 250000,
+    priceUSD: 11,
+    vat: 5,
+    afterVatVND: 262500,
+    afterVatUSD: 11.55,
+  },
+];
+
+const dataSource: Opportunity[] = [
+  {
+    id: "1",
     name: "Triển khai ERP cho công ty ABC",
     contactName: "Nguyễn Văn A",
     company: "Công ty ABC",
     expectedValue: 500_000_000,
     expectedCloseDate: "2025-09-15",
-    service: [
-      {
-        id: 1,
-        productName: "Máy in HP 107w",
-        productType: "Thiết bị văn phòng",
-        priceVND: 5000000,
-        priceUSD: 210,
-        vat: 10,
-        afterVatVND: 5500000,
-        afterVatUSD: 231,
-      },
-      {
-        id: 2,
-        productName: "Giấy A4 Double A",
-        productType: "Vật tư tiêu hao",
-        priceVND: 250000,
-        priceUSD: 11,
-        vat: 5,
-        afterVatVND: 262500,
-        afterVatUSD: 11.55,
-      },
-    ],
+    service: [serviceOpportunityOptions[0], serviceOpportunityOptions[1]],
     probability: 70,
     priority: "High",
     owner: "Phạm Văn Quyết",
@@ -74,12 +76,11 @@ const dataSource: Opportunity[] = [
 ];
 
 const OpportunityList: React.FC = () => {
-  const [form] = Form.useForm();
   const [searchParams, setSearchParams] = useSearchParams();
   const [queryParams, setQueryParams] = useState({
     q: searchParams.get("q") || "",
-    stage: searchParams.get("stage") || null,
-    priority: searchParams.get("priority") || null,
+    stage: searchParams.get("stage") || undefined,
+    priority: searchParams.get("priority") || undefined,
     page: searchParams.get("page") ? Number(searchParams.get("page")) : 1,
     limit: searchParams.get("limit") ? Number(searchParams.get("limit")) : 5,
   });
@@ -111,12 +112,12 @@ const OpportunityList: React.FC = () => {
     try {
       if (editData) {
         setData((prev) =>
-          prev.map((item) => (item.id === editData.id ? { ...item, ...values } : item))
+          prev.map((item) => (item.id === editData.id ? values : item))
         );
         toast.success("Cập nhật cơ hội thành công");
       } else {
         const newOpportunity: Opportunity = {
-          id: Date.now(),
+          id: String(Date.now()),
           ...values,
         };
         setData((prev) => [...prev, newOpportunity]);
@@ -129,7 +130,6 @@ const OpportunityList: React.FC = () => {
       }
       setOpenForm(false);
       setEditData(null);
-      form.resetFields();
     } catch (err: any) {
       toast.error(`Không thể ${editData ? "cập nhật" : "thêm"} cơ hội`);
     }
@@ -160,9 +160,7 @@ const OpportunityList: React.FC = () => {
   };
 
   const handleShowClick = (record: Opportunity) => {
-    navigate(
-      `${ROUTES_APP.crm.opportunityDetail.replace(":id", String(record.id))}`
-    );
+    navigate(ROUTES_APP.crm.opportunityDetail.replace(":id", record.id));
   };
 
   const handleSearch = (value: string) => {
@@ -172,6 +170,21 @@ const OpportunityList: React.FC = () => {
   const handlePageChange = (page: number, pageSize: number) => {
     setQueryParams({ ...queryParams, page, limit: pageSize });
   };
+
+  const filteredData = data.filter((item) => {
+    const matchesSearch =
+      item.name.toLowerCase().includes(queryParams.q.toLowerCase()) ||
+      item.contactName.toLowerCase().includes(queryParams.q.toLowerCase()) ||
+      item.company.toLowerCase().includes(queryParams.q.toLowerCase());
+    const matchesStage = queryParams.stage ? item.stage === queryParams.stage : true;
+    const matchesPriority = queryParams.priority ? item.priority === queryParams.priority : true;
+    return matchesSearch && matchesStage && matchesPriority;
+  });
+
+  const paginatedData = filteredData.slice(
+    (queryParams.page - 1) * queryParams.limit,
+    queryParams.page * queryParams.limit
+  );
 
   return (
     <>
@@ -229,7 +242,7 @@ const OpportunityList: React.FC = () => {
             okButtonProps={{ danger: true, loading: deleting }}
             centered
           >
-            <p>Bạn có chắc muốn xóa cơ hội này? Hành động này không thể hoàn tác.</p>
+            <p>Bạn có chắc muốn xóa {selectedRowKeys.length} cơ hội đã chọn?</p>
           </Modal>
           <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpenForm(true)}>
             Tạo
@@ -237,7 +250,7 @@ const OpportunityList: React.FC = () => {
         </div>
       </div>
 
-      {data.length === 0 ? (
+      {filteredData.length === 0 ? (
         <div className="empty-message">
           <Empty description="Không có cơ hội nào để hiển thị" />
           <p>Hiện tại không có dữ liệu cơ hội. Vui lòng thêm cơ hội mới!</p>
@@ -245,28 +258,23 @@ const OpportunityList: React.FC = () => {
       ) : (
         <>
           <TableOpportunity
-            data={data as any}
-            searchText={queryParams.q}
+            data={paginatedData}
             selectedRowKeys={selectedRowKeys}
             setSelectedRowKeys={setSelectedRowKeys}
             onShowClick={handleShowClick}
             onEditClick={handleEdit}
-            filterPriority={queryParams.priority}
-            filterStage={queryParams.stage}
-            filterDate={null}
+            loading={false}
           />
-          {meta && (
-            <div className="pagination-container">
-              <Pagination
-                current={meta.page}
-                pageSize={meta.limit}
-                total={meta.total}
-                onChange={handlePageChange}
-                showSizeChanger
-                pageSizeOptions={["5", "10", "20"]}
-              />
-            </div>
-          )}
+          <div className="pagination-container">
+            <Pagination
+              current={meta.page}
+              pageSize={meta.limit}
+              total={meta.total}
+              onChange={handlePageChange}
+              showSizeChanger
+              pageSizeOptions={["5", "10", "20"]}
+            />
+          </div>
         </>
       )}
 
@@ -276,16 +284,13 @@ const OpportunityList: React.FC = () => {
         onCancel={() => {
           setOpenForm(false);
           setEditData(null);
-          form.resetFields();
         }}
         onSave={handleSave}
         initialValues={editData}
         modalTitle={editData ? "Chỉnh sửa cơ hội" : "Thêm cơ hội"}
-        cardTitle="Thông tin cơ hội"
         cancelText="Hủy"
-        saveText={editData ? "Lưu thay đổi" : "Xác nhận"}
+        saveText={editData ? "Xác nhận" : "Xác nhận"}
         loading={false}
-        form={form}
       />
     </>
   );
