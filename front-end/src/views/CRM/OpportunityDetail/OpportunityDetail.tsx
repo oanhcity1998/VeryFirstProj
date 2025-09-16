@@ -168,16 +168,23 @@ const OpportunityDetail = () => {
   };
 
   const activityColumns: ColumnsType<Activity> = [
-    { title: "Ngày gặp mặt", dataIndex: "date" },
-    { title: "Hình thức", dataIndex: "method" },
-    { title: "Tóm tắt nội dung", dataIndex: "summary" },
-    { title: "Người thực hiện", dataIndex: "owner" },
-    { title: "Ghi chú", dataIndex: "note" },
+    { title: "Ngày gặp mặt", align: "center", dataIndex: "date" },
+    { title: "Hình thức", align: "center", dataIndex: "method" },
+    { title: "Tóm tắt nội dung", align: "center", dataIndex: "summary" },
+    { title: "Người thực hiện", align: "center", dataIndex: "owner" },
+    { title: "Ghi chú", align: "center", dataIndex: "note" },
     {
       title: "Hành động",
       align: "center",
       render: (_, record: Activity) => (
         <Button
+          style={{
+            fontSize: 20,
+            display: "block",
+            cursor: "pointer",
+            color: "#1890ff",
+            padding: 8,
+          }}
           type="link"
           onClick={() => {
             setEditingActivity(record);
