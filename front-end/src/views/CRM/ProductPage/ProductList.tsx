@@ -245,7 +245,6 @@ const ProductList: React.FC = () => {
             value={queryParams.q}
             onChange={(e) => handleSearch(e.target.value)}
             onSearch={handleSearch}
-            style={{ width: 250 }}
           />
           <Select
             className="filter-bar"
@@ -259,7 +258,6 @@ const ProductList: React.FC = () => {
               { value: "monthly", label: "Theo tháng" },
             ]}
             allowClear
-            style={{ width: 180 }}
           />
           <Select
             className="filter-bar"
