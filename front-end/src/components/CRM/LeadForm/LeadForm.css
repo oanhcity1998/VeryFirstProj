@@ -1,5 +1,6 @@
-label{
-    font-weight: bold;
+.lead-form .ant-form-item-label > label,
+.lead-form .ant-form-item > label {
+  font-weight: bold;
 }
 
 .lead-form{

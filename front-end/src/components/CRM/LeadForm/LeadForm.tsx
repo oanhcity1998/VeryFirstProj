@@ -44,13 +44,15 @@ const LeadForm: React.FC<LeadFormProps> = ({ open, onCancel, onSubmit, initialVa
     >
       <Card >
         <Form
-        form={form}
-        layout="vertical"
-        onFinish={onSubmit}
-        initialValues={initialValues}
-        className="lead-form"
+          form={form}
+          layout="horizontal"   // 👈 change to horizontal
+          labelCol={{ span: 10 }}   // 👈 label column width (adjust as needed)
+          wrapperCol={{ span: 14 }} // 👈 input column width (adjust as needed)
+          onFinish={onSubmit}
+          initialValues={initialValues}
+          className="lead-form"
         >
-          <Form.Item label="Tên khách hàng tiềm năng" name="leadName" rules={[{ required: true, message: "Nhập tên khách hàng tiềm năng" }]}>
+          <Form.Item className="form-label" label="Tên khách hàng" name="leadName" rules={[{ required: true, message: "Nhập tên khách hàng tiềm năng" }]}>
             <Input />
           </Form.Item>
 

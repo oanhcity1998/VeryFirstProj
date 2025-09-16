@@ -52,9 +52,10 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({
         </Button>,
       ]}
     >
+      <Card>
       {/* Khách hàng */}
       <div style={{ marginBottom: 16 }}>
-        <div>Khách hàng</div>
+        <h3>Khách hàng</h3>
         <Checkbox
           checked={customerOption === "new"}
           onChange={() => setCustomerOption("new")}
@@ -85,7 +86,7 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({
 
       {/* Liên hệ */}
       <div style={{ marginBottom: 16 }}>
-        <div>Liên hệ</div>
+        <h3>Liên hệ</h3>
         <Checkbox
           checked={contactOption === "new"}
           onChange={() => setContactOption("new")}
@@ -116,7 +117,7 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({
 
       {/* Cơ hội */}
       <div style={{ marginBottom: 16 }}>
-        <div>Cơ hội</div>
+        <h3>Cơ hội</h3>
         <Checkbox
           checked={opportunityOption === "new"}
           onChange={() => setOpportunityOption("new")}
@@ -143,6 +144,7 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({
           <Select options={[{ value: "Deal 1", label: "Deal 1" }]} />
         </Form.Item>
       )}
+      </Card>
     </Modal>
   );
 };
@@ -216,7 +218,7 @@ const LeadDetail: React.FC = () => {
         extra={
           <Popover
             content={
-              <Space direction="vertical">
+              <Space direction="vertical" className="popover-buttons">
                 <Button
                   disabled={currentStage > opportunityStages.length - 3}
                   type="primary"
