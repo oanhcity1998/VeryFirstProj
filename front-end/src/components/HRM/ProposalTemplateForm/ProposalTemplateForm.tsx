@@ -18,6 +18,7 @@ import {
   ProposalTemplate,
   statusProposalTemplateOptions,
 } from "@/views/HRM/ProposalTemplateList/ProposalTemplateList";
+import { PlusCircleFilled, PlusOutlined } from "@ant-design/icons";
 
 interface ProposalTemplateFormProps {
   onCancel: () => void;
@@ -43,7 +44,7 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
   open,
   modalTitle = "Thêm mới",
   cancelText = "Hủy",
-  saveText = "Lưu",
+  saveText = "Xác nhận",
 }) => {
   const [form] = Form.useForm();
 
@@ -178,20 +179,6 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
       ),
     },
     {
-      title: "Ghi chú",
-      dataIndex: "note",
-      render: (value: string, record: FieldMeta) => (
-        <Input
-          value={record.note}
-          onChange={(e) =>
-            setFieldRows((prev) =>
-              prev.map((row) => (row.id === record.id ? { ...row, note: e.target.value } : row))
-            )
-          }
-        />
-      ),
-    },
-    {
       title: "Thao tác",
       dataIndex: "action",
       render: (_: any, record: FieldMeta) => (
@@ -204,7 +191,7 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
 
   return (
     <Modal
-      title={modalTitle}
+      title={<h2>{modalTitle}</h2>}
       open={open}
       onCancel={onCancel}
       footer={[
@@ -218,71 +205,69 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
       width={800}
     >
       <Form form={form} layout="horizontal" onFinish={onFinish}>
-        <div className="form-section">
-          <h3>Thông tin mẫu đề xuất</h3>
 
-          <Card size="small" style={{ marginBottom: 16 }}>
-            <Form.Item
-              labelAlign="left"
-              labelCol={{ span: 6 }}
-              wrapperCol={{ span: 18 }}
-              label="Tên nhóm mẫu đề xuất"
-              name="name"
-              rules={[{ required: true, message: "Vui lòng nhập tên nhóm mẫu đề xuất!" }]}
-            >
-              <Input placeholder="Nhập tên mẫu đề xuất" />
-            </Form.Item>
+        <Card style={{ marginBottom: 16 }} title="Thông tin mẫu đề xuất" className="card-section">
+          <Form.Item
+            labelAlign="left"
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
+            label="Tên nhóm mẫu đề xuất"
+            name="name"
+            rules={[{ required: true, message: "Vui lòng nhập tên nhóm mẫu đề xuất!" }]}
+          >
+            <Input placeholder="Nhập tên mẫu đề xuất" />
+          </Form.Item>
 
-            <Form.Item
-              labelAlign="left"
-              labelCol={{ span: 6 }}
-              wrapperCol={{ span: 18 }}
-              label="Trạng thái"
-              name="status"
-              rules={[{ required: true, message: "Vui lòng chọn trạng thái!" }]}
-            >
-              <Select
-                options={statusProposalTemplateOptions.map((s) => ({ value: s, label: s }))}
-              />
-            </Form.Item>
-          </Card>
-
-          <Card size="small" title="Danh sách trường của mẫu đề xuất">
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 16,
-              }}
-            >
-              <h3 style={{ margin: 0 }}>Danh sách trường</h3>
-              <Button type="primary" onClick={addFieldRow}>
-                + Thêm dòng
-              </Button>
-            </div>
-
-            <Table<FieldMeta>
-              columns={fieldColumns}
-              dataSource={fieldRows}
-              id="id"
-              pagination={false}
-              bordered
+          <Form.Item
+            labelAlign="left"
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
+            label="Trạng thái"
+            name="status"
+            rules={[{ required: true, message: "Vui lòng chọn trạng thái!" }]}
+          >
+            <Select
+              placeholder="Chọn trạng thái"
+              options={statusProposalTemplateOptions.map((s) => ({ value: s, label: s }))}
             />
+          </Form.Item>
+        </Card>
 
-            <Form.Item
-              style={{ marginTop: 16 }}
-              name="approvalRequired"
-              valuePropName="checked" // ✅ rất quan trọng
-              getValueFromEvent={(e) => (e.target.checked ? "Có" : "Không")}
-              initialValue={template?.approvalRequired === "Có"}
-            >
-              <Checkbox>Có cần phải phê duyệt không?</Checkbox>
-            </Form.Item>
-          </Card>
-        </div>
+        <Card className="card-section">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 16,
+            }}
+          >
+            <h3 style={{ margin: 0 }}>Danh sách trường của mẫu đề xuất</h3>
+            <Button type="primary" onClick={addFieldRow}>
+              <PlusOutlined /> Thêm trường
+            </Button>
+          </div>
+
+          <Table<FieldMeta>
+            columns={fieldColumns}
+            dataSource={fieldRows}
+            id="id"
+            pagination={false}
+            bordered
+          />
+
+          <Form.Item
+            style={{ marginTop: 16 }}
+            name="approvalRequired"
+            valuePropName="checked" // ✅ rất quan trọng
+            getValueFromEvent={(e) => (e.target.checked ? "Có" : "Không")}
+            initialValue={template?.approvalRequired === "Có"}
+          >
+            <Checkbox>Có cần phải phê duyệt không?</Checkbox>
+          </Form.Item>
+        </Card>
       </Form>
-    </Modal>
+    </Modal >
   );
 };
 

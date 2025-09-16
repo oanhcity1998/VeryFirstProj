@@ -1,6 +1,5 @@
 import { useEffect } from "react";
-import { Modal, Form, Input, Button, Select } from "antd";
-import "./DepartmentForm.css";
+import { Modal, Form, Input, Button, Select, Card } from "antd"; // Thêm Card
 import { Department } from "@/models/HRM/department.model";
 import { useGetEmployeesQuery } from "@/services/HRM/employee.service";
 
@@ -24,7 +23,7 @@ const DepartmentForm: React.FC<DepartmentFormProps> = ({
   open,
   modalTitle = "Thêm mới",
   cancelText = "Hủy",
-  saveText = "Lưu",
+  saveText = "Xác nhận",
   loading = false,
 }) => {
   const [form] = Form.useForm();
@@ -46,7 +45,7 @@ const DepartmentForm: React.FC<DepartmentFormProps> = ({
   }, [department, form]);
 
   const onFinish = (values: any) => {
-    const manager = employeesData?.data.find(e => e.id === values.manager_id);
+    const manager = employeesData?.data.find((e) => e.id === values.manager_id);
 
     onSave({
       id: department?.id || values.id || Date.now(),
@@ -61,7 +60,7 @@ const DepartmentForm: React.FC<DepartmentFormProps> = ({
 
   return (
     <Modal
-      title={modalTitle}
+      title={<h2>{modalTitle}</h2>}
       open={open}
       onCancel={onCancel}
       footer={[
@@ -79,11 +78,11 @@ const DepartmentForm: React.FC<DepartmentFormProps> = ({
         </Button>,
       ]}
       width={800}
+      style={{ top: 20 }}
+      bodyStyle={{ maxHeight: "80vh", overflowY: "auto" }}
     >
       <Form form={form} layout="vertical" onFinish={onFinish}>
-        <div className="form-section">
-          <h3>Thông tin phòng ban</h3>
-
+        <Card title="Thông tin phòng ban" className="card-section">
           <Form.Item
             label="Mã phòng ban"
             name="code"
@@ -124,7 +123,7 @@ const DepartmentForm: React.FC<DepartmentFormProps> = ({
               autoSize={{ minRows: 5, maxRows: 10 }}
             />
           </Form.Item>
-        </div>
+        </Card>
       </Form>
     </Modal>
   );

@@ -6,6 +6,7 @@ import { EditOutlined } from "@ant-design/icons";
 import { ROUTES_APP } from "@/app/routes";
 
 
+
 const { Link } = Typography;
 
 export interface Contract {
@@ -71,7 +72,7 @@ const TableQuote: React.FC<TableContractProps> = ({
     {
       title: "",
       key: "action",
-      width: 60,
+      width: 80,
       render: (_, record) => (
         <Tooltip title="Chỉnh sửa">
           <EditOutlined
@@ -103,7 +104,7 @@ const TableQuote: React.FC<TableContractProps> = ({
       dataSource={data}
       rowKey="id"
       pagination={{ pageSize: 5, position: ["bottomCenter"] }}
-      className="contract-table"
+      className="base-table"
       onRow={onRow}
     />
   );

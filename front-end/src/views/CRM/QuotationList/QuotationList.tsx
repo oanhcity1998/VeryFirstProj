@@ -8,6 +8,7 @@ import { ROUTES_APP } from "../../../app/routes";
 import FilterQuotationDrawer from "@/components/CRM/Filter/FilterQuotationDrawer";
 import { TableQuotation } from "@/components/CRM/TableQuotation/TableQuotation";
 import { QuotationForm } from "@/components/CRM/QuotationForm/QuotationForm";
+;
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 export interface Product {
@@ -159,16 +160,14 @@ const QuotationList = () => {
 
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+      <div className="list-header">
         <h2>Danh sách mẫu báo giá</h2>
-
-        <Space>
-          {/* Searchbar  */}
+        <div className="list-actions">
           <Search
-            placeholder="Nhập tên mẫu báo giá..."
+            className="search-bar"
+            placeholder="Tìm kiếm theo tên mẫu báo giá"
             onChange={(e) => setSearchText(e.target.value)}
             allowClear
-            style={{ maxWidth: 300, marginRight: "auto", marginLeft: 8 }}
           />
           {/* Filter button */}
           <Button
@@ -220,7 +219,7 @@ const QuotationList = () => {
           <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsCreateModalOpen(true)}>
             Tạo
           </Button>
-        </Space>
+        </div>
       </div>
 
       <TableQuotation

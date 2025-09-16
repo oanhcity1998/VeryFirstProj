@@ -1,11 +1,12 @@
-import { Table, Checkbox } from "antd";
-import { generatePath, Link } from "react-router-dom";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
+import { Table, Typography, Tooltip } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
-import { ColumnsType } from "antd/es/table";
+import { useNavigate, generatePath } from "react-router-dom";
 import { ROUTES_APP } from "@/app/routes";
 
-// Định nghĩa type cho Contact
+const { Link } = Typography;
+
 export interface Contact {
   id: string;
   contactName: string;
@@ -22,138 +23,121 @@ interface TableContactProps {
   searchText: string;
   filterCustomer: string | null;
   filterMainContact: string | null;
-  selectedRowKeys: string[];
+  selectedRowKeys: React.Key[];
   setSelectedRowKeys: (keys: string[]) => void;
-  onShowClick?: (record: Contact) => void; // 👈 thêm
   onEditClick?: (record: Contact) => void;
-  selectable?: boolean;
-  showEdit?: boolean;
 }
 
-const TableContact = ({
+const TableContact: React.FC<TableContactProps> = ({
   data,
   searchText,
   filterCustomer,
   filterMainContact,
   selectedRowKeys,
   setSelectedRowKeys,
-  onShowClick,
   onEditClick,
-  selectable = true,
-  showEdit = true,
-}: TableContactProps) => {
-  // 🔎 lọc theo search + filter
+}) => {
+  const navigate = useNavigate();
+
   const filteredData = useMemo(() => {
     return data.filter((item) => {
+      const text = searchText.toLowerCase();
       const matchSearch =
-        item.contactName.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.customerName.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.mainContact.toLowerCase().includes(searchText.toLowerCase());
-
+        item.contactName.toLowerCase().includes(text) ||
+        item.customerName.toLowerCase().includes(text) ||
+        item.email.toLowerCase().includes(text);
       const matchCustomer = filterCustomer ? item.customerName === filterCustomer : true;
       const matchMainContact = filterMainContact ? item.mainContact === filterMainContact : true;
-
       return matchSearch && matchCustomer && matchMainContact;
     });
   }, [data, searchText, filterCustomer, filterMainContact]);
 
   const columns: ColumnsType<Contact> = [
     {
-      title: "Tên người liên hệ",
-      align: "center",
+      title: "Tên liên hệ",
       dataIndex: "contactName",
-      width: 200,
-      fixed: "left",
-      render: (_, record) => (
+      key: "contactName",
+      width: 150,
+      render: (text, record) => (
         <Link
-          onClick={() => onShowClick && onShowClick(record)}
-          to={generatePath(ROUTES_APP.crm.contactDetail, { id: record.id })} /*to={"#"}*/
+          className="contact-link"
+          onClick={() => navigate(generatePath(ROUTES_APP.crm.contactDetail, { id: record.id }))}
         >
-          {record.contactName}
+          {text}
         </Link>
       ),
     },
     {
       title: "Khách hàng",
-      align: "center",
       dataIndex: "customerName",
+      key: "customerName",
       width: 200,
-      fixed: "left",
     },
     {
       title: "Số điện thoại",
-      align: "center",
       dataIndex: "phone",
-      width: 150,
+      key: "phone",
+      width: 120,
     },
     {
       title: "Email",
-      align: "center",
       dataIndex: "email",
+      key: "email",
       width: 200,
     },
     {
       title: "Chức danh",
-      align: "center",
       dataIndex: "title",
+      key: "title",
       width: 150,
     },
     {
-      title: "Người liên hệ chính",
-      align: "center",
+      title: "Liên hệ chính",
       dataIndex: "mainContact",
+      key: "mainContact",
       width: 150,
     },
     {
       title: "Ghi chú",
-      align: "center",
       dataIndex: "note",
+      key: "note",
       width: 200,
+    },
+    {
+      title: "",
+      key: "action",
+      width: 80,
+      render: (_, record) => (
+        <Tooltip title="Chỉnh sửa">
+          <EditOutlined
+            style={{
+              fontSize: 20,
+              cursor: "pointer",
+              color: "#1890ff",
+              padding: 8,
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEditClick?.(record);
+            }}
+          />
+        </Tooltip>
+      ),
     },
   ];
 
-  if (showEdit) {
-    columns.push({
-      title: "",
-      align: "center",
-      dataIndex: "",
-      width: 60,
-      fixed: "right",
-      render: (_, record) => (
-        <EditOutlined
-          style={{
-            fontSize: "20px",
-            display: "block",
-            cursor: "pointer",
-            color: "#1890ff",
-            padding: "8px",
-          }}
-          onClick={(e) => {
-            e.stopPropagation(); // ❌ chặn click row
-            onEditClick?.(record);
-          }}
-        />
-      ),
-    });
-  }
-
   return (
-    <Table<Contact>
-      rowSelection={
-        selectable
-          ? {
-            selectedRowKeys,
-            onChange: (keys) => {
-              setSelectedRowKeys(keys as string[]); // 👈 ép kiểu vì React.Key có thể là string | number
-            },
-          }
-          : undefined
-      }
-      rowKey="id"
+    <Table
+      rowSelection={{
+        selectedRowKeys,
+        onChange: (keys) => setSelectedRowKeys(keys as string[]),
+      }}
       columns={columns}
       dataSource={filteredData}
-      scroll={{ x: "max-content", y: "calc(100vh - 330px)" }}
-      pagination={{ position: ["bottomCenter"] }}
+      rowKey="id"
+      pagination={false}
+      className="base-table"
+      scroll={{ x: 1050 }}
     />
   );
 };

@@ -1,196 +1,370 @@
-import {
-  Button,
-  Modal,
-  Form,
-  Input,
-  Breadcrumb,
-  Select,
-  InputNumber,
-  DatePicker,
-  Card,
-} from "antd";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { Modal, Button, Row, Col, Input, Select, Table, Card, Form, DatePicker } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { opportunityStages } from "@/views/CRM/OpportunityDetail/OpportunityDetail";
-import { Opportunity } from "@/views/CRM/OpportunityList/OpportunityList";
+import "@/index.css";
 
-interface OpportunityFormProps {
-  mode: "create" | "edit" | "detail";
-  open: boolean;
-  onCancel: () => void;
-  onOk?: (values: any) => void;
-  initialValues?: Opportunity | null;
+const { Option } = Select;
+
+interface Product {
+  id: number;
+  productName: string;
+  productType: string;
+  priceVND: number;
+  priceUSD: number;
+  vat: number;
+  afterVatVND: number;
+  afterVatUSD: number;
 }
 
-export const OpportunityForm = ({
+interface Opportunity {
+  id: number;
+  name: string;
+  contactName: string;
+  company: string;
+  expectedValue: number;
+  expectedCloseDate: string;
+  service: Product[];
+  probability: number;
+  priority: "Low" | "Medium" | "High";
+  owner: string;
+  stage: "Mới" | "Đạt yêu cầu" | "Đàm phán" | "Đóng";
+}
+
+interface OpportunityFormProps {
+  mode: "create" | "edit";
+  open: boolean;
+  onCancel: () => void;
+  onSave: (data: Opportunity) => void;
+  modalTitle?: string;
+  cardTitle?: string;
+  cancelText?: string;
+  saveText?: string;
+  loading?: boolean;
+  initialValues?: Opportunity | null;
+  form: any;
+}
+
+const OpportunityForm: React.FC<OpportunityFormProps> = ({
   mode,
   open,
   onCancel,
-  onOk,
+  onSave,
+  modalTitle = "Thêm cơ hội",
+  cardTitle = "Thông tin cơ hội",
+  cancelText = "Hủy",
+  saveText = "Xác nhận",
+  loading = false,
   initialValues,
-}: OpportunityFormProps) => {
-  const [form] = Form.useForm();
-  const isDetail = mode === "detail";
+  form,
+}) => {
+  const [services, setServices] = useState<Product[]>(
+    initialValues?.service || []
+  );
 
-  // Gán giá trị form khi mở modal
   useEffect(() => {
-    if (open && initialValues) {
+    if (initialValues) {
       form.setFieldsValue({
-        ...initialValues,
+        name: initialValues.name || "",
+        contactName: initialValues.contactName || "",
+        company: initialValues.company || "",
+        expectedValue: initialValues.expectedValue || undefined,
         expectedCloseDate: initialValues.expectedCloseDate
-          ? dayjs(initialValues.expectedCloseDate)
+          ? dayjs(initialValues.expectedCloseDate, "YYYY-MM-DD")
           : null,
+        probability: initialValues.probability || undefined,
+        priority: initialValues.priority || undefined,
+        owner: initialValues.owner || "",
+        stage: initialValues.stage || undefined,
       });
-    } else if (open && mode === "create") {
+      setServices(initialValues.service || []);
+    } else {
       form.resetFields();
+      setServices([]);
     }
-  }, [open, initialValues, form, mode]);
+  }, [initialValues, form]);
 
-  const handleOk = () => {
-    if (isDetail) {
-      onCancel();
-      return;
-    }
-    form.validateFields().then((values) => {
-      const payload = {
+  const handleDelete = (id: number) => {
+    setServices(services.filter((s) => s.id !== id));
+  };
+
+  const handleAddService = () => {
+    const newId = services.length > 0 ? Math.max(...services.map((s) => s.id)) + 1 : 1;
+    setServices([
+      ...services,
+      {
+        id: newId,
+        productName: "",
+        productType: "Thiết bị văn phòng",
+        priceVND: 0,
+        priceUSD: 0,
+        vat: 10,
+        afterVatVND: 0,
+        afterVatUSD: 0,
+      },
+    ]);
+  };
+
+  const handleSave = async () => {
+    try {
+      const values = await form.validateFields();
+      if (services.length === 0) {
+        form.setFields([
+          {
+            name: "service",
+            errors: ["Vui lòng thêm ít nhất một dịch vụ!"],
+          },
+        ]);
+        return;
+      }
+      onSave({
         ...values,
+        id: initialValues?.id || Date.now(),
         expectedCloseDate: values.expectedCloseDate
           ? values.expectedCloseDate.format("YYYY-MM-DD")
-          : null,
-      };
-      onOk?.(payload);
-      form.resetFields();
-    });
+          : "",
+        service: services.map((s) => ({
+          ...s,
+          afterVatVND: (s.priceVND * (100 + s.vat)) / 100,
+          afterVatUSD: (s.priceUSD * (100 + s.vat)) / 100,
+        })),
+      });
+    } catch (error) {
+      console.error("Validation failed:", error);
+    }
   };
+
+  const columns = [
+    {
+      title: "Tên dịch vụ",
+      dataIndex: "productName",
+      key: "productName",
+      render: (_: any, record: Product, index: number) => (
+        <Input
+          value={record.productName}
+          onChange={(e) => {
+            const newServices = [...services];
+            newServices[index].productName = e.target.value;
+            setServices(newServices);
+          }}
+          placeholder="Nhập tên dịch vụ"
+        />
+      ),
+    },
+    {
+      title: "Loại dịch vụ",
+      dataIndex: "productType",
+      key: "productType",
+      render: (_: any, record: Product, index: number) => (
+        <Select
+          value={record.productType}
+          onChange={(value) => {
+            const newServices = [...services];
+            newServices[index].productType = value;
+            setServices(newServices);
+          }}
+          style={{ width: "100%" }}
+        >
+          <Option value="Thiết bị văn phòng">Thiết bị văn phòng</Option>
+          <Option value="Vật tư tiêu hao">Vật tư tiêu hao</Option>
+        </Select>
+      ),
+    },
+    {
+      title: "Giá (VND)",
+      dataIndex: "priceVND",
+      key: "priceVND",
+      render: (_: any, record: Product, index: number) => (
+        <Input
+          type="number"
+          value={record.priceVND}
+          onChange={(e) => {
+            const newServices = [...services];
+            newServices[index].priceVND = Number(e.target.value);
+            setServices(newServices);
+          }}
+          placeholder="Nhập giá VND"
+        />
+      ),
+    },
+    {
+      title: "Giá (USD)",
+      dataIndex: "priceUSD",
+      key: "priceUSD",
+      render: (_: any, record: Product, index: number) => (
+        <Input
+          type="number"
+          value={record.priceUSD}
+          onChange={(e) => {
+            const newServices = [...services];
+            newServices[index].priceUSD = Number(e.target.value);
+            setServices(newServices);
+          }}
+          placeholder="Nhập giá USD"
+        />
+      ),
+    },
+    {
+      title: "VAT",
+      dataIndex: "vat",
+      key: "vat",
+      render: (_: any, record: Product, index: number) => (
+        <Input
+          type="number"
+          value={record.vat}
+          onChange={(e) => {
+            const newServices = [...services];
+            newServices[index].vat = Number(e.target.value);
+            setServices(newServices);
+          }}
+          placeholder="Nhập VAT (%)"
+        />
+      ),
+    },
+    {
+      title: "Giá sau VAT (VND)",
+      key: "afterVatVND",
+      render: (_: any, record: Product) =>
+        ((record.priceVND * (100 + record.vat)) / 100).toLocaleString("vi-VN"),
+    },
+    {
+      title: "Giá sau VAT (USD)",
+      key: "afterVatUSD",
+      render: (_: any, record: Product) =>
+        ((record.priceUSD * (100 + record.vat)) / 100).toLocaleString("en-US"),
+    },
+    {
+      title: "Hành động",
+      key: "action",
+      render: (_: any, record: Product) => (
+        <Button danger type="text" onClick={() => handleDelete(record.id)}>
+          ❌
+        </Button>
+      ),
+    },
+  ];
 
   return (
     <Modal
-      title={`${mode === "create" ? "Tạo" : mode === "edit" ? "Chỉnh sửa" : "Chi tiết"} cơ hội`}
+      title={<h2>{modalTitle}</h2>}
       open={open}
       onCancel={onCancel}
       footer={[
-        <Button key="cancel" danger onClick={onCancel}>
-          {isDetail ? "Đóng" : "Huỷ"}
+        <Button key="cancel" onClick={onCancel} disabled={loading}>
+          {cancelText}
         </Button>,
-        !isDetail && (
-          <Button key="submit" type="primary" onClick={handleOk}>
-            {mode === "create" ? "Xác nhận" : "Lưu thay đổi"}
-          </Button>
-        ),
+        <Button key="save" type="primary" onClick={handleSave} loading={loading}>
+          {saveText}
+        </Button>,
       ]}
-      width={800}
+      width={1000}
     >
-      <Card>
-        <h3>Thông tin cơ hội</h3>
+      <Form form={form} layout="vertical" labelAlign="left">
+        <Card title={cardTitle} className="card-section">
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item
+                label="Tên cơ hội"
+                name="name"
+                rules={[{ required: true, message: "Vui lòng nhập tên cơ hội!" }]}
+              >
+                <Input placeholder="Nhập tên cơ hội" />
+              </Form.Item>
+              <Form.Item
+                label="Tên liên hệ"
+                name="contactName"
+                rules={[{ required: true, message: "Vui lòng nhập tên liên hệ!" }]}
+              >
+                <Input placeholder="Nhập tên liên hệ" />
+              </Form.Item>
+              <Form.Item
+                label="Công ty"
+                name="company"
+                rules={[{ required: true, message: "Vui lòng nhập công ty!" }]}
+              >
+                <Input placeholder="Nhập công ty" />
+              </Form.Item>
+              <Form.Item
+                label="Giá trị dự kiến (VND)"
+                name="expectedValue"
+                rules={[{ required: true, message: "Vui lòng nhập giá trị dự kiến!" }]}
+              >
+                <Input type="number" placeholder="Nhập giá trị dự kiến" />
+              </Form.Item>
+              <Form.Item
+                label="Ngày chốt dự kiến"
+                name="expectedCloseDate"
+                rules={[{ required: true, message: "Vui lòng chọn ngày chốt dự kiến!" }]}
+              >
+                <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="Xác suất (%)"
+                name="probability"
+                rules={[{ required: true, message: "Vui lòng nhập xác suất!" }]}
+              >
+                <Input type="number" placeholder="Nhập xác suất" min={0} max={100} />
+              </Form.Item>
+              <Form.Item
+                label="Ưu tiên"
+                name="priority"
+                rules={[{ required: true, message: "Vui lòng chọn mức ưu tiên!" }]}
+              >
+                <Select style={{ width: "100%" }} placeholder="Chọn mức ưu tiên">
+                  <Option value="High">Cao</Option>
+                  <Option value="Medium">Trung bình</Option>
+                  <Option value="Low">Thấp</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                label="Nhân viên phụ trách"
+                name="owner"
+                rules={[{ required: true, message: "Vui lòng nhập nhân viên phụ trách!" }]}
+              >
+                <Input placeholder="Nhập nhân viên phụ trách" />
+              </Form.Item>
+              <Form.Item
+                label="Giai đoạn"
+                name="stage"
+                rules={[{ required: true, message: "Vui lòng chọn giai đoạn!" }]}
+              >
+                <Select style={{ width: "100%" }} placeholder="Chọn giai đoạn">
+                  <Option value="Mới">Mới</Option>
+                  <Option value="Đạt yêu cầu">Đạt yêu cầu</Option>
+                  <Option value="Đàm phán">Đàm phán</Option>
+                  <Option value="Đóng">Đóng</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+        </Card>
 
-        <Form
-          form={form}
-          layout="horizontal"
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 16 }}
-          disabled={isDetail}
-        >
-          <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Tên cơ hội"
-            name="name"
-            rules={[{ required: true, message: "Vui lòng nhập tên cơ hội" }]}
+        <Card className="card-section">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 16,
+            }}
           >
-            <Input />
-          </Form.Item>
-
+            <h3 style={{ margin: 0 }}>Danh sách dịch vụ</h3>
+            <Button type="primary" onClick={handleAddService}>
+              <PlusOutlined /> Thêm dịch vụ
+            </Button>
+          </div>
           <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Tên liên hệ"
-            name="contactName"
-            rules={[{ required: true, message: "Vui lòng nhập tên liên hệ" }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Công ty"
-            name="company"
-            rules={[{ required: true, message: "Vui lòng nhập công ty" }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Giá trị dự kiến (VND)"
-            name="expectedValue"
-            rules={[{ required: true, message: "Vui lòng nhập giá trị dự kiến" }]}
-          >
-            <InputNumber style={{ width: "100%" }} min={0} step={1000000} />
-          </Form.Item>
-
-          <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Ngày dự kiến chốt"
-            name="expectedCloseDate"
-            rules={[{ required: true, message: "Vui lòng chọn ngày dự kiến chốt" }]}
-          >
-            <DatePicker style={{ width: "100%" }} format="YYYY-MM-DD" />
-          </Form.Item>
-
-          <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Dịch vụ dự kiến"
             name="service"
-            rules={[{ required: true, message: "Vui lòng nhập dịch vụ dự kiến" }]}
+            rules={[{ validator: () => (services.length > 0 ? Promise.resolve() : Promise.reject(new Error("Vui lòng thêm ít nhất một dịch vụ!"))) }]}
           >
-            <Input />
+            <Table dataSource={services} columns={columns} pagination={false} bordered size="small" />
           </Form.Item>
-
-          <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Xác suất (%)"
-            name="probability"
-            rules={[{ required: true, type: "number", min: 0, max: 100 }]}
-          >
-            <InputNumber style={{ width: "100%" }} min={0} max={100} />
-          </Form.Item>
-
-          <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Ưu tiên"
-            name="priority"
-            rules={[{ required: true }]}
-          >
-            <Select>
-              <Select.Option value="High">High</Select.Option>
-              <Select.Option value="Medium">Medium</Select.Option>
-              <Select.Option value="Low">Low</Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Nhân viên phụ trách"
-            name="owner"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Giai đoạn"
-            name="stage"
-            rules={[{ required: true }]}
-          >
-            <Select>
-              {opportunityStages.map((stage) => (
-                <Select.Option key={stage} value={stage}>
-                  {stage}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Form>
-      </Card>
+        </Card>
+      </Form>
     </Modal>
   );
 };
+
+export default OpportunityForm;

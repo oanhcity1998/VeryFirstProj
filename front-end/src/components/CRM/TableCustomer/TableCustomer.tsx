@@ -2,10 +2,9 @@ import { useState } from "react";
 import { Table, Form, Checkbox, Button, Modal } from "antd";
 import { generatePath, Link } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
-import CreateCustomerForm from "../CustomerForm/CreateCustomerForm";
+import CreateCustomerForm from "../CustomerForm/CustomerForm";
 import dayjs from "dayjs";
 
-import "./TableCustomer.css";
 import { ROUTES_APP } from "@/app/routes";
 
 interface TableCustomerProps {
@@ -40,7 +39,7 @@ const TableCustomer: React.FC<TableCustomerProps> = ({
     setIsModalVisible(true);
   };
 
-  // Lưu dữ liệu từ form
+  // Xác nhận dữ liệu từ form
   const handleSave = (values: any) => {
     if (editingProduct) {
       setcustomerData((prev) =>
@@ -156,7 +155,7 @@ const TableCustomer: React.FC<TableCustomerProps> = ({
           icon={<EditOutlined />}
           type="link"
           onClick={() => onEdit(record)}
-          className="customer-edit-icon"
+          className="base-edit-icon"
         />
       ),
     },
@@ -165,6 +164,7 @@ const TableCustomer: React.FC<TableCustomerProps> = ({
   return (
     <div>
       <Table
+        className="base-table"
         columns={columns as any}
         dataSource={data}
         pagination={{ position: ["bottomCenter"] }} // center positioning
@@ -177,7 +177,7 @@ const TableCustomer: React.FC<TableCustomerProps> = ({
         open={isModalVisible}
         onOk={() => form.submit()}
         onCancel={() => setIsModalVisible(false)}
-        okText="Lưu"
+        okText="Xác nhận"
         cancelText="Hủy"
       >
         <CreateCustomerForm

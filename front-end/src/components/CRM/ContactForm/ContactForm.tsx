@@ -1,20 +1,18 @@
-import { Modal, Form, Input, Button, Breadcrumb } from "antd";
+import { Modal, Form, Input, Button, Card } from "antd";
 import { useEffect } from "react";
-import "./ContactForm.css";
-import { Link } from "react-router-dom";
 
 interface ContactFormProps {
   mode: "create" | "edit" | "detail";
   open: boolean;
   onCancel: () => void;
-  onOk?: (values: any) => void; // không bắt buộc trong chế độ detail
+  onOk?: (values: any) => void;
   initialValues?: any;
 }
 
 const ContactForm = ({ mode, open, onCancel, onOk, initialValues }: ContactFormProps) => {
   const [form] = Form.useForm();
+  const isDetail = mode === "detail";
 
-  // set giá trị ban đầu khi edit / detail
   useEffect(() => {
     if (open && initialValues) {
       form.setFieldsValue(initialValues);
@@ -24,7 +22,7 @@ const ContactForm = ({ mode, open, onCancel, onOk, initialValues }: ContactFormP
   }, [open, initialValues, form, mode]);
 
   const handleOk = () => {
-    if (mode === "detail") {
+    if (isDetail) {
       onCancel();
       return;
     }
@@ -34,11 +32,9 @@ const ContactForm = ({ mode, open, onCancel, onOk, initialValues }: ContactFormP
     });
   };
 
-  const isDetail = mode === "detail";
-
   return (
     <Modal
-      title={`${mode === "create" ? "Tạo" : mode === "edit" ? "Chỉnh sửa" : "Chi tiết"} liên hệ`}
+      title={<h2>{mode === "create" ? "Tạo" : mode === "edit" ? "Chỉnh sửa" : "Chi tiết"} liên hệ</h2>}
       open={open}
       onCancel={onCancel}
       footer={[
@@ -53,74 +49,67 @@ const ContactForm = ({ mode, open, onCancel, onOk, initialValues }: ContactFormP
       ]}
       width={800}
     >
-      <Form
-        form={form}
-        layout="horizontal"
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 18 }}
-        disabled={isDetail} // 👈 tự động disable input nếu là detail
-      >
-        <div className="form-section">
-          <h3>Thông tin liên hệ</h3>
-
+      <Form form={form} layout="vertical" disabled={isDetail}>
+        <Card title="Thông tin liên hệ" className="card-section">
           <Form.Item
-            style={{ fontWeight: "500" }}
             label="Tên liên hệ"
             name="contactName"
-            rules={[{ required: !isDetail }]}
+            rules={[{ required: !isDetail, message: "Vui lòng nhập tên liên hệ!" }]}
           >
             <Input placeholder="Nhập họ và tên người liên hệ" />
           </Form.Item>
-
           <Form.Item
-            style={{ fontWeight: "500" }}
             label="Khách hàng"
             name="customerName"
-            rules={[{ required: !isDetail }]}
+            rules={[{ required: !isDetail, message: "Vui lòng nhập tên khách hàng!" }]}
           >
             <Input placeholder="Nhập tên công ty hoặc khách hàng" />
           </Form.Item>
-
           <Form.Item
-            style={{ fontWeight: "500" }}
             label="Số điện thoại"
             name="phone"
-            rules={[{ required: !isDetail }]}
+            rules={[
+              { required: !isDetail, message: "Vui lòng nhập số điện thoại!" },
+              {
+                pattern: /^0\d{9}$/,
+                message: "Số điện thoại phải có 10 chữ số và bắt đầu bằng 0!",
+              },
+            ]}
           >
             <Input placeholder="Nhập số điện thoại (ví dụ: 0901234567)" />
           </Form.Item>
-
           <Form.Item
-            style={{ fontWeight: "500" }}
             label="Email"
             name="email"
-            rules={[{ required: !isDetail }]}
+            rules={[
+              { required: !isDetail, message: "Vui lòng nhập email!" },
+              { type: "email", message: "Email không đúng định dạng!" },
+            ]}
           >
             <Input placeholder="Nhập địa chỉ email (ví dụ: abc@gmail.com)" />
           </Form.Item>
-
           <Form.Item
-            style={{ fontWeight: "500" }}
             label="Chức danh"
             name="title"
-            rules={[{ required: !isDetail }]}
+            rules={[{ required: !isDetail, message: "Vui lòng nhập chức danh!" }]}
           >
             <Input placeholder="Nhập chức danh (ví dụ: Giám đốc, Trưởng phòng...)" />
           </Form.Item>
-
           <Form.Item
-            style={{ fontWeight: "500" }}
             label="Liên hệ chính"
             name="mainContact"
-            rules={[{ required: !isDetail }]}
+            rules={[{ required: !isDetail, message: "Vui lòng nhập tên người liên hệ chính!" }]}
           >
             <Input placeholder="Nhập tên người liên hệ chính" />
           </Form.Item>
-
-          <Form.Item style={{ fontWeight: "500" }} label="Ghi chú" name="note">
+          <Form.Item
+            label="Ghi chú"
+            name="note"
+            rules={[{ required: false }]}
+          >
             <Input.TextArea rows={3} placeholder="Nhập ghi chú thêm (nếu có)" />
           </Form.Item>
-        </div>
+        </Card>
       </Form>
     </Modal>
   );

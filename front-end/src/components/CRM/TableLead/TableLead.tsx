@@ -1,12 +1,7 @@
-// src/components/TableLead/TableLead.tsx
-import { Table, Tooltip, Button, Typography } from "antd";
-import { generatePath, Link } from "react-router-dom";
-import { ColumnsType } from "antd/es/table";
+import { Table, Checkbox, Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import "./TableLead.css"; // ✅ import css
-import { ROUTES_APP } from "@/app/routes";
 
-export interface Lead {
+interface Lead {
   id: number;
   leadName: string;
   contactName: string;
@@ -18,65 +13,134 @@ export interface Lead {
 }
 
 interface TableLeadProps {
-  data: any[];
-  searchText: string;
-  selectedRowKeys: React.Key[];
-  setSelectedRowKeys: (keys: number[]) => void;
-  onEdit: (record: any) => void;
+  data?: Lead[];
+  selectedRowKeys?: string[];
+  setSelectedRowKeys: (keys: string[]) => void;
+  onEdit?: (record: Lead) => void;
+  loading?: boolean;
 }
 
-const TableLead = ({
-  data,
-  searchText,
-  selectedRowKeys,
+const TableLead: React.FC<TableLeadProps> = ({
+  data = [],
+  selectedRowKeys = [],
   setSelectedRowKeys,
   onEdit,
-}: TableLeadProps) => {
-  const filteredData = data.filter((item) =>
-    item.leadName.toLowerCase().includes(searchText.toLowerCase())
-  );
+  loading = false,
+}) => {
+  const allKeys = data.map((item) => item.id.toString());
+  const isAllChecked = selectedRowKeys.length === data.length;
+  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
 
-  const columns: ColumnsType<Lead> = [
+  const columns = [
     {
-      title: "Tên lead",
-      dataIndex: "leadName",
-      key: "leadName",
-      render: (_: any, record: any) => (
-        <Link to={generatePath(ROUTES_APP.crm.leadDetail, { id: record.id })}>
-          {record.leadName}
-        </Link> // 👈 link
+      title: (
+        <Checkbox
+          indeterminate={isIndeterminate}
+          checked={isAllChecked}
+          onChange={(e) => {
+            if (e.target.checked) setSelectedRowKeys(allKeys);
+            else setSelectedRowKeys([]);
+          }}
+        />
+      ),
+      dataIndex: "option",
+      width: 60,
+      fixed: "left" as const,
+      align: "center" as const,
+      render: (_: any, record: Lead) => (
+        <Checkbox
+          checked={selectedRowKeys.includes(record.id.toString())}
+          onChange={(e) => {
+            if (e.target.checked) {
+              setSelectedRowKeys([...selectedRowKeys, record.id.toString()]);
+            } else {
+              setSelectedRowKeys(
+                selectedRowKeys.filter((key) => key !== record.id.toString())
+              );
+            }
+          }}
+        />
       ),
     },
-    { title: "Tên liên hệ", dataIndex: "contactName", key: "contactName" },
-    { title: "Email", dataIndex: "email", key: "email" },
-    { title: "Số điện thoại", dataIndex: "phone", key: "phone" },
-    { title: "Ưu tiên", dataIndex: "priority", key: "priority" },
-    { title: "Nhân viên phụ trách", dataIndex: "owner", key: "owner" },
-    { title: "Trạng thái", dataIndex: "status", key: "status" },
     {
-      title: "Hành động",
+      title: "Tên khách hàng tiềm năng",
+      dataIndex: "leadName",
+      key: "leadName",
+      fixed: "left" as const,
+      width: 200,
+      align: "center" as const,
+    },
+    {
+      title: "Người liên hệ",
+      dataIndex: "contactName",
+      key: "contactName",
+      width: 150,
+      align: "center" as const,
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      width: 200,
+      align: "center" as const,
+    },
+    {
+      title: "Số điện thoại",
+      dataIndex: "phone",
+      key: "phone",
+      width: 150,
+      align: "center" as const,
+    },
+    {
+      title: "Ưu tiên",
+      dataIndex: "priority",
+      key: "priority",
+      width: 100,
+      align: "center" as const,
+    },
+    {
+      title: "Nhân viên phụ trách",
+      dataIndex: "owner",
+      key: "owner",
+      width: 150,
+      align: "center" as const,
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      width: 150,
+      align: "center" as const,
+    },
+    {
+      title: "",
       key: "action",
-      render: (_: any, record: any) => (
+      fixed: "right" as const,
+      width: 80,
+      align: "center" as const,
+      render: (_: any, record: Lead) => (
         <Button
           type="link"
           icon={<EditOutlined />}
-          onClick={() => onEdit(record)}
-          className="lead-edit-icon"
-        ></Button>
+          onClick={() => onEdit?.(record)}
+          className="base-edit-icon"
+        />
       ),
     },
   ];
 
   return (
-    <Table<Lead>
-      rowSelection={{
-        selectedRowKeys,
-        onChange: (keys) => setSelectedRowKeys(keys as number[]),
-      }}
+    <Table
+      className="base-table"
       columns={columns}
-      dataSource={filteredData}
+      dataSource={data}
+      loading={loading}
+      pagination={false}
       rowKey="id"
-      pagination={{ position: ["bottomCenter"] }}
+      scroll={{ x: 1000 }}
+      rowClassName={(record: Lead) =>
+        selectedRowKeys.includes(record.id.toString()) ? "selected-row" : ""
+      }
     />
   );
 };

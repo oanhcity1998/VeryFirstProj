@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button, Modal, Upload, Select, Pagination, Empty, Spin } from "antd";
-import { PlusOutlined, InboxOutlined, DeleteOutlined } from "@ant-design/icons";
-import * as XLSX from "xlsx";
+import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
-import "./DepartmentList.css";
 import Search from "antd/es/input/Search";
 import TableDepartment from "@/components/HRM/TableDepartment/TableDepartment";
 import DepartmentForm from "@/components/HRM/DepartmentForm/DepartmentForm";
@@ -140,27 +138,27 @@ const DepartmentList: React.FC = () => {
 
   return (
     <>
-      <div className="department-list-header">
+      <div className="list-header">
         <h2>Danh sách phòng ban</h2>
-        <div className="department-list-actions">
+        <div className="list-actions">
           <Search
-            className="department-search-bar"
+            className="search-bar"
             placeholder="Tìm kiếm theo tên phòng ban"
             allowClear
             value={queryParams.q}
             onChange={(e) => handleSearch(e.target.value)}
             onSearch={handleSearch}
-            style={{ width: 250 }} // Standardize width
           />
           <Select
+            className="filter-bar"
             placeholder="Lọc theo tên phòng ban"
             value={queryParams.department_name} // Bind to queryParams.department_name
             onChange={(name) => setQueryParams({ ...queryParams, department_name: name, page: 1 })}
             options={(departments || []).map((item) => ({ value: item.name, label: item.name }))}
             allowClear
-            style={{ width: 250 }} // Standardize width
           />
           <Select
+            className="filter-bar"
             placeholder="Lọc theo trưởng phòng"
             value={queryParams.manager_name} // Bind to queryParams.manager_name
             onChange={(head) => setQueryParams({ ...queryParams, manager_name: head, page: 1 })}
@@ -168,7 +166,6 @@ const DepartmentList: React.FC = () => {
               .filter((item) => item.manager_name)
               .map((item) => ({ value: item.manager_name, label: item.manager_name }))}
             allowClear
-            style={{ width: 250 }} // Standardize width
           />
           <Button
             danger
@@ -246,7 +243,7 @@ const DepartmentList: React.FC = () => {
         department={selectedDepartment}
         modalTitle={selectedDepartment ? "Cập nhật phòng ban" : "Thêm phòng ban"}
         cancelText="Hủy"
-        saveText="Lưu"
+        saveText="Xác nhận"
         loading={isSubmitting || isCreating || isUpdating}
       />
     </>

@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import { Button, Space, Typography, Input, Select, Row, Col } from "antd";
+import { Button, Input, Select } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import "./QuoteList.css";
-import { generatePath, useNavigate } from "react-router-dom";
-import QuoteTable, {Contract} from "@/components/CRM/TableQuote/TableQuote"
-import CreateContractForm from "@/components/CRM/ContractForm/CreateContractForm";
+import { useNavigate } from "react-router-dom";
+import QuoteTable, { Contract } from "@/components/CRM/TableQuote/TableQuote"
 import QuoteDetail from "../QuoteDetail/QuoteDetail";
-import { ROUTES_APP } from "@/app/routes";
-
+import '@/index.css';
+import ContractForm from "@/components/CRM/ContractForm/ContractForm";
 const { Search } = Input;
 const { Option } = Select;
 type ViewDetail = {
@@ -26,14 +25,14 @@ const QuoteList: React.FC = () => {
 
   const navigate = useNavigate();
 
-//   // ContractList.tsx
-//   const handleRowClick = (record: Contract) => {
-//     navigate(
-//       `${generatePath(ROUTES_APP.crm.contractDetail, { id: record.id })}?loai=${
-//         record.type === "Báo giá" ? "baogia" : "hopdong"
-//       }`
-//     );
-//   };
+  //   // ContractList.tsx
+  //   const handleRowClick = (record: Contract) => {
+  //     navigate(
+  //       `${generatePath(ROUTES_APP.crm.contractDetail, { id: record.id })}?loai=${
+  //         record.type === "Báo giá" ? "baogia" : "hopdong"
+  //       }`
+  //     );
+  //   };
 
   if (viewDetail) {
     return <QuoteDetail loai={viewDetail.loai} onBack={() => setViewDetail(null)} />;
@@ -86,52 +85,43 @@ const QuoteList: React.FC = () => {
   });
 
   return (
-    <div className="quote-list-container">
-      {/* Header */}
-      <div className="quote-list-header">
-        <Row gutter={[16, 16]} align="middle" justify="space-between" style={{ flexWrap: "wrap" }}>
-            <Col>
-            <h2 className="quote-title">Danh sách báo giá</h2>
-            </Col>
-
-            <Col flex="auto">
-            <Space wrap style={{ justifyContent: "flex-end", width: "100%" }}>
-                <Search
-                placeholder="Tìm kiếm hợp đồng..."
-                allowClear
-                onSearch={(val) => setSearchText(val)}
-                style={{ minWidth: 180, maxWidth: 240, width: "100%" }}
-                />
-                <Select
-                placeholder="Trạng thái"
-                allowClear
-                style={{ minWidth: 140 }}
-                onChange={(val) => setStatusFilter(val)}
-                >
-                <Option value="Chờ duyệt">Chờ duyệt</Option>
-                <Option value="Đã duyệt">Đã duyệt</Option>
-                <Option value="Huỷ">Huỷ</Option>
-                </Select>
-                <Select
-                placeholder="Loại hợp đồng"
-                allowClear
-                style={{ minWidth: 140 }}
-                onChange={(val) => setTypeFilter(val)}
-                >
-                <Option value="Báo giá">Báo giá</Option>
-                <Option value="Hợp đồng">Hợp đồng</Option>
-                </Select>
-                <Button danger disabled={selectedRowKeys.length === 0} icon={<DeleteOutlined />}>
-                Xoá
-                </Button>
-                <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpenForm(true)}>
-                Tạo
-                </Button>
-            </Space>
-            </Col>
-        </Row>
+    <>
+      <div className="list-header">
+        <h2>Danh sách báo giá</h2>
+        <div className="list-actions">
+          <Search
+            placeholder="Tìm kiếm theo hợp đồng"
+            allowClear
+            onSearch={(val) => setSearchText(val)}
+            style={{ minWidth: 180, maxWidth: 240, width: "100%" }}
+          />
+          <Select
+            className="filter-bar"
+            placeholder="Trạng thái"
+            allowClear
+            onChange={(val) => setStatusFilter(val)}
+          >
+            <Option value="Chờ duyệt">Chờ duyệt</Option>
+            <Option value="Đã duyệt">Đã duyệt</Option>
+            <Option value="Huỷ">Huỷ</Option>
+          </Select>
+          <Select
+            className="filter-bar"
+            placeholder="Loại hợp đồng"
+            allowClear
+            onChange={(val) => setTypeFilter(val)}
+          >
+            <Option value="Báo giá">Báo giá</Option>
+            <Option value="Hợp đồng">Hợp đồng</Option>
+          </Select>
+          <Button danger disabled={selectedRowKeys.length === 0} icon={<DeleteOutlined />}>
+            Xoá
+          </Button>
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpenForm(true)}>
+            Tạo
+          </Button>
         </div>
-
+      </div>
 
       {/* Table (separated component) */}
       <QuoteTable
@@ -142,23 +132,23 @@ const QuoteList: React.FC = () => {
       />
 
       {/* Form modal */}
-      <CreateContractForm
+      <ContractForm
         open={openForm}
         onCancel={() => setOpenForm(false)}
         onSave={handleSave}
       />
 
-      <CreateContractForm
+      <ContractForm
         open={!!editRecord}
         onCancel={() => setEditRecord(null)}
         onSave={(data) => {
-            console.log("Edited data:", data);
-            setEditRecord(null);
+          console.log("Edited data:", data);
+          setEditRecord(null);
         }}
         title="Chỉnh sửa báo giá & hợp đồng" // ✅ new title
         initialValues={editRecord || undefined} // ✅ pass record data
-        />
-    </div>
+      />
+    </>
   );
 };
 

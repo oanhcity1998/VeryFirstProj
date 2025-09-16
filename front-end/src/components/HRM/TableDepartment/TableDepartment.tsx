@@ -1,6 +1,6 @@
 import { Table, Checkbox, Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import "./TableDepartment.css";
+
 import { Department } from "@/models/HRM/department.model";
 
 interface TableDepartmentProps {
@@ -107,7 +107,7 @@ const TableDepartment: React.FC<TableDepartmentProps> = ({
                         console.log("Edit clicked for record:", record); // Debug edit click
                         onEdit?.(record);
                     }}
-                    className="department-edit-icon"
+                    className="base-edit-icon"
                 />
             ),
         },
@@ -115,7 +115,7 @@ const TableDepartment: React.FC<TableDepartmentProps> = ({
 
     return (
         <Table
-            className="department-table"
+            className="base-table"
             columns={columns}
             dataSource={data}
             loading={loading}

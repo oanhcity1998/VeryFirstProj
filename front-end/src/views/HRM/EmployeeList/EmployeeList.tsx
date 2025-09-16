@@ -10,7 +10,7 @@ import {
   DownloadOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import "./EmployeeList.css";
+;
 import dayjs from "dayjs";
 import Search from "antd/es/input/Search";
 import TableEmployee from "@/components/HRM/TableEmployee/TableEmployee";
@@ -398,17 +398,16 @@ const EmployeeList: React.FC = () => {
 
   return (
     <>
-      <div className="employee-list-header">
+      <div className="list-header">
         <h2>Danh sách nhân sự</h2>
-        <div className="employee-list-actions">
+        <div className="list-actions">
           <Search
-            className="employee-search-bar"
+            className="search-bar"
             placeholder="Tìm kiếm theo họ và tên"
             allowClear
             value={queryParams.q}
             onChange={(e) => handleSearch(e.target.value)}
             onSearch={handleSearch}
-            style={{ width: 250 }} // Standardize width
           />
           <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>
             Bộ lọc
@@ -530,7 +529,7 @@ const EmployeeList: React.FC = () => {
       </div>
 
       {showLoading ? (
-        <div style={{ textAlign: "center", padding: "50px 0" }}>
+        <div className="loading-icon">
           <Spin size="large" />
         </div>
       ) : employees && employees.length > 0 ? (
@@ -543,7 +542,7 @@ const EmployeeList: React.FC = () => {
             onEdit={handleEdit}
           />
           {meta && (
-            <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
+            <div className="pagination-container">
               <Pagination
                 current={meta.page}
                 pageSize={meta.limit}
@@ -556,7 +555,7 @@ const EmployeeList: React.FC = () => {
           )}
         </>
       ) : (
-        <div style={{ textAlign: "center", padding: "50px 0", color: "#888" }}>
+        <div className="empty-message">
           <Empty description="Không có nhân viên nào để hiển thị" />
           <p>Hiện tại không có dữ liệu nhân sự. Vui lòng thêm nhân viên mới!</p>
         </div>
@@ -577,7 +576,7 @@ const EmployeeList: React.FC = () => {
         extraInfoTitle="Thông tin bổ sung"
         contractTitle="Thông tin hợp đồng"
         cancelText="Hủy"
-        saveText="Lưu"
+        saveText="Xác nhận"
         loading={isSubmitting || isCreating || isUpdating}
       />
 

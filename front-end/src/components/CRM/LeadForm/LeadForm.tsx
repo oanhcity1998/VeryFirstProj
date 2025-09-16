@@ -1,115 +1,158 @@
-import React from "react";
-import { Modal, Form, Input, Select, Button } from "antd";
-import "./LeadForm.css"
+import { useEffect } from "react";
+import { Modal, Form, Input, Button, Select, Card } from "antd";
+import "@/index.css";
 
-const { Option } = Select;
-
-interface LeadFormProps {
-    open: boolean; 
-    onCancel: () => void;
-    onSubmit: (values: any) => void;
-    initialValues?: any;
+interface Lead {
+  id: number;
+  leadName: string;
+  contactName: string;
+  email: string;
+  phone: string;
+  priority: string;
+  owner: string;
+  status: string;
 }
 
+interface LeadFormProps {
+  onCancel: () => void;
+  onSave: (values: Lead) => void;
+  lead?: Lead | null;
+  open: boolean;
+  modalTitle?: string;
+  cancelText?: string;
+  saveText?: string;
+  loading?: boolean;
+  form: any;
+}
 
-const LeadForm: React.FC<LeadFormProps> = ({ open, onCancel, onSubmit, initialValues }) => {
-  const [form] = Form.useForm();
-
-  React.useEffect(() => {
-    if (initialValues) {
-      form.setFieldsValue(initialValues);
+const LeadForm: React.FC<LeadFormProps> = ({
+  onCancel,
+  onSave,
+  lead,
+  open,
+  modalTitle = "Thêm khách hàng tiềm năng",
+  cancelText = "Hủy",
+  saveText = "Xác nhận",
+  loading = false,
+  form,
+}) => {
+  useEffect(() => {
+    if (lead) {
+      form.setFieldsValue({
+        leadName: lead.leadName,
+        contactName: lead.contactName,
+        email: lead.email,
+        phone: lead.phone,
+        priority: lead.priority,
+        owner: lead.owner,
+        status: lead.status,
+      });
     } else {
       form.resetFields();
     }
-  }, [initialValues, form]);
+  }, [lead, form]);
+
+  const onFinish = (values: any) => {
+    onSave({
+      id: lead?.id || Date.now(),
+      leadName: values.leadName,
+      contactName: values.contactName,
+      email: values.email,
+      phone: values.phone,
+      priority: values.priority,
+      owner: values.owner,
+      status: values.status,
+    });
+  };
 
   return (
     <Modal
+      title={<h2>{modalTitle}</h2>}
       open={open}
-      title={initialValues ? "Chỉnh sửa Lead" : "Thêm mới Lead"}
       onCancel={onCancel}
-      footer={[
-        <Button key="cancel" onClick={onCancel}>
-          Hủy
-        </Button>,
-        <Button
-          key="submit"
-          type="primary"
-          onClick={() => form.submit()}
-        >
-          Lưu
-        </Button>,
-      ]}
+      footer={null}
+      width={900}
+      style={{ top: 20 }}
+      bodyStyle={{ maxHeight: "80vh", overflowY: "auto" }}
+      centered
       destroyOnClose
     >
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={onSubmit}
-        initialValues={initialValues}
-      >
-        <Form.Item label="Tên lead" name="leadName" rules={[{ required: true, message: "Nhập tên lead" }]}>
-          <Input />
-        </Form.Item>
-
-        <Form.Item label="Tên liên hệ" name="contactName">
-          <Input />
-        </Form.Item>
-
-        <Form.Item label="Chức vụ" name="position">
-          <Input />
-        </Form.Item>
-
-        <Form.Item label="Công ty" name="company">
-          <Input />
-        </Form.Item>
-
-        <Form.Item label="Email" name="email">
-          <Input />
-        </Form.Item>
-
-        <Form.Item label="Số điện thoại" name="phone">
-          <Input />
-        </Form.Item>
-
-        <Form.Item label="Địa chỉ" name="address">
-          <Input />
-        </Form.Item>
-
-        <Form.Item label="Website" name="website">
-          <Input />
-        </Form.Item>
-
-        <Form.Item label="Nguồn" name="source">
-          <Select placeholder="Chọn nguồn">
-            <Option value="web">Website</Option>
-            <Option value="event">Sự kiện</Option>
-            <Option value="referral">Giới thiệu</Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item label="Ưu tiên" name="priority">
-          <Select placeholder="Chọn mức ưu tiên">
-            <Option value="low">Thấp</Option>
-            <Option value="medium">Trung bình</Option>
-            <Option value="high">Cao</Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item label="Nhân viên phụ trách" name="owner">
-          <Select placeholder="Chọn nhân viên">
-            <Option value="A">Văn A</Option>
-            <Option value="B">Nguyễn B</Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item label="Trạng thái" name="status">
-          <Select placeholder="Chọn trạng thái">
-            <Option value="new">Khách hàng mới</Option>
-            <Option value="contacted">Đã liên hệ</Option>
-            <Option value="converted">Đã chuyển đổi</Option>
-          </Select>
-        </Form.Item>
+      <Form form={form} layout="vertical" onFinish={onFinish}>
+        <Card title="Thông tin khách hàng tiềm năng" className="employee-card">
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+            <div>
+              <Form.Item
+                label="Tên khách hàng tiềm năng"
+                name="leadName"
+                rules={[{ required: true, message: "Vui lòng nhập tên khách hàng tiềm năng!" }]}
+              >
+                <Input placeholder="Nhập tên khách hàng tiềm năng" />
+              </Form.Item>
+              <Form.Item
+                label="Người liên hệ"
+                name="contactName"
+                rules={[{ required: true, message: "Vui lòng nhập người liên hệ!" }]}
+              >
+                <Input placeholder="Nhập người liên hệ" />
+              </Form.Item>
+              <Form.Item
+                label="Email"
+                name="email"
+                rules={[
+                  { required: true, message: "Vui lòng nhập email!" },
+                  { type: "email", message: "Email không hợp lệ!" },
+                ]}
+              >
+                <Input placeholder="Nhập email" />
+              </Form.Item>
+              <Form.Item
+                label="Số điện thoại"
+                name="phone"
+                rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
+              >
+                <Input placeholder="Nhập số điện thoại" />
+              </Form.Item>
+            </div>
+            <div>
+              <Form.Item
+                label="Ưu tiên"
+                name="priority"
+                rules={[{ required: true, message: "Vui lòng chọn mức độ ưu tiên!" }]}
+              >
+                <Select placeholder="Chọn mức độ ưu tiên">
+                  <Select.Option value="Cao">Cao</Select.Option>
+                  <Select.Option value="Thấp">Thấp</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                label="Nhân viên phụ trách"
+                name="owner"
+                rules={[{ required: true, message: "Vui lòng nhập nhân viên phụ trách!" }]}
+              >
+                <Input placeholder="Nhập nhân viên phụ trách" />
+              </Form.Item>
+              <Form.Item
+                label="Trạng thái"
+                name="status"
+                rules={[{ required: true, message: "Vui lòng chọn trạng thái!" }]}
+              >
+                <Select placeholder="Chọn trạng thái">
+                  <Select.Option value="Khách hàng mới">Khách hàng mới</Select.Option>
+                  <Select.Option value="Đang chăm sóc">Đang chăm sóc</Select.Option>
+                  <Select.Option value="Chưa quan tâm">Chưa quan tâm</Select.Option>
+                </Select>
+              </Form.Item>
+            </div>
+          </div>
+        </Card>
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 24 }}>
+          <Button danger onClick={onCancel} disabled={loading}>
+            {cancelText}
+          </Button>
+          <Button type="primary" htmlType="submit" loading={loading} disabled={loading}>
+            {saveText}
+          </Button>
+        </div>
       </Form>
     </Modal>
   );

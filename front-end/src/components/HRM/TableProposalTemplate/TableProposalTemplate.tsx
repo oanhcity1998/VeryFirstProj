@@ -117,7 +117,7 @@ const TableProposalTemplate: React.FC<TableProposalTemplateProps> = ({
           type="link"
           icon={<EditOutlined />}
           onClick={() => handleEdit(record)}
-          className="template-edit-icon"
+          className="base-edit-icon"
         ></Button>
       ),
     },
@@ -125,7 +125,7 @@ const TableProposalTemplate: React.FC<TableProposalTemplateProps> = ({
 
   return (
     <Table
-      className="proposal-template-table"
+      className="base-table"
       columns={columns}
       dataSource={data}
       pagination={{

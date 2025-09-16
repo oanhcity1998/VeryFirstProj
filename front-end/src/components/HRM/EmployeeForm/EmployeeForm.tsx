@@ -13,10 +13,10 @@ import {
   Select,
 } from "antd";
 import dayjs from "dayjs";
-import "./EmployeeForm.css";
 import { Employee } from "@/models/HRM/employee.model";
 import { useGetDepartmentsQuery } from "@/services/HRM/department.service";
 import { useGetJobsQuery } from "@/services/HRM/position.service";
+import "./EmployeeForm.css"
 
 interface EmployeeFormProps {
   onCancel: () => void;
@@ -44,7 +44,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   extraInfoTitle = "Thông tin bổ sung",
   contractTitle = "Thông tin hợp đồng",
   cancelText = "Hủy",
-  saveText = "Lưu",
+  saveText = "Xác nhận",
   loading = false,
 }) => {
   const { data: departmentData } = useGetDepartmentsQuery();
@@ -131,7 +131,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
 
   return (
     <Modal
-      title={modalTitle}
+      title={<h2>{modalTitle}</h2>}
       open={open}
       onCancel={onCancel}
       footer={[
@@ -139,7 +139,6 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
           key="cancel"
           danger
           onClick={onCancel}
-          style={{ backgroundColor: "red", color: "white" }}
         >
           {cancelText}
         </Button>,
@@ -149,12 +148,11 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       ]}
       width={1100}
       style={{ top: 20 }}
-      bodyStyle={{ maxHeight: "80vh", overflowY: "auto" }}
     >
-      <Form form={form} layout="vertical" onFinish={onFinish} style={{ padding: "0 16px" }}>
+      <Form form={form} layout="vertical" onFinish={onFinish}>
         <Row gutter={16} align="stretch">
           <Col span={8}>
-            <Card title={infoTitle} bordered className="employee-card">
+            <Card title={infoTitle} className="card-section employee-card">
               <Form.Item
                 label="Mã nhân viên"
                 name="code"
@@ -251,7 +249,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
           </Col>
 
           <Col span={8}>
-            <Card title={extraInfoTitle} bordered className="employee-card">
+            <Card title={extraInfoTitle} bordered className="card-section employee-card">
               <Form.Item
                 label="Số CCCD"
                 name="id_number"
@@ -300,7 +298,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
           </Col>
 
           <Col span={8}>
-            <Card title={contractTitle} bordered className="employee-card">
+            <Card title={contractTitle} bordered className="card-section employee-card">
               <Form.Item
                 label="Tên hợp đồng"
                 name={["contract", "name"]}

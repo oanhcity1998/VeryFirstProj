@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Table, Checkbox, Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import "./TableAsset.css";
+
 import { generatePath, Link } from "react-router-dom";
 import { ROUTES_APP } from "@/app/routes";
 
@@ -143,7 +143,7 @@ const TableAsset: React.FC<TableAssetProps> = ({
                     type="link"
                     icon={<EditOutlined />}
                     onClick={() => handleEdit(record)}
-                    className="asset-edit-icon"
+                    className="base-edit-icon"
                 ></Button>
             ),
         },
@@ -151,7 +151,7 @@ const TableAsset: React.FC<TableAssetProps> = ({
 
     return (
         <Table
-            className="asset-table"
+            className="base-table"
             columns={columns}
             dataSource={assetData}
             pagination={{

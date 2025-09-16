@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
 import { Table, Checkbox, Button, Tooltip } from "antd";
 import { generatePath, Link } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
-import "./TableEmployee.css";
 import { ROUTES_APP } from "@/app/routes";
 import { Employee } from "@/models/HRM/employee.model";
+
 import dayjs from "dayjs";
 
 interface TableEmployeeProps {
@@ -179,7 +178,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
             console.log("Edit clicked for record:", record); // Debug
             onEdit?.(record);
           }}
-          className="employee-edit-icon"
+          className="base-edit-icon"
         />
       ),
     },

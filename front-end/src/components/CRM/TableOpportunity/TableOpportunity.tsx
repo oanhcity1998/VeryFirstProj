@@ -35,7 +35,6 @@ export const TableOpportunity = ({
   filterStage,
   filterDate,
 }: TableOpportunityProps) => {
-  // 🔎 lọc theo search
   const filteredData = useMemo(() => {
     return data.filter((item) => {
       const text = searchText.toLowerCase();
@@ -65,7 +64,10 @@ export const TableOpportunity = ({
       width: 240,
       fixed: "left",
       render: (_, record) => (
-        <Link to={generatePath(ROUTES_APP.crm.opportunityDetail, { id: record.id })}>
+        <Link
+          to={generatePath(ROUTES_APP.crm.opportunityDetail, { id: record.id })}
+          onClick={() => onShowClick?.(record)}
+        >
           <FileTextOutlined style={{ marginRight: 6, color: "#1890ff" }} />
           {record.name}
         </Link>
@@ -139,7 +141,7 @@ export const TableOpportunity = ({
       width: 160,
     },
     {
-      title: "Hành động",
+      title: "",
       align: "center",
       key: "action",
       width: 60,
@@ -166,6 +168,7 @@ export const TableOpportunity = ({
 
   return (
     <Table<Opportunity>
+      className="base-table"
       rowSelection={{
         selectedRowKeys,
         onChange: (keys) => {

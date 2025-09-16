@@ -1,169 +1,178 @@
-// src/views/LeadList/LeadList.tsx
-import { useState } from "react";
-import { Button, Space, Modal, message, Select, Checkbox } from "antd";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { Button, Modal, Select, Pagination, Empty, Spin, Form } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import { toast } from "react-toastify";
 import Search from "antd/es/input/Search";
-import "./LeadList.css";
-import TableLead, { Lead } from "@/components/CRM/TableLead/TableLead";
+import TableLead from "@/components/CRM/TableLead/TableLead";
 import LeadForm from "@/components/CRM/LeadForm/LeadForm";
+import "@/index.css";
 
-const dataSource: Lead[] = [
-  {
-    id: 1,
-    leadName: "Khách tiềm năng 1",
-    contactName: "Nguyễn Thùy Linh",
-    email: "thuy@example.com",
-    phone: "098454546",
-    priority: "Cao",
-    owner: "Văn A.",
-    status: "Khách hàng mới",
-  },
-];
+interface Lead {
+  id: number;
+  leadName: string;
+  contactName: string;
+  email: string;
+  phone: string;
+  priority: string;
+  owner: string;
+  status: string;
+}
 
-const LeadList = () => {
-  const [data, setData] = useState(dataSource);
-  const [searchText, setSearchText] = useState("");
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+const LeadList: React.FC = () => {
+  const [form] = Form.useForm();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [queryParams, setQueryParams] = useState({
+    q: searchParams.get("q") || "",
+    status: searchParams.get("status") || undefined,
+    priority: searchParams.get("priority") || undefined,
+    page: searchParams.get("page") ? Number(searchParams.get("page")) : 1,
+    limit: searchParams.get("limit") ? Number(searchParams.get("limit")) : 5,
+  });
+  const [data, setData] = useState<Lead[]>([
+    {
+      id: 1,
+      leadName: "Khách tiềm năng 1",
+      contactName: "Nguyễn Thùy Linh",
+      email: "thuy@example.com",
+      phone: "098454546",
+      priority: "Cao",
+      owner: "Văn A",
+      status: "Khách hàng mới",
+    },
+  ]);
+  const [meta, setMeta] = useState<{ page: number; limit: number; total: number; pages: number }>({
+    page: 1,
+    limit: 5,
+    total: 1,
+    pages: 1,
+  });
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [openForm, setOpenForm] = useState(false);
-  const [editData, setEditData] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [opportunityOpen, setOpportunityOpen] = useState(false);
-  const [converting, setConverting] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<string[]>([]);
-  const [priorityFilter, setPriorityFilter] = useState<string[]>([]);
-  const [filters, setFilters] = useState({
-    status: null,
-    priority: null,
-  });
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
-  const handleDelete = () => {
-    setDeleting(true);
-    setData((prev) => prev.filter((item) => !selectedRowKeys.includes(item.id)));
-    setSelectedRowKeys([]);
-    message.success("Đã xóa Khách tiềm năng");
-    setDeleteOpen(false);
-    setDeleting(false);
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (queryParams.q) params.set("q", queryParams.q);
+    if (queryParams.status) params.set("status", queryParams.status);
+    if (queryParams.priority) params.set("priority", queryParams.priority);
+    params.set("page", queryParams.page.toString());
+    params.set("limit", queryParams.limit.toString());
+    setSearchParams(params);
+  }, [queryParams, setSearchParams]);
+
+  const handleSave = async (values: Lead) => {
+    try {
+      if (selectedLead) {
+        setData((prev) =>
+          prev.map((item) => (item.id === selectedLead.id ? { ...item, ...values } : item))
+        );
+        toast.success("Cập nhật khách hàng tiềm năng thành công");
+      } else {
+        const newLead: Lead = {
+          id: Date.now(),
+          ...values,
+        };
+        setData((prev) => [...prev, newLead]);
+        setMeta((prev) => ({
+          ...prev,
+          total: prev.total + 1,
+          pages: Math.ceil((prev.total + 1) / prev.limit),
+        }));
+        toast.success("Thêm khách hàng tiềm năng thành công");
+      }
+      setIsModalOpen(false);
+      setSelectedLead(null);
+    } catch (err: any) {
+      toast.error(`Không thể ${selectedLead ? "cập nhật" : "thêm"} khách hàng tiềm năng`);
+    }
   };
 
-  const handleCreate = () => {
-    setEditData(null);
-    setOpenForm(true);
+  const handleDelete = async () => {
+    try {
+      setDeleting(true);
+      setData((prev) => prev.filter((item) => !selectedRowKeys.includes(item.id.toString())));
+      setMeta((prev) => ({
+        ...prev,
+        total: prev.total - selectedRowKeys.length,
+        pages: Math.ceil((prev.total - selectedRowKeys.length) / prev.limit),
+      }));
+      toast.success("Đã xóa khách hàng tiềm năng thành công");
+      setSelectedRowKeys([]);
+      setDeleteOpen(false);
+    } catch (err) {
+      toast.error("Không thể xóa khách hàng tiềm năng");
+    } finally {
+      setDeleting(false);
+    }
   };
 
-  const handleSubmit = (values: any) => {
-    console.log("Form values:", values);
-    setOpenForm(false);
+  const handleEdit = (record: Lead) => {
+    setSelectedLead(record);
+    setIsModalOpen(true);
   };
 
-  const handleEdit = (record: any) => {
-    setEditData(record);
-    setOpenForm(true);
+  const handleSearch = (value: string) => {
+    setQueryParams({ ...queryParams, q: value, page: 1 });
   };
 
-  const handleCancel = () => {
-    setOpenForm(false);
+  const handlePageChange = (page: number, pageSize: number) => {
+    setQueryParams({ ...queryParams, page, limit: pageSize });
   };
-
-  const handleConvertToOpportunity = () => {
-    setConverting(true);
-    // Example: convert logic here
-    message.success("Khách tiềm năng đã được chuyển thành cơ hội");
-    setSelectedRowKeys([]);
-    setOpportunityOpen(false);
-    setConverting(false);
-  };
-
-  const statusOptions = ["Khách hàng mới", "Đang chăm sóc", "Chưa quan tâm"];
-  const priorityOptions = ["Có", "Không"];
-
-  // Status popover content
-  const StatusContent = (
-    <div className="filter-popover">
-      {statusOptions.map((opt) => (
-        <Checkbox
-          key={opt}
-          checked={statusFilter.includes(opt)}
-          onChange={(e) => {
-            setStatusFilter((prev) =>
-              e.target.checked ? [...prev, opt] : prev.filter((v) => v !== opt)
-            );
-          }}
-        >
-          {opt}
-        </Checkbox>
-      ))}
-      <div className="filter-actions">
-        <Button size="small" type="link" onClick={() => setStatusFilter([])}>
-          Xoá chọn
-        </Button>
-      </div>
-    </div>
-  );
 
   const filteredData = data.filter((item) => {
-    const matchStatus = filters.status ? item.status === filters.status : true;
-    const matchPriority = filters.priority ? item.priority === filters.priority : true;
-    return matchStatus && matchPriority;
+    const matchSearch =
+      item.leadName.toLowerCase().includes(queryParams.q.toLowerCase()) ||
+      item.contactName.toLowerCase().includes(queryParams.q.toLowerCase()) ||
+      item.email.toLowerCase().includes(queryParams.q.toLowerCase());
+    const matchStatus = queryParams.status ? item.status === queryParams.status : true;
+    const matchPriority = queryParams.priority ? item.priority === queryParams.priority : true;
+    return matchSearch && matchStatus && matchPriority;
   });
+
+  const paginatedData = filteredData.slice(
+    (queryParams.page - 1) * queryParams.limit,
+    queryParams.page * queryParams.limit
+  );
 
   return (
     <>
-      <div className="leadlist-header">
+      <div className="list-header">
         <h2>Danh sách khách hàng tiềm năng</h2>
-
-        <Space>
+        <div className="list-actions">
           <Search
-            placeholder="Tìm kiếm Khách tiềm năng..."
-            onChange={(e) => setSearchText(e.target.value)}
+            placeholder="Tìm kiếm theo tên, liên hệ, email"
             allowClear
-            className="leadlist-search"
+            value={queryParams.q}
+            onChange={(e) => handleSearch(e.target.value)}
+            onSearch={handleSearch}
+            className="search-bar"
           />
           <Select
-            allowClear
-            placeholder="Trạng thái"
-            style={{ width: 180 }}
-            value={filters.status}
-            onChange={(val) => setFilters((prev) => ({ ...prev, status: val }))}
+            className="filter-bar"
+            placeholder="Lọc theo trạng thái"
+            value={queryParams.status}
+            onChange={(status) => setQueryParams({ ...queryParams, status, page: 1 })}
             options={[
-              { label: "Khách hàng mới", value: "Khách hàng mới" },
-              { label: "Đang chăm sóc", value: "Đang chăm sóc" },
-              { label: "Chưa quan tâm", value: "Chưa quan tâm" },
+              { value: "Khách hàng mới", label: "Khách hàng mới" },
+              { value: "Đang chăm sóc", label: "Đang chăm sóc" },
+              { value: "Chưa quan tâm", label: "Chưa quan tâm" },
             ]}
+            allowClear
           />
-
           <Select
-            allowClear
-            placeholder="Ưu tiên"
-            style={{ width: 150 }}
-            value={filters.priority}
-            onChange={(val) => setFilters((prev) => ({ ...prev, priority: val }))}
+            className="filter-bar"
+            placeholder="Lọc theo ưu tiên"
+            value={queryParams.priority}
+            onChange={(priority) => setQueryParams({ ...queryParams, priority, page: 1 })}
             options={[
-              { label: "Cao", value: "Cao" },
-              { label: "Thấp", value: "Thấp" },
+              { value: "Cao", label: "Cao" },
+              { value: "Thấp", label: "Thấp" },
             ]}
+            allowClear
           />
-
-          {/* Opportunity button  */}
-          <Button onClick={() => setOpportunityOpen(true)} disabled={selectedRowKeys.length === 0}>
-            Cơ hội
-          </Button>
-          {/* Opportunity Modal */}
-          <Modal
-            open={opportunityOpen}
-            title="Chuyển thành cơ hội"
-            onOk={handleConvertToOpportunity}
-            onCancel={() => setOpportunityOpen(false)}
-            okText="Xác nhận"
-            cancelText="Hủy"
-            okButtonProps={{ loading: converting }}
-            centered
-          >
-            <p>Bạn có muốn chuyển Khách tiềm năng này thành cơ hội?</p>
-          </Modal>
-
-          {/* Delete button  */}
           <Button
             danger
             icon={<DeleteOutlined />}
@@ -172,7 +181,6 @@ const LeadList = () => {
           >
             Xóa
           </Button>
-          {/* Delete Modal  */}
           <Modal
             open={deleteOpen}
             title="Xác nhận xóa"
@@ -183,36 +191,57 @@ const LeadList = () => {
             okButtonProps={{ danger: true, loading: deleting }}
             centered
           >
-            <p>Bạn có chắc muốn xóa Khách tiềm năng này?</p>
+            <p>Bạn có chắc muốn xóa khách hàng tiềm năng này? Hành động này không thể hoàn tác.</p>
           </Modal>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsModalOpen(true)}>
             Tạo
           </Button>
-        </Space>
+        </div>
       </div>
 
-      <TableLead
-        data={filteredData}
-        searchText={searchText}
-        selectedRowKeys={selectedRowKeys}
-        setSelectedRowKeys={setSelectedRowKeys}
-        onEdit={handleEdit}
-      />
+      {data.length === 0 ? (
+        <div className="empty-message">
+          <Empty description="Không có khách hàng tiềm năng nào để hiển thị" />
+          <p>Hiện tại không có dữ liệu khách hàng tiềm năng. Vui lòng thêm mới!</p>
+        </div>
+      ) : (
+        <>
+          <TableLead
+            data={paginatedData}
+            selectedRowKeys={selectedRowKeys}
+            setSelectedRowKeys={setSelectedRowKeys}
+            onEdit={handleEdit}
+            loading={false}
+          />
+          {meta && (
+            <div className="pagination-container">
+              <Pagination
+                current={meta.page}
+                pageSize={meta.limit}
+                total={meta.total}
+                onChange={handlePageChange}
+                showSizeChanger
+                pageSizeOptions={["5", "10", "20"]}
+              />
+            </div>
+          )}
+        </>
+      )}
 
-      <Modal
-        open={openForm}
-        title={editData ? "Chỉnh sửa Khách tiềm năng" : "Thêm mới Khách tiềm năng"}
-        onCancel={() => setOpenForm(false)}
-        footer={null}
-        destroyOnClose
-      >
-        <LeadForm
-          open={openForm}
-          initialValues={editData}
-          onCancel={() => setOpenForm(false)}
-          onSubmit={handleSubmit}
-        />
-      </Modal>
+      <LeadForm
+        open={isModalOpen}
+        onCancel={() => {
+          setIsModalOpen(false);
+          setSelectedLead(null);
+        }}
+        onSave={handleSave}
+        lead={selectedLead}
+        modalTitle={selectedLead ? "Cập nhật khách hàng tiềm năng" : "Thêm khách hàng tiềm năng"}
+        cancelText="Hủy"
+        saveText={selectedLead ? "Lưu thay đổi" : "Xác nhận"}
+        loading={false}
+        form={form}
+      />
     </>
   );
 };

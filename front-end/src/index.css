@@ -8,11 +8,88 @@ body,
 }
 
 .ant-layout-content {
-  flex: 1; /* cho phép Content chiếm phần còn lại */
-  min-height: auto; /* không bị khóa cứng */
-  overflow: visible; /* đảm bảo nội dung bên trong được cuộn */
+  flex: 1;
+  /* cho phép Content chiếm phần còn lại */
+  min-height: auto;
+  /* không bị khóa cứng */
+  overflow: visible;
+  /* đảm bảo nội dung bên trong được cuộn */
 }
 
 .ant-input {
-  height: auto !important; /* khóa chiều cao của input */
+  height: auto !important;
+  /* khóa chiều cao của input */
+}
+
+
+.loading-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 500px;
+  width: 100%;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.empty-message {
+  text-align: center;
+  color: #888;
+  padding: 50px 0;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.list-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.search-bar .ant-input {
+  border-radius: 4px;
+  width: 250px;
+}
+
+.filter-bar .ant-select {
+  border-radius: 4px;
+}
+
+
+/* Form Section Styling */
+.card-section {
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+}
+
+.card-section .ant-card-head {
+  border-bottom: 1px solid #d9d9d9;
+}
+
+/* Table Styling */
+.base-table .ant-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.base-table .ant-table-thead>tr>th {
+  background: #fafafa;
+  font-weight: 600;
+}
+
+.base-edit-icon {
+  font-size: 20px;
+}
+
+.selected-row {
+  background-color: #e6f7ff;
 }
