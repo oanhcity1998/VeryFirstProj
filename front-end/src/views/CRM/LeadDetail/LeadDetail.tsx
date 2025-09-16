@@ -1,5 +1,17 @@
-import React, {useState} from "react";
-import { Descriptions, Breadcrumb, Button, Card, Popover, Select, Steps, Form, Space, Modal } from "antd";
+import React, { useState } from "react";
+import {
+  Breadcrumb,
+  Button,
+  Card,
+  Popover,
+  Select,
+  Steps,
+  Form,
+  Space,
+  Modal,
+  Input,
+  Checkbox,
+} from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import "./LeadDetail.css";
@@ -17,21 +29,135 @@ interface Activity {
 
 export const opportunityStages = ["Mới", "Đạt yêu cầu", "Đàm phán", "Đóng", "Mất", "Đạt"] as const;
 
+// ✅ Modal chuyển đổi
+const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({
+  open,
+  onClose,
+}) => {
+  const [customerOption, setCustomerOption] = useState<"new" | "update" | null>(null);
+  const [contactOption, setContactOption] = useState<"new" | "update" | null>(null);
+  const [opportunityOption, setOpportunityOption] = useState<"new" | "update" | null>(null);
+
+  return (
+    <Modal
+      title="Chuyển đổi khách hàng tiềm năng"
+      open={open}
+      onCancel={onClose}
+      footer={[
+        <Button key="cancel" onClick={onClose}>
+          Hủy
+        </Button>,
+        <Button key="save" type="primary">
+          Lưu
+        </Button>,
+      ]}
+    >
+      {/* Khách hàng */}
+      <div style={{ marginBottom: 16 }}>
+        <div>Khách hàng</div>
+        <Checkbox
+          checked={customerOption === "new"}
+          onChange={() => setCustomerOption("new")}
+        >
+          Tạo mới
+        </Checkbox>
+        <Checkbox
+          checked={customerOption === "update"}
+          onChange={() => setCustomerOption("update")}
+        >
+          Cập nhật
+        </Checkbox>
+      </div>
+
+      {customerOption === "new" && (
+        <>
+          <Form.Item label="Tên khách hàng"><Input /></Form.Item>
+          <Form.Item label="Số điện thoại"><Input /></Form.Item>
+          <Form.Item label="Email"><Input /></Form.Item>
+        </>
+      )}
+
+      {customerOption === "update" && (
+        <Form.Item label="Tên khách hàng">
+          <Select options={[{ value: "Piggy Hotel", label: "Piggy Hotel" }]} />
+        </Form.Item>
+      )}
+
+      {/* Liên hệ */}
+      <div style={{ marginBottom: 16 }}>
+        <div>Liên hệ</div>
+        <Checkbox
+          checked={contactOption === "new"}
+          onChange={() => setContactOption("new")}
+        >
+          Tạo mới
+        </Checkbox>
+        <Checkbox
+          checked={contactOption === "update"}
+          onChange={() => setContactOption("update")}
+        >
+          Cập nhật
+        </Checkbox>
+      </div>
+
+      {contactOption === "new" && (
+        <>
+          <Form.Item label="Tên liên hệ"><Input /></Form.Item>
+          <Form.Item label="Số điện thoại"><Input /></Form.Item>
+          <Form.Item label="Email"><Input /></Form.Item>
+        </>
+      )}
+
+      {contactOption === "update" && (
+        <Form.Item label="Tên liên hệ">
+          <Select options={[{ value: "Nguyễn Thùy Linh", label: "Nguyễn Thùy Linh" }]} />
+        </Form.Item>
+      )}
+
+      {/* Cơ hội */}
+      <div style={{ marginBottom: 16 }}>
+        <div>Cơ hội</div>
+        <Checkbox
+          checked={opportunityOption === "new"}
+          onChange={() => setOpportunityOption("new")}
+        >
+          Tạo mới
+        </Checkbox>
+        <Checkbox
+          checked={opportunityOption === "update"}
+          onChange={() => setOpportunityOption("update")}
+        >
+          Cập nhật
+        </Checkbox>
+      </div>
+
+      {opportunityOption === "new" && (
+        <>
+          <Form.Item label="Tên cơ hội"><Input /></Form.Item>
+          <Form.Item label="Giai đoạn"><Select options={[{ value: "Mới", label: "Mới" }]} /></Form.Item>
+        </>
+      )}
+
+      {opportunityOption === "update" && (
+        <Form.Item label="Tên cơ hội">
+          <Select options={[{ value: "Deal 1", label: "Deal 1" }]} />
+        </Form.Item>
+      )}
+    </Modal>
+  );
+};
+
 const LeadDetail: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  
   const [isLoseModalOpen, setIsLoseModalOpen] = useState(false);
+  const [isConvertModalOpen, setIsConvertModalOpen] = useState(false);
   const [currentStage, setCurrentStage] = useState(0);
   const [stageClose, setStageClose] = useState<"Mất" | "Đạt" | "Đóng">("Đóng");
-  const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
   const [reasonLose, setReasonLose] = useState("");
   const [losing, setLosing] = useState(false);
 
-  const { id } = useParams(); // 👈 get lead id from URL
+  const { id } = useParams();
   const [form] = Form.useForm();
-
   const navigate = useNavigate();
-
 
   const reasons = [
     { key: "1", label: "Khách hàng không quan tâm" },
@@ -39,7 +165,7 @@ const LeadDetail: React.FC = () => {
     { key: "3", label: "Chọn nhà cung cấp khác" },
   ];
 
-  // Mock data – later replace with API call
+  // Mock data
   const lead = {
     id,
     leadName: "Lead 1",
@@ -57,20 +183,16 @@ const LeadDetail: React.FC = () => {
   };
 
   const handelLose = async (reason: string) => {
-      try {
-        setLosing(true);
-        setCurrentStage(opportunityStages.length - 2);
-        setStageClose("Mất");
-        // alert(reason);
-        // message.success("Đã xóa cơ hội");
-        // navigate(ROUTES_APP.crm.opportunityList);
-      } catch (err) {
-        // message.error("Không thể xóa cơ hội");
-      } finally {
-        setLosing(false);
-        setIsLoseModalOpen(false);
-      }
-    };
+    try {
+      setLosing(true);
+      setCurrentStage(opportunityStages.length - 2);
+      setStageClose("Mất");
+    } finally {
+      setLosing(false);
+      setIsLoseModalOpen(false);
+      setReasonLose(""); // ✅ reset when closed
+    }
+  };
 
   return (
     <div className="lead-detail-container">
@@ -107,41 +229,10 @@ const LeadDetail: React.FC = () => {
                   disabled={currentStage > opportunityStages.length - 3}
                   type="primary"
                   style={{ backgroundColor: "#60A917", borderColor: "#60A917" }}
-                  onClick={() => {
-                    setCurrentStage(opportunityStages.length - 1);
-                    setStageClose("Đạt");
-                  }}
+                  onClick={() => setIsConvertModalOpen(true)}
                 >
-                  Đạt
+                  Chuyển đổi
                 </Button>
-
-                <Modal
-                  open={isLoseModalOpen}
-                  title="Xác nhận Xóa"
-                  onOk={() => handelLose(reasonLose)}
-                  onCancel={() => {
-                    setIsModalOpen(false);
-                    setEditingActivity(null);
-                    form.resetFields(); // ✅ tránh giữ giá trị cũ
-                  }}
-                  okText="Xóa"
-                  cancelText="Hủy"
-                  okButtonProps={{ danger: true, loading: losing }}
-                  centered
-                >
-                  <Select
-                    placeholder="Chọn lý do mất cơ hội"
-                    onChange={(value) => {
-                      setReasonLose(value);
-                    }}
-                  >
-                    {reasons.map((r) => (
-                      <Select.Option key={r.key} value={r.label}>
-                        {r.label}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Modal>
               </Space>
             }
             trigger="click"
@@ -155,10 +246,12 @@ const LeadDetail: React.FC = () => {
       >
         <Steps
           current={currentStage}
-          items={opportunityStages.slice(0, opportunityStages.length - 2).map((title) => ({
-            title: title === "Đóng" ? stageClose : title,
-            disabled: title === "Đóng" || currentStage > opportunityStages.length - 3,
-          }))}
+          items={opportunityStages
+            .slice(0, opportunityStages.length - 2)
+            .map((title) => ({
+              title: title === "Đóng" ? stageClose : title,
+              disabled: title === "Đóng" || currentStage > opportunityStages.length - 3,
+            }))}
           onChange={(value) => setCurrentStage(value)}
         />
       </Card>
@@ -167,7 +260,7 @@ const LeadDetail: React.FC = () => {
         <div className="lead-detail-title">Chi tiết {lead.leadName}</div>
         <div className="lead-detail-form">
           <div className="form-row first-row">
-            <label>Tên lead:</label>
+            <label>Tên khách hàng tiềm năng:</label>
             <input value={lead.leadName} disabled />
           </div>
           <div className="form-row">
@@ -216,6 +309,48 @@ const LeadDetail: React.FC = () => {
           </div>
         </div>
       </Card>
+
+      {/* Lose Modal */}
+      <Modal
+        open={isLoseModalOpen}
+        title="Lí do mất khách hàng tiềm năng"
+        onOk={() => handelLose(reasonLose)}
+        onCancel={() => {
+          setIsLoseModalOpen(false);
+          setReasonLose(""); // ✅ reset when closed
+        }}
+        okText="Lưu"
+        cancelText="Hủy"
+        okButtonProps={{
+          type: "primary",
+          loading: losing,
+          disabled: !reasonLose, // ✅ disable until selected
+        }}
+        cancelButtonProps={{ type: "default" }}
+        centered
+      >
+        <Form layout="vertical">
+          <Form.Item label="Lí do">
+            <Select
+              placeholder="Chọn lí do"
+              onChange={(value) => setReasonLose(value)}
+              value={reasonLose}
+            >
+              {reasons.map((r) => (
+                <Select.Option key={r.key} value={r.label}>
+                  {r.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Convert Modal */}
+      <ConvertLeadModal
+        open={isConvertModalOpen}
+        onClose={() => setIsConvertModalOpen(false)}
+      />
     </div>
   );
 };

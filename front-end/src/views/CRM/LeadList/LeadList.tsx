@@ -29,8 +29,6 @@ const LeadList = () => {
   const [openForm, setOpenForm] = useState(false);
   const [editData, setEditData] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [opportunityOpen, setOpportunityOpen] = useState(false);
-  const [converting, setConverting] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [priorityFilter, setPriorityFilter] = useState<string[]>([]);
   const [filters, setFilters] = useState({
@@ -64,15 +62,6 @@ const LeadList = () => {
 
   const handleCancel = () => {
     setOpenForm(false);
-  };
-
-  const handleConvertToOpportunity = () => {
-    setConverting(true);
-    // Example: convert logic here
-    message.success("Khách tiềm năng đã được chuyển thành cơ hội");
-    setSelectedRowKeys([]);
-    setOpportunityOpen(false);
-    setConverting(false);
   };
 
   const statusOptions = ["Khách hàng mới", "Đang chăm sóc", "Chưa quan tâm"];
@@ -122,7 +111,7 @@ const LeadList = () => {
           />
           <Select
             allowClear
-            placeholder="Trạng thái"
+            placeholder="Giai đoạn"
             style={{ width: 180 }}
             value={filters.status}
             onChange={(val) => setFilters((prev) => ({ ...prev, status: val }))}
@@ -144,24 +133,6 @@ const LeadList = () => {
               { label: "Thấp", value: "Thấp" },
             ]}
           />
-
-          {/* Opportunity button  */}
-          <Button onClick={() => setOpportunityOpen(true)} disabled={selectedRowKeys.length === 0}>
-            Cơ hội
-          </Button>
-          {/* Opportunity Modal */}
-          <Modal
-            open={opportunityOpen}
-            title="Chuyển thành cơ hội"
-            onOk={handleConvertToOpportunity}
-            onCancel={() => setOpportunityOpen(false)}
-            okText="Xác nhận"
-            cancelText="Hủy"
-            okButtonProps={{ loading: converting }}
-            centered
-          >
-            <p>Bạn có muốn chuyển Khách tiềm năng này thành cơ hội?</p>
-          </Modal>
 
           {/* Delete button  */}
           <Button
@@ -201,7 +172,6 @@ const LeadList = () => {
 
       <Modal
         open={openForm}
-        title={editData ? "Chỉnh sửa Khách tiềm năng" : "Thêm mới Khách tiềm năng"}
         onCancel={() => setOpenForm(false)}
         footer={null}
         destroyOnClose

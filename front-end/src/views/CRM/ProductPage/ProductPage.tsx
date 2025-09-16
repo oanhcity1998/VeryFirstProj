@@ -129,6 +129,7 @@ const ProductPage = () => {
   const columns: ColumnsType<Product> = [
     {
       title: "Tên sản phẩm",
+      align: "center",
       dataIndex: "name",
       key: "name",
       fixed: "left",
@@ -136,12 +137,14 @@ const ProductPage = () => {
     },
     {
       title: "Mô tả",
+      align: "center",
       dataIndex: "description",
       key: "description",
       width: 200,
     },
     {
       title: "Loại sản phẩm",
+      align: "center",
       dataIndex: "type",
       key: "type",
       width: 150,
@@ -149,6 +152,7 @@ const ProductPage = () => {
     },
     {
       title: "Giá (VND)",
+      align: "center",
       dataIndex: "priceVND",
       key: "priceVND",
       width: 120,
@@ -156,6 +160,7 @@ const ProductPage = () => {
     },
     {
       title: "Giá (USD)",
+      align: "center",
       dataIndex: "priceUSD",
       key: "priceUSD",
       width: 120,
@@ -163,12 +168,14 @@ const ProductPage = () => {
     },
     {
       title: "VAT (%)",
+      align: "center",
       dataIndex: "vat",
       key: "vat",
       width: 100,
     },
     {
       title: "Giá sau VAT (VND)",
+      align: "center",
       dataIndex: "priceAfterVatVND",
       key: "priceAfterVatVND",
       width: 150,
@@ -176,6 +183,7 @@ const ProductPage = () => {
     },
     {
       title: "Giá sau VAT (USD)",
+      align: "center",
       dataIndex: "priceAfterVatUSD",
       key: "priceAfterVatUSD",
       width: 150,
@@ -183,6 +191,7 @@ const ProductPage = () => {
     },
     {
       title: "Ngày tạo",
+      align: "center",
       dataIndex: "createdAt",
       key: "createdAt",
       width: 120,
@@ -190,6 +199,7 @@ const ProductPage = () => {
     },
     {
       title: "Ngày cập nhật",
+      align: "center",
       dataIndex: "updatedAt",
       key: "updatedAt",
       width: 120,
@@ -197,6 +207,7 @@ const ProductPage = () => {
     },
     {
       title: "",
+      align: "center",
       key: "action",
       fixed: "right",
       width: 100,

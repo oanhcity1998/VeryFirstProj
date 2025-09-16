@@ -39,6 +39,7 @@ const TableLead = ({
   const columns: ColumnsType<Lead> = [
     {
       title: "Tên lead",
+      align: "center",
       dataIndex: "leadName",
       key: "leadName",
       render: (_: any, record: any) => (
@@ -47,14 +48,17 @@ const TableLead = ({
         </Link> // 👈 link
       ),
     },
-    { title: "Tên liên hệ", dataIndex: "contactName", key: "contactName" },
-    { title: "Email", dataIndex: "email", key: "email" },
-    { title: "Số điện thoại", dataIndex: "phone", key: "phone" },
-    { title: "Ưu tiên", dataIndex: "priority", key: "priority" },
-    { title: "Nhân viên phụ trách", dataIndex: "owner", key: "owner" },
-    { title: "Trạng thái", dataIndex: "status", key: "status" },
+    { title: "Tên liên hệ", align: "center", dataIndex: "contactName", key: "contactName" },
+    { title: "Email", align: "center", dataIndex: "email", key: "email" },
+    { title: "Số điện thoại", align: "center", dataIndex: "phone", key: "phone" },
+    { title: "Ưu tiên", align: "center", dataIndex: "priority", key: "priority" },
+    { title: "Nhân viên phụ trách", align: "center", dataIndex: "owner", key: "owner" },
+    { title: "Giai đoạn", align: "center", dataIndex: "status", key: "status" },
+    { title: "Ngày tạo", align: "center", dataIndex: "createDay", key:"createDay"},
+    { title: "Ngày cập nhật", align: "center", dataIndex: "updateDay", key: "updateDay"},
     {
       title: "Hành động",
+      align: "center",
       key: "action",
       render: (_: any, record: any) => (
         <Button

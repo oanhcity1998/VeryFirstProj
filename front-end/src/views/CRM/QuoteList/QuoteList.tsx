@@ -35,10 +35,6 @@ const QuoteList: React.FC = () => {
 //     );
 //   };
 
-  if (viewDetail) {
-    return <QuoteDetail loai={viewDetail.loai} onBack={() => setViewDetail(null)} />;
-  }
-
   const handleSave = (data: any) => {
     console.log("Dữ liệu hợp đồng mới:", data);
     setOpenForm(false);
@@ -97,11 +93,12 @@ const QuoteList: React.FC = () => {
             <Col flex="auto">
             <Space wrap style={{ justifyContent: "flex-end", width: "100%" }}>
                 <Search
-                placeholder="Tìm kiếm hợp đồng..."
+                placeholder="Tìm kiếm báo giá..."
                 allowClear
                 onSearch={(val) => setSearchText(val)}
                 style={{ minWidth: 180, maxWidth: 240, width: "100%" }}
                 />
+
                 <Select
                 placeholder="Trạng thái"
                 allowClear
@@ -112,15 +109,7 @@ const QuoteList: React.FC = () => {
                 <Option value="Đã duyệt">Đã duyệt</Option>
                 <Option value="Huỷ">Huỷ</Option>
                 </Select>
-                <Select
-                placeholder="Loại hợp đồng"
-                allowClear
-                style={{ minWidth: 140 }}
-                onChange={(val) => setTypeFilter(val)}
-                >
-                <Option value="Báo giá">Báo giá</Option>
-                <Option value="Hợp đồng">Hợp đồng</Option>
-                </Select>
+
                 <Button danger disabled={selectedRowKeys.length === 0} icon={<DeleteOutlined />}>
                 Xoá
                 </Button>

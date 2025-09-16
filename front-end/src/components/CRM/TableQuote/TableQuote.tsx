@@ -5,6 +5,8 @@ import { useNavigate, generatePath } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
 import { ROUTES_APP } from "@/app/routes";
 
+import "./TableQuote.css"
+
 
 const { Link } = Typography;
 
@@ -40,9 +42,10 @@ const TableQuote: React.FC<TableContractProps> = ({
   const navigate = useNavigate();
 
   const columns: ColumnsType<Contract> = [
-    { title: "Mã báo giá", dataIndex: "code", key: "code" },
+    { title: "Mã báo giá", width: 110, align: "center", dataIndex: "code", key: "code" },
     {
       title: "Tên báo giá",
+      align: "center",
       dataIndex: "name",
       key: "name",
       render: (text, record) => (
@@ -54,33 +57,30 @@ const TableQuote: React.FC<TableContractProps> = ({
         </Link>
       ),
     },
-    { title: "Khách hàng", dataIndex: "customer", key: "customer" },
+    { title: "Khách hàng", align: "center", dataIndex: "customer", key: "customer" },
     {
       title: "Tổng giá trị",
+      align: "center",
       dataIndex: "total",
       key: "total",
       render: (val) => val.toLocaleString("vi-VN"),
     },
-    { title: "Nhân viên phụ trách", dataIndex: "owner", key: "owner" },
-    { title: "Ngày tạo", dataIndex: "createdAt", key: "createdAt" },
-    { title: "Người duyệt", dataIndex: "approver", key: "approver" },
-    { title: "Ngày duyệt", dataIndex: "approvedAt", key: "approvedAt" },
-    { title: "Trạng thái", dataIndex: "status", key: "status" },
+    { title: "Nhân viên phụ trách", align: "center", dataIndex: "owner", key: "owner" },
+    { title: "Ngày tạo", align: "center", dataIndex: "createdAt", key: "createdAt" },
+    { title: "Người duyệt", align: "center", dataIndex: "approver", key: "approver" },
+    { title: "Ngày duyệt", align: "center", dataIndex: "approvedAt", key: "approvedAt" },
+    { title: "Trạng thái", align: "center", dataIndex: "status", key: "status" },
 
     // ✅ New action column like in TableQuotation
     {
       title: "",
+      align: "center",
       key: "action",
       width: 60,
       render: (_, record) => (
         <Tooltip title="Chỉnh sửa">
           <EditOutlined
-            style={{
-              fontSize: 20,
-              cursor: "pointer",
-              color: "#1890ff",
-              padding: 8,
-            }}
+            className="quote-edit-icon"
             onClick={(e) => {
               e.stopPropagation(); // prevent row click
               onEditClick?.(record);
