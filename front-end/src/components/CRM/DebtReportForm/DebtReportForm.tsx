@@ -237,7 +237,7 @@ export const DebtReportForm = ({
         </Button>,
         isEdit && (
           <Button key="save" type="primary" onClick={() => handleOk()}>
-            Lưu thay đổi
+            Xác nhận
           </Button>
         ),
         !isEdit && (

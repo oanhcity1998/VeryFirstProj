@@ -37,11 +37,12 @@ export const TableOpportunity = ({
 }: TableOpportunityProps) => {
   const filteredData = useMemo(() => {
     return data.filter((item) => {
-      const text = searchText.toLowerCase();
+      const text = searchText?.toLowerCase() || "";
+
       const matchSearch =
-        item.name.toLowerCase().includes(text) ||
-        item.company.toLowerCase().includes(text) ||
-        item.contactName.toLowerCase().includes(text);
+        (item.name ?? "").toLowerCase().includes(text) ||
+        (item.company ?? "").toLowerCase().includes(text) ||
+        (item.contactName ?? "").toLowerCase().includes(text);
 
       const matchPriority = filterPriority ? item.priority === filterPriority : true;
       const matchStage = filterStage ? item.stage === filterStage : true;

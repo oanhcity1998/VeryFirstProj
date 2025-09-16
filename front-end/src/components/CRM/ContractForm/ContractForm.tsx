@@ -246,7 +246,7 @@ const ContractForm: React.FC<ContractFormProps> = ({
           Huỷ
         </Button>,
         <Button key="save" type="primary" onClick={handleSave}>
-          {initialValues ? "Lưu thay đổi" : "Xác nhận"}
+          {initialValues ? "Xác nhận" : "Lưu thay đổi"}
         </Button>,
       ]}
       width={1000}
