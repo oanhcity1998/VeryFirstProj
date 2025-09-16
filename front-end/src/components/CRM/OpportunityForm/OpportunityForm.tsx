@@ -12,7 +12,10 @@ import {
 import { useEffect } from "react";
 import dayjs from "dayjs";
 import { opportunityStages } from "@/views/CRM/OpportunityDetail/OpportunityDetail";
-import { Opportunity } from "@/views/CRM/OpportunityList/OpportunityList";
+import {
+  Opportunity,
+  serviceOpportunityOptions,
+} from "@/views/CRM/OpportunityList/OpportunityList";
 
 interface OpportunityFormProps {
   mode: "create" | "edit" | "detail";
@@ -40,6 +43,8 @@ export const OpportunityForm = ({
         expectedCloseDate: initialValues.expectedCloseDate
           ? dayjs(initialValues.expectedCloseDate)
           : null,
+        // 👇 convert object -> id để Select hiển thị
+        service: initialValues.service?.map((s) => s.id),
       });
     } else if (open && mode === "create") {
       form.resetFields();
@@ -52,12 +57,18 @@ export const OpportunityForm = ({
       return;
     }
     form.validateFields().then((values) => {
+      const selectedProducts = values.service.map((id: number) =>
+        serviceOpportunityOptions.find((p) => p.id === id)
+      );
+
       const payload = {
         ...values,
         expectedCloseDate: values.expectedCloseDate
           ? values.expectedCloseDate.format("YYYY-MM-DD")
           : null,
+        service: selectedProducts, // 👈 gán lại danh sách object
       };
+
       onOk?.(payload);
       form.resetFields();
     });
@@ -136,12 +147,20 @@ export const OpportunityForm = ({
           </Form.Item>
 
           <Form.Item
-            style={{ fontWeight: "500" }}
-            label="Dịch vụ dự kiến"
+            label="Sản phẩm dự kiến"
             name="service"
-            rules={[{ required: true, message: "Vui lòng nhập dịch vụ dự kiến" }]}
+            rules={[{ required: true, message: "Vui lòng chọn ít nhất một sản phẩm" }]}
           >
-            <Input />
+            <Select
+              mode="multiple"
+              placeholder="Chọn sản phẩm"
+              allowClear
+              // Hiển thị productName nhưng giá trị là id
+              options={serviceOpportunityOptions.map((p) => ({
+                label: p.productName,
+                value: p.id,
+              }))}
+            />
           </Form.Item>
 
           <Form.Item

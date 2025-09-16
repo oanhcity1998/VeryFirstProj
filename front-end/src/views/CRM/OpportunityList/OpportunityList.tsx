@@ -62,6 +62,29 @@ const dataSource: Opportunity[] = [
   },
 ];
 
+export const serviceOpportunityOptions = [
+  {
+    id: 1,
+    productName: "Máy in HP 107w",
+    productType: "Thiết bị văn phòng",
+    priceVND: 5000000,
+    priceUSD: 210,
+    vat: 10,
+    afterVatVND: 5500000,
+    afterVatUSD: 231,
+  },
+  {
+    id: 2,
+    productName: "Giấy A4 Double A",
+    productType: "Vật tư tiêu hao",
+    priceVND: 250000,
+    priceUSD: 11,
+    vat: 5,
+    afterVatVND: 262500,
+    afterVatUSD: 11.55,
+  },
+];
+
 const OpportunityList = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<Opportunity[]>(dataSource);
