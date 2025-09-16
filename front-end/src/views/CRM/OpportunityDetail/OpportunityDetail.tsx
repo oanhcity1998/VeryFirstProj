@@ -524,7 +524,14 @@ const OpportunityDetail = () => {
                       });
                     }}
                   >
-                    <Form form={form} layout="vertical" initialValues={editingActivity || {}}>
+                    <Form
+                      form={form}
+                      layout="vertical"
+                      initialValues={{
+                        ...editingActivity,
+                        date: editingActivity?.date ? dayjs(editingActivity.date) : null,
+                      }}
+                    >
                       <Form.Item
                         label="Ngày gặp mặt"
                         name="date"
