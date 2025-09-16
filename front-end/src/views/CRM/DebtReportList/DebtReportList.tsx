@@ -21,9 +21,9 @@ import { DebtReportForm } from "@/components/CRM/DebtReportForm/DebtReportForm";
 import { TableDebtReport } from "@/components/CRM/TableDebtReport/TableDebtReport";
 dayjs.extend(isBetween);
 
-import rawConfig from "@/@kvac/config/debtReport/debtReport.table.json";
-import { KVTableConfig } from "@/@kvac/ui/KVTable";
-const debtReportTableConfig = rawConfig as KVTableConfig;
+import rawConfig from "@/components/CRM/TableDebtReport/debtReport.table.json";
+import { UITableConfig } from "@/ui/UITable";
+const debtReportTableConfig = rawConfig as UITableConfig;
 
 // 👉 Hóa đơn
 export interface Invoice {
@@ -473,7 +473,7 @@ const DebtReportList = () => {
           navigate(generatePath(ROUTES_APP.crm.debtReportDetail, { id: record.id }))
         }
       />
-      {/* <KVTable
+      {/* <UITable
         rowKey="id"
         data={filteredData}
         config={debtReportTableConfig}

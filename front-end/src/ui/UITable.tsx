@@ -5,7 +5,7 @@ import { generatePath, Link } from "react-router-dom";
 import { ColumnsType, TableProps } from "antd/es/table";
 import { ROUTES_APP } from "@/app/routes";
 
-export interface KVTableColumn {
+export interface UITableColumn {
   title: string;
   dataIndex: string;
   type?: "text" | "number" | "date" | "link" | "tag" | "list";
@@ -14,14 +14,14 @@ export interface KVTableColumn {
   align?: "left" | "center" | "right";
 }
 
-export interface KVTableConfig {
-  columns: KVTableColumn[];
+export interface UITableConfig {
+  columns: UITableColumn[];
   rowActions?: string[];
 }
 
-interface KVTableProps<T> {
+interface UITableProps<T> {
   data: T[];
-  config: KVTableConfig;
+  config: UITableConfig;
   rowKey: string;
   selectedRowKeys?: React.Key[];
   setSelectedRowKeys?: (keys: React.Key[]) => void;
@@ -39,14 +39,14 @@ function getRoutePath(pathKey: string, params: any) {
   return generatePath(route, params);
 }
 
-export function KVTable<T extends { id: number | string }>({
+export function UITable<T extends { id: number | string }>({
   data,
   config,
   rowKey,
   selectedRowKeys,
   setSelectedRowKeys,
   onEditClick,
-}: KVTableProps<T>) {
+}: UITableProps<T>) {
   const columns: ColumnsType<T> = config.columns.map((col) => {
     return {
       title: col.title,
@@ -165,4 +165,4 @@ export function KVTable<T extends { id: number | string }>({
   );
 }
 
-export default KVTable;
+export default UITable;
