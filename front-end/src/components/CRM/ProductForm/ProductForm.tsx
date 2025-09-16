@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { Modal, Form, Input, Button, Select, Card, InputNumber, FormInstance } from "antd";
+import { Modal, Form, Input, Button, Select, Card, InputNumber } from "antd";
 import "@/index.css";
 
 const { Option } = Select;
 
-interface Product {
-  id?: number;
+export interface Product {
+  id: string;
   name: string;
   description: string;
   type: string;
@@ -19,33 +19,33 @@ interface Product {
 interface ProductFormProps {
   onCancel: () => void;
   onSave: (values: Product) => void;
-  product?: Product | null;
+  initialValues?: Product | null;
   open: boolean;
   modalTitle?: string;
   cancelText?: string;
   saveText?: string;
   loading?: boolean;
-  form: FormInstance;
 }
 
 const ProductForm: React.FC<ProductFormProps> = ({
   onCancel,
   onSave,
-  product,
+  initialValues,
   open,
   modalTitle = "Thêm sản phẩm",
   cancelText = "Hủy",
   saveText = "Xác nhận",
   loading = false,
-  form,
 }) => {
+  const [form] = Form.useForm();
+
   useEffect(() => {
-    if (product) {
-      form.setFieldsValue(product);
+    if (initialValues) {
+      form.setFieldsValue(initialValues);
     } else {
       form.resetFields();
     }
-  }, [product, form]);
+  }, [initialValues, form]);
 
   const handleValuesChange = (changedValues: any, allValues: any) => {
     const { priceVND, priceUSD, vat } = allValues;
@@ -63,9 +63,9 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
   const onFinish = (values: any) => {
     onSave({
-      id: product?.id || values.id || Date.now(),
+      id: initialValues?.id || String(Date.now()),
       name: values.name,
-      description: values.description || null,
+      description: values.description,
       type: values.type,
       priceVND: values.priceVND,
       priceUSD: values.priceUSD,
@@ -73,7 +73,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
       priceAfterVatVND: values.priceAfterVatVND || 0,
       priceAfterVatUSD: values.priceAfterVatUSD || 0,
     });
-    onCancel();
   };
 
   return (
@@ -96,8 +95,8 @@ const ProductForm: React.FC<ProductFormProps> = ({
         </Button>,
       ]}
       width={800}
-      style={{ top: 20 }}
-      bodyStyle={{ maxHeight: "80vh", overflowY: "auto" }}
+      className="modal-body"
+      centered
     >
       <Form
         form={form}
@@ -114,7 +113,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
             <Input placeholder="Nhập tên sản phẩm" />
           </Form.Item>
 
-          <Form.Item name="description" label="Mô tả">
+          <Form.Item
+            name="description"
+            label="Mô tả"
+            rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}
+          >
             <Input.TextArea
               placeholder="Nhập mô tả"
               autoSize={{ minRows: 3, maxRows: 5 }}

@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { Button, Space, Modal, message } from "antd";
 import { PlusOutlined, DeleteOutlined, FilterOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import "./QuotationList.css";
 import Search from "antd/es/input/Search";
 import { ROUTES_APP } from "../../../app/routes";
 import FilterQuotationDrawer from "@/components/CRM/Filter/FilterQuotationDrawer";

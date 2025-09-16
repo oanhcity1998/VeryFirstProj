@@ -127,7 +127,7 @@ const ContactList = () => {
         <div className="list-actions">
           <Search
             className="search-bar"
-            placeholder="Nhập tên người liên hệ..."
+            placeholder="Tìm kiếm theo tên người liên hệ"
             onChange={(e) => setSearchText(e.target.value)}
             allowClear
           />

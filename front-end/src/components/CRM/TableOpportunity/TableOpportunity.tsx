@@ -179,11 +179,8 @@ export const TableOpportunity = ({
       columns={columns}
       dataSource={filteredData}
       rowKey="id"
+      pagination={false}
       scroll={{ x: "max-content", y: "calc(100vh - 150px)" }}
-      pagination={{
-        pageSize: 10,
-        position: ["bottomCenter"],
-      }}
     />
   );
 };

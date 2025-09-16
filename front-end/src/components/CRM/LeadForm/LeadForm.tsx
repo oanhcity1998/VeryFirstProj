@@ -104,14 +104,14 @@ const LeadForm: React.FC<LeadFormProps> = ({
         </Button>,
       ]}
       width={800}
-      destroyOnClose
     >
-      <Card className="card-section">
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-        >
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={onFinish}
+      >
+        <Card title="Thông tin khách hàng tiềm năng" className="card-section">
+
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item
@@ -212,8 +212,8 @@ const LeadForm: React.FC<LeadFormProps> = ({
               </Form.Item>
             </Col>
           </Row>
-        </Form>
-      </Card>
+        </Card>
+      </Form>
     </Modal>
   );
 };

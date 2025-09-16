@@ -156,7 +156,7 @@ const ContractList: React.FC = () => {
         <div className="list-actions">
           <Search
             className="search-bar"
-            placeholder="Tìm kiếm theo tên hợp đồng hoặc khách hàng"
+            placeholder="Tìm kiếm theo tên hợp đồng, khách hàng"
             allowClear
             onSearch={(val) => setSearchText(val)}
           />

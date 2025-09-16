@@ -1,47 +1,32 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Button, Modal, Select, Pagination, Empty, Spin, Form } from "antd";
-import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Button, Modal, Select, Pagination, Empty } from "antd";
+import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import Search from "antd/es/input/Search";
-import Table from "antd/es/table";
+import TableProduct, { Product } from "@/components/CRM/TableProduct/TableProduct";
 import ProductForm from "@/components/CRM/ProductForm/ProductForm";
 import "@/index.css";
 
 const { Option } = Select;
 
-interface Product {
-  key: number;
-  id: number;
-  name: string;
-  description: string;
-  type: string;
-  priceVND: number;
-  priceUSD: number;
-  vat: number;
-  priceAfterVatVND: number;
-  priceAfterVatUSD: number;
-}
-
 const ProductList: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [form] = Form.useForm();
   const [queryParams, setQueryParams] = useState({
     q: searchParams.get("q") || "",
-    product_type: searchParams.get("product_type") || undefined,
+    type: searchParams.get("type") || undefined,
     vat: searchParams.get("vat") ? Number(searchParams.get("vat")) : undefined,
     page: searchParams.get("page") ? Number(searchParams.get("page")) : 1,
     limit: searchParams.get("limit") ? Number(searchParams.get("limit")) : 5,
   });
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [openForm, setOpenForm] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([
     {
-      key: 1,
-      id: 1,
+      id: "1",
       name: "iPhone 15 Pro",
       description: "Smartphone cao cấp",
       type: "package",
@@ -52,8 +37,7 @@ const ProductList: React.FC = () => {
       priceAfterVatUSD: 1320,
     },
     {
-      key: 2,
-      id: 2,
+      id: "2",
       name: "MacBook Air M2",
       description: "Laptop nhẹ và mạnh",
       type: "monthly",
@@ -74,7 +58,7 @@ const ProductList: React.FC = () => {
   useEffect(() => {
     const params = new URLSearchParams();
     if (queryParams.q) params.set("q", queryParams.q);
-    if (queryParams.product_type) params.set("product_type", queryParams.product_type);
+    if (queryParams.type) params.set("type", queryParams.type);
     if (queryParams.vat !== undefined) params.set("vat", queryParams.vat.toString());
     params.set("page", queryParams.page.toString());
     params.set("limit", queryParams.limit.toString());
@@ -87,15 +71,12 @@ const ProductList: React.FC = () => {
     try {
       if (selectedProduct) {
         setProducts((prev) =>
-          prev.map((item) =>
-            item.id === selectedProduct.id ? { ...item, ...values } : item
-          )
+          prev.map((item) => (item.id === selectedProduct.id ? values : item))
         );
         toast.success("Cập nhật sản phẩm thành công");
       } else {
         const newProduct: Product = {
-          key: Date.now(),
-          id: Date.now(),
+          id: String(Date.now()),
           ...values,
         };
         setProducts((prev) => [...prev, newProduct]);
@@ -106,7 +87,7 @@ const ProductList: React.FC = () => {
         }));
         toast.success("Thêm sản phẩm thành công");
       }
-      setIsModalOpen(false);
+      setOpenForm(false);
       setSelectedProduct(null);
     } catch (err: any) {
       toast.error(`Không thể ${selectedProduct ? "cập nhật" : "thêm"} sản phẩm`);
@@ -118,14 +99,14 @@ const ProductList: React.FC = () => {
   const handleDelete = async () => {
     try {
       setProducts((prev) =>
-        prev.filter((item) => !selectedRowKeys.includes(String(item.id)))
+        prev.filter((item) => !selectedRowKeys.includes(item.id))
       );
       setMeta((prev) => ({
         ...prev,
         total: prev.total - selectedRowKeys.length,
         pages: Math.ceil((prev.total - selectedRowKeys.length) / prev.limit),
       }));
-      toast.success("Đã xóa sản phẩm thành công");
+      toast.success(`Đã xóa ${selectedRowKeys.length} sản phẩm thành công`);
       setSelectedRowKeys([]);
       setDeleteOpen(false);
     } catch (err) {
@@ -135,7 +116,7 @@ const ProductList: React.FC = () => {
 
   const handleEdit = (record: Product) => {
     setSelectedProduct(record);
-    setIsModalOpen(true);
+    setOpenForm(true);
   };
 
   const handleSearch = (value: string) => {
@@ -150,9 +131,7 @@ const ProductList: React.FC = () => {
     const matchSearch =
       item.name.toLowerCase().includes(queryParams.q.toLowerCase()) ||
       item.description.toLowerCase().includes(queryParams.q.toLowerCase());
-    const matchType = queryParams.product_type
-      ? item.type === queryParams.product_type
-      : true;
+    const matchType = queryParams.type ? item.type === queryParams.type : true;
     const matchVAT = queryParams.vat !== undefined ? item.vat === queryParams.vat : true;
     return matchSearch && matchType && matchVAT;
   });
@@ -162,77 +141,6 @@ const ProductList: React.FC = () => {
     queryParams.page * queryParams.limit
   );
 
-  const columns = [
-    {
-      title: "Tên sản phẩm",
-      dataIndex: "name",
-      key: "name",
-      fixed: "left" as const,
-      width: 200,
-    },
-    {
-      title: "Mô tả",
-      dataIndex: "description",
-      key: "description",
-      width: 200,
-    },
-    {
-      title: "Loại sản phẩm",
-      dataIndex: "type",
-      key: "type",
-      width: 150,
-      render: (value: string) => (value === "package" ? "Theo gói" : "Theo tháng"),
-    },
-    {
-      title: "Giá (VND)",
-      dataIndex: "priceVND",
-      key: "priceVND",
-      width: 120,
-      render: (value: number) => value.toLocaleString("vi-VN"),
-    },
-    {
-      title: "Giá (USD)",
-      dataIndex: "priceUSD",
-      key: "priceUSD",
-      width: 120,
-      render: (value: number) => value.toLocaleString("en-US"),
-    },
-    {
-      title: "VAT (%)",
-      dataIndex: "vat",
-      key: "vat",
-      width: 100,
-    },
-    {
-      title: "Giá sau VAT (VND)",
-      dataIndex: "priceAfterVatVND",
-      key: "priceAfterVatVND",
-      width: 150,
-      render: (value: number) => value.toLocaleString("vi-VN"),
-    },
-    {
-      title: "Giá sau VAT (USD)",
-      dataIndex: "priceAfterVatUSD",
-      key: "priceAfterVatUSD",
-      width: 150,
-      render: (value: number) => value.toLocaleString("en-US"),
-    },
-    {
-      title: "",
-      key: "action",
-      fixed: "right" as const,
-      width: 80,
-      render: (_: any, record: Product) => (
-        <Button
-          type="link"
-          icon={<EditOutlined />}
-          className="base-edit-icon"
-          onClick={() => handleEdit(record)}
-        />
-      ),
-    },
-  ];
-
   return (
     <>
       <div className="list-header">
@@ -240,7 +148,7 @@ const ProductList: React.FC = () => {
         <div className="list-actions">
           <Search
             className="search-bar"
-            placeholder="Tìm kiếm theo tên sản phẩm"
+            placeholder="Tìm kiếm theo tên hoặc mô tả"
             allowClear
             value={queryParams.q}
             onChange={(e) => handleSearch(e.target.value)}
@@ -249,10 +157,8 @@ const ProductList: React.FC = () => {
           <Select
             className="filter-bar"
             placeholder="Lọc theo loại sản phẩm"
-            value={queryParams.product_type}
-            onChange={(type) =>
-              setQueryParams({ ...queryParams, product_type: type, page: 1 })
-            }
+            value={queryParams.type}
+            onChange={(type) => setQueryParams({ ...queryParams, type, page: 1 })}
             options={[
               { value: "package", label: "Theo gói" },
               { value: "monthly", label: "Theo tháng" },
@@ -270,7 +176,6 @@ const ProductList: React.FC = () => {
               { value: 10, label: "10%" },
             ]}
             allowClear
-            style={{ width: 150 }}
           />
           <Button
             danger
@@ -287,17 +192,17 @@ const ProductList: React.FC = () => {
             onCancel={() => setDeleteOpen(false)}
             okText="Xóa"
             cancelText="Hủy"
-            okButtonProps={{ danger: true }}
+            okButtonProps={{ danger: true, loading: isSubmitting }}
             centered
           >
-            <p>Bạn có chắc muốn xóa sản phẩm này? Hành động này không thể hoàn tác.</p>
+            <p>Bạn có chắc muốn xóa {selectedRowKeys.length} sản phẩm đã chọn?</p>
           </Modal>
           <Button
             type="primary"
             icon={<PlusOutlined />}
             onClick={() => {
               setSelectedProduct(null);
-              setIsModalOpen(true);
+              setOpenForm(true);
             }}
           >
             Tạo
@@ -305,53 +210,45 @@ const ProductList: React.FC = () => {
         </div>
       </div>
 
-      {products.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "50px 0", color: "#888" }}>
+      {filteredData.length === 0 ? (
+        <div className="empty-message">
           <Empty description="Không có sản phẩm nào để hiển thị" />
           <p>Hiện tại không có dữ liệu sản phẩm. Vui lòng thêm sản phẩm mới!</p>
         </div>
       ) : (
         <>
-          <Table
-            rowSelection={{
-              selectedRowKeys,
-              onChange: (keys) => setSelectedRowKeys(keys.map(String)),
-              type: "checkbox",
-            }}
-            columns={columns}
-            dataSource={paginatedData}
-            rowKey="id"
-            pagination={false}
-            scroll={{ x: 1200 }}
+          <TableProduct
+            data={paginatedData}
+            selectedRowKeys={selectedRowKeys}
+            setSelectedRowKeys={setSelectedRowKeys}
+            onEdit={handleEdit}
+            loading={isSubmitting}
           />
-          {meta && (
-            <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
-              <Pagination
-                current={meta.page}
-                pageSize={meta.limit}
-                total={meta.total}
-                onChange={handlePageChange}
-                showSizeChanger
-                pageSizeOptions={["5", "10", "20"]}
-              />
-            </div>
-          )}
+          <div className="pagination-container">
+            <Pagination
+              current={meta.page}
+              pageSize={meta.limit}
+              total={meta.total}
+              onChange={handlePageChange}
+              showSizeChanger
+              pageSizeOptions={["5", "10", "20"]}
+            />
+          </div>
         </>
       )}
 
       <ProductForm
-        open={isModalOpen}
+        open={openForm}
         onCancel={() => {
-          setIsModalOpen(false);
+          setOpenForm(false);
           setSelectedProduct(null);
         }}
         onSave={handleSave}
-        product={selectedProduct}
-        modalTitle={selectedProduct ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
+        initialValues={selectedProduct}
+        modalTitle={selectedProduct ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm"}
         cancelText="Hủy"
-        saveText="Xác nhận"
+        saveText={selectedProduct ? "Xác nhận" : "Xác nhận"}
         loading={isSubmitting}
-        form={form}
       />
     </>
   );

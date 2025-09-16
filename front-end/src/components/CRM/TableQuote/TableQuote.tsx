@@ -5,7 +5,6 @@ import { useNavigate, generatePath } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
 import { ROUTES_APP } from "@/app/routes";
 
-import "./TableQuote.css"
 
 
 
@@ -81,7 +80,7 @@ const TableQuote: React.FC<TableContractProps> = ({
       render: (_, record) => (
         <Tooltip title="Chỉnh sửa">
           <EditOutlined
-            className="quote-edit-icon"
+            className="base-edit-icon"
             onClick={(e) => {
               e.stopPropagation(); // prevent row click
               onEditClick?.(record);

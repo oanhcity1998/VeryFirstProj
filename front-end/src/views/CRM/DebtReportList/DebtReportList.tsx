@@ -350,7 +350,7 @@ const DebtReportList = () => {
         <div className="list-actions">
           <Search
             className="search-bar"
-            placeholder="Tìm kiếm theo số báo cáo - khách hàng"
+            placeholder="Tìm kiếm theo số báo cáo, khách hàng"
             onChange={(e) => setSearchText(e.target.value)}
             allowClear
           />
