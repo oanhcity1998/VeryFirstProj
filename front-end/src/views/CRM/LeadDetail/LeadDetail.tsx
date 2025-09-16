@@ -54,20 +54,20 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({
     >
       <Card>
       {/* Khách hàng */}
-      <div style={{ marginBottom: 16 }}>
-        <h3>Khách hàng</h3>
-        <Checkbox
-          checked={customerOption === "new"}
-          onChange={() => setCustomerOption("new")}
-        >
-          Tạo mới
-        </Checkbox>
-        <Checkbox
-          checked={customerOption === "update"}
-          onChange={() => setCustomerOption("update")}
-        >
-          Cập nhật
-        </Checkbox>
+      <div className="option-row">
+        <h3 className="option-label">Khách hàng</h3>
+          <Checkbox
+            checked={customerOption === "new"}
+            onChange={() => setCustomerOption("new")}
+          >
+            Tạo mới
+          </Checkbox>
+          <Checkbox
+            checked={customerOption === "update"}
+            onChange={() => setCustomerOption("update")}
+          >
+            Cập nhật
+          </Checkbox>
       </div>
 
       {customerOption === "new" && (
@@ -85,8 +85,8 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({
       )}
 
       {/* Liên hệ */}
-      <div style={{ marginBottom: 16 }}>
-        <h3>Liên hệ</h3>
+      <div className="option-row">
+        <h3 className="option-label">Liên hệ</h3>
         <Checkbox
           checked={contactOption === "new"}
           onChange={() => setContactOption("new")}
@@ -116,8 +116,8 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({
       )}
 
       {/* Cơ hội */}
-      <div style={{ marginBottom: 16 }}>
-        <h3>Cơ hội</h3>
+      <div className="option-row">
+        <h3 className="option-label">Cơ hội</h3>
         <Checkbox
           checked={opportunityOption === "new"}
           onChange={() => setOpportunityOption("new")}

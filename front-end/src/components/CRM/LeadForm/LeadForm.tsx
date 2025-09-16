@@ -40,6 +40,8 @@ const LeadForm: React.FC<LeadFormProps> = ({ open, onCancel, onSubmit, initialVa
           Lưu
         </Button>,
       ]}
+      className="lead-form-modal"
+      width="50%" 
       destroyOnClose
     >
       <Card >
