@@ -170,19 +170,13 @@ const LeadList = () => {
         onEdit={handleEdit}
       />
 
-      <Modal
-        open={openForm}
-        onCancel={() => setOpenForm(false)}
-        footer={null}
-        destroyOnClose
-      >
+      
         <LeadForm
           open={openForm}
           initialValues={editData}
           onCancel={() => setOpenForm(false)}
           onSubmit={handleSubmit}
         />
-      </Modal>
     </>
   );
 };
