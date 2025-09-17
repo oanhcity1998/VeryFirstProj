@@ -73,7 +73,6 @@ const FilterQuotationDrawer: React.FC<FilterQuotationDrawerProps> = ({
         <Form.Item label="VAT" name="VAT">
           <Select
             allowClear
-            style={{ width: 200 }}
             value={filterVAT}
             onChange={(val) => setFilterVAT(val)}
             options={VATOptions.map((c) => ({ label: c, value: c }))}
@@ -84,7 +83,6 @@ const FilterQuotationDrawer: React.FC<FilterQuotationDrawerProps> = ({
         <Form.Item label="Sản phẩm" name="productCode">
           <Select
             allowClear
-            style={{ width: 200 }}
             value={filterProduct}
             onChange={(val) => setFilterProduct(val)}
             options={ProductOptions.map((c) => ({ label: c, value: c }))}
@@ -95,7 +93,6 @@ const FilterQuotationDrawer: React.FC<FilterQuotationDrawerProps> = ({
         <Form.Item label="Trạng thái" name="status">
           <Select
             allowClear
-            style={{ width: 200 }}
             value={filterStatus}
             onChange={(val) => setFilterStatus(val)}
             options={StatusOptions.map((c) => ({ label: c, value: c }))}

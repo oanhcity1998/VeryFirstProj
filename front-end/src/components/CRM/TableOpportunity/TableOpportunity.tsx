@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Table, Tooltip, Tag, Progress } from "antd";
+import { Table, Tooltip, Tag, Progress, Spin } from "antd";
 import { EditOutlined, FileTextOutlined } from "@ant-design/icons";
 import { generatePath, Link } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";
@@ -22,6 +22,7 @@ interface TableOpportunityProps {
   filterPriority: string | null;
   filterStage: string | null;
   filterDate: [string, string] | null;
+  loading?: boolean;
 }
 
 export const TableOpportunity = ({
@@ -34,6 +35,7 @@ export const TableOpportunity = ({
   filterPriority,
   filterStage,
   filterDate,
+  loading,
 }: TableOpportunityProps) => {
   const filteredData = useMemo(() => {
     return data.filter((item) => {
@@ -49,7 +51,7 @@ export const TableOpportunity = ({
 
       const matchDate = filterDate
         ? dayjs(item.expectedCloseDate).isSameOrAfter(dayjs(filterDate[0])) &&
-        dayjs(item.expectedCloseDate).isSameOrBefore(dayjs(filterDate[1]))
+          dayjs(item.expectedCloseDate).isSameOrBefore(dayjs(filterDate[1]))
         : true;
 
       return matchSearch && matchPriority && matchStage && matchDate;
@@ -168,19 +170,25 @@ export const TableOpportunity = ({
   ];
 
   return (
-    <Table<Opportunity>
-      className="base-table"
-      rowSelection={{
-        selectedRowKeys,
-        onChange: (keys) => {
-          setSelectedRowKeys(keys as number[]);
-        },
-      }}
-      columns={columns}
-      dataSource={filteredData}
-      rowKey="id"
-      pagination={false}
-      scroll={{ x: "max-content", y: "calc(100vh - 150px)" }}
-    />
+    <>
+      {loading ? (
+        <Spin />
+      ) : (
+        <Table<Opportunity>
+          className="base-table"
+          rowSelection={{
+            selectedRowKeys,
+            onChange: (keys) => {
+              setSelectedRowKeys(keys as number[]);
+            },
+          }}
+          columns={columns}
+          dataSource={filteredData}
+          rowKey="id"
+          pagination={false}
+          scroll={{ x: "max-content", y: "calc(100vh - 150px)" }}
+        />
+      )}
+    </>
   );
 };

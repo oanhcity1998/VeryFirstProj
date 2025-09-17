@@ -111,13 +111,10 @@ const OpportunityList: React.FC = () => {
   const handleSave = async (values: Opportunity) => {
     try {
       if (editData) {
-        setData((prev) =>
-          prev.map((item) => (item.id === editData.id ? values : item))
-        );
+        setData((prev) => prev.map((item) => (item.id === editData.id ? values : item)));
         toast.success("Cập nhật cơ hội thành công");
       } else {
         const newOpportunity: Opportunity = {
-          id: String(Date.now()),
           ...values,
         };
         setData((prev) => [...prev, newOpportunity]);
@@ -264,6 +261,10 @@ const OpportunityList: React.FC = () => {
             onShowClick={handleShowClick}
             onEditClick={handleEdit}
             loading={false}
+            searchText={""}
+            filterPriority={""}
+            filterStage={""}
+            filterDate={["", ""]}
           />
           <div className="pagination-container">
             <Pagination

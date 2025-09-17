@@ -47,7 +47,7 @@ export const FilterDebtReportDrawer = ({
       placement="right"
       onClose={onClose}
       open={open}
-      width={320}
+      width={350}
     >
       <Form layout="vertical">
         {/* Ngày báo cáo */}
