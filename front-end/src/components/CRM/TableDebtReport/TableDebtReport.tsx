@@ -111,14 +111,14 @@ export const TableDebtReport = ({
       align: "center",
       dataIndex: "debtStatus",
       key: "debtStatus",
-      width: 140,
+      width: 180,
     },
     {
       title: "Trạng thái báo cáo",
       align: "center",
       dataIndex: "status",
       key: "status",
-      width: 140,
+      width: 180,
     },
     {
       title: "Tổng nợ còn lại",

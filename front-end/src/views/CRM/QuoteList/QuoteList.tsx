@@ -4,10 +4,11 @@ import { Button, Modal, Select, Pagination, Empty, Row, Col, Space } from "antd"
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import Search from "antd/es/input/Search";
-import TableContract, { Contract } from "@/components/CRM/TableContract/TableContract";
+import { Contract } from "@/components/CRM/TableContract/TableContract";
 import ContractForm from "@/components/CRM/ContractForm/ContractForm";
 import { ROUTES_APP } from "@/app/routes";
 import "@/index.css";
+import TableQuote from "@/components/CRM/TableQuote/TableQuote";
 
 const { Option } = Select;
 
@@ -155,7 +156,7 @@ const QuoteList: React.FC = () => {
   return (
     <>
       <div className="list-header">
-        <h2>Danh sách báo giá & hợp đồng</h2>
+        <h2>Danh sách báo giá</h2>
         <div className="list-actions">
           <Search
             placeholder="Tìm kiếm theo tên hoặc khách hàng"
@@ -221,7 +222,7 @@ const QuoteList: React.FC = () => {
         </div>
       ) : (
         <>
-          <TableContract
+          <TableQuote
             data={paginatedData}
             selectedRowKeys={selectedRowKeys}
             setSelectedRowKeys={setSelectedRowKeys}
@@ -251,7 +252,7 @@ const QuoteList: React.FC = () => {
         }}
         onSave={handleSave}
         initialValues={editRecord}
-        modalTitle={editRecord ? "Chỉnh sửa báo giá & hợp đồng" : "Thêm báo giá & hợp đồng"}
+        modalTitle={editRecord ? "Chỉnh sửa báo giá" : "Thêm báo giá"}
         cancelText="Hủy"
         saveText={editRecord ? "Xác nhận" : "Xác nhận"}
         loading={false}

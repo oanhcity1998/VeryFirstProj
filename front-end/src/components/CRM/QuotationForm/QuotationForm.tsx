@@ -252,7 +252,7 @@ export const QuotationForm = ({
               marginBottom: 16,
             }}
           >
-            <h3 style={{ margin: 0 }}>Danh sách sản phẩm</h3>
+            <h3 className="card-title">Danh sách sản phẩm</h3>
             {!isDetail && (
               <Button type="primary" onClick={addRow}>
                 + Thêm sản phẩm

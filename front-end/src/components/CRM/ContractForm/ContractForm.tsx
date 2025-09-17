@@ -366,7 +366,7 @@ const ContractForm: React.FC<ContractFormProps> = ({
               marginBottom: 16,
             }}
           >
-            <h3 style={{ margin: 0 }}>Danh sách sản phẩm</h3>
+            <h3 className="card-title">Danh sách sản phẩm</h3>
             <Button type="primary" onClick={handleAddProduct}>
               <PlusOutlined /> Thêm sản phẩm
             </Button>

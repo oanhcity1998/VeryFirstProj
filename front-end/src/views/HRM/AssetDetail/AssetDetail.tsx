@@ -94,7 +94,7 @@ const AssetDetail: React.FC = () => {
 
     return (
         <div className="asset-detail-container">
-            <Breadcrumb style={{ marginBottom: "16px" }}>
+            <Breadcrumb>
                 <Breadcrumb.Item>
                     <Link to={ROUTES_APP.hrm.assetList}>Danh sách tài sản</Link>
                 </Breadcrumb.Item>
@@ -105,7 +105,7 @@ const AssetDetail: React.FC = () => {
             <Row gutter={16}>
                 <Col span={24}>
                     <Card
-                        title={<h2 style={{ margin: 0 }}>Chi tiết tài sản: {asset.name}</h2>}
+                        title={<h2 className="card-title">Chi tiết tài sản: {asset.name}</h2>}
                         variant="outlined"
                         className="card-section"
                     >

@@ -1,13 +1,14 @@
+import React from "react";
 import { Table, Checkbox, Button, Typography, Tooltip } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
 import { useNavigate, generatePath } from "react-router-dom";
-import { ColumnsType } from "antd/es/table";
 import { ROUTES_APP } from "@/app/routes";
 import "@/index.css";
 
 const { Link } = Typography;
 
-interface Product {
+export interface Product {
   key: number;
   name: string;
   type: string;
@@ -34,19 +35,22 @@ export interface Contract {
 interface TableContractProps {
   data?: Contract[];
   selectedRowKeys?: string[];
-  setSelectedRowKeys: (keys: string[]) => void;
+  setSelectedRowKeys?: (keys: string[]) => void;
+  onEditClick?: (record: Contract) => void;
   onEdit?: (record: Contract) => void;
   onRowClick?: (record: Contract) => void;
   loading?: boolean;
+  showEdit?: boolean;
 }
 
 const TableContract: React.FC<TableContractProps> = ({
   data = [],
   selectedRowKeys = [],
   setSelectedRowKeys,
-  onEdit,
+  onEditClick,
   onRowClick,
   loading = false,
+  showEdit = true,
 }) => {
   const navigate = useNavigate();
   const allKeys = data.map((item) => item.id);
@@ -60,13 +64,13 @@ const TableContract: React.FC<TableContractProps> = ({
           indeterminate={isIndeterminate}
           checked={isAllChecked}
           onChange={(e) => {
-            if (e.target.checked) {
+            if (e.target.checked && setSelectedRowKeys) {
               setSelectedRowKeys(allKeys);
-            } else {
+            } else if (setSelectedRowKeys) {
               setSelectedRowKeys([]);
             }
           }}
-          disabled={data.length === 0}
+          disabled={data.length === 0 || !setSelectedRowKeys}
         />
       ),
       dataIndex: "option",
@@ -77,12 +81,13 @@ const TableContract: React.FC<TableContractProps> = ({
         <Checkbox
           checked={selectedRowKeys.includes(record.id)}
           onChange={(e) => {
-            if (e.target.checked) {
+            if (e.target.checked && setSelectedRowKeys) {
               setSelectedRowKeys([...selectedRowKeys, record.id]);
-            } else {
+            } else if (setSelectedRowKeys) {
               setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.id));
             }
           }}
+          disabled={!setSelectedRowKeys}
         />
       ),
     },
@@ -102,12 +107,17 @@ const TableContract: React.FC<TableContractProps> = ({
       align: "center",
       render: (text: string, record: Contract) => (
         <Link
-          onClick={() =>
-            navigate(
-              generatePath(ROUTES_APP.crm.contractDetail, { id: record.id }) +
-              `?loai=${record.type === "Báo giá" ? "baogia" : "hopdong"}`
-            )
-          }
+          className="contract-link"
+          onClick={() => {
+            if (onRowClick) {
+              onRowClick(record);
+            } else {
+              navigate(
+                generatePath(ROUTES_APP.crm.contractDetail, { id: record.id }) +
+                `?loai=hopdong`
+              );
+            }
+          }}
         >
           {text}
         </Link>
@@ -140,7 +150,7 @@ const TableContract: React.FC<TableContractProps> = ({
       title: "Nhân viên phụ trách",
       dataIndex: "owner",
       key: "owner",
-      width: 150,
+      width: 200,
       align: "center",
     },
     {
@@ -171,26 +181,31 @@ const TableContract: React.FC<TableContractProps> = ({
       width: 120,
       align: "center",
     },
-    {
-      title: "",
-      key: "action",
-      width: 80,
-      fixed: "right",
-      align: "center",
-      render: (_: any, record: Contract) => (
-        <Tooltip title="Chỉnh sửa">
-          <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit?.(record);
-            }}
-            className="base-edit-icon"
-          />
-        </Tooltip>
-      ),
-    },
+    ...(showEdit
+      ? [
+        {
+          title: "",
+          key: "action",
+          width: 80,
+          render: (_, record) => (
+            <Tooltip title="Chỉnh sửa">
+              <EditOutlined
+                style={{
+                  fontSize: 20,
+                  cursor: "pointer",
+                  color: "#1890ff",
+                  padding: 8,
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEditClick?.(record);
+                }}
+              />
+            </Tooltip>
+          ),
+        },
+      ]
+      : []),
   ];
 
   return (

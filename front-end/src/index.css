@@ -7,6 +7,10 @@ body,
   overflow-y: auto;
 }
 
+.card-title {
+  margin: 0;
+}
+
 .ant-layout-content {
   flex: 1;
   /* cho phép Content chiếm phần còn lại */
@@ -65,7 +69,7 @@ body,
 }
 
 
-/* Form Section Styling */
+/* Form Card Section Styling */
 .card-section {
   border: 1px solid #d9d9d9;
   border-radius: 6px;
@@ -119,4 +123,10 @@ body,
   /* bỏ mờ */
   font-weight: normal;
   /* không đậm */
+}
+
+
+/* Space Breadcrumb */
+.ant-breadcrumb {
+  margin-bottom: 16px;
 }

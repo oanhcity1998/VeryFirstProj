@@ -3,10 +3,11 @@ import { useParams, Link } from "react-router-dom";
 import { Card, Input, Tabs, Form, Row, Col, Breadcrumb, Select } from "antd";
 import TableContact from "@/components/CRM/TableContact/TableContact";
 import ContactForm from "@/components/CRM/ContactForm/ContactForm";
-import QuoteList from "../QuoteList/QuoteList";
+import TableQuote from "@/components/CRM/TableQuote/TableQuote";
 import ContractList from "../ContractList/ContractList";
-import "./CustomerDetail.css";
 import { ROUTES_APP } from "../../../app/routes";
+import "./CustomerDetail.css";
+import TableContract from "@/components/CRM/TableContract/TableContract";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -20,9 +21,11 @@ export default function CustomerDetail() {
   const [customerOptions] = useState(["Công ty ABC", "Công ty XYZ"]);
   const [mainContactOptions] = useState(["Nguyễn Văn A", "Trần Thị B"]);
   const [selectedContact, setSelectedContact] = useState(null);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [selectedQuote, setSelectedQuote] = useState(null);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
-  const [data] = useState([
+  const [contactData] = useState([
     {
       key: "1",
       id: "10",
@@ -88,6 +91,48 @@ export default function CustomerDetail() {
       title: "Trợ lý",
       mainContact: "Nguyễn Văn C",
       note: "Cần follow-up",
+    },
+  ]);
+
+  const [quoteData] = useState([
+    {
+      id: "q1",
+      code: "BG001",
+      name: "Báo giá A",
+      type: "Báo giá",
+      customer: "Công ty TNHH ABC",
+      total: 100000000,
+      owner: "Nguyễn Văn A",
+      createdAt: "2025-09-01",
+      approver: "Trần Thị B",
+      approvedAt: "2025-09-02",
+      status: "Đã duyệt",
+    },
+    {
+      id: "q2",
+      code: "BG002",
+      name: "Báo giá B",
+      type: "Báo giá",
+      customer: "Công ty TNHH XYZ",
+      total: 200000000,
+      owner: "Lê Văn C",
+      createdAt: "2025-09-03",
+      approver: "Phạm Thị D",
+      approvedAt: "2025-09-04",
+      status: "Chờ duyệt",
+    },
+    {
+      id: "q3",
+      code: "BG003",
+      name: "Báo giá C",
+      type: "Báo giá",
+      customer: "Công ty CP MNO",
+      total: 150000000,
+      owner: "Hoàng Văn E",
+      createdAt: "2025-09-05",
+      approver: "Đỗ Thị F",
+      approvedAt: "",
+      status: "Chưa duyệt",
     },
   ]);
 
@@ -226,7 +271,7 @@ export default function CustomerDetail() {
             </div>
           </div>
           <TableContact
-            data={data}
+            data={contactData}
             searchText={searchText}
             filterCustomer={filterCustomer}
             filterMainContact={filterMainContact}
@@ -234,27 +279,131 @@ export default function CustomerDetail() {
             showEdit={false}
             onShowClick={(record) => {
               setSelectedContact(record);
-              setIsDetailModalOpen(true);
+              setIsContactModalOpen(true);
             }}
           />
           <ContactForm
             mode="detail"
-            open={isDetailModalOpen}
-            onCancel={() => setIsDetailModalOpen(false)}
+            open={isContactModalOpen}
+            onCancel={() => setIsContactModalOpen(false)}
             initialValues={selectedContact}
           />
         </>
       ),
     },
-    { key: "3", label: "Báo giá", children: <QuoteList /> },
-    { key: "4", label: "Hợp đồng", children: <ContractList /> },
+    {
+      key: "3",
+      label: "Báo giá",
+      children: (
+        <>
+          <div className="list-header">
+            <h2>Thông tin báo giá</h2>
+            <div className="header-actions">
+              <Search
+                placeholder="Tìm kiếm theo tên báo giá"
+                onChange={(e) => setSearchText(e.target.value)}
+                allowClear
+                className="search-bar"
+              />
+              <Select
+                allowClear
+                placeholder="Lọc theo Khách hàng"
+                value={filterCustomer}
+                onChange={(val) => setFilterCustomer(val)}
+                options={customerOptions.map((c) => ({ label: c, value: c }))}
+                className="filter-bar"
+              />
+              <Select
+                allowClear
+                placeholder="Lọc theo Nhân viên phụ trách"
+                value={filterMainContact}
+                onChange={(val) => setFilterMainContact(val)}
+                options={mainContactOptions.map((m) => ({ label: m, value: m }))}
+                className="filter-bar"
+              />
+            </div>
+          </div>
+          <TableQuote
+            data={quoteData}
+            searchText={searchText}
+            filterCustomer={filterCustomer}
+            filterMainContact={filterMainContact}
+            selectable={false}
+            showEdit={false}
+            onShowClick={(record) => {
+              setSelectedQuote(record);
+              setIsQuoteModalOpen(true);
+            }}
+          />
+          {/* <QuoteForm
+            mode="detail"
+            open={isQuoteModalOpen}
+            onCancel={() => setIsQuoteModalOpen(false)}
+            initialValues={selectedQuote}
+          /> */}
+        </>
+      ),
+    },
+    {
+      key: "4",
+      label: "Hợp đồng",
+      children: (
+        <>
+          <div className="list-header">
+            <h2>Thông tin hợp đồng</h2>
+            <div className="header-actions">
+              <Search
+                placeholder="Tìm kiếm theo tên hợp đồng"
+                onChange={(e) => setSearchText(e.target.value)}
+                allowClear
+                className="search-bar"
+              />
+              <Select
+                allowClear
+                placeholder="Lọc theo Khách hàng"
+                value={filterCustomer}
+                onChange={(val) => setFilterCustomer(val)}
+                options={customerOptions.map((c) => ({ label: c, value: c }))}
+                className="filter-bar"
+              />
+              <Select
+                allowClear
+                placeholder="Lọc theo Nhân viên phụ trách"
+                value={filterMainContact}
+                onChange={(val) => setFilterMainContact(val)}
+                options={mainContactOptions.map((m) => ({ label: m, value: m }))}
+                className="filter-bar"
+              />
+            </div>
+          </div>
+          <TableContract
+            data={quoteData}
+            searchText={searchText}
+            filterCustomer={filterCustomer}
+            filterMainContact={filterMainContact}
+            selectable={false}
+            showEdit={false}
+            onShowClick={(record) => {
+              setSelectedQuote(record);
+              setIsQuoteModalOpen(true);
+            }}
+          />
+          {/* <QuoteForm
+            mode="detail"
+            open={isQuoteModalOpen}
+            onCancel={() => setIsQuoteModalOpen(false)}
+            initialValues={selectedQuote}
+          /> */}
+        </>
+      )
+    },
     { key: "5", label: "Tài liệu", children: <p>File tài liệu…</p> },
   ];
 
   return (
     <>
-      <Breadcrumb style={{ marginBottom: "16px" }} items={breadcrumbItems} separator=">" />
-      <Card className="card-section" title={<h2>Chi tiết khách hàng: {customer.name}</h2>}>
+      <Breadcrumb className="breadcrumb" items={breadcrumbItems} separator=">" />
+      <Card className="card-section" title={<h2 className="card-title">Chi tiết khách hàng: {customer.name}</h2>}>
         <Tabs type="card" defaultActiveKey="1" items={tabs} />
       </Card>
     </>

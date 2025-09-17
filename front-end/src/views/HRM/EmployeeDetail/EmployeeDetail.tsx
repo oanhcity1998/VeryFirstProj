@@ -84,7 +84,7 @@ const EmployeeDetail: React.FC = () => {
 
   return (
     <>
-      <Breadcrumb style={{ marginBottom: "16px" }}>
+      <Breadcrumb>
         <Breadcrumb.Item>
           <Link to={ROUTES_APP.hrm.employeeList}>Danh sách nhân sự</Link>
         </Breadcrumb.Item>
@@ -95,7 +95,7 @@ const EmployeeDetail: React.FC = () => {
       <Row gutter={16}>
         <Col span={24}>
           <Card
-            title={<h2 style={{ margin: 0 }}>Chi tiết nhân sự: {profile.name}</h2>}
+            title={<h2 className="card-title">Chi tiết nhân sự: {profile.name}</h2>}
             variant="outlined"
             className="card-section"
           >

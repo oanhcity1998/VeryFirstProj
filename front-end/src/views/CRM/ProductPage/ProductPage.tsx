@@ -245,7 +245,7 @@ const ProductPage = () => {
         }}
       >
         <Space>
-          <h2 style={{ margin: 0 }}>Danh sách sản phẩm</h2>
+          <h2 className="card-title">Danh sách sản phẩm</h2>
         </Space>
 
         <Space>

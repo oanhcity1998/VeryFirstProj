@@ -242,7 +242,7 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
               marginBottom: 16,
             }}
           >
-            <h3 style={{ margin: 0 }}>Danh sách trường của mẫu đề xuất</h3>
+            <h3 className="card-title">Danh sách trường của mẫu đề xuất</h3>
             <Button type="primary" onClick={addFieldRow}>
               <PlusOutlined /> Thêm trường
             </Button>
