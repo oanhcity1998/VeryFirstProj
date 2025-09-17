@@ -75,6 +75,12 @@ body,
   border-bottom: 1px solid #d9d9d9;
 }
 
+.card-height {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 /* Table Styling */
 .base-table .ant-table {
   border-radius: 8px;
@@ -92,4 +98,25 @@ body,
 
 .selected-row {
   background-color: #e6f7ff;
+}
+
+/* Date Picker Styling */
+.base-datepicker {
+  width: 100%;
+  height: 30px;
+}
+
+/* Tăng độ đậm chữ trong input bị disabled */
+/* Hiển thị chữ bình thường trong input/textarea/select bị disabled */
+.ant-input[disabled],
+.ant-input-disabled,
+.ant-select-disabled .ant-select-selection-item,
+.ant-input-textarea[disabled] textarea,
+.ant-select-disabled .ant-select-selector {
+  color: rgba(0, 0, 0, 0.85);
+  /* màu chữ mặc định */
+  opacity: 1 !important;
+  /* bỏ mờ */
+  font-weight: normal;
+  /* không đậm */
 }

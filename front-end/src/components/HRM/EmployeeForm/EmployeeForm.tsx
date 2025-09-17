@@ -16,7 +16,6 @@ import dayjs from "dayjs";
 import { Employee } from "@/models/HRM/employee.model";
 import { useGetDepartmentsQuery } from "@/services/HRM/department.service";
 import { useGetJobsQuery } from "@/services/HRM/position.service";
-import "./EmployeeForm.css"
 
 interface EmployeeFormProps {
   onCancel: () => void;
@@ -152,7 +151,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Row gutter={16} align="stretch">
           <Col span={8}>
-            <Card title={infoTitle} className="card-section employee-card">
+            <Card title={infoTitle} className="card-section card-height">
               <Form.Item
                 label="Mã nhân viên"
                 name="code"
@@ -184,7 +183,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               >
                 <DatePicker
                   format="DD/MM/YYYY"
-                  style={{ width: "100%", height: 30 }}
+                  className="base-datepicker"
                   placeholder="Chọn ngày sinh"
                 />
               </Form.Item>
@@ -249,7 +248,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
           </Col>
 
           <Col span={8}>
-            <Card title={extraInfoTitle} bordered className="card-section employee-card">
+            <Card title={extraInfoTitle} bordered className="card-section card-height">
               <Form.Item
                 label="Số CCCD"
                 name="id_number"
@@ -265,7 +264,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 <DatePicker
                   format="DD/MM/YYYY"
                   placeholder="Chọn ngày cấp"
-                  style={{ width: "100%", height: 30 }}
+                  className="base-datepicker"
                 />
               </Form.Item>
               <Form.Item
@@ -298,7 +297,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
           </Col>
 
           <Col span={8}>
-            <Card title={contractTitle} bordered className="card-section employee-card">
+            <Card title={contractTitle} bordered className="card-section card-height">
               <Form.Item
                 label="Tên hợp đồng"
                 name={["contract", "name"]}
@@ -329,7 +328,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               >
                 <DatePicker
                   format="DD/MM/YYYY"
-                  style={{ width: "100%", height: 30 }}
+                  className="base-datepicker"
                   placeholder="Chọn ngày bắt đầu"
                 />
               </Form.Item>
@@ -339,7 +338,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               >
                 <DatePicker
                   format="DD/MM/YYYY"
-                  style={{ width: "100%", height: 30 }}
+                  className="base-datepicker"
                   placeholder="Chọn ngày kết thúc (không bắt buộc)"
                 />
               </Form.Item>
