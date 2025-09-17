@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
     Form,
-    Button,
     Row,
     Col,
     Card,
@@ -10,10 +9,8 @@ import {
     Input,
     DatePicker,
     Breadcrumb,
-    Upload,
 } from "antd";
 import dayjs from "dayjs";
-import "./AssetDetail.css";
 import { ROUTES_APP } from "../../../app/routes";
 
 const { Title } = Typography;
@@ -108,14 +105,15 @@ const AssetDetail: React.FC = () => {
             <Row gutter={16}>
                 <Col span={24}>
                     <Card
-                        title={<h2 style={{ margin: 0 }}>Chi tiết tài sản {asset.name}</h2>}
+                        title={<h2 style={{ margin: 0 }}>Chi tiết tài sản: {asset.name}</h2>}
                         variant="outlined"
+                        className="card-section"
                     >
                         <Form form={form} layout="vertical" disabled>
                             <Row gutter={16} align={'stretch'}>
                                 {/* Cột 1 */}
                                 <Col span={8}>
-                                    <Card title="Thông tin cơ bản" variant="outlined" className="asset-card">
+                                    <Card title="Thông tin cơ bản" variant="outlined" className="card-section card-height">
                                         <Form.Item label="Mã tài sản" name="id">
                                             <Input />
                                         </Form.Item>
@@ -133,7 +131,7 @@ const AssetDetail: React.FC = () => {
 
                                 {/* Cột 2 */}
                                 <Col span={8}>
-                                    <Card title="Thông tin sở hữu" variant="outlined" className="asset-card">
+                                    <Card title="Thông tin sở hữu" variant="outlined" className="card-section card-height">
                                         <Form.Item label="Phòng ban sở hữu" name="department">
                                             <Input />
                                         </Form.Item>
@@ -151,7 +149,7 @@ const AssetDetail: React.FC = () => {
 
                                 {/* Cột 3 */}
                                 <Col span={8}>
-                                    <Card title="Thông tin khác" variant="outlined" className="asset-card">
+                                    <Card title="Thông tin khác" variant="outlined" className="card-section card-height">
                                         <Form.Item label="Ngày mua" name="purchaseDate">
                                             <DatePicker
                                                 format="DD/MM/YYYY"

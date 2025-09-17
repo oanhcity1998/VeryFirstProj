@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Table, Typography, Tooltip } from "antd";
+import { Table, Tooltip, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
 import { useNavigate, generatePath } from "react-router-dom";
@@ -23,9 +23,12 @@ interface TableContactProps {
   searchText: string;
   filterCustomer: string | null;
   filterMainContact: string | null;
-  selectedRowKeys: React.Key[];
-  setSelectedRowKeys: (keys: string[]) => void;
+  selectedRowKeys?: React.Key[];
+  setSelectedRowKeys?: (keys: string[]) => void;
   onEditClick?: (record: Contact) => void;
+  onShowClick?: (record: Contact) => void;
+  selectable?: boolean;
+  showEdit?: boolean;
 }
 
 const TableContact: React.FC<TableContactProps> = ({
@@ -36,6 +39,9 @@ const TableContact: React.FC<TableContactProps> = ({
   selectedRowKeys,
   setSelectedRowKeys,
   onEditClick,
+  onShowClick,
+  selectable = true,
+  showEdit = true,
 }) => {
   const navigate = useNavigate();
 
@@ -61,7 +67,13 @@ const TableContact: React.FC<TableContactProps> = ({
       render: (text, record) => (
         <Link
           className="contact-link"
-          onClick={() => navigate(generatePath(ROUTES_APP.crm.contactDetail, { id: record.id }))}
+          onClick={() => {
+            if (onShowClick) {
+              onShowClick(record);
+            } else {
+              navigate(generatePath(ROUTES_APP.crm.contactDetail, { id: record.id }));
+            }
+          }}
         >
           {text}
         </Link>
@@ -103,35 +115,43 @@ const TableContact: React.FC<TableContactProps> = ({
       key: "note",
       width: 200,
     },
-    {
-      title: "",
-      key: "action",
-      width: 80,
-      render: (_, record) => (
-        <Tooltip title="Chỉnh sửa">
-          <EditOutlined
-            style={{
-              fontSize: 20,
-              cursor: "pointer",
-              color: "#1890ff",
-              padding: 8,
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onEditClick?.(record);
-            }}
-          />
-        </Tooltip>
-      ),
-    },
+    ...(showEdit
+      ? [
+        {
+          title: "",
+          key: "action",
+          width: 80,
+          render: (_, record) => (
+            <Tooltip title="Chỉnh sửa">
+              <EditOutlined
+                style={{
+                  fontSize: 20,
+                  cursor: "pointer",
+                  color: "#1890ff",
+                  padding: 8,
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEditClick?.(record);
+                }}
+              />
+            </Tooltip>
+          ),
+        },
+      ]
+      : []),
   ];
 
   return (
     <Table
-      rowSelection={{
-        selectedRowKeys,
-        onChange: (keys) => setSelectedRowKeys(keys as string[]),
-      }}
+      {...(selectable && setSelectedRowKeys
+        ? {
+          rowSelection: {
+            selectedRowKeys,
+            onChange: (keys) => setSelectedRowKeys(keys as string[]),
+          },
+        }
+        : {})}
       columns={columns}
       dataSource={filteredData}
       rowKey="id"

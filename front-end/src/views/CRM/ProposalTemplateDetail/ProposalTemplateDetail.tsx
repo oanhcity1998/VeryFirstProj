@@ -17,24 +17,17 @@ const ProposalTemplateDetail: React.FC = () => {
   const proposal = proposalTemplateMocks.find((item) => item.key === id);
 
   return (
-    <Card bordered={false}>
+    <>
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
-        <Button
-          icon={<ArrowLeftOutlined />}
-          type="text"
-          onClick={() => navigate(-1)}
-          className="back-button"
-        />
-        <Breadcrumb separator=">">
-          <Breadcrumb.Item>
-            <Link to={ROUTES_APP.hrm.proposalTemplateList}>Danh sách mẫu đề xuất</Link>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>{proposal?.name}</Breadcrumb.Item>
-        </Breadcrumb>
-      </div>
+      <Breadcrumb style={{ marginBottom: "16px" }}>
+        <Breadcrumb.Item>
+          <Link to={ROUTES_APP.hrm.proposalTemplateList}>Danh sách mẫu đề xuất</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Chi tiết mẫu đề xuất</Breadcrumb.Item>
+        <Breadcrumb.Item>{proposal?.name}</Breadcrumb.Item>
+      </Breadcrumb>
 
-      <Card style={{ margin: "24px 0" }}>
+      <Card style={{ margin: "0" }}>
         {/* Thông tin chung */}
         <h3>Thông tin chi tiết mẫu đề xuất</h3>
         <Form
@@ -92,7 +85,7 @@ const ProposalTemplateDetail: React.FC = () => {
           ]}
         />
       </Card>
-    </Card>
+    </>
   );
 };
 
