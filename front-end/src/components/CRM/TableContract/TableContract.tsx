@@ -104,24 +104,27 @@ const TableContract: React.FC<TableContractProps> = ({
       dataIndex: "name",
       key: "name",
       width: 200,
-      align: "center",
-      render: (text: string, record: Contract) => (
-        <Link
-          className="contract-link"
-          onClick={() => {
-            if (onRowClick) {
-              onRowClick(record);
-            } else {
-              navigate(
-                generatePath(ROUTES_APP.crm.contractDetail, { id: record.id }) +
-                `?loai=hopdong`
-              );
-            }
-          }}
-        >
-          {text}
-        </Link>
-      ),
+      align: "center" as const,
+      render: (text: string, record: Contract) =>
+        showEdit ? (
+          <Link
+            className="contract-link"
+            onClick={() => {
+              if (onRowClick) {
+                onRowClick(record);
+              } else {
+                navigate(
+                  generatePath(ROUTES_APP.crm.contractDetail, { id: record.id }) +
+                  `?loai=hopdong`
+                );
+              }
+            }}
+          >
+            {text}
+          </Link>
+        ) : (
+          <>{text}</>
+        ),
     },
     {
       title: "Loại",

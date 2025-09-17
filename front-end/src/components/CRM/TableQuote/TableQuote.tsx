@@ -28,6 +28,7 @@ interface TableQuoteProps {
   setSelectedRowKeys?: (keys: string[]) => void;
   onEditClick?: (record: Quote) => void;
   onShowClick?: (record: Quote) => void;
+  onRowClick?: (record: Quote) => void;
   loading?: boolean;
   selectable?: boolean;
   showEdit?: boolean;
@@ -41,7 +42,7 @@ const TableQuote: React.FC<TableQuoteProps> = ({
   selectedRowKeys,
   setSelectedRowKeys,
   onEditClick,
-  onShowClick,
+  onRowClick,
   loading = false,
   selectable = true,
   showEdit = true,
@@ -76,23 +77,27 @@ const TableQuote: React.FC<TableQuoteProps> = ({
       dataIndex: "name",
       key: "name",
       width: 200,
-      render: (text, record) => (
-        <Link
-          className="quote-link"
-          onClick={() => {
-            if (onShowClick) {
-              onShowClick(record);
-            } else {
-              navigate(
-                generatePath(ROUTES_APP.crm.quoteDetail, { id: record.id }) +
-                `?loai=baogia`
-              );
-            }
-          }}
-        >
-          {text}
-        </Link>
-      ),
+      align: "center" as const,
+      render: (text: string, record: Quote) =>
+        showEdit ? (
+          <Link
+            className="contract-link"
+            onClick={() => {
+              if (onRowClick) {
+                onRowClick(record);
+              } else {
+                navigate(
+                  generatePath(ROUTES_APP.crm.quoteDetail, { id: record.id }) +
+                  `?loai=baogia`
+                );
+              }
+            }}
+          >
+            {text}
+          </Link>
+        ) : (
+          <>{text}</>
+        ),
     },
     {
       title: "Khách hàng",
@@ -104,7 +109,7 @@ const TableQuote: React.FC<TableQuoteProps> = ({
       title: "Tổng giá trị (VND)",
       dataIndex: "total",
       key: "total",
-      width: 150,
+      width: 200,
       render: (value?: number) =>
         typeof value === "number" ? value.toLocaleString("vi-VN") : "0",
     },
@@ -112,7 +117,7 @@ const TableQuote: React.FC<TableQuoteProps> = ({
       title: "Nhân viên phụ trách",
       dataIndex: "owner",
       key: "owner",
-      width: 150,
+      width: 250,
     },
     {
       title: "Ngày tạo",

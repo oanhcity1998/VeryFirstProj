@@ -116,7 +116,7 @@ const TableLead: React.FC<TableLeadProps> = ({
       title: "Nhân viên phụ trách",
       dataIndex: "owner",
       key: "owner",
-      width: 150,
+      width: 200,
       align: "center",
     },
     {
@@ -137,11 +137,11 @@ const TableLead: React.FC<TableLeadProps> = ({
       title: "Ngày cập nhật",
       dataIndex: "updatedAt",
       key: "updatedAt",
-      width: 120,
+      width: 180,
       align: "center",
     },
     {
-      title: "Hành động",
+      title: "",
       key: "action",
       width: 80,
       fixed: "right",

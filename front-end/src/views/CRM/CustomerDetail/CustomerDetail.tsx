@@ -282,12 +282,6 @@ export default function CustomerDetail() {
               setIsContactModalOpen(true);
             }}
           />
-          <ContactForm
-            mode="detail"
-            open={isContactModalOpen}
-            onCancel={() => setIsContactModalOpen(false)}
-            initialValues={selectedContact}
-          />
         </>
       ),
     },
@@ -335,12 +329,6 @@ export default function CustomerDetail() {
               setIsQuoteModalOpen(true);
             }}
           />
-          {/* <QuoteForm
-            mode="detail"
-            open={isQuoteModalOpen}
-            onCancel={() => setIsQuoteModalOpen(false)}
-            initialValues={selectedQuote}
-          /> */}
         </>
       ),
     },
@@ -388,12 +376,6 @@ export default function CustomerDetail() {
               setIsQuoteModalOpen(true);
             }}
           />
-          {/* <QuoteForm
-            mode="detail"
-            open={isQuoteModalOpen}
-            onCancel={() => setIsQuoteModalOpen(false)}
-            initialValues={selectedQuote}
-          /> */}
         </>
       )
     },

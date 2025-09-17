@@ -130,7 +130,7 @@ const TableProduct: React.FC<TableProductProps> = ({
             render: (value: number) => value.toLocaleString("en-US"),
         },
         {
-            title: "Hành động",
+            title: "",
             key: "action",
             width: 80,
             fixed: "right",

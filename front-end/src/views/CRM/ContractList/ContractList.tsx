@@ -162,7 +162,7 @@ const ContractList: React.FC = () => {
           />
           <Select
             className="filter-bar"
-            placeholder="Trạng thái"
+            placeholder="Lọc theo trạng thái"
             allowClear
             onChange={(val) => setStatusFilter(val)}
           >
@@ -172,12 +172,12 @@ const ContractList: React.FC = () => {
           </Select>
           <Select
             className="filter-bar"
-            placeholder="Loại"
+            placeholder="Lọc theo khách hàng"
             allowClear
             onChange={(val) => setTypeFilter(val)}
           >
-            <Option value="Báo giá">Báo giá</Option>
-            <Option value="Hợp đồng">Hợp đồng</Option>
+            <Option value="Piggy hotel">Piggy hotel</Option>
+            <Option value="Trường A">Trường A</Option>
           </Select>
           <Button
             danger

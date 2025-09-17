@@ -27,6 +27,7 @@ interface TableContactProps {
   setSelectedRowKeys?: (keys: string[]) => void;
   onEditClick?: (record: Contact) => void;
   onShowClick?: (record: Contact) => void;
+  onRowClick?: (record: Contact) => void;
   selectable?: boolean;
   showEdit?: boolean;
 }
@@ -39,7 +40,7 @@ const TableContact: React.FC<TableContactProps> = ({
   selectedRowKeys,
   setSelectedRowKeys,
   onEditClick,
-  onShowClick,
+  onRowClick,
   selectable = true,
   showEdit = true,
 }) => {
@@ -64,20 +65,25 @@ const TableContact: React.FC<TableContactProps> = ({
       dataIndex: "contactName",
       key: "contactName",
       width: 150,
-      render: (text, record) => (
-        <Link
-          className="contact-link"
-          onClick={() => {
-            if (onShowClick) {
-              onShowClick(record);
-            } else {
-              navigate(generatePath(ROUTES_APP.crm.contactDetail, { id: record.id }));
-            }
-          }}
-        >
-          {text}
-        </Link>
-      ),
+      fixed: "left" as const,
+      align: "center" as const,
+      render: (text: string, record: Contact) =>
+        showEdit ? (
+          <Link
+            className="contact-link"
+            onClick={() => {
+              if (onRowClick) {
+                onRowClick(record);
+              } else {
+                navigate(generatePath(ROUTES_APP.crm.contactDetail, { id: record.id }));
+              }
+            }}
+          >
+            {text}
+          </Link>
+        ) : (
+          <>{text}</>
+        ),
     },
     {
       title: "Khách hàng",
