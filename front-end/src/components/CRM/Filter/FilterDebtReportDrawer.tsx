@@ -65,13 +65,13 @@ export const FilterDebtReportDrawer = ({
         </Form.Item> */}
 
         {/* Hợp đồng */}
-        {/* <Form.Item label="Hợp đồng">
+        <Form.Item label="Hợp đồng">
           <Input
             placeholder="Nhập số hợp đồng"
             value={filterContract ?? ""}
             onChange={(e) => setFilterContract(e.target.value || null)}
           />
-        </Form.Item> */}
+        </Form.Item>
 
         {/* Khách hàng */}
         <Form.Item label="Khách hàng">
