@@ -15,6 +15,9 @@ import {
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { DebtReport } from "@/views/CRM/DebtReportList/DebtReportList";
+import "@/index.css";
+
+const { Option } = Select;
 
 // Mock data
 export const contractOptions = [
@@ -62,32 +65,21 @@ export const DebtReportForm = ({
 
   // Các field theo section
   const sectionFields: Record<string, (string | string[])[]> = {
-    // Thông tin khởi tạo
     init: ["reportNo", "reportDate", "contract", "customer", "auditor", "director"],
-
-    // Thông tin phí
     fee: ["exchangeRate", "feeUSD", "feeNoVAT", "feeVND", "feeWithVAT"],
-
-    // Hóa đơn
     invoice: [
       ["invoice", "invoiceNo"],
       ["invoice", "invoiceDate"],
       ["invoice", "rate"],
       ["invoice", "amountNoVAT"],
     ],
-
-    // Thanh toán
     payment: [
-      ["payment", "paymentCode"],
-      ["payment", "amount"],
-      ["payment", "paymentDate"],
-      ["payment", "status"],
+      ["payments", "paymentCode"],
+      ["payments", "amount"],
+      ["payments", "paymentDate"],
+      ["payments", "status"],
     ],
-
-    // Công nợ
     debt: ["debtNoVAT", "debtWithVAT", "totalDebtRemaining", "badDebt"],
-
-    // Cộng tác viên
     collaborator: [
       ["collaborator", "name"],
       ["collaborator", "phone"],
@@ -97,34 +89,22 @@ export const DebtReportForm = ({
     ],
   };
 
-  // Gom cho kế toán (toàn bộ fee + invoice + payment + debt + collaborator)
-  sectionFields.accounting = [
-    ...sectionFields.fee,
-    ...sectionFields.invoice,
-    ...sectionFields.payment,
-    ...sectionFields.debt,
-    ...sectionFields.collaborator,
-  ];
-
   useEffect(() => {
     if (open && initialValues) {
       form.setFieldsValue({
         ...initialValues,
-        // Report date
-        reportDate: initialValues.reportDate ? dayjs(initialValues.reportDate) : null,
-        // Invoice date
+        reportDate: initialValues.reportDate ? dayjs(initialValues.reportDate, "YYYY-MM-DD") : null,
         invoice: initialValues.invoice
           ? {
-              ...initialValues.invoice,
-              invoiceDate: initialValues.invoice.invoiceDate
-                ? dayjs(initialValues.invoice.invoiceDate)
-                : null,
-            }
+            ...initialValues.invoice,
+            invoiceDate: initialValues.invoice.invoiceDate
+              ? dayjs(initialValues.invoice.invoiceDate, "YYYY-MM-DD")
+              : null,
+          }
           : undefined,
-        // Payments array
         payments: initialValues.payments?.map((p: any) => ({
           ...p,
-          paymentDate: p.paymentDate ? dayjs(p.paymentDate) : null,
+          paymentDate: p.paymentDate ? dayjs(p.paymentDate, "YYYY-MM-DD") : null,
         })),
       });
       updateProgress();
@@ -183,16 +163,9 @@ export const DebtReportForm = ({
       return total > 0 ? Math.round((filled / total) * 100) : 0;
     };
 
-    // Tính cho từng section con
-    Object.entries(sectionFields).forEach(([section, fields]) => {
-      if (section === "accounting") return; // bỏ qua, xử lý riêng
-      newProgress[section] = calcSection(section, fields);
+    Object.keys(sectionFields).forEach((section) => {
+      newProgress[section] = calcSection(section, sectionFields[section]);
     });
-
-    // Tính accounting = trung bình các section con
-    const accountingSections = ["fee", "invoice", "payment", "debt", "collaborator"];
-    const sum = accountingSections.reduce((acc, s) => acc + (newProgress[s] || 0), 0);
-    newProgress.accounting = Math.round(sum / accountingSections.length);
 
     setProgress(newProgress);
   };
@@ -204,56 +177,49 @@ export const DebtReportForm = ({
         reportDate: values.reportDate?.format("YYYY-MM-DD") || null,
         invoice: values.invoice
           ? {
-              ...values.invoice,
-              invoiceDate: values.invoice.invoiceDate?.format("YYYY-MM-DD") || null,
-            }
+            ...values.invoice,
+            invoiceDate: values.invoice.invoiceDate?.format("YYYY-MM-DD") || null,
+          }
           : undefined,
         payments: values.payments?.map((p: any) => ({
           ...p,
           paymentDate: p.paymentDate?.format("YYYY-MM-DD") || null,
         })),
       };
-      onOk?.(payload, status || payload.status);
+      onOk?.(payload, status || values.status || "Khởi tạo");
+      if (!isEdit) {
+        form.resetFields();
+      }
     });
   };
 
   const renderHeader = (label: string, key: string) => (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      <span style={{ fontWeight: "bolder" }}>{label}</span>
-
+      <span>{label}</span>
       {key === "init" && isEdit && (
-        <Row style={{ width: "40%" }}>
-          <Form.Item
-            name="status"
-            label="Trạng thái báo cáo"
-            labelCol={{ span: 14 }}
-            wrapperCol={{ span: 10 }}
-            labelAlign="left"
-            style={{ marginBottom: 0 }}
-          >
-            <Select allowClear>
-              <Select.Option value="Khởi tạo">Khởi tạo</Select.Option>
-              <Select.Option value="Chờ kế toán">Chờ kế toán</Select.Option>
-              <Select.Option value="Xác nhận">Xác nhận</Select.Option>
-              <Select.Option value="Hủy">Hủy</Select.Option>
-            </Select>
-          </Form.Item>
-        </Row>
+        <Form.Item
+          name="status"
+          style={{ marginBottom: 0, minWidth: 200 }}
+        >
+          <Select placeholder="Chọn trạng thái" allowClear>
+            <Option value="Khởi tạo">Khởi tạo</Option>
+            <Option value="Chờ kế toán">Chờ kế toán</Option>
+            <Option value="Xác nhận">Xác nhận</Option>
+            <Option value="Hủy">Hủy</Option>
+          </Select>
+        </Form.Item>
       )}
-
-      {key !== "init" &&
-        (progress[key] === 0 ? (
-          <span style={{ fontSize: 12, color: "#999" }}>Optional</span>
-        ) : (
-          <Progress
-            percent={progress[key] || 0}
-            size="small"
-            style={{ width: 120 }}
-            status={progress[key] === 100 ? "success" : "active"}
-          />
-        ))}
+      {key !== "init" && (
+        <Progress
+          percent={progress[key] || 0}
+          size="small"
+          style={{ width: 120 }}
+          status={progress[key] === 100 ? "success" : "active"}
+        />
+      )}
     </div>
   );
+
 
   const numberFormatter = (value?: string | number) =>
     `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -262,35 +228,20 @@ export const DebtReportForm = ({
 
   return (
     <Modal
-      title={isEdit ? "Chỉnh sửa báo cáo" : "Tạo báo cáo mới"}
+      title={<h2>{isEdit ? "Chỉnh sửa báo cáo" : "Tạo báo cáo mới"}</h2>}
       open={open}
       onCancel={onCancel}
       footer={[
         <Button key="cancel" onClick={onCancel}>
           Huỷ
         </Button>,
-        // isEdit && (
-        //   <Button key="save" onClick={() => handleOk("Chờ kế toán")}>
-        //     Lưu tạm
-        //   </Button>
-        // ),
-        // isEdit && (
-        //   <Button type="primary" key="confirm" onClick={() => handleOk("Xác nhận")}>
-        //     Xác nhận
-        //   </Button>
-        // ),
-        // isEdit && (
-        //   <Button type="primary" key="confirm" onClick={() => handleOk("Hủy")}>
-        //     Hủy
-        //   </Button>
-        // ),
         isEdit && (
-          <Button type="primary" key="confirm" onClick={() => handleOk()}>
-            Lưu thay đổi
+          <Button key="save" type="primary" onClick={() => handleOk()}>
+            Xác nhận
           </Button>
         ),
         !isEdit && (
-          <Button type="primary" key="create" onClick={() => handleOk("Khởi tạo")}>
+          <Button key="create" type="primary" onClick={() => handleOk("Khởi tạo")}>
             Tạo báo cáo
           </Button>
         ),
@@ -299,67 +250,80 @@ export const DebtReportForm = ({
     >
       <Form
         form={form}
-        layout="horizontal"
-        labelCol={{ span: 11 }}
-        wrapperCol={{ span: 13 }}
-        labelWrap
+        layout="vertical"
         labelAlign="left"
         onValuesChange={updateProgress}
       >
         <Space direction="vertical" style={{ width: "100%" }} size="large">
           {/* Thông tin khởi tạo */}
-          <Card title={renderHeader("Thông tin khởi tạo", "init")}>
-            <Row gutter={16}>
+          <Card title={renderHeader("Thông tin khởi tạo", "init")} className="card-section">
+            <Row gutter={24}>
               <Col span={12}>
-                <Form.Item name="reportNo" label="Số báo cáo" rules={[{ required: true }]}>
-                  <Input />
+                <Form.Item
+                  name="reportNo"
+                  label="Số báo cáo"
+                  rules={[{ required: true, message: "Vui lòng nhập số báo cáo!" }]}
+                >
+                  <Input placeholder="Nhập số báo cáo" />
                 </Form.Item>
-
-                {/* Hợp đồng */}
-                <Form.Item name="contract" label="Hợp đồng" rules={[{ required: true }]}>
+                <Form.Item
+                  name="contract"
+                  label="Hợp đồng"
+                  rules={[{ required: true, message: "Vui lòng chọn hợp đồng!" }]}
+                >
                   <Select placeholder="Chọn hợp đồng">
                     {contractOptions.map((c) => (
-                      <Select.Option key={c.id} value={c.id}>
+                      <Option key={c.id} value={c.id}>
                         {c.name}
-                      </Select.Option>
+                      </Option>
                     ))}
                   </Select>
                 </Form.Item>
-
-                {/* Kiểm toán viên */}
-                <Form.Item name="auditor" label="Kiểm toán viên">
+                <Form.Item
+                  name="auditor"
+                  label="Kiểm toán viên"
+                  rules={[{ required: false }]}
+                >
                   <Select mode="multiple" allowClear placeholder="Chọn kiểm toán viên">
                     {auditorOptions.map((a) => (
-                      <Select.Option key={a.id} value={a.name}>
+                      <Option key={a.id} value={a.name}>
                         {a.name}
-                      </Select.Option>
+                      </Option>
                     ))}
                   </Select>
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item name="reportDate" label="Ngày lập" rules={[{ required: true }]}>
-                  <DatePicker style={{ width: "100%" }} />
+                <Form.Item
+                  name="reportDate"
+                  label="Ngày lập"
+                  rules={[{ required: true, message: "Vui lòng chọn ngày lập!" }]}
+                >
+                  <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
                 </Form.Item>
-
-                {/* Khách hàng */}
-                <Form.Item name="customer" label="Khách hàng" rules={[{ required: true }]}>
+                <Form.Item
+                  name="customer"
+                  label="Khách hàng"
+                  rules={[{ required: true, message: "Vui lòng chọn khách hàng!" }]}
+                >
                   <Select placeholder="Chọn khách hàng">
                     {customerOptions.map((c) => (
-                      <Select.Option key={c.id} value={c.id}>
+                      <Option key={c.id} value={c.id}>
                         {c.name}
-                      </Select.Option>
+                      </Option>
                     ))}
                   </Select>
                 </Form.Item>
-
-                {/* Giám đốc phụ trách */}
-                <Form.Item name="director" label="Giám đốc phụ trách">
-                  <Select placeholder="Chọn giám đốc">
+                <Form.Item
+                  name="director"
+                  label="Giám đốc phụ trách"
+                  rules={[{ required: false }]}
+                >
+                  <Select placeholder="Chọn giám đốc" allowClear>
                     {directorOptions.map((d) => (
-                      <Select.Option key={d.id} value={d.id}>
+                      <Option key={d.id} value={d.id}>
                         {d.name}
-                      </Select.Option>
+                      </Option>
                     ))}
                   </Select>
                 </Form.Item>
@@ -368,47 +332,71 @@ export const DebtReportForm = ({
           </Card>
 
           {role !== "HCNS" && (
-            <Card title={renderHeader("Thông tin chờ kế toán", "accounting")}>
+            <>
               {/* Thông tin phí */}
-              <Card title={renderHeader("Thông tin phí", "fee")}>
-                <Row gutter={16}>
+              <Card title={renderHeader("Thông tin phí", "fee")} className="card-section">
+                <Row gutter={24}>
                   <Col span={12}>
-                    <Form.Item name="exchangeRate" label="Tỉ giá">
+                    <Form.Item
+                      name="exchangeRate"
+                      label="Tỉ giá"
+                      rules={[{ required: false }, { type: "number", min: 0, message: "Tỉ giá phải lớn hơn hoặc bằng 0!" }]}
+                    >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
                         style={{ width: "100%" }}
+                        min={0}
                       />
                     </Form.Item>
-                    <Form.Item name="feeUSD" label="Phí USD">
+                    <Form.Item
+                      name="feeUSD"
+                      label="Phí USD"
+                      rules={[{ required: false }, { type: "number", min: 0, message: "Phí USD phải lớn hơn hoặc bằng 0!" }]}
+                    >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
                         style={{ width: "100%" }}
+                        min={0}
                       />
                     </Form.Item>
-                    <Form.Item name="feeNoVAT" label="Phí chưa VAT">
+                    <Form.Item
+                      name="feeNoVAT"
+                      label="Phí chưa VAT"
+                      rules={[{ required: false }, { type: "number", min: 0, message: "Phí chưa VAT phải lớn hơn hoặc bằng 0!" }]}
+                    >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
                         style={{ width: "100%" }}
+                        min={0}
                       />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item> </Form.Item>
-                    <Form.Item name="feeVND" label="Phí VND">
+                    <Form.Item
+                      name="feeVND"
+                      label="Phí VND"
+                      rules={[{ required: false }, { type: "number", min: 0, message: "Phí VND phải lớn hơn hoặc bằng 0!" }]}
+                    >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
                         style={{ width: "100%" }}
+                        min={0}
                       />
                     </Form.Item>
-                    <Form.Item name="feeWithVAT" label="Phí gồm VAT">
+                    <Form.Item
+                      name="feeWithVAT"
+                      label="Phí gồm VAT"
+                      rules={[{ required: false }, { type: "number", min: 0, message: "Phí gồm VAT phải lớn hơn hoặc bằng 0!" }]}
+                    >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
                         style={{ width: "100%" }}
+                        min={0}
                       />
                     </Form.Item>
                   </Col>
@@ -416,25 +404,51 @@ export const DebtReportForm = ({
               </Card>
 
               {/* Hóa đơn */}
-              <Card title={renderHeader("Hóa đơn", "invoice")}>
-                <Row gutter={16}>
+              <Card title={renderHeader("Hóa đơn", "invoice")} className="card-section">
+                <Row gutter={24}>
                   <Col span={12}>
-                    <Form.Item name={["invoice", "invoiceNo"]} label="Số hóa đơn">
-                      <Input />
+                    <Form.Item
+                      name={["invoice", "invoiceNo"]}
+                      label="Số hóa đơn"
+                      rules={[{ required: false }]}
+                    >
+                      <Input placeholder="Nhập số hóa đơn" />
                     </Form.Item>
-                    <Form.Item name={["invoice", "rate"]} label="Tỉ lệ suất (%)">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item name={["invoice", "invoiceDate"]} label="Ngày hóa đơn">
-                      <DatePicker style={{ width: "100%" }} />
-                    </Form.Item>
-                    <Form.Item name={["invoice", "amountNoVAT"]} label="Giá trị chưa VAT">
+                    <Form.Item
+                      name={["invoice", "rate"]}
+                      label="Tỉ lệ suất (%)"
+                      rules={[
+                        { required: false },
+                        { type: "number", min: 0, max: 100, message: "Tỉ lệ suất phải từ 0 đến 100!" },
+                      ]}
+                    >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
                         style={{ width: "100%" }}
+                        min={0}
+                        max={100}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      name={["invoice", "invoiceDate"]}
+                      label="Ngày hóa đơn"
+                      rules={[{ required: false }]}
+                    >
+                      <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+                    </Form.Item>
+                    <Form.Item
+                      name={["invoice", "amountNoVAT"]}
+                      label="Giá trị chưa VAT"
+                      rules={[{ required: false }, { type: "number", min: 0, message: "Giá trị chưa VAT phải lớn hơn hoặc bằng 0!" }]}
+                    >
+                      <InputNumber
+                        parser={numberOnly}
+                        formatter={numberFormatter}
+                        style={{ width: "100%" }}
+                        min={0}
                       />
                     </Form.Item>
                   </Col>
@@ -442,20 +456,20 @@ export const DebtReportForm = ({
               </Card>
 
               {/* Thanh toán */}
-              <Card title={renderHeader("Thanh toán", "payment")}>
+              <Card title={renderHeader("Thanh toán", "payment")} className="card-section">
                 <Form.List name="payments">
                   {(fields, { add, remove }) => (
                     <>
                       {fields.map(({ key, name, ...restField }) => (
-                        <Row gutter={16} key={key} align="middle">
+                        <Row gutter={24} key={key} style={{ marginBottom: 16 }}>
                           <Col span={12}>
                             <Form.Item
                               {...restField}
                               name={[name, "paymentCode"]}
                               label="Mã thanh toán"
-                              rules={[{ required: true, message: "Nhập mã thanh toán" }]}
+                              rules={[{ required: true, message: "Vui lòng nhập mã thanh toán!" }]}
                             >
-                              <Input />
+                              <Input placeholder="Nhập mã thanh toán" />
                             </Form.Item>
                           </Col>
                           <Col span={12}>
@@ -463,12 +477,16 @@ export const DebtReportForm = ({
                               {...restField}
                               name={[name, "amount"]}
                               label="Số tiền đã thu"
-                              rules={[{ required: true, message: "Nhập số tiền" }]}
+                              rules={[
+                                { required: true, message: "Vui lòng nhập số tiền!" },
+                                { type: "number", min: 0, message: "Số tiền phải lớn hơn hoặc bằng 0!" },
+                              ]}
                             >
                               <InputNumber
                                 parser={numberOnly}
                                 formatter={numberFormatter}
                                 style={{ width: "100%" }}
+                                min={0}
                               />
                             </Form.Item>
                           </Col>
@@ -477,9 +495,9 @@ export const DebtReportForm = ({
                               {...restField}
                               name={[name, "paymentDate"]}
                               label="Ngày thu tiền"
-                              rules={[{ required: true, message: "Chọn ngày" }]}
+                              rules={[{ required: true, message: "Vui lòng chọn ngày thu tiền!" }]}
                             >
-                              <DatePicker style={{ width: "100%" }} />
+                              <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
                             </Form.Item>
                           </Col>
                           <Col span={12}>
@@ -487,19 +505,17 @@ export const DebtReportForm = ({
                               {...restField}
                               name={[name, "status"]}
                               label="Trạng thái"
-                              rules={[{ required: true, message: "Chọn trạng thái" }]}
+                              rules={[{ required: true, message: "Vui lòng chọn trạng thái!" }]}
                             >
-                              <Select>
-                                <Select.Option value="Chưa thanh toán">
-                                  Chưa thanh toán
-                                </Select.Option>
-                                <Select.Option value="Đã thanh toán">Đã thanh toán</Select.Option>
+                              <Select placeholder="Chọn trạng thái">
+                                <Option value="Chưa thanh toán">Chưa thanh toán</Option>
+                                <Option value="Đã thanh toán">Đã thanh toán</Option>
                               </Select>
                             </Form.Item>
                           </Col>
                           <Col span={24}>
                             <Button
-                              style={{ width: "100%", marginBottom: 24 }}
+                              style={{ width: "100%", marginBottom: 16 }}
                               danger
                               type="default"
                               onClick={() => remove(name)}
@@ -509,8 +525,7 @@ export const DebtReportForm = ({
                           </Col>
                         </Row>
                       ))}
-
-                      <Form.Item wrapperCol={{ span: 24 }}>
+                      <Form.Item>
                         <Button type="default" onClick={() => add()} block>
                           Thêm thanh toán
                         </Button>
@@ -521,37 +536,57 @@ export const DebtReportForm = ({
               </Card>
 
               {/* Công nợ */}
-              <Card title={renderHeader("Công nợ", "debt")}>
-                <Row gutter={16}>
+              <Card title={renderHeader("Công nợ", "debt")} className="card-section">
+                <Row gutter={24}>
                   <Col span={12}>
-                    <Form.Item name="debtNoVAT" label="Số tiền chưa VAT">
+                    <Form.Item
+                      name="debtNoVAT"
+                      label="Số tiền chưa VAT"
+                      rules={[{ required: false }, { type: "number", min: 0, message: "Số tiền chưa VAT phải lớn hơn hoặc bằng 0!" }]}
+                    >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
                         style={{ width: "100%" }}
+                        min={0}
                       />
                     </Form.Item>
-                    <Form.Item name="totalDebtRemaining" label="Tổng công nợ còn phải thu (đã VAT)">
+                    <Form.Item
+                      name="totalDebtRemaining"
+                      label="Tổng công nợ còn phải thu (đã VAT)"
+                      rules={[{ required: false }, { type: "number", min: 0, message: "Tổng công nợ phải lớn hơn hoặc bằng 0!" }]}
+                    >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
                         style={{ width: "100%" }}
+                        min={0}
                       />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item name="debtWithVAT" label="Số tiền đã VAT">
+                    <Form.Item
+                      name="debtWithVAT"
+                      label="Số tiền đã VAT"
+                      rules={[{ required: false }, { type: "number", min: 0, message: "Số tiền đã VAT phải lớn hơn hoặc bằng 0!" }]}
+                    >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
                         style={{ width: "100%" }}
+                        min={0}
                       />
                     </Form.Item>
-                    <Form.Item name="badDebt" label="Nợ khó đòi">
+                    <Form.Item
+                      name="badDebt"
+                      label="Nợ khó đòi"
+                      rules={[{ required: false }, { type: "number", min: 0, message: "Nợ khó đòi phải lớn hơn hoặc bằng 0!" }]}
+                    >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
                         style={{ width: "100%" }}
+                        min={0}
                       />
                     </Form.Item>
                   </Col>
@@ -559,13 +594,24 @@ export const DebtReportForm = ({
               </Card>
 
               {/* Hoa hồng cộng tác viên */}
-              <Card title={renderHeader("Hoa hồng cộng tác viên", "collaborator")}>
-                <Row gutter={16}>
+              <Card title={renderHeader("Hoa hồng cộng tác viên", "collaborator")} className="card-section">
+                <Row gutter={24}>
                   <Col span={12}>
-                    <Form.Item name={["collaborator", "name"]} label="Tên cộng tác viên">
-                      <Input />
+                    <Form.Item
+                      name={["collaborator", "name"]}
+                      label="Tên cộng tác viên"
+                      rules={[{ required: false }]}
+                    >
+                      <Input placeholder="Nhập tên cộng tác viên" />
                     </Form.Item>
-                    <Form.Item name={["collaborator", "commissionRate"]} label="Tỷ lệ hoa hồng (%)">
+                    <Form.Item
+                      name={["collaborator", "commissionRate"]}
+                      label="Tỷ lệ hoa hồng (%)"
+                      rules={[
+                        { required: false },
+                        { type: "number", min: 0, max: 100, message: "Tỷ lệ hoa hồng phải từ 0 đến 100!" },
+                      ]}
+                    >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
@@ -577,6 +623,7 @@ export const DebtReportForm = ({
                     <Form.Item
                       name={["collaborator", "remainingAmount"]}
                       label="Số tiền còn phải chi"
+                      rules={[{ required: false }, { type: "number", min: 0, message: "Số tiền còn phải chi phải lớn hơn hoặc bằng 0!" }]}
                     >
                       <InputNumber
                         parser={numberOnly}
@@ -590,22 +637,26 @@ export const DebtReportForm = ({
                     <Form.Item
                       name={["collaborator", "phone"]}
                       label="Số điện thoại"
-                      rules={[{ pattern: /^0\d{9}$/, message: "Số điện thoại không hợp lệ" }]}
+                      rules={[{ required: false }, { pattern: /^0\d{9}$/, message: "Số điện thoại phải có 10 chữ số và bắt đầu bằng 0!" }]}
                     >
-                      <Input />
+                      <Input placeholder="Nhập số điện thoại" />
                     </Form.Item>
-                    <Form.Item name={["collaborator", "amount"]} label="Số tiền hoa hồng">
+                    <Form.Item
+                      name={["collaborator", "amount"]}
+                      label="Số tiền hoa hồng"
+                      rules={[{ required: false }, { type: "number", min: 0, message: "Số tiền hoa hồng phải lớn hơn hoặc bằng 0!" }]}
+                    >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
                         min={0}
                         style={{ width: "100%" }}
                       />
-                    </Form.Item>{" "}
+                    </Form.Item>
                   </Col>
                 </Row>
               </Card>
-            </Card>
+            </>
           )}
         </Space>
       </Form>

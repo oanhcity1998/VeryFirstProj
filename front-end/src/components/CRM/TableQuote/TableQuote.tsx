@@ -1,16 +1,14 @@
-import React from "react";
-import { Table, Typography, Tooltip } from "antd";
+import React, { useMemo } from "react";
+import { Table, Tooltip, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { useNavigate, generatePath } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
+import { useNavigate, generatePath } from "react-router-dom";
 import { ROUTES_APP } from "@/app/routes";
-
-import "./TableQuote.css"
-
+import "@/index.css";
 
 const { Link } = Typography;
 
-export interface Contract {
+export interface Quote {
   id: string;
   code: string;
   name: string;
@@ -24,87 +22,171 @@ export interface Contract {
   status: string;
 }
 
-interface TableContractProps {
-  data: Contract[];
-  selectedRowKeys: React.Key[];
-  onSelectChange: (keys: React.Key[]) => void;
-  onRow?: (record: Contract) => React.HTMLAttributes<HTMLElement>;
-  onEditClick?: (record: Contract) => void; // ✅ add callback
+interface TableQuoteProps {
+  data: Quote[];
+  selectedRowKeys?: React.Key[];
+  setSelectedRowKeys?: (keys: string[]) => void;
+  onEditClick?: (record: Quote) => void;
+  onShowClick?: (record: Quote) => void;
+  onRowClick?: (record: Quote) => void;
+  loading?: boolean;
+  selectable?: boolean;
+  showEdit?: boolean;
+  searchText?: string;
+  filterCustomer?: string | null;
+  filterMainContact?: string | null;
 }
 
-const TableQuote: React.FC<TableContractProps> = ({
-  data,
+const TableQuote: React.FC<TableQuoteProps> = ({
+  data = [],
   selectedRowKeys,
-  onSelectChange,
-  onRow,
+  setSelectedRowKeys,
   onEditClick,
+  onRowClick,
+  loading = false,
+  selectable = true,
+  showEdit = true,
+  searchText = "",
+  filterCustomer = null,
+  filterMainContact = null,
 }) => {
   const navigate = useNavigate();
 
-  const columns: ColumnsType<Contract> = [
-    { title: "Mã báo giá", width: 110, align: "center", dataIndex: "code", key: "code" },
+  const filteredData = useMemo(() => {
+    return data.filter((item) => {
+      const text = searchText.toLowerCase();
+      const matchSearch =
+        item.name.toLowerCase().includes(text) ||
+        item.customer.toLowerCase().includes(text) ||
+        item.code.toLowerCase().includes(text);
+      const matchCustomer = filterCustomer ? item.customer === filterCustomer : true;
+      const matchMainContact = filterMainContact ? item.owner === filterMainContact : true;
+      return matchSearch && matchCustomer && matchMainContact;
+    });
+  }, [data, searchText, filterCustomer, filterMainContact]);
+
+  const columns: ColumnsType<Quote> = [
+    {
+      title: "Mã báo giá",
+      dataIndex: "code",
+      key: "code",
+      width: 150,
+    },
     {
       title: "Tên báo giá",
-      align: "center",
       dataIndex: "name",
       key: "name",
-      render: (text, record) => (
-        <Link
-          className="contract-link"
-          onClick={() => navigate(generatePath(ROUTES_APP.crm.quoteDetail, { id: record.id }))}
-        >
-          {text}
-        </Link>
-      ),
+      width: 200,
+      align: "center" as const,
+      render: (text: string, record: Quote) =>
+        showEdit ? (
+          <Link
+            className="contract-link"
+            onClick={() => {
+              if (onRowClick) {
+                onRowClick(record);
+              } else {
+                navigate(
+                  generatePath(ROUTES_APP.crm.quoteDetail, { id: record.id }) +
+                  `?loai=baogia`
+                );
+              }
+            }}
+          >
+            {text}
+          </Link>
+        ) : (
+          <>{text}</>
+        ),
     },
-    { title: "Khách hàng", align: "center", dataIndex: "customer", key: "customer" },
     {
-      title: "Tổng giá trị",
-      align: "center",
+      title: "Khách hàng",
+      dataIndex: "customer",
+      key: "customer",
+      width: 200,
+    },
+    {
+      title: "Tổng giá trị (VND)",
       dataIndex: "total",
       key: "total",
-      render: (val) => val.toLocaleString("vi-VN"),
+      width: 200,
+      render: (value?: number) =>
+        typeof value === "number" ? value.toLocaleString("vi-VN") : "0",
     },
-    { title: "Nhân viên phụ trách", align: "center", dataIndex: "owner", key: "owner" },
-    { title: "Ngày tạo", align: "center", dataIndex: "createdAt", key: "createdAt" },
-    { title: "Người duyệt", align: "center", dataIndex: "approver", key: "approver" },
-    { title: "Ngày duyệt", align: "center", dataIndex: "approvedAt", key: "approvedAt" },
-    { title: "Trạng thái", align: "center", dataIndex: "status", key: "status" },
-
-    // ✅ New action column like in TableQuotation
     {
-      title: "",
-      align: "center",
-      key: "action",
-      width: 60,
-      render: (_, record) => (
-        <Tooltip title="Chỉnh sửa">
-          <EditOutlined
-            className="quote-edit-icon"
-            onClick={(e) => {
-              e.stopPropagation(); // prevent row click
-              onEditClick?.(record);
-            }}
-          />
-        </Tooltip>
-      ),
+      title: "Nhân viên phụ trách",
+      dataIndex: "owner",
+      key: "owner",
+      width: 250,
     },
+    {
+      title: "Ngày tạo",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      width: 120,
+    },
+    {
+      title: "Người duyệt",
+      dataIndex: "approver",
+      key: "approver",
+      width: 150,
+    },
+    {
+      title: "Ngày duyệt",
+      dataIndex: "approvedAt",
+      key: "approvedAt",
+      width: 120,
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      width: 120,
+    },
+    ...(showEdit
+      ? [
+        {
+          title: "",
+          key: "action",
+          width: 80,
+          render: (_, record) => (
+            <Tooltip title="Chỉnh sửa">
+              <EditOutlined
+                style={{
+                  fontSize: 20,
+                  cursor: "pointer",
+                  color: "#1890ff",
+                  padding: 8,
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEditClick?.(record);
+                }}
+              />
+            </Tooltip>
+          ),
+        },
+      ]
+      : []),
   ];
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
 
   return (
     <Table
-      rowSelection={rowSelection}
+      {...(selectable && setSelectedRowKeys
+        ? {
+          rowSelection: {
+            selectedRowKeys,
+            onChange: (keys) => setSelectedRowKeys(keys as string[]),
+          },
+        }
+        : {})}
       columns={columns}
-      dataSource={data}
+      dataSource={filteredData}
+      loading={loading}
+      pagination={false}
       rowKey="id"
-      pagination={{ pageSize: 5, position: ["bottomCenter"] }}
-      className="contract-table"
-      onRow={onRow}
+      className="base-table"
+      scroll={{ x: 1050 }}
     />
   );
 };

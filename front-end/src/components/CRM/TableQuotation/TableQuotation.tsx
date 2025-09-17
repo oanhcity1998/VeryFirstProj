@@ -7,6 +7,7 @@ import { Product, Quotation } from "@/views/CRM/QuotationList/QuotationList";
 import { ROUTES_APP } from "@/app/routes";
 
 
+
 interface TableQuotationProps {
   data: Quotation[];
   searchText: string;
@@ -125,7 +126,7 @@ export const TableQuotation = ({
       width: 160,
     },
     {
-      title: "Hành động",
+      title: "",
       align: "center",
       key: "action",
       width: 60,
@@ -158,6 +159,7 @@ export const TableQuotation = ({
           setSelectedRowKeys(keys as number[]);
         },
       }}
+      className="base-table"
       columns={columns}
       dataSource={filteredData}
       rowKey="id"

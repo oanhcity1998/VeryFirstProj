@@ -1,5 +1,5 @@
 import { Product } from "@/views/CRM/QuotationList/QuotationList";
-import { Button, Modal, Table, Form, Input, Breadcrumb, Select } from "antd";
+import { Button, Modal, Table, Form, Input, Select, Card } from "antd";
 import { useEffect, useMemo, useState } from "react";
 
 export const fmt = (n?: number) => (typeof n === "number" ? n.toLocaleString() : "0");
@@ -186,9 +186,8 @@ export const QuotationForm = ({
 
   return (
     <Modal
-      title={`${
-        mode === "create" ? "Tạo" : mode === "edit" ? "Chỉnh sửa" : "Chi tiết"
-      } mẫu báo giá`}
+      title={<h2>{mode === "create" ? "Tạo" : mode === "edit" ? "Chỉnh sửa" : "Chi tiết"
+      } mẫu báo giá</h2>}
       open={open}
       onCancel={onCancel}
       footer={[
@@ -206,49 +205,45 @@ export const QuotationForm = ({
       <Form
         form={form}
         layout="horizontal"
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 18 }}
         disabled={isDetail}
       >
-        <div className="form-section">
-          <h3>Thông tin mẫu báo giá</h3>
+        <Card style={{ marginBottom: 16 }} title="Thông tin mẫu báo giá" className="card-section">
           <Form.Item
             label="Tên mẫu báo giá"
             name="quotationName"
             rules={[{ required: !isDetail, message: "Vui lòng nhập tên mẫu báo giá" }]}
           >
-            <Input />
+            <Input placeholder="Nhập tên mẫu báo giá" />
           </Form.Item>
           <Form.Item
             label="Thời hạn hiệu lực"
             name="validityPeriod"
             rules={[{ required: !isDetail, message: "Vui lòng nhập thời hạn hiệu lực" }]}
           >
-            <Input />
+            <Input placeholder="Nhập thời gian hiệu lực" />
           </Form.Item>
           <Form.Item
             label="Điều khoản thanh toán"
             name="paymentTerms"
             rules={[{ required: !isDetail, message: "Vui lòng nhập điều khoản thanh toán" }]}
           >
-            <Input />
+            <Input placeholder="Nhập điều khoản thanh toán" />
           </Form.Item>
           <Form.Item
             label="Trạng thái"
             name="status"
-            initialValue={initialValues?.status ?? "Draft"}
             rules={[{ required: !isDetail }]}
           >
-            <Select disabled={isDetail}>
+            <Select disabled={isDetail} placeholder="Chọn trạng thái">
               <Select.Option value="Draft">Draft</Select.Option>
               <Select.Option value="Sent">Sent</Select.Option>
               <Select.Option value="Accepted">Accepted</Select.Option>
               <Select.Option value="Declined">Declined</Select.Option>
             </Select>
           </Form.Item>
-        </div>
+        </Card>
 
-        <div className="form-section">
+        <Card className="card-section">
           <div
             style={{
               display: "flex",
@@ -257,7 +252,7 @@ export const QuotationForm = ({
               marginBottom: 16,
             }}
           >
-            <h3 style={{ margin: 0 }}>Danh sách sản phẩm</h3>
+            <h3 className="card-title">Danh sách sản phẩm</h3>
             {!isDetail && (
               <Button type="primary" onClick={addRow}>
                 + Thêm sản phẩm
@@ -286,7 +281,7 @@ export const QuotationForm = ({
               </p>
             </div>
           )}
-        </div>
+        </Card>
       </Form>
     </Modal>
   );

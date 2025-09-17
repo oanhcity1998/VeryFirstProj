@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Form, Row, Col, Card, Input, DatePicker, Breadcrumb, Spin } from "antd";
 import dayjs from "dayjs";
-import "./EmployeeDetail.css";
 import { ROUTES_APP } from "../../../app/routes";
 import { useGetEmployeeByIdQuery } from "@/services/HRM/employee.service";
 
@@ -84,8 +83,8 @@ const EmployeeDetail: React.FC = () => {
   const { profile } = data;
 
   return (
-    <div className="employee-detail-container">
-      <Breadcrumb style={{ marginBottom: "16px" }}>
+    <>
+      <Breadcrumb>
         <Breadcrumb.Item>
           <Link to={ROUTES_APP.hrm.employeeList}>Danh sách nhân sự</Link>
         </Breadcrumb.Item>
@@ -96,8 +95,9 @@ const EmployeeDetail: React.FC = () => {
       <Row gutter={16}>
         <Col span={24}>
           <Card
-            title={<h2 style={{ margin: 0 }}>Chi tiết nhân sự {profile.name}</h2>}
+            title={<h2 className="card-title">Chi tiết nhân sự: {profile.name}</h2>}
             variant="outlined"
+            className="card-section"
           >
             <Form form={form} layout="vertical" disabled={true}>
               <Row gutter={16} align="stretch">
@@ -106,7 +106,7 @@ const EmployeeDetail: React.FC = () => {
                   <Card
                     title="Thông tin nhân sự"
                     variant="outlined"
-                    className="employee-card"
+                    className="card-height card-section"
                   >
                     <Form.Item label="Họ và tên" name="fullName">
                       <Input />
@@ -140,7 +140,7 @@ const EmployeeDetail: React.FC = () => {
                   <Card
                     title="Thông tin bổ sung"
                     variant="outlined"
-                    className="employee-card"
+                    className="card-height card-section"
                   >
                     <Form.Item label="Số CCCD" name="idNumber">
                       <Input />
@@ -177,7 +177,7 @@ const EmployeeDetail: React.FC = () => {
                   <Card
                     title="Thông tin hợp đồng"
                     variant="outlined"
-                    className="employee-card"
+                    className="card-height card-section"
                   >
                     <Form.Item label="Loại hợp đồng lao động" name="contractType">
                       <Input />
@@ -213,7 +213,7 @@ const EmployeeDetail: React.FC = () => {
           </Card>
         </Col>
       </Row>
-    </div>
+    </>
   );
 };
 

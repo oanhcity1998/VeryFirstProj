@@ -9,7 +9,6 @@ import {
 } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import dayjs from "dayjs";
-import "./AssetList.css";
 
 import Search from "antd/es/input/Search";
 import FilterDrawerAsset from "@/components/HRM/FilterAsset/FilterDrawerAsset";
@@ -326,12 +325,12 @@ const AssetList: React.FC = () => {
 
   return (
     <>
-      <div className="asset-list-header">
+      <div className="list-header">
         <h2>Danh sách tài sản</h2>
-        <div className="asset-list-actions">
+        <div className="list-actions">
           <Space direction="vertical">
             <Search
-              className="asset-search-bar"
+              className="search-bar"
               placeholder="Tìm kiếm theo tên tài sản"
               allowClear
               onSearch={handleSearch}
@@ -420,7 +419,7 @@ const AssetList: React.FC = () => {
         asset={selectedAsset}
         modalTitle={selectedAsset ? "Cập nhật tài sản" : "Thêm tài sản"}
         cancelText="Hủy"
-        saveText="Lưu"
+        saveText="Xác nhận"
       />
     </>
   );

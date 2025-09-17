@@ -71,17 +71,19 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({
       </div>
 
       {customerOption === "new" && (
-        <>
+        <Card>
           <Form.Item label="Tên khách hàng"><Input /></Form.Item>
           <Form.Item label="Số điện thoại"><Input /></Form.Item>
           <Form.Item label="Email"><Input /></Form.Item>
-        </>
+        </Card>
       )}
 
       {customerOption === "update" && (
-        <Form.Item label="Tên khách hàng">
+        <Card className="update-card">
+        <Form.Item label="Tên khách hàng" className="cutomer-name">
           <Select options={[{ value: "Piggy Hotel", label: "Piggy Hotel" }]} />
         </Form.Item>
+        </Card>
       )}
 
       {/* Liên hệ */}
@@ -102,17 +104,19 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({
       </div>
 
       {contactOption === "new" && (
-        <>
+        <Card>
           <Form.Item label="Tên liên hệ"><Input /></Form.Item>
           <Form.Item label="Số điện thoại"><Input /></Form.Item>
           <Form.Item label="Email"><Input /></Form.Item>
-        </>
+        </Card>
       )}
 
       {contactOption === "update" && (
+        <Card className="update-card">
         <Form.Item label="Tên liên hệ">
           <Select options={[{ value: "Nguyễn Thùy Linh", label: "Nguyễn Thùy Linh" }]} />
         </Form.Item>
+        </Card>
       )}
 
       {/* Cơ hội */}
@@ -133,16 +137,18 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({
       </div>
 
       {opportunityOption === "new" && (
-        <>
+        <Card>
           <Form.Item label="Tên cơ hội"><Input /></Form.Item>
           <Form.Item label="Giai đoạn"><Select options={[{ value: "Mới", label: "Mới" }]} /></Form.Item>
-        </>
+        </Card>
       )}
 
       {opportunityOption === "update" && (
+        <Card className="update-card">
         <Form.Item label="Tên cơ hội">
           <Select options={[{ value: "Deal 1", label: "Deal 1" }]} />
         </Form.Item>
+        </Card>
       )}
       </Card>
     </Modal>
@@ -331,7 +337,9 @@ const LeadDetail: React.FC = () => {
         cancelButtonProps={{ type: "default" }}
         centered
       >
-        <Form layout="vertical">
+        
+        <Form layout="vertical" className="reason-form">
+          <Card>
           <Form.Item label="Lí do">
             <Select
               placeholder="Chọn lí do"
@@ -345,7 +353,9 @@ const LeadDetail: React.FC = () => {
               ))}
             </Select>
           </Form.Item>
+          </Card>
         </Form>
+        
       </Modal>
 
       {/* Convert Modal */}

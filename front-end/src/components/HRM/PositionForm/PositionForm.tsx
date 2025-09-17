@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { Modal, Form, Input, Button, InputNumber } from "antd";
-import "./PositionForm.css";
+import { Modal, Form, Input, Button, InputNumber, Card } from "antd";
+
 import { Position } from "@/models/HRM/position.model";
 
 interface PositionFormProps {
@@ -21,7 +21,7 @@ const PositionForm: React.FC<PositionFormProps> = ({
   open,
   modalTitle = "Thêm mới",
   cancelText = "Hủy",
-  saveText = "Lưu",
+  saveText = "Xác nhận",
   loading = false,
 }) => {
   const [form] = Form.useForm();
@@ -52,7 +52,7 @@ const PositionForm: React.FC<PositionFormProps> = ({
 
   return (
     <Modal
-      title={modalTitle}
+      title={<h2>{modalTitle}</h2>}
       open={open}
       onCancel={onCancel}
       footer={[
@@ -72,8 +72,7 @@ const PositionForm: React.FC<PositionFormProps> = ({
       width={800}
     >
       <Form form={form} layout="vertical" onFinish={onFinish}>
-        <div className="form-section">
-          <h3>Thông tin chức vụ</h3>
+        <Card title="Thông tin chức vụ" className="card-section">
           <Form.Item
             label="Mã chức vụ"
             name="code"
@@ -105,7 +104,7 @@ const PositionForm: React.FC<PositionFormProps> = ({
               autoSize={{ minRows: 5, maxRows: 10 }}
             />
           </Form.Item>
-        </div>
+        </Card>
       </Form>
     </Modal>
   );

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Space, Modal, message, Input, Popover, Upload } from "antd";
+import { Button, Space, Modal, message, Input, Popover, Upload, Form } from "antd";
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -7,18 +7,17 @@ import {
   FilterOutlined,
   InboxOutlined,
 } from "@ant-design/icons";
-
-
-import "./CustomerList.css";
 import { ROUTES_APP } from "../../../app/routes";
 import { useNavigate } from "react-router-dom";
 import Search from "antd/es/input/Search";
 import TableCustomer from "@/components/CRM/TableCustomer/TableCustomer";
-import CreateCustomerForm from "@/components/CRM/CustomerForm/CreateCustomerForm";
+import CustomerForm from "@/components/CRM/CustomerForm/CustomerForm";
 import FilterDrawer from "@/components/CRM/Filter/FilterDrawer";
+import "@/index.css";
 
 const CustomerList = () => {
   const navigate = useNavigate();
+  const [form] = Form.useForm();
   const [data, setData] = useState([
     {
       key: "1",
@@ -38,35 +37,29 @@ const CustomerList = () => {
     },
   ]);
   const [filterOpen, setFilterOpen] = useState(false);
-
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
-
   const [importOpen, setImportOpen] = useState(false);
   const [importing, setImporting] = useState(false);
-
   const [editingCustomer, setEditingCustomer] = useState(null);
 
   const handleEdit = (record: any) => {
-    setEditingCustomer(record); // set current row
+    setEditingCustomer(record);
     setIsModalOpen(true);
   };
 
   const handleCreate = () => {
-    setEditingCustomer(null); // reset
+    setEditingCustomer(null);
     setIsModalOpen(true);
   };
 
-  // handle delete
   const handleDelete = async () => {
     try {
       setDeleting(true);
       // TODO: replace with your real API delete call
       // await api.delete(`/customers/${customer.id}`);
-
       message.success("Đã xóa khách hàng");
       navigate(ROUTES_APP.crm.customerList);
     } catch (err) {
@@ -77,7 +70,6 @@ const CustomerList = () => {
     }
   };
 
-  // upload handler
   const handleUpload = async (file: any) => {
     setImporting(true);
     try {
@@ -94,30 +86,22 @@ const CustomerList = () => {
 
   return (
     <>
-      <div className="customer-list-header">
+      <div className="list-header">
         <h2>Danh sách khách hàng</h2>
-
-        <div className="customer-list-actions">
-          {/* Search bar */}
+        <div className="list-actions">
           <Search
-            placeholder="Tìm kiếm khách hàng..."
+            className="search-bar"
+            placeholder="Tìm kiếm theo tên khách hàng"
             allowClear
-            className="customer-list-search"
             name="search"
           />
-
-          {/* Bộ lọc */}
           <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>
             Bộ lọc
           </Button>
-
-          {/* Cài đặt */}
           <Popover
             content={
               <Space direction="vertical">
                 <Button type="text" onClick={() => setImportOpen(true)}>
-                  {" "}
-                  {/* must have onClick to trigger */}
                   Import
                 </Button>
                 <Button type="text" onClick={() => console.log("Export clicked")}>
@@ -151,8 +135,6 @@ const CustomerList = () => {
               <p className="ant-upload-hint">Chỉ chấp nhận 1 file mỗi lần</p>
             </Upload.Dragger>
           </Modal>
-
-          {/* Delete */}
           <Button
             danger
             icon={<DeleteOutlined />}
@@ -161,7 +143,6 @@ const CustomerList = () => {
           >
             Xóa
           </Button>
-
           <Modal
             open={deleteOpen}
             title="Xác nhận xóa"
@@ -174,9 +155,7 @@ const CustomerList = () => {
           >
             <p>Bạn có chắc muốn xóa khách hàng này? Hành động này không thể hoàn tác.</p>
           </Modal>
-
-          {/* Create */}
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsModalOpen(true)}>
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
             Tạo
           </Button>
         </div>
@@ -189,18 +168,29 @@ const CustomerList = () => {
         onEdit={handleEdit}
       />
 
-      <CreateCustomerForm
+      <CustomerForm
         open={isModalOpen}
         mode={editingCustomer ? "edit" : "add"}
-        customer={editingCustomer} // 👈 pass the record when editing
-        onCancel={() => setIsModalOpen(false)}
+        customer={editingCustomer}
+        form={form}
+        onCancel={() => {
+          setIsModalOpen(false);
+          form.resetFields();
+        }}
         onSave={(values: any) => {
           console.log("Saved customer:", values);
+          setData((prev) =>
+            editingCustomer
+              ? prev.map((item) =>
+                item.id === editingCustomer.id ? { ...item, ...values } : item
+              )
+              : [...prev, { ...values, key: String(Date.now()), id: String(Date.now()) }]
+          );
           setIsModalOpen(false);
+          form.resetFields();
         }}
       />
 
-      {/* Drawer */}
       <FilterDrawer
         open={filterOpen}
         onClose={() => setFilterOpen(false)}

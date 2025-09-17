@@ -4,7 +4,7 @@ import MainLayout from "@/layouts/MainLayout/mainLayout";
 import Home from "./views/public/Home/Home";
 import CustomerList from "./views/CRM/CustomerList/CustomerList";
 import CustomerDetail from "./views/CRM/CustomerDetail/CustomerDetail";
-import ProductPage from "./views/CRM/ProductPage/ProductPage";
+import ProductPage from "./views/CRM/ProductPage/ProductList";
 import ContactList from "./views/CRM/ContactList/ContactList";
 import QuotationList from "./views/CRM/QuotationList/QuotationList";
 import LeadList from "./views/CRM/LeadList/LeadList";
@@ -28,11 +28,11 @@ import AssetDetail from "./views/HRM/AssetDetail/AssetDetail";
 import DebtReportList from "./views/CRM/DebtReportList/DebtReportList";
 import DebtReportDetail from "./views/CRM/DebtReportDetail/DebtReportDetail";
 import ProposalTemplateList from "./views/HRM/ProposalTemplateList/ProposalTemplateList";
-import ProposalTemplateDetail from "./views/CRM/ProposalTemplateDetail/ProposalTemplateDetail";
 import Login from "./views/public/Login/Login";
 import EmployeeList from "./views/HRM/EmployeeList/EmployeeList";
 import { ConfigProvider } from "antd";
 import viVN from "antd/es/locale/vi_VN";
+import ProposalTemplateDetail from "./views/HRM/ProposalTemplateDetail/ProposalTemplateDetail";
 
 export default function App() {
   return (

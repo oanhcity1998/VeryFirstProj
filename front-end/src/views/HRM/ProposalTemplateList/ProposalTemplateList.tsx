@@ -344,102 +344,94 @@ const ProposalTemplateList: React.FC = () => {
 
   return (
     <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 8,
-          marginBottom: 16,
-        }}
-      >
+      <div className="list-header">
         <h2>Danh sách mẫu đề xuất</h2>
+        <div className="list-actions">
+          <Space wrap>
+            <Search
+              className="search-bar"
+              placeholder="Tìm kiếm theo tên mẫu đề xuất"
+              allowClear
+              onChange={(e) => {
+                setFilterName(e.target.value);
+              }}
+            />
 
-        <Space wrap>
-          <Search
-            placeholder="Tên mẫu đề xuất"
-            allowClear
-            style={{ width: 150 }}
-            onChange={(e) => {
-              setFilterName(e.target.value);
-            }}
-          />
+            <Select
+              className="filter-bar"
+              placeholder="Lọc theo bắt buộc phê duyệt"
+              allowClear
+              options={approvalRequiredProposalTemplateOptions.map((s) => ({ value: s, label: s }))}
+              onChange={(val) => {
+                setFilterApprovalRequired(val);
+              }}
+            />
 
-          <Select
-            placeholder="Bắt buộc phê duyệt"
-            style={{ width: 150 }}
-            allowClear
-            options={approvalRequiredProposalTemplateOptions.map((s) => ({ value: s, label: s }))}
-            onChange={(val) => {
-              setFilterApprovalRequired(val);
-            }}
-          />
+            <Select
+              className="filter-bar"
+              placeholder="Lọc theo trạng thái"
+              allowClear
+              options={statusProposalTemplateOptions.map((s) => ({ value: s, label: s }))}
+              onChange={(val) => {
+                setFilterStatus(val);
+              }}
+            />
 
-          <Select
-            placeholder="Trạng thái"
-            style={{ width: 150 }}
-            allowClear
-            options={statusProposalTemplateOptions.map((s) => ({ value: s, label: s }))}
-            onChange={(val) => {
-              setFilterStatus(val);
-            }}
-          />
-
-          <Modal
-            open={importOpen}
-            title="Import dữ liệu"
-            onCancel={() => setImportOpen(false)}
-            footer={null}
-            centered
-          >
-            <Upload.Dragger
-              name="file"
-              multiple={false}
-              beforeUpload={handleUpload}
-              showUploadList={false}
-              disabled={importing}
+            <Modal
+              open={importOpen}
+              title="Import dữ liệu"
+              onCancel={() => setImportOpen(false)}
+              footer={null}
+              centered
             >
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">Click hoặc kéo thả file để import</p>
-              <p className="ant-upload-hint">Chỉ 1 file mỗi lần</p>
-            </Upload.Dragger>
-          </Modal>
+              <Upload.Dragger
+                name="file"
+                multiple={false}
+                beforeUpload={handleUpload}
+                showUploadList={false}
+                disabled={importing}
+              >
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">Click hoặc kéo thả file để import</p>
+                <p className="ant-upload-hint">Chỉ 1 file mỗi lần</p>
+              </Upload.Dragger>
+            </Modal>
 
-          <Button
-            danger
-            icon={<DeleteOutlined />}
-            disabled={selectedRowKeys.length === 0}
-            onClick={() => setDeleteOpen(true)}
-          >
-            Xóa
-          </Button>
-          <Modal
-            open={deleteOpen}
-            title="Xác nhận xóa"
-            onOk={handleDelete}
-            onCancel={() => setDeleteOpen(false)}
-            okText="Xóa"
-            cancelText="Hủy"
-            okButtonProps={{ danger: true, loading: deleting }}
-            centered
-          >
-            <p>Bạn có chắc muốn xóa mẫu đề xuất này?</p>
-          </Modal>
+            <Button
+              danger
+              icon={<DeleteOutlined />}
+              disabled={selectedRowKeys.length === 0}
+              onClick={() => setDeleteOpen(true)}
+            >
+              Xóa
+            </Button>
+            <Modal
+              open={deleteOpen}
+              title="Xác nhận xóa"
+              onOk={handleDelete}
+              onCancel={() => setDeleteOpen(false)}
+              okText="Xóa"
+              cancelText="Hủy"
+              okButtonProps={{ danger: true, loading: deleting }}
+              centered
+            >
+              <p>Bạn có chắc muốn xóa mẫu đề xuất này?</p>
+            </Modal>
 
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => {
-              setSelectedTemplate(null);
-              setIsModalOpen(true);
-            }}
-          >
-            Tạo
-          </Button>
-        </Space>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setSelectedTemplate(null);
+                setIsModalOpen(true);
+              }}
+            >
+              Tạo
+            </Button>
+          </Space>
+        </div>
       </div>
 
       <TableProposalTemplate
@@ -459,7 +451,7 @@ const ProposalTemplateList: React.FC = () => {
         template={selectedTemplate}
         modalTitle={selectedTemplate ? "Cập nhật mẫu đề xuất" : "Thêm mẫu đề xuất"}
         cancelText="Hủy"
-        saveText="Lưu"
+        saveText="Xác nhận"
       />
     </>
   );

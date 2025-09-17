@@ -1,13 +1,13 @@
 import { Table, Checkbox, Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import "./TablePosition.css";
-import { Job } from "@/models/HRM/position.model";
+
+import { Position } from "@/models/HRM/position.model";
 
 interface TablePositionProps {
-  data?: Job[];
+  data?: Position[];
   selectedRowKeys?: string[];
   setSelectedRowKeys: (keys: string[]) => void;
-  onEdit?: (record: Job) => void;
+  onEdit?: (record: Position) => void;
   loading?: boolean;
 }
 
@@ -38,7 +38,7 @@ const TablePosition: React.FC<TablePositionProps> = ({
       width: 60,
       fixed: "left" as const,
       align: "center" as const,
-      render: (_: any, record: Job) => (
+      render: (_: any, record: Position) => (
         <Checkbox
           checked={selectedRowKeys.includes(record.id.toString())}
           onChange={(e) => {
@@ -91,12 +91,12 @@ const TablePosition: React.FC<TablePositionProps> = ({
       fixed: "right" as const,
       width: 80,
       align: "center" as const,
-      render: (_: any, record: Job) => (
+      render: (_: any, record: Position) => (
         <Button
           type="link"
           icon={<EditOutlined />}
           onClick={() => onEdit?.(record)}
-          className="position-edit-icon"
+          className="base-edit-icon"
         />
       ),
     },
@@ -104,14 +104,14 @@ const TablePosition: React.FC<TablePositionProps> = ({
 
   return (
     <Table
-      className="position-table"
+      className="base-table"
       columns={columns}
       dataSource={data}
       loading={loading}
       pagination={false}
       rowKey="id"
       scroll={{ x: 800, y: 600 }}
-      rowClassName={(record: Job) =>
+      rowClassName={(record: Position) =>
         selectedRowKeys.includes(record.id.toString()) ? "selected-row" : ""
       }
     />

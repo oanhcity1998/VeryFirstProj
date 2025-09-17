@@ -35,14 +35,14 @@ export const TableOpportunity = ({
   filterStage,
   filterDate,
 }: TableOpportunityProps) => {
-  // 🔎 lọc theo search
   const filteredData = useMemo(() => {
     return data.filter((item) => {
-      const text = searchText.toLowerCase();
+      const text = searchText?.toLowerCase() || "";
+
       const matchSearch =
-        item.name.toLowerCase().includes(text) ||
-        item.company.toLowerCase().includes(text) ||
-        item.contactName.toLowerCase().includes(text);
+        (item.name ?? "").toLowerCase().includes(text) ||
+        (item.company ?? "").toLowerCase().includes(text) ||
+        (item.contactName ?? "").toLowerCase().includes(text);
 
       const matchPriority = filterPriority ? item.priority === filterPriority : true;
       const matchStage = filterStage ? item.stage === filterStage : true;
@@ -65,7 +65,10 @@ export const TableOpportunity = ({
       width: 240,
       fixed: "left",
       render: (_, record) => (
-        <Link to={generatePath(ROUTES_APP.crm.opportunityDetail, { id: record.id })}>
+        <Link
+          to={generatePath(ROUTES_APP.crm.opportunityDetail, { id: record.id })}
+          onClick={() => onShowClick?.(record)}
+        >
           <FileTextOutlined style={{ marginRight: 6, color: "#1890ff" }} />
           {record.name}
         </Link>
@@ -139,7 +142,7 @@ export const TableOpportunity = ({
       width: 160,
     },
     {
-      title: "Hành động",
+      title: "",
       align: "center",
       key: "action",
       width: 60,
@@ -166,6 +169,7 @@ export const TableOpportunity = ({
 
   return (
     <Table<Opportunity>
+      className="base-table"
       rowSelection={{
         selectedRowKeys,
         onChange: (keys) => {
@@ -175,11 +179,8 @@ export const TableOpportunity = ({
       columns={columns}
       dataSource={filteredData}
       rowKey="id"
+      pagination={false}
       scroll={{ x: "max-content", y: "calc(100vh - 150px)" }}
-      pagination={{
-        pageSize: 10,
-        position: ["bottomCenter"],
-      }}
     />
   );
 };

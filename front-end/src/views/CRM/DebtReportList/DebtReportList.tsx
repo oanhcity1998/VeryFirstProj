@@ -11,7 +11,7 @@ import Search from "antd/es/input/Search";
 import { generatePath, useNavigate } from "react-router-dom";
 import { ROUTES_APP } from "../../../app/routes";
 import { normalizeDebtReport } from "./debtReport.utils";
-
+;
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import dayjs from "dayjs";
@@ -24,6 +24,7 @@ dayjs.extend(isBetween);
 import rawConfig from "@/components/CRM/TableDebtReport/debtReport.table.json";
 import { UITableConfig } from "@/ui/UITable";
 const debtReportTableConfig = rawConfig as UITableConfig;
+
 
 // 👉 Hóa đơn
 export interface Invoice {
@@ -344,17 +345,15 @@ const DebtReportList = () => {
 
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
-        <h2>Báo cáo Công nợ</h2>
-        <Space>
-          <Tooltip>
-            <Search
-              placeholder="Tìm theo số báo cáo / khách hàng..."
-              onChange={(e) => setSearchText(e.target.value)}
-              allowClear
-              style={{ maxWidth: 300 }}
-            />
-          </Tooltip>
+      <div className="list-header">
+        <h2>Danh sách báo cáo công nợ</h2>
+        <div className="list-actions">
+          <Search
+            className="search-bar"
+            placeholder="Tìm kiếm theo số báo cáo, khách hàng"
+            onChange={(e) => setSearchText(e.target.value)}
+            allowClear
+          />
 
           {/* Cài đặt */}
           <Popover
@@ -455,11 +454,11 @@ const DebtReportList = () => {
           <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsCreateModalOpen(true)}>
             Tạo
           </Button>
-        </Space>
-      </div>
+        </div>
+      </div >
 
       {/* Table */}
-      <TableDebtReport
+      < TableDebtReport
         data={filteredData}
         searchText={searchText}
         filterStatus={filterStatus}

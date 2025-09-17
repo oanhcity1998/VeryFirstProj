@@ -116,4 +116,21 @@
   font-weight: 600;
 }
 
+.update-card{
+  margin-bottom: 20px;
+}
+
+.ant-card-body{
+  padding-bottom: 8px !important;
+}
+
+.ant-card{
+  margin-bottom: 12px;
+}
+
+.reason-form{
+  padding-top: 0px;
+}
+
+
 

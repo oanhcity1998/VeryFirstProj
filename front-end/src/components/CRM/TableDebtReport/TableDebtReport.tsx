@@ -1,9 +1,10 @@
 import React, { useMemo } from "react";
-import { Table, Tooltip, Tag } from "antd";
+import { Table, Tooltip, Tag, Button } from "antd";
 import { EditOutlined, FileTextOutlined, DownloadOutlined } from "@ant-design/icons";
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { DebtReport } from "@/views/CRM/DebtReportList/DebtReportList";
+
 
 interface TableDebtReportProps {
   data: DebtReport[];
@@ -110,14 +111,14 @@ export const TableDebtReport = ({
       align: "center",
       dataIndex: "debtStatus",
       key: "debtStatus",
-      width: 140,
+      width: 180,
     },
     {
       title: "Trạng thái báo cáo",
       align: "center",
       dataIndex: "status",
       key: "status",
-      width: 140,
+      width: 180,
     },
     {
       title: "Tổng nợ còn lại",
@@ -131,19 +132,21 @@ export const TableDebtReport = ({
       },
     },
     {
-      title: "Hành động",
+      title: "",
       align: "center",
       key: "action",
-      width: 70,
+      width: 80,
       fixed: "right",
       render: (_, record) => (
         <Tooltip title="Chỉnh sửa">
-          <EditOutlined
-            style={{ fontSize: 18, color: "#1890ff", cursor: "pointer" }}
+          <Button
+            type="link"
+            icon={<EditOutlined />}
             onClick={(e) => {
               e.stopPropagation();
               onEditClick?.(record);
             }}
+            className="base-edit-icon"
           />
         </Tooltip>
       ),
@@ -156,6 +159,7 @@ export const TableDebtReport = ({
         selectedRowKeys,
         onChange: (keys) => setSelectedRowKeys(keys as number[]),
       }}
+      className="base-table"
       columns={columns}
       dataSource={filteredData}
       rowKey="id"

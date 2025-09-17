@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Button, Modal, Upload, Select, Pagination, Popover, Space, Empty, Spin } from "antd";
+import { Button, Modal, Upload, Select, Pagination, Empty, Spin } from "antd";
 import {
   PlusOutlined,
   InboxOutlined,
   DeleteOutlined,
-  SettingOutlined,
-  UploadOutlined,
 } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import { toast } from "react-toastify";
-import "./PositionList.css";
+;
 import Search from "antd/es/input/Search";
 import TablePosition from "@/components/HRM/TablePosition/TablePosition";
 import PositionForm from "@/components/HRM/PositionForm/PositionForm";
@@ -154,7 +152,7 @@ const PositionList: React.FC = () => {
       setIsModalOpen(false);
       setSelectedPosition(null);
     } catch (err: any) {
-      toast.error(`Không thể lưu chức vụ: ${err.message || "Lỗi không xác định"}`);
+      toast.error(`Không thể Xác nhận chức vụ: ${err.message || "Lỗi không xác định"}`);
     }
   };
 
@@ -175,19 +173,19 @@ const PositionList: React.FC = () => {
 
   return (
     <>
-      <div className="position-list-header">
+      <div className="list-header">
         <h2>Danh sách chức vụ</h2>
-        <div className="position-list-actions">
+        <div className="list-actions">
           <Search
-            className="position-search-bar"
+            className="search-bar"
             placeholder="Tìm kiếm theo tên chức vụ"
             allowClear
             value={queryParams.q}
             onChange={(e) => handleSearch(e.target.value)}
             onSearch={handleSearch}
-            style={{ width: 250 }} // Standardize width
           />
           <Select
+            className="filter-bar"
             placeholder="Lọc theo mã chức vụ"
             value={queryParams.code} // Bind to queryParams.code
             onChange={(code) => setQueryParams({ ...queryParams, code, page: 1 })}
@@ -196,7 +194,6 @@ const PositionList: React.FC = () => {
               label: item.code,
             }))}
             allowClear
-            style={{ width: 250 }} // Standardize width
           />
           <Modal
             open={importOpen}
@@ -266,7 +263,7 @@ const PositionList: React.FC = () => {
       </div>
 
       {showLoading ? (
-        <div style={{ textAlign: "center", padding: "50px 0" }}>
+        <div className="loading-icon">
           <Spin size="large" />
         </div>
       ) : jobs && jobs.length > 0 ? (
@@ -279,7 +276,7 @@ const PositionList: React.FC = () => {
             loading={isCreating || isUpdating || isDeleting}
           />
           {meta && (
-            <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
+            <div className="pagination-container">
               <Pagination
                 current={meta.page}
                 pageSize={meta.limit}
@@ -292,7 +289,7 @@ const PositionList: React.FC = () => {
           )}
         </>
       ) : (
-        <div style={{ textAlign: "center", padding: "50px 0", color: "#888" }}>
+        <div className="empty-message">
           <Empty description="Không có chức vụ nào để hiển thị" />
           <p>Hiện tại không có dữ liệu chức vụ. Vui lòng thêm chức vụ mới!</p>
         </div>
@@ -308,7 +305,7 @@ const PositionList: React.FC = () => {
         position={selectedPosition}
         modalTitle={selectedPosition ? "Cập nhật chức vụ" : "Thêm chức vụ"}
         cancelText="Hủy"
-        saveText="Lưu"
+        saveText="Xác nhận"
         loading={isCreating || isUpdating}
       />
     </>
