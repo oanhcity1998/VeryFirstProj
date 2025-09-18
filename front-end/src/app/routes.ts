@@ -2,6 +2,7 @@ export const ROUTES_APP = {
   login: "/login",
   profile: "/profile",
   home: "/",
+  notAuthenticated: "/notauthenticated",
   crm: {
     homeCRM: "/crm/home",
     customerList: "/crm/customerlist",
@@ -23,7 +24,7 @@ export const ROUTES_APP = {
     debtReportDetail: "/crm/debtReportList/:id",
   },
   hrm: {
-    homeHRM: "hrm/home",
+    homeHRM: "/hrm/home",
     employeeList: "/hrm/employee-list",
     employeeDetail: "/hrm/employee-list/:id",
     positionList: "/hrm/position-list",
