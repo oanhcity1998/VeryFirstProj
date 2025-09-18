@@ -4,7 +4,6 @@ import type { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
 import { useNavigate, generatePath } from "react-router-dom";
 import { ROUTES_APP } from "@/app/routes";
-import "@/index.css";
 
 const { Link } = Typography;
 
@@ -76,7 +75,7 @@ const TableQuote: React.FC<TableQuoteProps> = ({
       title: "Tên báo giá",
       dataIndex: "name",
       key: "name",
-      width: 200,
+      width: 150,
       align: "center" as const,
       render: (text: string, record: Quote) =>
         showEdit ? (
@@ -87,8 +86,7 @@ const TableQuote: React.FC<TableQuoteProps> = ({
                 onRowClick(record);
               } else {
                 navigate(
-                  generatePath(ROUTES_APP.crm.quoteDetail, { id: record.id }) +
-                  `?loai=baogia`
+                  generatePath(ROUTES_APP.crm.quoteDetail, { id: record.id }) + `?loai=baogia`
                 );
               }
             }}
@@ -103,15 +101,14 @@ const TableQuote: React.FC<TableQuoteProps> = ({
       title: "Khách hàng",
       dataIndex: "customer",
       key: "customer",
-      width: 200,
+      width: 150,
     },
     {
       title: "Tổng giá trị (VND)",
       dataIndex: "total",
       key: "total",
-      width: 200,
-      render: (value?: number) =>
-        typeof value === "number" ? value.toLocaleString("vi-VN") : "0",
+      width: 150,
+      render: (value?: number) => (typeof value === "number" ? value.toLocaleString("vi-VN") : "0"),
     },
     {
       title: "Nhân viên phụ trách",
@@ -123,7 +120,7 @@ const TableQuote: React.FC<TableQuoteProps> = ({
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
-      width: 120,
+      width: 150,
     },
     {
       title: "Người duyệt",
@@ -135,38 +132,33 @@ const TableQuote: React.FC<TableQuoteProps> = ({
       title: "Ngày duyệt",
       dataIndex: "approvedAt",
       key: "approvedAt",
-      width: 120,
+      width: 150,
     },
     {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
-      width: 120,
+      width: 150,
     },
     ...(showEdit
       ? [
-        {
-          title: "",
-          key: "action",
-          width: 80,
-          render: (_, record) => (
-            <Tooltip title="Chỉnh sửa">
-              <EditOutlined
-                style={{
-                  fontSize: 20,
-                  cursor: "pointer",
-                  color: "#1890ff",
-                  padding: 8,
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEditClick?.(record);
-                }}
-              />
-            </Tooltip>
-          ),
-        },
-      ]
+          {
+            title: "",
+            key: "action",
+            width: 60,
+            render: (_, record) => (
+              <Tooltip title="Chỉnh sửa">
+                <EditOutlined
+                  className="base-edit-icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEditClick?.(record);
+                  }}
+                />
+              </Tooltip>
+            ),
+          },
+        ]
       : []),
   ];
 
@@ -174,11 +166,11 @@ const TableQuote: React.FC<TableQuoteProps> = ({
     <Table
       {...(selectable && setSelectedRowKeys
         ? {
-          rowSelection: {
-            selectedRowKeys,
-            onChange: (keys) => setSelectedRowKeys(keys as string[]),
-          },
-        }
+            rowSelection: {
+              selectedRowKeys,
+              onChange: (keys) => setSelectedRowKeys(keys as string[]),
+            },
+          }
         : {})}
       columns={columns}
       dataSource={filteredData}

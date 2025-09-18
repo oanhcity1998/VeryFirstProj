@@ -1,14 +1,9 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button, Modal, Upload, Select, Pagination, Empty, Spin } from "antd";
-import {
-  PlusOutlined,
-  InboxOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, InboxOutlined, DeleteOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import { toast } from "react-toastify";
-;
 import Search from "antd/es/input/Search";
 import TablePosition from "@/components/HRM/TablePosition/TablePosition";
 import PositionForm from "@/components/HRM/PositionForm/PositionForm";
@@ -36,7 +31,12 @@ const PositionList: React.FC = () => {
   const [importOpen, setImportOpen] = useState<boolean>(false);
   const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
   const [jobs, setJobs] = useState<Position[] | null>(null);
-  const [meta, setMeta] = useState<{ page: number; limit: number; total: number; pages: number } | null>(null);
+  const [meta, setMeta] = useState<{
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  } | null>(null);
 
   const { data, isLoading, isError, refetch } = useGetJobsQuery(queryParams);
   const [createJob, { isLoading: isCreating }] = useCreateJobMutation();
@@ -203,18 +203,12 @@ const PositionList: React.FC = () => {
               <Button key="cancel" onClick={() => setImportOpen(false)}>
                 Hủy
               </Button>,
-              <Button
-                key="submit"
-                type="primary"
-                loading={isCreating}
-                disabled={isCreating}
-              >
+              <Button key="submit" type="primary" loading={isCreating} disabled={isCreating}>
                 Tải lên
               </Button>,
             ]}
             centered
-            width={600}
-            bodyStyle={{ padding: "24px" }}
+            className="width-800 modal-body-padding"
           >
             <Dragger
               name="file"
@@ -223,7 +217,7 @@ const PositionList: React.FC = () => {
               showUploadList={false}
             >
               <p className="ant-upload-drag-icon">
-                <InboxOutlined style={{ color: "#1890ff", fontSize: "48px" }} />
+                <InboxOutlined className="upload-drag-icon" />
               </p>
               <p className="ant-upload-text">Kéo thả file hoặc click để tải lên</p>
               <p className="ant-upload-hint">Chỉ chấp nhận file .xlsx hoặc .csv</p>

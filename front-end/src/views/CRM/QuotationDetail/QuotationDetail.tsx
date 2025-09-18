@@ -1,8 +1,18 @@
 import React, { useMemo } from "react";
-import { Breadcrumb, Button, Card, Descriptions, Table, Tag, Divider, Form, Select } from "antd";
+import {
+  Breadcrumb,
+  Button,
+  Card,
+  Descriptions,
+  Table,
+  Tag,
+  Divider,
+  Form,
+  Select,
+  Space,
+} from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import "./QuotationDetail.css";
 import { ROUTES_APP } from "../../../app/routes";
 import Input from "antd/es/input/Input";
 import TextArea from "antd/es/input/TextArea";
@@ -63,30 +73,30 @@ const QuotationDetail: React.FC = () => {
   }, [quotation.products]);
 
   return (
-    <Card className="quotation-detail-container" bordered={false}>
+    <Card className="detail-container" bordered={false}>
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
+      <Space>
         <Button
           icon={<ArrowLeftOutlined />}
           type="text"
           onClick={() => navigate(-1)}
           className="back-button"
         />
-        <Breadcrumb className="quotation-detail-breadcrumb" separator=">">
+        <Breadcrumb className="detail-breadcrumb" separator=">">
           <Breadcrumb.Item>
             <Link to={ROUTES_APP.crm.quotationList}>Danh sách mẫu báo giá</Link>
           </Breadcrumb.Item>
           <Breadcrumb.Item>{quotation.quotationName}</Breadcrumb.Item>
         </Breadcrumb>
-      </div>
+      </Space>
 
-      <Card style={{ margin: "24px 0" }}>
+      <Card className="margin-y-24">
         {/* Thông tin chung */}
         <h3>Thông tin chi tiết mẫu báo giá</h3>
         <Form
           layout="horizontal"
           initialValues={quotation}
-          style={{ marginBottom: 24 }}
+          className="margin-bottom-16"
           labelCol={{ span: 6 }}
           labelAlign="left"
         >
@@ -153,7 +163,7 @@ const QuotationDetail: React.FC = () => {
         />
 
         {summary && (
-          <div style={{ marginTop: 16, textAlign: "right" }}>
+          <div className="summary-box">
             <p>
               <b>Tổng chưa VAT:</b> {summary.totalBeforeVat.toLocaleString()} VND
             </p>

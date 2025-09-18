@@ -26,9 +26,7 @@ export default function Login() {
       success("Đăng nhập thành công!");
       navigate(ROUTES_APP.home);
     } catch (err: any) {
-      toastError(
-        `Đăng nhập thất bại: ${err.message || "Email hoặc mật khẩu không hợp lệ"}`
-      );
+      toastError(`Đăng nhập thất bại: ${err.message || "Email hoặc mật khẩu không hợp lệ"}`);
     } finally {
       setLoading(false);
     }
@@ -48,7 +46,7 @@ export default function Login() {
           <Form.Item
             name="email"
             rules={[{ required: true, message: "Vui lòng nhập Email!" }]}
-            style={{ marginBottom: 24 }}
+            className="margin-bottom-16"
           >
             <Input
               prefix={<UserOutlined />}
@@ -61,7 +59,7 @@ export default function Login() {
           <Form.Item
             name="password"
             rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
-            style={{ marginBottom: 24 }}
+            className="margin-bottom-16"
           >
             <Input.Password
               prefix={<LockOutlined />}

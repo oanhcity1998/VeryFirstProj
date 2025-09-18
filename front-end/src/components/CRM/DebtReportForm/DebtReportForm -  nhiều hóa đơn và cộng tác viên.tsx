@@ -89,17 +89,17 @@
 //   };
 
 //   const renderHeader = (label: string, key: string) => (
-//     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-//       <span style={{ fontWeight: "bolder" }}>{label}</span>
+//     <div className="header-container">
+//       <span className="font-bolder">{label}</span>
 //       {key === "init" && (
-//         <Row style={{ width: "40%" }}>
+//         <Row className="header-row">
 //           <Form.Item
 //             name="status"
 //             label="Trạng thái báo cáo"
 //             labelCol={{ span: 14 }}
 //             wrapperCol={{ span: 10 }}
 //             labelAlign="left"
-//             style={{ marginBottom: 0 }}
+//             className="margin-bottom-0 "
 //           >
 //             <Select allowClear>
 //               <Select.Option value="Khởi tạo">Khởi tạo</Select.Option>
@@ -114,7 +114,7 @@
 //         <Progress
 //           percent={progress[key] || 0}
 //           size="small"
-//           style={{ width: 120 }}
+//           className="width-150"
 //           status={progress[key] === 100 ? "success" : "active"}
 //         />
 //       )}
@@ -151,7 +151,7 @@
 //           </Button>
 //         ),
 //       ]}
-//       width={1000}
+//             className="width-1100"
 //     >
 //       <Form
 //         form={form}
@@ -162,7 +162,7 @@
 //         labelAlign="left"
 //         onValuesChange={updateProgress}
 //       >
-//         <Space direction="vertical" style={{ width: "100%" }} size="large">
+//         <Space direction="vertical" className="full-width" size="large">
 //           {/* Thông tin khởi tạo */}
 //           <Card title={renderHeader("Thông tin khởi tạo", "init")}>
 //             <Row gutter={16}>
@@ -179,7 +179,7 @@
 //               </Col>
 //               <Col span={12}>
 //                 <Form.Item name="reportDate" label="Ngày lập" rules={[{ required: true }]}>
-//                   <DatePicker style={{ width: "100%" }} />
+//                   <DatePicker className="full-width" />
 //                 </Form.Item>
 //                 <Form.Item name="customer" label="Khách hàng" rules={[{ required: true }]}>
 //                   <Input />
@@ -198,21 +198,21 @@
 //                 <Row gutter={16}>
 //                   <Col span={12}>
 //                     <Form.Item name="exchangeRate" label="Tỉ giá">
-//                       <InputNumber style={{ width: "100%" }} />
+//                       <InputNumber className="full-width" />
 //                     </Form.Item>
 //                     <Form.Item name="feeUSD" label="Phí USD">
-//                       <InputNumber style={{ width: "100%" }} />
+//                       <InputNumber className="full-width" />
 //                     </Form.Item>
 //                     <Form.Item name="feeNoVAT" label="Phí chưa VAT">
-//                       <InputNumber style={{ width: "100%" }} />
+//                       <InputNumber className="full-width" />
 //                     </Form.Item>
 //                   </Col>
 //                   <Col span={12}>
 //                     <Form.Item name="feeVND" label="Phí VND">
-//                       <InputNumber style={{ width: "100%" }} />
+//                       <InputNumber className="full-width" />
 //                     </Form.Item>
 //                     <Form.Item name="feeWithVAT" label="Phí gồm VAT">
-//                       <InputNumber style={{ width: "100%" }} />
+//                       <InputNumber className="full-width" />
 //                     </Form.Item>
 //                   </Col>
 //                 </Row>
@@ -232,12 +232,12 @@
 //                           </Col>
 //                           <Col span={5}>
 //                             <Form.Item {...rest} name={[name, "invoiceDate"]} label="Ngày">
-//                               <DatePicker style={{ width: "100%" }} />
+//                               <DatePicker className="full-width" />
 //                             </Form.Item>
 //                           </Col>
 //                           <Col span={4}>
 //                             <Form.Item {...rest} name={[name, "rate"]} label="Tỉ lệ (%)">
-//                               <InputNumber style={{ width: "100%" }} />
+//                               <InputNumber className="full-width" />
 //                             </Form.Item>
 //                           </Col>
 //                           <Col span={6}>
@@ -246,7 +246,7 @@
 //                               name={[name, "amountNoVAT"]}
 //                               label="Giá trị chưa VAT"
 //                             >
-//                               <InputNumber style={{ width: "100%" }} />
+//                               <InputNumber className="full-width" />
 //                             </Form.Item>
 //                           </Col>
 //                           <Col span={2}>
@@ -278,12 +278,12 @@
 //                           </Col>
 //                           <Col span={4}>
 //                             <Form.Item {...rest} name={[name, "amount"]} label="Số tiền">
-//                               <InputNumber style={{ width: "100%" }} />
+//                               <InputNumber className="full-width" />
 //                             </Form.Item>
 //                           </Col>
 //                           <Col span={6}>
 //                             <Form.Item {...rest} name={[name, "paymentDate"]} label="Ngày">
-//                               <DatePicker style={{ width: "100%" }} />
+//                               <DatePicker className="full-width" />
 //                             </Form.Item>
 //                           </Col>
 //                           <Col span={6}>
@@ -316,18 +316,18 @@
 //                 <Row gutter={16}>
 //                   <Col span={12}>
 //                     <Form.Item name="debtNoVAT" label="Số tiền chưa VAT">
-//                       <InputNumber style={{ width: "100%" }} />
+//                       <InputNumber className="full-width" />
 //                     </Form.Item>
 //                     <Form.Item name="totalDebtRemaining" label="Công nợ còn phải thu (đã VAT)">
-//                       <InputNumber style={{ width: "100%" }} />
+//                       <InputNumber className="full-width" />
 //                     </Form.Item>
 //                   </Col>
 //                   <Col span={12}>
 //                     <Form.Item name="debtWithVAT" label="Số tiền đã VAT">
-//                       <InputNumber style={{ width: "100%" }} />
+//                       <InputNumber className="full-width" />
 //                     </Form.Item>
 //                     <Form.Item name="badDebt" label="Nợ khó đòi">
-//                       <InputNumber style={{ width: "100%" }} />
+//                       <InputNumber className="full-width" />
 //                     </Form.Item>
 //                   </Col>
 //                 </Row>
@@ -352,12 +352,12 @@
 //                           </Col>
 //                           <Col span={4}>
 //                             <Form.Item {...rest} name={[name, "commissionRate"]} label="Tỷ lệ (%)">
-//                               <InputNumber min={0} max={100} style={{ width: "100%" }} />
+//                               <InputNumber min={0} max={100} className="full-width" />
 //                             </Form.Item>
 //                           </Col>
 //                           <Col span={4}>
 //                             <Form.Item {...rest} name={[name, "amount"]} label="Hoa hồng">
-//                               <InputNumber min={0} style={{ width: "100%" }} />
+//                               <InputNumber min={0} className="full-width" />
 //                             </Form.Item>
 //                           </Col>
 //                           <Col span={6}>
@@ -366,7 +366,7 @@
 //                               name={[name, "remainingAmount"]}
 //                               label="Còn phải chi"
 //                             >
-//                               <InputNumber min={0} style={{ width: "100%" }} />
+//                               <InputNumber min={0} className="full-width" />
 //                             </Form.Item>
 //                           </Col>
 //                           <Col span={2}>

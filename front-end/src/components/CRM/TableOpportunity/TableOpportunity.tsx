@@ -49,9 +49,12 @@ export const TableOpportunity = ({
       const matchPriority = filterPriority ? item.priority === filterPriority : true;
       const matchStage = filterStage ? item.stage === filterStage : true;
 
-      const matchDate = filterDate
-        ? dayjs(item.expectedCloseDate).isSameOrAfter(dayjs(filterDate[0])) &&
-          dayjs(item.expectedCloseDate).isSameOrBefore(dayjs(filterDate[1]))
+      // ✅ Fix: kiểm tra kỹ filterDate trước khi dùng
+      const hasValidDateRange = Array.isArray(filterDate) && filterDate[0] && filterDate[1];
+
+      const matchDate = hasValidDateRange
+        ? dayjs(item.expectedCloseDate).isSameOrAfter(dayjs(filterDate[0]), "day") &&
+          dayjs(item.expectedCloseDate).isSameOrBefore(dayjs(filterDate[1]), "day")
         : true;
 
       return matchSearch && matchPriority && matchStage && matchDate;
@@ -64,14 +67,14 @@ export const TableOpportunity = ({
       align: "center",
       dataIndex: "name",
       key: "name",
-      width: 240,
+      width: 150,
       fixed: "left",
       render: (_, record) => (
         <Link
           to={generatePath(ROUTES_APP.crm.opportunityDetail, { id: record.id })}
           onClick={() => onShowClick?.(record)}
         >
-          <FileTextOutlined style={{ marginRight: 6, color: "#1890ff" }} />
+          <FileTextOutlined className="icon-link" />
           {record.name}
         </Link>
       ),
@@ -81,21 +84,21 @@ export const TableOpportunity = ({
       align: "center",
       dataIndex: "contactName",
       key: "contactName",
-      width: 180,
+      width: 150,
     },
     {
       title: "Công ty",
       align: "center",
       dataIndex: "company",
       key: "company",
-      width: 200,
+      width: 150,
     },
     {
       title: "Giá trị dự kiến (VND)",
       align: "center",
       dataIndex: "expectedValue",
       key: "expectedValue",
-      width: 180,
+      width: 150,
       render: (val: number) => val.toLocaleString(),
     },
     {
@@ -110,7 +113,7 @@ export const TableOpportunity = ({
       align: "center",
       dataIndex: "service",
       key: "service",
-      width: 200,
+      width: 150,
       render: (services) =>
         Array.isArray(services) ? services.map((s) => <p key={s.id}>{s.productName}</p>) : "-",
     },
@@ -127,21 +130,21 @@ export const TableOpportunity = ({
       align: "center",
       dataIndex: "priority",
       key: "priority",
-      width: 120,
+      width: 150,
     },
     {
       title: "Nhân viên phụ trách",
       align: "center",
       dataIndex: "owner",
       key: "owner",
-      width: 180,
+      width: 150,
     },
     {
       title: "Giai đoạn",
       align: "center",
       dataIndex: "stage",
       key: "stage",
-      width: 160,
+      width: 150,
     },
     {
       title: "",
@@ -152,13 +155,7 @@ export const TableOpportunity = ({
       render: (_, record) => (
         <Tooltip title="Chỉnh sửa">
           <EditOutlined
-            style={{
-              fontSize: 20,
-              display: "block",
-              cursor: "pointer",
-              color: "#1890ff",
-              padding: 8,
-            }}
+            className="base-edit-icon"
             onClick={(e) => {
               e.stopPropagation();
               onEditClick?.(record);

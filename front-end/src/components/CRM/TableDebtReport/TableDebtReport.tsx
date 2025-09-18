@@ -5,7 +5,6 @@ import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { DebtReport } from "@/views/CRM/DebtReportList/DebtReportList";
 
-
 interface TableDebtReportProps {
   data: DebtReport[];
   searchText: string;
@@ -48,11 +47,8 @@ export const TableDebtReport = ({
       width: 150,
       fixed: "left",
       render: (_, record) => (
-        <span
-          style={{ cursor: "pointer", color: "#1890ff" }}
-          onClick={() => onDetailClick?.(record)}
-        >
-          <FileTextOutlined style={{ marginRight: 6 }} />
+        <span className="link-container" onClick={() => onDetailClick?.(record)}>
+          <FileTextOutlined className="icon-link" />
           {record.reportNo}
         </span>
       ),
@@ -62,7 +58,7 @@ export const TableDebtReport = ({
       align: "center",
       dataIndex: "reportDate",
       key: "reportDate",
-      width: 140,
+      width: 150,
       render: (val: string) => dayjs(val).format("YYYY-MM-DD"),
     },
     {
@@ -70,21 +66,21 @@ export const TableDebtReport = ({
       align: "center",
       dataIndex: "contract",
       key: "contract",
-      width: 160,
+      width: 150,
     },
     {
       title: "Khách hàng",
       align: "center",
       dataIndex: "customer",
       key: "customer",
-      width: 200,
+      width: 150,
     },
     {
       title: "Kiểm toán viên",
       align: "center",
       dataIndex: "auditor",
       key: "auditor",
-      width: 200,
+      width: 150,
       render(value) {
         if (!value || value.length === 0) return "-";
 
@@ -104,28 +100,28 @@ export const TableDebtReport = ({
       align: "center",
       dataIndex: "director",
       key: "director",
-      width: 180,
+      width: 150,
     },
     {
       title: "Trạng thái công nợ",
       align: "center",
       dataIndex: "debtStatus",
       key: "debtStatus",
-      width: 180,
+      width: 150,
     },
     {
       title: "Trạng thái báo cáo",
       align: "center",
       dataIndex: "status",
       key: "status",
-      width: 180,
+      width: 150,
     },
     {
       title: "Tổng nợ còn lại",
       align: "center",
       dataIndex: "totalDebtRemaining",
       key: "totalDebtRemaining",
-      width: 140,
+      width: 150,
       render: (value: number) => {
         if (value == null) return "-";
         return <span>{value.toLocaleString()} ₫</span>;
@@ -135,7 +131,7 @@ export const TableDebtReport = ({
       title: "",
       align: "center",
       key: "action",
-      width: 80,
+      width: 60,
       fixed: "right",
       render: (_, record) => (
         <Tooltip title="Chỉnh sửa">

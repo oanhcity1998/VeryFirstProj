@@ -229,9 +229,9 @@ const AssetList: React.FC = () => {
       if (errors.length > 0) {
         const errorMessages = errors.join("\n");
         message.error(
-          <div style={{ maxHeight: "200px", overflowY: "auto" }}>
+          <div>
             <p>Có lỗi trong file của bạn:</p>
-            <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>{errorMessages}</pre>
+            <pre>{errorMessages}</pre>
           </div>,
           5
         );

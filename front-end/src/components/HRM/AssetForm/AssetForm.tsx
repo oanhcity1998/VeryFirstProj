@@ -68,14 +68,14 @@ const AssetForm: React.FC<AssetFormProps> = ({
       open={open}
       onCancel={onCancel}
       footer={null}
-      width={900}
+      className="width-1100"
       centered
     >
-      <h2 style={{ fontWeight: 600, marginBottom: 16 }}>{modalTitle}</h2>
+      <h2 className="modal-title">{modalTitle}</h2>
 
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Card title="Thông tin tài sản" className="card-section">
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+          <div className="modal-grid">
             {/* Cột trái */}
             <div>
               <Form.Item
@@ -99,7 +99,7 @@ const AssetForm: React.FC<AssetFormProps> = ({
                 name="purchaseDate"
                 rules={[{ required: true, message: "Vui lòng chọn ngày mua!" }]}
               >
-                <DatePicker format="DD/MM/YYYY" style={{ width: "100%" }} placeholder="Chọn ngày" />
+                <DatePicker format="DD/MM/YYYY" className="full-width" placeholder="Chọn ngày" />
               </Form.Item>
 
               <Form.Item
@@ -123,7 +123,7 @@ const AssetForm: React.FC<AssetFormProps> = ({
                 name="warranty"
                 rules={[{ required: true, message: "Vui lòng chọn hạn bảo hành!" }]}
               >
-                <DatePicker format="DD/MM/YYYY" style={{ width: "100%" }} placeholder="Chọn ngày" />
+                <DatePicker format="DD/MM/YYYY" className="full-width" placeholder="Chọn ngày" />
               </Form.Item>
             </div>
 
@@ -151,7 +151,7 @@ const AssetForm: React.FC<AssetFormProps> = ({
                 rules={[{ required: true, message: "Vui lòng nhập giá trị!" }]}
               >
                 <InputNumber<number>
-                  style={{ width: "100%" }}
+                  className="full-width"
                   min={0}
                   placeholder="Nhập giá trị"
                   formatter={(val) => `${val}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
@@ -201,7 +201,7 @@ const AssetForm: React.FC<AssetFormProps> = ({
         </Card>
 
         {/* Footer */}
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 24 }}>
+        <div className="form-actions">
           <Button danger onClick={onCancel}>
             {cancelText}
           </Button>

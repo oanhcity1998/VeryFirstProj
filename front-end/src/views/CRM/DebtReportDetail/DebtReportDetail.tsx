@@ -11,11 +11,11 @@ import {
   Row,
   Col,
   Select,
+  Space,
 } from "antd";
 import { ROUTES_APP } from "../../../app/routes";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import "./DebtReportDetail.css";
 import { mockDebtReportData } from "../DebtReportList/DebtReportList";
 
 const { TabPane } = Tabs;
@@ -34,7 +34,7 @@ const DebtReportDetail = () => {
   return (
     <>
       {/* Breadcrumb */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: 16 }}>
+      <Space>
         <Button icon={<ArrowLeftOutlined />} type="text" onClick={() => navigate(-1)} />
         <Breadcrumb
           items={[
@@ -44,7 +44,7 @@ const DebtReportDetail = () => {
           ]}
           separator=">"
         />
-      </div>
+      </Space>
 
       <Form
         form={form}
@@ -62,14 +62,14 @@ const DebtReportDetail = () => {
         {/* Card thông tin chung */}
         <Card
           title="Thông tin chung"
-          style={{ marginBottom: 16 }}
+          className="margin-bottom-16"
           extra={
             <Form.Item
               name="status"
               label="Trạng thái báo cáo"
               labelCol={{ span: 10 }}
               wrapperCol={{ span: 14 }}
-              style={{ marginBottom: 0 }}
+              className="margin-bottom-0"
             >
               <Input />
             </Form.Item>
@@ -83,7 +83,7 @@ const DebtReportDetail = () => {
             </Col>
             <Col span={12}>
               <Form.Item name="reportDate" label="Ngày báo cáo">
-                <DatePicker style={{ width: "100%" }} />
+                <DatePicker className="full-width" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -114,15 +114,13 @@ const DebtReportDetail = () => {
           <Tabs defaultActiveKey="fee">
             {/* Tab phí */}
             <TabPane tab="Phí" key="fee">
-              <Card size="small" style={{ marginBottom: 12 }}>
-                <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
-                  Phí báo cáo công nợ {`<${report?.reportNo}>`}
-                </h3>
+              <Card size="small" className="margin-bottom-16">
+                <h3 className="text-bold-margin">Phí báo cáo công nợ {`<${report?.reportNo}>`}</h3>
 
                 <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item name="exchangeRate" label="Tỉ giá">
-                      <InputNumber disabled style={{ width: "100%" }} formatter={numberFormatter} />
+                      <InputNumber disabled className="full-width" formatter={numberFormatter} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
@@ -130,22 +128,22 @@ const DebtReportDetail = () => {
                   </Col>
                   <Col span={12}>
                     <Form.Item name="feeUSD" label="Phí USD">
-                      <InputNumber disabled style={{ width: "100%" }} formatter={numberFormatter} />
+                      <InputNumber disabled className="full-width" formatter={numberFormatter} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item name="feeVND" label="Phí VNĐ">
-                      <InputNumber disabled style={{ width: "100%" }} formatter={numberFormatter} />
+                      <InputNumber disabled className="full-width" formatter={numberFormatter} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item name="feeNoVAT" label="Phí chưa VAT">
-                      <InputNumber disabled style={{ width: "100%" }} formatter={numberFormatter} />
+                      <InputNumber disabled className="full-width" formatter={numberFormatter} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item name="feeWithVAT" label="Phí gồm VAT">
-                      <InputNumber disabled style={{ width: "100%" }} formatter={numberFormatter} />
+                      <InputNumber disabled className="full-width" formatter={numberFormatter} />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -154,8 +152,8 @@ const DebtReportDetail = () => {
 
             {/* Tab hóa đơn */}
             <TabPane tab="Hóa đơn" key="invoice">
-              <Card size="small" style={{ marginBottom: 12 }}>
-                <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
+              <Card size="small" className="margin-bottom-16">
+                <h3 className="text-bold-margin">
                   Hóa đơn báo cáo công nợ {`<${report?.reportNo}>`}
                 </h3>
 
@@ -175,7 +173,7 @@ const DebtReportDetail = () => {
                       <InputNumber
                         value={report?.invoice?.rate}
                         disabled
-                        style={{ width: "100%" }}
+                        className="full-width"
                         formatter={numberFormatter}
                       />
                     </Form.Item>
@@ -185,7 +183,7 @@ const DebtReportDetail = () => {
                       <InputNumber
                         value={report?.invoice?.amountNoVAT}
                         disabled
-                        style={{ width: "100%" }}
+                        className="full-width"
                         formatter={numberFormatter}
                       />
                     </Form.Item>
@@ -203,7 +201,7 @@ const DebtReportDetail = () => {
                       <InputNumber
                         value={report?.invoice?.totalAmount}
                         disabled
-                        style={{ width: "100%" }}
+                        className="full-width"
                         formatter={numberFormatter}
                       />
                     </Form.Item>
@@ -215,8 +213,8 @@ const DebtReportDetail = () => {
             {/* Tab thanh toán */}
             <TabPane tab="Thanh toán" key="payment">
               {(report.payments || []).map((pmt, idx) => (
-                <Card key={idx} size="small" style={{ marginBottom: 12 }}>
-                  <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
+                <Card key={idx} size="small" className="margin-bottom-16">
+                  <h3 className="text-bold-margin">
                     Thanh toán báo cáo công nợ {`<${report?.reportNo}>`}
                   </h3>
 
@@ -233,7 +231,7 @@ const DebtReportDetail = () => {
                     </Col>
                     <Col span={12}>
                       <Form.Item label="Số tiền đã thu">
-                        <InputNumber value={pmt.amount} disabled style={{ width: "100%" }} />
+                        <InputNumber value={pmt.amount} disabled className="full-width" />
                       </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -253,35 +251,33 @@ const DebtReportDetail = () => {
 
             {/* Tab công nợ */}
             <TabPane tab="Công nợ" key="debt">
-              <Card size="small" style={{ marginBottom: 12 }}>
-                <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
-                  Công nợ {`<${report?.reportNo}>`}
-                </h3>
+              <Card size="small" className="margin-bottom-16">
+                <h3 className="text-bold-margin">Công nợ {`<${report?.reportNo}>`}</h3>
 
                 <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item name="debtNoVAT" label="Số tiền chưa VAT">
-                      <InputNumber style={{ width: "100%" }} />
+                      <InputNumber className="full-width" />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item name="debtWithVAT" label="Số tiền đã VAT">
-                      <InputNumber style={{ width: "100%" }} />
+                      <InputNumber className="full-width" />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item
                       name="totalDebtRemaining"
                       label="Tổng công nợ còn phải thu (đã VAT)"
-                    // labelCol={{ span: 10 }}
-                    // wrapperCol={{ span: 14 }}
+                      // labelCol={{ span: 10 }}
+                      // wrapperCol={{ span: 14 }}
                     >
-                      <InputNumber style={{ width: "100%" }} />
+                      <InputNumber className="full-width" />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item name="badDebt" label="Nợ khó đòi">
-                      <InputNumber style={{ width: "100%" }} />
+                      <InputNumber className="full-width" />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -290,8 +286,8 @@ const DebtReportDetail = () => {
 
             {/* Tab hoa hồng CTV */}
             <TabPane tab="Hoa hồng CTV" key="collaborator">
-              <Card size="small" style={{ marginBottom: 12 }}>
-                <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
+              <Card size="small" className="margin-bottom-16">
+                <h3 className="text-bold-margin">
                   Hoa hồng cộng tác viên {`<${report?.reportNo}>`}
                 </h3>
 
@@ -311,7 +307,7 @@ const DebtReportDetail = () => {
                       <InputNumber
                         value={report?.collaborator?.commissionRate}
                         disabled
-                        style={{ width: "100%" }}
+                        className="full-width"
                       />
                     </Form.Item>
                   </Col>
@@ -320,7 +316,7 @@ const DebtReportDetail = () => {
                       <InputNumber
                         value={report?.collaborator?.amount}
                         disabled
-                        style={{ width: "100%" }}
+                        className="full-width"
                       />
                     </Form.Item>
                   </Col>
@@ -329,7 +325,7 @@ const DebtReportDetail = () => {
                       <InputNumber
                         value={report?.collaborator?.remainingAmount}
                         disabled
-                        style={{ width: "100%" }}
+                        className="full-width"
                       />
                     </Form.Item>
                   </Col>

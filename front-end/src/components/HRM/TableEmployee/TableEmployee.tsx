@@ -68,7 +68,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       dataIndex: "name",
       key: "name",
       fixed: "left",
-      width: 200,
+      width: 150,
       align: "center",
       render: (text: string, record: Employee) => (
         <Link to={generatePath(ROUTES_APP.hrm.employeeDetail, { id: record.id.toString() })}>
@@ -80,7 +80,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       title: "Giới tính",
       dataIndex: "gender",
       key: "gender",
-      width: 120,
+      width: 150,
       align: "center",
     },
     {
@@ -95,7 +95,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       title: "Số CCCD",
       dataIndex: "id_number",
       key: "id_number",
-      width: 180,
+      width: 150,
       align: "center",
     },
     {
@@ -116,35 +116,35 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       title: "Mã số thuế TNCN",
       dataIndex: "tax_id",
       key: "tax_id",
-      width: 180,
+      width: 150,
       align: "center",
     },
     {
       title: "Tài khoản ngân hàng",
       dataIndex: "bank_account",
       key: "bank_account",
-      width: 200,
+      width: 150,
       align: "center",
     },
     {
       title: "Phòng ban",
       dataIndex: "department_name",
       key: "department_name",
-      width: 180,
+      width: 150,
       align: "center",
     },
     {
       title: "Vị trí",
       dataIndex: "job_name",
       key: "job_name",
-      width: 200,
+      width: 150,
       align: "center",
     },
     {
       title: "Loại hợp đồng",
       dataIndex: "contract",
       key: "contract_type",
-      width: 200,
+      width: 150,
       align: "center",
       render: (contract: Employee["contract"]) => (
         <Tooltip
@@ -168,7 +168,7 @@ const TableEmployee: React.FC<TableEmployeeProps> = ({
       title: "",
       key: "action",
       fixed: "right",
-      width: 80,
+      width: 60,
       align: "center",
       render: (_: any, record: Employee) => (
         <Button

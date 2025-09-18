@@ -5,7 +5,6 @@ import Search from "antd/es/input/Search";
 import { createContact, deleteContact, updateContact } from "./contactService";
 import TableContact, { Contact } from "@/components/CRM/TableContact/TableContact";
 import ContactForm from "@/components/CRM/ContactForm/ContactForm";
-import "@/index.css";
 
 const { Option } = Select;
 

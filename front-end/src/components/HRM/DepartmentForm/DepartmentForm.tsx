@@ -29,7 +29,9 @@ const DepartmentForm: React.FC<DepartmentFormProps> = ({
   const [form] = Form.useForm();
 
   // Lấy danh sách nhân viên
-  const { data: employeesData, isLoading: employeesLoading } = useGetEmployeesQuery({ limit: 1000 });
+  const { data: employeesData, isLoading: employeesLoading } = useGetEmployeesQuery({
+    limit: 1000,
+  });
 
   useEffect(() => {
     if (department) {
@@ -77,9 +79,7 @@ const DepartmentForm: React.FC<DepartmentFormProps> = ({
           {saveText}
         </Button>,
       ]}
-      width={800}
-      style={{ top: 20 }}
-      bodyStyle={{ maxHeight: "80vh", overflowY: "auto" }}
+      className="width-800 top-20 modal-scroll"
     >
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Card title="Thông tin phòng ban" className="card-section">
@@ -104,11 +104,7 @@ const DepartmentForm: React.FC<DepartmentFormProps> = ({
             name="manager_id"
             rules={[{ required: true, message: "Vui lòng chọn trưởng phòng!" }]}
           >
-            <Select
-              placeholder="Chọn trưởng phòng"
-              loading={employeesLoading}
-              allowClear
-            >
+            <Select placeholder="Chọn trưởng phòng" loading={employeesLoading} allowClear>
               {employeesData?.data.map((emp) => (
                 <Option key={emp.id} value={emp.id}>
                   {emp.name}
@@ -118,10 +114,7 @@ const DepartmentForm: React.FC<DepartmentFormProps> = ({
           </Form.Item>
 
           <Form.Item label="Ghi chú" name="note">
-            <Input.TextArea
-              placeholder="Nhập ghi chú"
-              autoSize={{ minRows: 5, maxRows: 10 }}
-            />
+            <Input.TextArea placeholder="Nhập ghi chú" autoSize={{ minRows: 5, maxRows: 10 }} />
           </Form.Item>
         </Card>
       </Form>

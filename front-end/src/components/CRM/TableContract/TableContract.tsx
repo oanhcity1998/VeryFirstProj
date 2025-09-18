@@ -4,7 +4,6 @@ import type { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
 import { useNavigate, generatePath } from "react-router-dom";
 import { ROUTES_APP } from "@/app/routes";
-import "@/index.css";
 
 const { Link } = Typography;
 
@@ -103,7 +102,7 @@ const TableContract: React.FC<TableContractProps> = ({
       title: "Tên hợp đồng",
       dataIndex: "name",
       key: "name",
-      width: 200,
+      width: 150,
       align: "center" as const,
       render: (text: string, record: Contract) =>
         showEdit ? (
@@ -114,8 +113,7 @@ const TableContract: React.FC<TableContractProps> = ({
                 onRowClick(record);
               } else {
                 navigate(
-                  generatePath(ROUTES_APP.crm.contractDetail, { id: record.id }) +
-                  `?loai=hopdong`
+                  generatePath(ROUTES_APP.crm.contractDetail, { id: record.id }) + `?loai=hopdong`
                 );
               }
             }}
@@ -130,7 +128,7 @@ const TableContract: React.FC<TableContractProps> = ({
       title: "Loại",
       dataIndex: "type",
       key: "type",
-      width: 120,
+      width: 150,
       align: "center",
     },
     {
@@ -146,21 +144,20 @@ const TableContract: React.FC<TableContractProps> = ({
       key: "total",
       width: 150,
       align: "center",
-      render: (value?: number) =>
-        typeof value === "number" ? value.toLocaleString("vi-VN") : "0",
+      render: (value?: number) => (typeof value === "number" ? value.toLocaleString("vi-VN") : "0"),
     },
     {
       title: "Nhân viên phụ trách",
       dataIndex: "owner",
       key: "owner",
-      width: 200,
+      width: 150,
       align: "center",
     },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
-      width: 120,
+      width: 150,
       align: "center",
     },
     {
@@ -174,40 +171,35 @@ const TableContract: React.FC<TableContractProps> = ({
       title: "Ngày duyệt",
       dataIndex: "approvedAt",
       key: "approvedAt",
-      width: 120,
+      width: 150,
       align: "center",
     },
     {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
-      width: 120,
+      width: 150,
       align: "center",
     },
     ...(showEdit
       ? [
-        {
-          title: "",
-          key: "action",
-          width: 80,
-          render: (_, record) => (
-            <Tooltip title="Chỉnh sửa">
-              <EditOutlined
-                style={{
-                  fontSize: 20,
-                  cursor: "pointer",
-                  color: "#1890ff",
-                  padding: 8,
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEditClick?.(record);
-                }}
-              />
-            </Tooltip>
-          ),
-        },
-      ]
+          {
+            title: "",
+            key: "action",
+            width: 60,
+            render: (_, record) => (
+              <Tooltip title="Chỉnh sửa">
+                <EditOutlined
+                  className="base-edit-icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEditClick?.(record);
+                  }}
+                />
+              </Tooltip>
+            ),
+          },
+        ]
       : []),
   ];
 

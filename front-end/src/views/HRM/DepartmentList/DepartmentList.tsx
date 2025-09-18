@@ -32,7 +32,12 @@ const DepartmentList: React.FC = () => {
   const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [departments, setDepartments] = useState<Department[] | null>(null);
-  const [meta, setMeta] = useState<{ page: number; limit: number; total: number; pages: number } | null>(null);
+  const [meta, setMeta] = useState<{
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  } | null>(null);
 
   const { data, isLoading, isError, refetch } = useGetDepartmentsQuery(queryParams);
   const [createDepartment, { isLoading: isCreating }] = useCreateDepartmentMutation();
@@ -201,7 +206,7 @@ const DepartmentList: React.FC = () => {
       </div>
 
       {showLoading ? (
-        <div style={{ textAlign: "center", padding: "50px 0" }}>
+        <div className="loading-container">
           <Spin size="large" />
         </div>
       ) : departments && departments.length > 0 ? (
@@ -214,7 +219,7 @@ const DepartmentList: React.FC = () => {
             loading={isCreating || isUpdating || isDeleting}
           />
           {meta && (
-            <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
+            <div className="pagination-container">
               <Pagination
                 current={meta.page}
                 pageSize={meta.limit}
@@ -227,7 +232,7 @@ const DepartmentList: React.FC = () => {
           )}
         </>
       ) : (
-        <div style={{ textAlign: "center", padding: "50px 0", color: "#888" }}>
+        <div className="empty-state">
           <Empty description="Không có phòng ban nào để hiển thị" />
           <p>Hiện tại không có dữ liệu phòng ban. Vui lòng thêm phòng ban mới!</p>
         </div>

@@ -5,7 +5,6 @@ import { useNavigate, generatePath } from "react-router-dom";
 import TableContract, { Contract } from "@/components/CRM/TableContract/TableContract";
 import ContractForm from "@/components/CRM/ContractForm/ContractForm";
 import { ROUTES_APP } from "@/app/routes";
-import "@/index.css";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -51,8 +50,22 @@ const ContractList: React.FC = () => {
       approvedAt: "",
       status: "Chờ duyệt",
       products: [
-        { key: 1, name: "Dịch vụ kế toán", type: "Tháng", priceVND: 5000000, priceUSD: 400, vat: 10 },
-        { key: 2, name: "Ghi chép sổ sách", type: "Gói", priceVND: 3000000, priceUSD: 200, vat: 10 },
+        {
+          key: 1,
+          name: "Dịch vụ kế toán",
+          type: "Tháng",
+          priceVND: 5000000,
+          priceUSD: 400,
+          vat: 10,
+        },
+        {
+          key: 2,
+          name: "Ghi chép sổ sách",
+          type: "Gói",
+          priceVND: 3000000,
+          priceUSD: 200,
+          vat: 10,
+        },
       ],
     },
     {
@@ -85,13 +98,15 @@ const ContractList: React.FC = () => {
   const handleRowClick = (record: Contract) => {
     navigate(
       generatePath(ROUTES_APP.crm.contractDetail, { id: record.id }) +
-      `?loai=${record.type === "Báo giá" ? "baogia" : "hopdong"}`
+        `?loai=${record.type === "Báo giá" ? "baogia" : "hopdong"}`
     );
   };
 
   const handleSave = (data: Contract) => {
     if (editRecord) {
-      setData((prev) => prev.map((item) => (item.id === editRecord.id ? { ...item, ...data } : item)));
+      setData((prev) =>
+        prev.map((item) => (item.id === editRecord.id ? { ...item, ...data } : item))
+      );
       message.success("Cập nhật hợp đồng thành công");
     } else {
       const newContract: Contract = {
@@ -216,7 +231,7 @@ const ContractList: React.FC = () => {
             data={paginatedData}
             selectedRowKeys={selectedRowKeys}
             setSelectedRowKeys={setSelectedRowKeys}
-            onEdit={(record) => {
+            onEditClick={(record) => {
               setEditRecord(record);
               setOpenForm(true);
             }}

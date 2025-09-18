@@ -123,7 +123,7 @@ export const QuotationForm = ({
       render: (_: any, record: ProductWithKey) => (
         <Select
           placeholder="Chọn sản phẩm"
-          style={{ width: "100%" }}
+          className="full-width"
           value={record.id > 0 ? record.id : undefined}
           onChange={(value) => handleSelectProduct(record.__rowKey, value)}
           disabled={isDetail}
@@ -186,8 +186,11 @@ export const QuotationForm = ({
 
   return (
     <Modal
-      title={<h2>{mode === "create" ? "Tạo" : mode === "edit" ? "Chỉnh sửa" : "Chi tiết"
-      } mẫu báo giá</h2>}
+      title={
+        <h2>
+          {mode === "create" ? "Tạo" : mode === "edit" ? "Chỉnh sửa" : "Chi tiết"} mẫu báo giá
+        </h2>
+      }
       open={open}
       onCancel={onCancel}
       footer={[
@@ -200,14 +203,10 @@ export const QuotationForm = ({
           </Button>
         ),
       ]}
-      width={1000}
+      className="width-1100"
     >
-      <Form
-        form={form}
-        layout="horizontal"
-        disabled={isDetail}
-      >
-        <Card style={{ marginBottom: 16 }} title="Thông tin mẫu báo giá" className="card-section">
+      <Form form={form} layout="horizontal" disabled={isDetail}>
+        <Card title="Thông tin mẫu báo giá" className="card-section header-row">
           <Form.Item
             label="Tên mẫu báo giá"
             name="quotationName"
@@ -229,11 +228,7 @@ export const QuotationForm = ({
           >
             <Input placeholder="Nhập điều khoản thanh toán" />
           </Form.Item>
-          <Form.Item
-            label="Trạng thái"
-            name="status"
-            rules={[{ required: !isDetail }]}
-          >
+          <Form.Item label="Trạng thái" name="status" rules={[{ required: !isDetail }]}>
             <Select disabled={isDetail} placeholder="Chọn trạng thái">
               <Select.Option value="Draft">Draft</Select.Option>
               <Select.Option value="Sent">Sent</Select.Option>
@@ -244,14 +239,7 @@ export const QuotationForm = ({
         </Card>
 
         <Card className="card-section">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 16,
-            }}
-          >
+          <div className="header-container">
             <h3 className="card-title">Danh sách sản phẩm</h3>
             {!isDetail && (
               <Button type="primary" onClick={addRow}>
@@ -269,7 +257,7 @@ export const QuotationForm = ({
           />
 
           {summary && (
-            <div style={{ marginTop: 16, textAlign: "right" }}>
+            <div className="summary-box">
               <p>
                 <b>Tổng chưa VAT:</b> {fmt(summary.totalBeforeVat)} VND
               </p>

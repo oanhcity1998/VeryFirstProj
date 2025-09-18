@@ -14,7 +14,6 @@ import {
 } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import "./LeadDetail.css";
 import { ROUTES_APP } from "../../../app/routes";
 
 // Định nghĩa kiểu Activity
@@ -30,10 +29,7 @@ interface Activity {
 export const opportunityStages = ["Mới", "Đạt yêu cầu", "Đàm phán", "Đóng", "Mất", "Đạt"] as const;
 
 // ✅ Modal chuyển đổi
-const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({
-  open,
-  onClose,
-}) => {
+const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
   const [customerOption, setCustomerOption] = useState<"new" | "update" | null>(null);
   const [contactOption, setContactOption] = useState<"new" | "update" | null>(null);
   const [opportunityOption, setOpportunityOption] = useState<"new" | "update" | null>(null);
@@ -53,13 +49,10 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({
       ]}
     >
       <Card>
-      {/* Khách hàng */}
-      <div className="option-row">
-        <h3 className="option-label">Khách hàng</h3>
-          <Checkbox
-            checked={customerOption === "new"}
-            onChange={() => setCustomerOption("new")}
-          >
+        {/* Khách hàng */}
+        <div className="option-row">
+          <h3 className="option-label">Khách hàng</h3>
+          <Checkbox checked={customerOption === "new"} onChange={() => setCustomerOption("new")}>
             Tạo mới
           </Checkbox>
           <Checkbox
@@ -68,88 +61,101 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({
           >
             Cập nhật
           </Checkbox>
-      </div>
+        </div>
 
-      {customerOption === "new" && (
-        <Card>
-          <Form.Item label="Tên khách hàng"><Input /></Form.Item>
-          <Form.Item label="Số điện thoại"><Input /></Form.Item>
-          <Form.Item label="Email"><Input /></Form.Item>
-        </Card>
-      )}
+        {customerOption === "new" && (
+          <Card>
+            <Form.Item label="Tên khách hàng">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Số điện thoại">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Email">
+              <Input />
+            </Form.Item>
+          </Card>
+        )}
 
-      {customerOption === "update" && (
-        <Card className="update-card">
-        <Form.Item label="Tên khách hàng" className="cutomer-name">
-          <Select options={[{ value: "Piggy Hotel", label: "Piggy Hotel" }]} />
-        </Form.Item>
-        </Card>
-      )}
+        {customerOption === "update" && (
+          <Card className="update-card">
+            <Form.Item label="Tên khách hàng" className="cutomer-name">
+              <Select options={[{ value: "Piggy Hotel", label: "Piggy Hotel" }]} />
+            </Form.Item>
+          </Card>
+        )}
 
-      {/* Liên hệ */}
-      <div className="option-row">
-        <h3 className="option-label">Liên hệ</h3>
-        <Checkbox
-          checked={contactOption === "new"}
-          onChange={() => setContactOption("new")}
-        >
-          Tạo mới
-        </Checkbox>
-        <Checkbox
-          checked={contactOption === "update"}
-          onChange={() => setContactOption("update")}
-        >
-          Cập nhật
-        </Checkbox>
-      </div>
+        {/* Liên hệ */}
+        <div className="option-row">
+          <h3 className="option-label">Liên hệ</h3>
+          <Checkbox checked={contactOption === "new"} onChange={() => setContactOption("new")}>
+            Tạo mới
+          </Checkbox>
+          <Checkbox
+            checked={contactOption === "update"}
+            onChange={() => setContactOption("update")}
+          >
+            Cập nhật
+          </Checkbox>
+        </div>
 
-      {contactOption === "new" && (
-        <Card>
-          <Form.Item label="Tên liên hệ"><Input /></Form.Item>
-          <Form.Item label="Số điện thoại"><Input /></Form.Item>
-          <Form.Item label="Email"><Input /></Form.Item>
-        </Card>
-      )}
+        {contactOption === "new" && (
+          <Card>
+            <Form.Item label="Tên liên hệ">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Số điện thoại">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Email">
+              <Input />
+            </Form.Item>
+          </Card>
+        )}
 
-      {contactOption === "update" && (
-        <Card className="update-card">
-        <Form.Item label="Tên liên hệ">
-          <Select options={[{ value: "Nguyễn Thùy Linh", label: "Nguyễn Thùy Linh" }]} />
-        </Form.Item>
-        </Card>
-      )}
+        {contactOption === "update" && (
+          <Card className="update-card">
+            <Form.Item label="Tên liên hệ">
+              <Select options={[{ value: "Nguyễn Thùy Linh", label: "Nguyễn Thùy Linh" }]} />
+            </Form.Item>
+          </Card>
+        )}
 
-      {/* Cơ hội */}
-      <div className="option-row">
-        <h3 className="option-label">Cơ hội</h3>
-        <Checkbox
-          checked={opportunityOption === "new"}
-          onChange={() => setOpportunityOption("new")}
-        >
-          Tạo mới
-        </Checkbox>
-        <Checkbox
-          checked={opportunityOption === "update"}
-          onChange={() => setOpportunityOption("update")}
-        >
-          Cập nhật
-        </Checkbox>
-      </div>
+        {/* Cơ hội */}
+        <div className="option-row">
+          <h3 className="option-label">Cơ hội</h3>
+          <Checkbox
+            checked={opportunityOption === "new"}
+            onChange={() => setOpportunityOption("new")}
+          >
+            Tạo mới
+          </Checkbox>
+          <Checkbox
+            checked={opportunityOption === "update"}
+            onChange={() => setOpportunityOption("update")}
+          >
+            Cập nhật
+          </Checkbox>
+        </div>
 
-      {opportunityOption === "new" && (
-        <Card>
-          <Form.Item label="Tên cơ hội"><Input /></Form.Item>
-          <Form.Item label="Giai đoạn"><Select options={[{ value: "Mới", label: "Mới" }]} /></Form.Item>
-        </Card>
-      )}
+        {opportunityOption === "new" && (
+          <Card>
+            <Form.Item label="Tên cơ hội">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Giai đoạn">
+              <Select options={[{ value: "Mới", label: "Mới" }]} />
+            </Form.Item>
+          </Card>
+        )}
 
-      {opportunityOption === "update" && (
-        <Card className="update-card">
-        <Form.Item label="Tên cơ hội">
-          <Select options={[{ value: "Deal 1", label: "Deal 1" }]} />
-        </Form.Item>
-        </Card>
-      )}
+        {opportunityOption === "update" && (
+          <Card className="update-card">
+            <Form.Item label="Tên cơ hội">
+              <Select options={[{ value: "Deal 1", label: "Deal 1" }]} />
+            </Form.Item>
+          </Card>
+        )}
       </Card>
     </Modal>
   );
@@ -203,15 +209,15 @@ const LeadDetail: React.FC = () => {
   };
 
   return (
-    <div className="lead-detail-container">
-      <div className="lead-detail-header">
+    <div className="detail-container">
+      <div className="detail-header">
         <Button
           icon={<ArrowLeftOutlined />}
           type="text"
           onClick={() => navigate(-1)}
           className="back-button"
         />
-        <Breadcrumb className="lead-detail-breadcrumb" separator=">">
+        <Breadcrumb className="detail-breadcrumb" separator=">">
           <Breadcrumb.Item>
             <Link to={ROUTES_APP.crm.leadList}>Danh sách khách hàng tiềm năng</Link>
           </Breadcrumb.Item>
@@ -236,7 +242,7 @@ const LeadDetail: React.FC = () => {
                 <Button
                   disabled={currentStage > opportunityStages.length - 3}
                   type="primary"
-                  style={{ backgroundColor: "#60A917", borderColor: "#60A917" }}
+                  className="green-btn"
                   onClick={() => setIsConvertModalOpen(true)}
                 >
                   Chuyển đổi
@@ -250,23 +256,21 @@ const LeadDetail: React.FC = () => {
             </Button>
           </Popover>
         }
-        style={{ marginBottom: 16 }}
+        className="margin-bottom-16"
       >
         <Steps
           current={currentStage}
-          items={opportunityStages
-            .slice(0, opportunityStages.length - 2)
-            .map((title) => ({
-              title: title === "Đóng" ? stageClose : title,
-              disabled: title === "Đóng" || currentStage > opportunityStages.length - 3,
-            }))}
+          items={opportunityStages.slice(0, opportunityStages.length - 2).map((title) => ({
+            title: title === "Đóng" ? stageClose : title,
+            disabled: title === "Đóng" || currentStage > opportunityStages.length - 3,
+          }))}
           onChange={(value) => setCurrentStage(value)}
         />
       </Card>
 
-      <Card className="lead-detail-content">
-        <div className="lead-detail-title">Chi tiết {lead.leadName}</div>
-        <div className="lead-detail-form">
+      <Card className="detail-content">
+        <div className="detail-title">Chi tiết {lead.leadName}</div>
+        <div className="detail-form">
           <div className="form-row first-row">
             <label>Tên khách hàng tiềm năng:</label>
             <input value={lead.leadName} disabled />
@@ -337,32 +341,27 @@ const LeadDetail: React.FC = () => {
         cancelButtonProps={{ type: "default" }}
         centered
       >
-        
         <Form layout="vertical" className="reason-form">
           <Card>
-          <Form.Item label="Lí do">
-            <Select
-              placeholder="Chọn lí do"
-              onChange={(value) => setReasonLose(value)}
-              value={reasonLose}
-            >
-              {reasons.map((r) => (
-                <Select.Option key={r.key} value={r.label}>
-                  {r.label}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
+            <Form.Item label="Lí do">
+              <Select
+                placeholder="Chọn lí do"
+                onChange={(value) => setReasonLose(value)}
+                value={reasonLose}
+              >
+                {reasons.map((r) => (
+                  <Select.Option key={r.key} value={r.label}>
+                    {r.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
           </Card>
         </Form>
-        
       </Modal>
 
       {/* Convert Modal */}
-      <ConvertLeadModal
-        open={isConvertModalOpen}
-        onClose={() => setIsConvertModalOpen(false)}
-      />
+      <ConvertLeadModal open={isConvertModalOpen} onClose={() => setIsConvertModalOpen(false)} />
     </div>
   );
 };

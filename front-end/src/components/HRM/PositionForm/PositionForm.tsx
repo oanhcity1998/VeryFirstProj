@@ -69,7 +69,7 @@ const PositionForm: React.FC<PositionFormProps> = ({
           {saveText}
         </Button>,
       ]}
-      width={800}
+      className="width-800"
     >
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Card title="Thông tin chức vụ" className="card-section">
@@ -90,19 +90,12 @@ const PositionForm: React.FC<PositionFormProps> = ({
           <Form.Item
             label="Độ ưu tiên"
             name="priority_level"
-            rules={[{ type: 'number', min: 0, max: 5, message: 'Độ ưu tiên phải từ 0 đến 5' }]}
+            rules={[{ type: "number", min: 0, max: 5, message: "Độ ưu tiên phải từ 0 đến 5" }]}
           >
-            <InputNumber
-              min={0}
-              style={{ width: "100%" }}
-              placeholder="Nhập độ ưu tiên (0-5)"
-            />
+            <InputNumber min={0} className="full-width" placeholder="Nhập độ ưu tiên (0-5)" />
           </Form.Item>
           <Form.Item label="Ghi chú" name="note">
-            <Input.TextArea
-              placeholder="Nhập ghi chú"
-              autoSize={{ minRows: 5, maxRows: 10 }}
-            />
+            <Input.TextArea placeholder="Nhập ghi chú" autoSize={{ minRows: 5, maxRows: 10 }} />
           </Form.Item>
         </Card>
       </Form>

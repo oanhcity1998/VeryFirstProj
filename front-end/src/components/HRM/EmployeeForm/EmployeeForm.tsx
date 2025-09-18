@@ -63,7 +63,9 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         job_id: employee.job_id || undefined,
         status: employee.status,
         id_number: employee.id_number,
-        id_issued_date: employee.id_issued_date ? dayjs(employee.id_issued_date, "YYYY-MM-DD") : null,
+        id_issued_date: employee.id_issued_date
+          ? dayjs(employee.id_issued_date, "YYYY-MM-DD")
+          : null,
         id_issued_place: employee.id_issued_place,
         permanent_address: employee.permanent_address,
         temporary_address: employee.temporary_address,
@@ -113,16 +115,22 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       insurance_id: values.insurance_id || "",
       bank_account: values.bank_account || "",
       contract: values.contract
-        ? [{
-          id: employee?.contract?.[0]?.id || Date.now(),
-          name: values.contract.name || "",
-          contract_type: values.contract.contract_type || "",
-          contract_term: values.contract.contract_term || "",
-          date_start: values.contract.date_start ? values.contract.date_start.format("YYYY-MM-DD") : "",
-          date_end: values.contract.date_end ? values.contract.date_end.format("YYYY-MM-DD") : "",
-          wage: values.contract.wage || 0,
-          bonus: values.contract.bonus || 0,
-        }]
+        ? [
+            {
+              id: employee?.contract?.[0]?.id || Date.now(),
+              name: values.contract.name || "",
+              contract_type: values.contract.contract_type || "",
+              contract_term: values.contract.contract_term || "",
+              date_start: values.contract.date_start
+                ? values.contract.date_start.format("YYYY-MM-DD")
+                : "",
+              date_end: values.contract.date_end
+                ? values.contract.date_end.format("YYYY-MM-DD")
+                : "",
+              wage: values.contract.wage || 0,
+              bonus: values.contract.bonus || 0,
+            },
+          ]
         : [],
     };
     onSave(formattedValues);
@@ -134,19 +142,14 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       open={open}
       onCancel={onCancel}
       footer={[
-        <Button
-          key="cancel"
-          danger
-          onClick={onCancel}
-        >
+        <Button key="cancel" danger onClick={onCancel}>
           {cancelText}
         </Button>,
         <Button key="submit" type="primary" onClick={() => form.submit()} loading={loading}>
           {saveText}
         </Button>,
       ]}
-      width={1100}
-      style={{ top: 20 }}
+      className="width-1100 top-20"
     >
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Row gutter={16} align="stretch">
@@ -218,7 +221,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 <Select
                   placeholder="Chọn phòng ban"
                   getPopupContainer={(triggerNode) => triggerNode.parentNode as HTMLElement}
-                  style={{ width: "100%" }}
+                  className="full-width"
                 >
                   {departmentData?.data.map((dept) => (
                     <Select.Option key={dept.id} value={dept.id}>
@@ -235,7 +238,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 <Select
                   placeholder="Chọn vị trí"
                   getPopupContainer={(triggerNode) => triggerNode.parentNode as HTMLElement}
-                  style={{ width: "100%" }}
+                  className="full-width"
                 >
                   {jobData?.data.map((job) => (
                     <Select.Option key={job.id} value={job.id}>
@@ -298,10 +301,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
 
           <Col span={8}>
             <Card title={contractTitle} bordered className="card-section card-height">
-              <Form.Item
-                label="Tên hợp đồng"
-                name={["contract", "name"]}
-              >
+              <Form.Item label="Tên hợp đồng" name={["contract", "name"]}>
                 <Input placeholder="Nhập tên hợp đồng" />
               </Form.Item>
               <Form.Item
@@ -310,8 +310,12 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 rules={[{ required: true, message: "Vui lòng chọn loại hợp đồng!" }]}
               >
                 <Select placeholder="Chọn loại hợp đồng">
-                  <Select.Option value="Hợp đồng lao động xác định thời hạn">Hợp đồng lao động xác định thời hạn</Select.Option>
-                  <Select.Option value="Hợp đồng lao động không xác định thời hạn">Hợp đồng lao động không xác định thời hạn</Select.Option>
+                  <Select.Option value="Hợp đồng lao động xác định thời hạn">
+                    Hợp đồng lao động xác định thời hạn
+                  </Select.Option>
+                  <Select.Option value="Hợp đồng lao động không xác định thời hạn">
+                    Hợp đồng lao động không xác định thời hạn
+                  </Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item
@@ -332,10 +336,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                   placeholder="Chọn ngày bắt đầu"
                 />
               </Form.Item>
-              <Form.Item
-                label="Ngày kết thúc"
-                name={["contract", "date_end"]}
-              >
+              <Form.Item label="Ngày kết thúc" name={["contract", "date_end"]}>
                 <DatePicker
                   format="DD/MM/YYYY"
                   className="base-datepicker"
@@ -349,7 +350,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               >
                 <InputNumber
                   min={0}
-                  style={{ width: "100%" }}
+                  className="full-width"
                   placeholder="Nhập mức lương"
                   formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                   parser={(value) => value!.replace(/,/g, "") as any}
@@ -362,7 +363,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               >
                 <InputNumber
                   min={0}
-                  style={{ width: "100%" }}
+                  className="full-width"
                   placeholder="Nhập tiền thưởng"
                   formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                   parser={(value) => value!.replace(/,/g, "") as any}

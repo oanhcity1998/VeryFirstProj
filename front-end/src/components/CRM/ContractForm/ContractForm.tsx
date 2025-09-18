@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, Row, Col, Input, Select, Table, Card, Form, DatePicker } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import "@/index.css";
 
 const { Option } = Select;
 
@@ -48,9 +47,7 @@ const ContractForm: React.FC<ContractFormProps> = ({
   initialValues,
 }) => {
   const [form] = Form.useForm();
-  const [products, setProducts] = useState<Product[]>(
-    initialValues?.products || []
-  );
+  const [products, setProducts] = useState<Product[]>(initialValues?.products || []);
 
   useEffect(() => {
     if (initialValues) {
@@ -153,7 +150,7 @@ const ContractForm: React.FC<ContractFormProps> = ({
             newProducts[index].type = value;
             setProducts(newProducts);
           }}
-          style={{ width: "100%" }}
+          className="full-width"
         >
           <Option value="Tháng">Tháng</Option>
           <Option value="Gói">Gói</Option>
@@ -249,7 +246,7 @@ const ContractForm: React.FC<ContractFormProps> = ({
           {initialValues ? "Xác nhận" : "Lưu thay đổi"}
         </Button>,
       ]}
-      width={1000}
+      className="top-20 width-1100"
     >
       <Form form={form} layout="vertical" labelAlign="left">
         <Card title="Thông tin báo giá & hợp đồng" className="card-section">
@@ -276,12 +273,8 @@ const ContractForm: React.FC<ContractFormProps> = ({
               >
                 <Input placeholder="Nhập khách hàng" />
               </Form.Item>
-              <Form.Item
-                label="Mẫu báo giá"
-                name="template"
-                rules={[{ required: false }]}
-              >
-                <Select style={{ width: "100%" }} placeholder="Chọn mẫu" allowClear>
+              <Form.Item label="Mẫu báo giá" name="template" rules={[{ required: false }]}>
+                <Select className="full-width" placeholder="Chọn mẫu" allowClear>
                   <Option value="1">Mẫu 1</Option>
                   <Option value="2">Mẫu 2</Option>
                 </Select>
@@ -291,7 +284,7 @@ const ContractForm: React.FC<ContractFormProps> = ({
                 name="type"
                 rules={[{ required: true, message: "Vui lòng chọn loại!" }]}
               >
-                <Select style={{ width: "100%" }} placeholder="Chọn loại">
+                <Select className="full-width" placeholder="Chọn loại">
                   <Option value="Báo giá">Báo giá</Option>
                   <Option value="Hợp đồng">Hợp đồng</Option>
                 </Select>
@@ -305,11 +298,7 @@ const ContractForm: React.FC<ContractFormProps> = ({
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                label="Thời hạn hiệu lực"
-                name="validity"
-                rules={[{ required: false }]}
-              >
+              <Form.Item label="Thời hạn hiệu lực" name="validity" rules={[{ required: false }]}>
                 <Input placeholder="Nhập thời hạn" />
               </Form.Item>
               <Form.Item
@@ -319,11 +308,7 @@ const ContractForm: React.FC<ContractFormProps> = ({
               >
                 <Input placeholder="Nhập nhân viên" />
               </Form.Item>
-              <Form.Item
-                label="Người duyệt"
-                name="approver"
-                rules={[{ required: false }]}
-              >
+              <Form.Item label="Người duyệt" name="approver" rules={[{ required: false }]}>
                 <Input placeholder="Nhập người duyệt" />
               </Form.Item>
               <Form.Item
@@ -331,7 +316,7 @@ const ContractForm: React.FC<ContractFormProps> = ({
                 name="status"
                 rules={[{ required: true, message: "Vui lòng chọn trạng thái!" }]}
               >
-                <Select style={{ width: "100%" }} placeholder="Chọn trạng thái">
+                <Select className="full-width" placeholder="Chọn trạng thái">
                   <Option value="Chờ duyệt">Chờ duyệt</Option>
                   <Option value="Đã duyệt">Đã duyệt</Option>
                   <Option value="Huỷ">Huỷ</Option>
@@ -344,28 +329,23 @@ const ContractForm: React.FC<ContractFormProps> = ({
                   {
                     validator: async (_, value) => {
                       if (value && !dayjs(value, "DD/MM/YYYY", true).isValid()) {
-                        return Promise.reject(new Error("Ngày duyệt không đúng định dạng DD/MM/YYYY!"));
+                        return Promise.reject(
+                          new Error("Ngày duyệt không đúng định dạng DD/MM/YYYY!")
+                        );
                       }
                       return Promise.resolve();
                     },
                   },
                 ]}
               >
-                <DatePicker format="DD/MM/YYYY" style={{ width: "100%" }} />
+                <DatePicker format="DD/MM/YYYY" className="full-width" />
               </Form.Item>
             </Col>
           </Row>
         </Card>
 
         <Card className="card-section">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 16,
-            }}
-          >
+          <div className="header-container">
             <h3 className="card-title">Danh sách sản phẩm</h3>
             <Button type="primary" onClick={handleAddProduct}>
               <PlusOutlined /> Thêm sản phẩm
@@ -373,9 +353,22 @@ const ContractForm: React.FC<ContractFormProps> = ({
           </div>
           <Form.Item
             name="products"
-            rules={[{ validator: () => (products.length > 0 ? Promise.resolve() : Promise.reject(new Error("Vui lòng thêm ít nhất một sản phẩm!"))) }]}
+            rules={[
+              {
+                validator: () =>
+                  products.length > 0
+                    ? Promise.resolve()
+                    : Promise.reject(new Error("Vui lòng thêm ít nhất một sản phẩm!")),
+              },
+            ]}
           >
-            <Table dataSource={products} columns={columns} pagination={false} bordered size="small" />
+            <Table
+              dataSource={products}
+              columns={columns}
+              pagination={false}
+              bordered
+              size="small"
+            />
           </Form.Item>
         </Card>
       </Form>

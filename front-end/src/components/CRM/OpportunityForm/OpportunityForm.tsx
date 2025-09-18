@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Modal, Button, Row, Col, Input, Select, Card, Form, DatePicker, InputNumber } from "antd";
 import dayjs from "dayjs";
-import "@/index.css";
 
 const { Option } = Select;
 
@@ -107,9 +106,9 @@ const OpportunityForm: React.FC<OpportunityFormProps> = ({
 
   const handleOk = () => {
     form.validateFields().then((values) => {
-      const selectedProducts = values.service?.map((id: number) =>
-        serviceOpportunityOptions.find((p) => p.id === id)
-      ) || [];
+      const selectedProducts =
+        values.service?.map((id: number) => serviceOpportunityOptions.find((p) => p.id === id)) ||
+        [];
 
       const payload: Opportunity = {
         id: initialValues?.id || String(Date.now()),
@@ -147,7 +146,7 @@ const OpportunityForm: React.FC<OpportunityFormProps> = ({
           {saveText}
         </Button>,
       ]}
-      width={800}
+      className="width-800"
       destroyOnClose
     >
       <Form form={form} layout="vertical" labelAlign="left">
@@ -184,7 +183,7 @@ const OpportunityForm: React.FC<OpportunityFormProps> = ({
                 ]}
               >
                 <InputNumber
-                  style={{ width: "100%" }}
+                  className="full-width"
                   min={0}
                   step={1000000}
                   formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
@@ -196,7 +195,7 @@ const OpportunityForm: React.FC<OpportunityFormProps> = ({
                 name="expectedCloseDate"
                 rules={[{ required: true, message: "Vui lòng chọn ngày chốt dự kiến!" }]}
               >
-                <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+                <DatePicker format="YYYY-MM-DD" className="full-width" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -208,12 +207,7 @@ const OpportunityForm: React.FC<OpportunityFormProps> = ({
                   { type: "number", min: 0, max: 100, message: "Xác suất phải từ 0 đến 100!" },
                 ]}
               >
-                <InputNumber
-                  style={{ width: "100%" }}
-                  min={0}
-                  max={100}
-                  placeholder="Nhập xác suất"
-                />
+                <InputNumber className="full-width" min={0} max={100} placeholder="Nhập xác suất" />
               </Form.Item>
               <Form.Item
                 label="Ưu tiên"

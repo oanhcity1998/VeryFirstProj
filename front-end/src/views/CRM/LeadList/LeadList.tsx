@@ -7,7 +7,6 @@ import Search from "antd/es/input/Search";
 import TableLead from "@/components/CRM/TableLead/TableLead";
 import LeadForm from "@/components/CRM/LeadForm/LeadForm";
 import { ROUTES_APP } from "@/app/routes";
-import "@/index.css";
 
 const { Option } = Select;
 

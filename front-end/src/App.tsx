@@ -75,7 +75,7 @@ export default function App() {
             <Route path={ROUTES_APP.crm.contractList} element={<ContractList />} />
             <Route path={ROUTES_APP.crm.contractDetail} element={<ContractDetailWrapper />} />
 
-            {/* Hợp đồng  */}
+            {/* báo giá  */}
             <Route path={ROUTES_APP.crm.quoteList} element={<QuoteList />} />
             <Route path={ROUTES_APP.crm.quoteDetail} element={<QuoteDetailWrapper />} />
 
@@ -111,6 +111,5 @@ export default function App() {
         </Routes>
       </BrowserRouter>
     </ConfigProvider>
-
   );
 }

@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import { Input, Table, Button, Row, Col, Modal, Breadcrumb, Card, Typography, Space } from "antd";
 import { Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import "./ContractDetail.css";
 import { ROUTES_APP } from "../../../app/routes";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
@@ -86,7 +85,6 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
     firstPage.drawRectangle({
       x: 115,
       y: 675 - 3,
-      width: 400,
       height: 20,
       color: rgb(246 / 255, 250 / 255, 253 / 255), // #f6fafd
     });
@@ -118,11 +116,11 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
   };
 
   return (
-    <div className="contract-detail">
+    <div className="detail">
       {/* Header */}
-      <div className="contract-detail-header">
+      <div className="detail-header">
         <Button icon={<ArrowLeftOutlined />} type="text" onClick={onBack} className="back-button" />
-        <Breadcrumb className="contract-detail-title" separator=">">
+        <Breadcrumb className="detail-title" separator=">">
           <Breadcrumb.Item>
             <Link to={ROUTES_APP.crm.contractList}>Danh sách hợp đồng & cơ hội</Link>
           </Breadcrumb.Item>
@@ -131,7 +129,7 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
       </div>
 
       {/* Card wrapper */}
-      <Card title={title} style={{ marginTop: 16 }}>
+      <Card title={title} className="margin-top-16">
         <Row gutter={24} className="form-grid">
           <Col span={12}>
             <FormItem label="Mã hợp đồng" value="AF25_BG1" />
@@ -167,9 +165,9 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
       </Card>
 
       {/* Products card */}
-      <Card title="Danh sách sản phẩm" style={{ marginTop: 16 }}>
+      <Card title="Danh sách sản phẩm" className="margin-top-16">
         <Table dataSource={products} columns={columns} pagination={false} bordered />
-        <div className="totals" style={{ marginTop: 16 }}>
+        <div className="totals margin-top-16">
           <p>Tổng giá trước VAT (VND): {totalVND.toLocaleString("vi-VN")}</p>
           <p>Tổng giá trước VAT (USD): {totalUSD}</p>
           <p>Tổng giá sau VAT (VND): {totalVNDWithVAT.toLocaleString("vi-VN")}</p>
@@ -178,16 +176,7 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
       </Card>
 
       {/* Actions */}
-      <div
-        style={{
-          marginTop: 16,
-          display: "flex",
-          justifyContent: "flex-end",
-          flexWrap: "wrap",
-          gap: 12,
-          position: "sticky",
-        }}
-      >
+      <div className="form-actions">
         <Space wrap>
           <Button>Xem hợp đồng</Button>
           <Button type="primary" onClick={() => setIsModalOpen(true)}>
@@ -219,18 +208,9 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
             Tải xuống
           </Button>,
         ]}
-        width="80%"
-        style={{ top: 20 }}
+        className="top-20 width-80-per"
       >
-        {pdfUrl && (
-          <iframe
-            src={pdfUrl}
-            title="PDF Preview"
-            width="100%"
-            height="600px"
-            style={{ border: "none" }}
-          />
-        )}
+        {pdfUrl && <iframe src={pdfUrl} title="PDF Preview" className="full-iframe" />}
       </Modal>
     </div>
   );
@@ -238,8 +218,8 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
 
 // Small helper component for read-only fields
 const FormItem: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <div style={{ marginBottom: 12 }}>
-    <label style={{ display: "block", fontWeight: 500 }}>{label}</label>
+  <div className="margin-bottom-16">
+    <label className="form-item">{label}</label>
     <Input value={value} disabled />
   </div>
 );

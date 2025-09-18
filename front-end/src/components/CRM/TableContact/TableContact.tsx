@@ -89,19 +89,19 @@ const TableContact: React.FC<TableContactProps> = ({
       title: "Khách hàng",
       dataIndex: "customerName",
       key: "customerName",
-      width: 200,
+      width: 150,
     },
     {
       title: "Số điện thoại",
       dataIndex: "phone",
       key: "phone",
-      width: 120,
+      width: 150,
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
-      width: 200,
+      width: 150,
     },
     {
       title: "Chức danh",
@@ -119,32 +119,27 @@ const TableContact: React.FC<TableContactProps> = ({
       title: "Ghi chú",
       dataIndex: "note",
       key: "note",
-      width: 200,
+      width: 150,
     },
     ...(showEdit
       ? [
-        {
-          title: "",
-          key: "action",
-          width: 80,
-          render: (_, record) => (
-            <Tooltip title="Chỉnh sửa">
-              <EditOutlined
-                style={{
-                  fontSize: 20,
-                  cursor: "pointer",
-                  color: "#1890ff",
-                  padding: 8,
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEditClick?.(record);
-                }}
-              />
-            </Tooltip>
-          ),
-        },
-      ]
+          {
+            title: "",
+            key: "action",
+            width: 60,
+            render: (_, record) => (
+              <Tooltip title="Chỉnh sửa">
+                <EditOutlined
+                  className="base-edit-icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEditClick?.(record);
+                  }}
+                />
+              </Tooltip>
+            ),
+          },
+        ]
       : []),
   ];
 
@@ -152,11 +147,11 @@ const TableContact: React.FC<TableContactProps> = ({
     <Table
       {...(selectable && setSelectedRowKeys
         ? {
-          rowSelection: {
-            selectedRowKeys,
-            onChange: (keys) => setSelectedRowKeys(keys as string[]),
-          },
-        }
+            rowSelection: {
+              selectedRowKeys,
+              onChange: (keys) => setSelectedRowKeys(keys as string[]),
+            },
+          }
         : {})}
       columns={columns}
       dataSource={filteredData}

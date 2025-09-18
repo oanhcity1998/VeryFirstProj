@@ -27,11 +27,17 @@ export const FilterOpportunityDrawer = ({
   setFilterDate,
 }: FilterOpportunityDrawerProps) => {
   return (
-    <Drawer title="Bộ lọc cơ hội" placement="right" onClose={onClose} open={open} width={350}>
+    <Drawer
+      title="Bộ lọc cơ hội"
+      placement="right"
+      onClose={onClose}
+      open={open}
+      className="width-350"
+    >
       <Form layout="vertical">
         <Form.Item label="Ngày dự kiến chốt">
           <RangePicker
-            style={{ width: "100%" }}
+            className="full-width"
             format="YYYY-MM-DD"
             value={filterDate ? [dayjs(filterDate[0]), dayjs(filterDate[1])] : undefined}
             onChange={(dates) =>

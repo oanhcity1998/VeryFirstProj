@@ -7,7 +7,7 @@ import Search from "antd/es/input/Search";
 import { Contract } from "@/components/CRM/TableContract/TableContract";
 import ContractForm from "@/components/CRM/ContractForm/ContractForm";
 import { ROUTES_APP } from "@/app/routes";
-import "@/index.css";
+
 import TableQuote from "@/components/CRM/TableQuote/TableQuote";
 
 const { Option } = Select;
@@ -126,7 +126,8 @@ const QuoteList: React.FC = () => {
 
   const handleRowClick = (record: Contract) => {
     navigate(
-      `${ROUTES_APP.crm.contractDetail.replace(":id", record.id)}?loai=${record.type === "Báo giá" ? "baogia" : "hopdong"
+      `${ROUTES_APP.crm.contractDetail.replace(":id", record.id)}?loai=${
+        record.type === "Báo giá" ? "baogia" : "hopdong"
       }`
     );
   };
@@ -213,8 +214,6 @@ const QuoteList: React.FC = () => {
         </div>
       </div>
 
-
-
       {filteredData.length === 0 ? (
         <div className="empty-message">
           <Empty description="Không có báo giá hoặc hợp đồng nào để hiển thị" />
@@ -226,7 +225,7 @@ const QuoteList: React.FC = () => {
             data={paginatedData}
             selectedRowKeys={selectedRowKeys}
             setSelectedRowKeys={setSelectedRowKeys}
-            onEdit={handleEdit}
+            onEditClick={handleEdit}
             onRowClick={handleRowClick}
             loading={false}
           />

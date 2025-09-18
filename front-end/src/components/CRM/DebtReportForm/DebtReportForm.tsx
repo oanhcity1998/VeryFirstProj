@@ -15,7 +15,6 @@ import {
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { DebtReport } from "@/views/CRM/DebtReportList/DebtReportList";
-import "@/index.css";
 
 const { Option } = Select;
 
@@ -96,11 +95,11 @@ export const DebtReportForm = ({
         reportDate: initialValues.reportDate ? dayjs(initialValues.reportDate, "YYYY-MM-DD") : null,
         invoice: initialValues.invoice
           ? {
-            ...initialValues.invoice,
-            invoiceDate: initialValues.invoice.invoiceDate
-              ? dayjs(initialValues.invoice.invoiceDate, "YYYY-MM-DD")
-              : null,
-          }
+              ...initialValues.invoice,
+              invoiceDate: initialValues.invoice.invoiceDate
+                ? dayjs(initialValues.invoice.invoiceDate, "YYYY-MM-DD")
+                : null,
+            }
           : undefined,
         payments: initialValues.payments?.map((p: any) => ({
           ...p,
@@ -177,9 +176,9 @@ export const DebtReportForm = ({
         reportDate: values.reportDate?.format("YYYY-MM-DD") || null,
         invoice: values.invoice
           ? {
-            ...values.invoice,
-            invoiceDate: values.invoice.invoiceDate?.format("YYYY-MM-DD") || null,
-          }
+              ...values.invoice,
+              invoiceDate: values.invoice.invoiceDate?.format("YYYY-MM-DD") || null,
+            }
           : undefined,
         payments: values.payments?.map((p: any) => ({
           ...p,
@@ -194,13 +193,10 @@ export const DebtReportForm = ({
   };
 
   const renderHeader = (label: string, key: string) => (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <div className="header-container">
       <span>{label}</span>
       {key === "init" && isEdit && (
-        <Form.Item
-          name="status"
-          style={{ marginBottom: 0, minWidth: 200 }}
-        >
+        <Form.Item name="status" className="width-150 margin-bottom-0">
           <Select placeholder="Chọn trạng thái" allowClear>
             <Option value="Khởi tạo">Khởi tạo</Option>
             <Option value="Chờ kế toán">Chờ kế toán</Option>
@@ -213,13 +209,12 @@ export const DebtReportForm = ({
         <Progress
           percent={progress[key] || 0}
           size="small"
-          style={{ width: 120 }}
+          className="width-150"
           status={progress[key] === 100 ? "success" : "active"}
         />
       )}
     </div>
   );
-
 
   const numberFormatter = (value?: string | number) =>
     `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -246,15 +241,10 @@ export const DebtReportForm = ({
           </Button>
         ),
       ]}
-      width={1000}
+      className="width-1100"
     >
-      <Form
-        form={form}
-        layout="vertical"
-        labelAlign="left"
-        onValuesChange={updateProgress}
-      >
-        <Space direction="vertical" style={{ width: "100%" }} size="large">
+      <Form form={form} layout="vertical" labelAlign="left" onValuesChange={updateProgress}>
+        <Space direction="vertical" className="full-width" size="large">
           {/* Thông tin khởi tạo */}
           <Card title={renderHeader("Thông tin khởi tạo", "init")} className="card-section">
             <Row gutter={24}>
@@ -279,11 +269,7 @@ export const DebtReportForm = ({
                     ))}
                   </Select>
                 </Form.Item>
-                <Form.Item
-                  name="auditor"
-                  label="Kiểm toán viên"
-                  rules={[{ required: false }]}
-                >
+                <Form.Item name="auditor" label="Kiểm toán viên" rules={[{ required: false }]}>
                   <Select mode="multiple" allowClear placeholder="Chọn kiểm toán viên">
                     {auditorOptions.map((a) => (
                       <Option key={a.id} value={a.name}>
@@ -299,7 +285,7 @@ export const DebtReportForm = ({
                   label="Ngày lập"
                   rules={[{ required: true, message: "Vui lòng chọn ngày lập!" }]}
                 >
-                  <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+                  <DatePicker format="YYYY-MM-DD" className="full-width" />
                 </Form.Item>
                 <Form.Item
                   name="customer"
@@ -314,11 +300,7 @@ export const DebtReportForm = ({
                     ))}
                   </Select>
                 </Form.Item>
-                <Form.Item
-                  name="director"
-                  label="Giám đốc phụ trách"
-                  rules={[{ required: false }]}
-                >
+                <Form.Item name="director" label="Giám đốc phụ trách" rules={[{ required: false }]}>
                   <Select placeholder="Chọn giám đốc" allowClear>
                     {directorOptions.map((d) => (
                       <Option key={d.id} value={d.id}>
@@ -340,36 +322,49 @@ export const DebtReportForm = ({
                     <Form.Item
                       name="exchangeRate"
                       label="Tỉ giá"
-                      rules={[{ required: false }, { type: "number", min: 0, message: "Tỉ giá phải lớn hơn hoặc bằng 0!" }]}
+                      rules={[
+                        { required: false },
+                        { type: "number", min: 0, message: "Tỉ giá phải lớn hơn hoặc bằng 0!" },
+                      ]}
                     >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
-                        style={{ width: "100%" }}
+                        className="full-width"
                         min={0}
                       />
                     </Form.Item>
                     <Form.Item
                       name="feeUSD"
                       label="Phí USD"
-                      rules={[{ required: false }, { type: "number", min: 0, message: "Phí USD phải lớn hơn hoặc bằng 0!" }]}
+                      rules={[
+                        { required: false },
+                        { type: "number", min: 0, message: "Phí USD phải lớn hơn hoặc bằng 0!" },
+                      ]}
                     >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
-                        style={{ width: "100%" }}
+                        className="full-width"
                         min={0}
                       />
                     </Form.Item>
                     <Form.Item
                       name="feeNoVAT"
                       label="Phí chưa VAT"
-                      rules={[{ required: false }, { type: "number", min: 0, message: "Phí chưa VAT phải lớn hơn hoặc bằng 0!" }]}
+                      rules={[
+                        { required: false },
+                        {
+                          type: "number",
+                          min: 0,
+                          message: "Phí chưa VAT phải lớn hơn hoặc bằng 0!",
+                        },
+                      ]}
                     >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
-                        style={{ width: "100%" }}
+                        className="full-width"
                         min={0}
                       />
                     </Form.Item>
@@ -378,24 +373,34 @@ export const DebtReportForm = ({
                     <Form.Item
                       name="feeVND"
                       label="Phí VND"
-                      rules={[{ required: false }, { type: "number", min: 0, message: "Phí VND phải lớn hơn hoặc bằng 0!" }]}
+                      rules={[
+                        { required: false },
+                        { type: "number", min: 0, message: "Phí VND phải lớn hơn hoặc bằng 0!" },
+                      ]}
                     >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
-                        style={{ width: "100%" }}
+                        className="full-width"
                         min={0}
                       />
                     </Form.Item>
                     <Form.Item
                       name="feeWithVAT"
                       label="Phí gồm VAT"
-                      rules={[{ required: false }, { type: "number", min: 0, message: "Phí gồm VAT phải lớn hơn hoặc bằng 0!" }]}
+                      rules={[
+                        { required: false },
+                        {
+                          type: "number",
+                          min: 0,
+                          message: "Phí gồm VAT phải lớn hơn hoặc bằng 0!",
+                        },
+                      ]}
                     >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
-                        style={{ width: "100%" }}
+                        className="full-width"
                         min={0}
                       />
                     </Form.Item>
@@ -419,13 +424,18 @@ export const DebtReportForm = ({
                       label="Tỉ lệ suất (%)"
                       rules={[
                         { required: false },
-                        { type: "number", min: 0, max: 100, message: "Tỉ lệ suất phải từ 0 đến 100!" },
+                        {
+                          type: "number",
+                          min: 0,
+                          max: 100,
+                          message: "Tỉ lệ suất phải từ 0 đến 100!",
+                        },
                       ]}
                     >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
-                        style={{ width: "100%" }}
+                        className="full-width"
                         min={0}
                         max={100}
                       />
@@ -437,17 +447,24 @@ export const DebtReportForm = ({
                       label="Ngày hóa đơn"
                       rules={[{ required: false }]}
                     >
-                      <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+                      <DatePicker format="YYYY-MM-DD" className="full-width" />
                     </Form.Item>
                     <Form.Item
                       name={["invoice", "amountNoVAT"]}
                       label="Giá trị chưa VAT"
-                      rules={[{ required: false }, { type: "number", min: 0, message: "Giá trị chưa VAT phải lớn hơn hoặc bằng 0!" }]}
+                      rules={[
+                        { required: false },
+                        {
+                          type: "number",
+                          min: 0,
+                          message: "Giá trị chưa VAT phải lớn hơn hoặc bằng 0!",
+                        },
+                      ]}
                     >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
-                        style={{ width: "100%" }}
+                        className="full-width"
                         min={0}
                       />
                     </Form.Item>
@@ -461,7 +478,7 @@ export const DebtReportForm = ({
                   {(fields, { add, remove }) => (
                     <>
                       {fields.map(({ key, name, ...restField }) => (
-                        <Row gutter={24} key={key} style={{ marginBottom: 16 }}>
+                        <Row gutter={24} key={key} className="header-row">
                           <Col span={12}>
                             <Form.Item
                               {...restField}
@@ -479,13 +496,17 @@ export const DebtReportForm = ({
                               label="Số tiền đã thu"
                               rules={[
                                 { required: true, message: "Vui lòng nhập số tiền!" },
-                                { type: "number", min: 0, message: "Số tiền phải lớn hơn hoặc bằng 0!" },
+                                {
+                                  type: "number",
+                                  min: 0,
+                                  message: "Số tiền phải lớn hơn hoặc bằng 0!",
+                                },
                               ]}
                             >
                               <InputNumber
                                 parser={numberOnly}
                                 formatter={numberFormatter}
-                                style={{ width: "100%" }}
+                                className="full-width"
                                 min={0}
                               />
                             </Form.Item>
@@ -497,7 +518,7 @@ export const DebtReportForm = ({
                               label="Ngày thu tiền"
                               rules={[{ required: true, message: "Vui lòng chọn ngày thu tiền!" }]}
                             >
-                              <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+                              <DatePicker format="YYYY-MM-DD" className="full-width" />
                             </Form.Item>
                           </Col>
                           <Col span={12}>
@@ -515,9 +536,9 @@ export const DebtReportForm = ({
                           </Col>
                           <Col span={24}>
                             <Button
-                              style={{ width: "100%", marginBottom: 16 }}
                               danger
                               type="default"
+                              className="full-width margin-16 "
                               onClick={() => remove(name)}
                             >
                               Xóa
@@ -542,24 +563,38 @@ export const DebtReportForm = ({
                     <Form.Item
                       name="debtNoVAT"
                       label="Số tiền chưa VAT"
-                      rules={[{ required: false }, { type: "number", min: 0, message: "Số tiền chưa VAT phải lớn hơn hoặc bằng 0!" }]}
+                      rules={[
+                        { required: false },
+                        {
+                          type: "number",
+                          min: 0,
+                          message: "Số tiền chưa VAT phải lớn hơn hoặc bằng 0!",
+                        },
+                      ]}
                     >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
-                        style={{ width: "100%" }}
+                        className="full-width"
                         min={0}
                       />
                     </Form.Item>
                     <Form.Item
                       name="totalDebtRemaining"
                       label="Tổng công nợ còn phải thu (đã VAT)"
-                      rules={[{ required: false }, { type: "number", min: 0, message: "Tổng công nợ phải lớn hơn hoặc bằng 0!" }]}
+                      rules={[
+                        { required: false },
+                        {
+                          type: "number",
+                          min: 0,
+                          message: "Tổng công nợ phải lớn hơn hoặc bằng 0!",
+                        },
+                      ]}
                     >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
-                        style={{ width: "100%" }}
+                        className="full-width"
                         min={0}
                       />
                     </Form.Item>
@@ -568,24 +603,34 @@ export const DebtReportForm = ({
                     <Form.Item
                       name="debtWithVAT"
                       label="Số tiền đã VAT"
-                      rules={[{ required: false }, { type: "number", min: 0, message: "Số tiền đã VAT phải lớn hơn hoặc bằng 0!" }]}
+                      rules={[
+                        { required: false },
+                        {
+                          type: "number",
+                          min: 0,
+                          message: "Số tiền đã VAT phải lớn hơn hoặc bằng 0!",
+                        },
+                      ]}
                     >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
-                        style={{ width: "100%" }}
+                        className="full-width"
                         min={0}
                       />
                     </Form.Item>
                     <Form.Item
                       name="badDebt"
                       label="Nợ khó đòi"
-                      rules={[{ required: false }, { type: "number", min: 0, message: "Nợ khó đòi phải lớn hơn hoặc bằng 0!" }]}
+                      rules={[
+                        { required: false },
+                        { type: "number", min: 0, message: "Nợ khó đòi phải lớn hơn hoặc bằng 0!" },
+                      ]}
                     >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
-                        style={{ width: "100%" }}
+                        className="full-width"
                         min={0}
                       />
                     </Form.Item>
@@ -594,7 +639,10 @@ export const DebtReportForm = ({
               </Card>
 
               {/* Hoa hồng cộng tác viên */}
-              <Card title={renderHeader("Hoa hồng cộng tác viên", "collaborator")} className="card-section">
+              <Card
+                title={renderHeader("Hoa hồng cộng tác viên", "collaborator")}
+                className="card-section"
+              >
                 <Row gutter={24}>
                   <Col span={12}>
                     <Form.Item
@@ -609,7 +657,12 @@ export const DebtReportForm = ({
                       label="Tỷ lệ hoa hồng (%)"
                       rules={[
                         { required: false },
-                        { type: "number", min: 0, max: 100, message: "Tỷ lệ hoa hồng phải từ 0 đến 100!" },
+                        {
+                          type: "number",
+                          min: 0,
+                          max: 100,
+                          message: "Tỷ lệ hoa hồng phải từ 0 đến 100!",
+                        },
                       ]}
                     >
                       <InputNumber
@@ -617,19 +670,26 @@ export const DebtReportForm = ({
                         formatter={numberFormatter}
                         min={0}
                         max={100}
-                        style={{ width: "100%" }}
+                        className="full-width"
                       />
                     </Form.Item>
                     <Form.Item
                       name={["collaborator", "remainingAmount"]}
                       label="Số tiền còn phải chi"
-                      rules={[{ required: false }, { type: "number", min: 0, message: "Số tiền còn phải chi phải lớn hơn hoặc bằng 0!" }]}
+                      rules={[
+                        { required: false },
+                        {
+                          type: "number",
+                          min: 0,
+                          message: "Số tiền còn phải chi phải lớn hơn hoặc bằng 0!",
+                        },
+                      ]}
                     >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
                         min={0}
-                        style={{ width: "100%" }}
+                        className="full-width"
                       />
                     </Form.Item>
                   </Col>
@@ -637,20 +697,33 @@ export const DebtReportForm = ({
                     <Form.Item
                       name={["collaborator", "phone"]}
                       label="Số điện thoại"
-                      rules={[{ required: false }, { pattern: /^0\d{9}$/, message: "Số điện thoại phải có 10 chữ số và bắt đầu bằng 0!" }]}
+                      rules={[
+                        { required: false },
+                        {
+                          pattern: /^0\d{9}$/,
+                          message: "Số điện thoại phải có 10 chữ số và bắt đầu bằng 0!",
+                        },
+                      ]}
                     >
                       <Input placeholder="Nhập số điện thoại" />
                     </Form.Item>
                     <Form.Item
                       name={["collaborator", "amount"]}
                       label="Số tiền hoa hồng"
-                      rules={[{ required: false }, { type: "number", min: 0, message: "Số tiền hoa hồng phải lớn hơn hoặc bằng 0!" }]}
+                      rules={[
+                        { required: false },
+                        {
+                          type: "number",
+                          min: 0,
+                          message: "Số tiền hoa hồng phải lớn hơn hoặc bằng 0!",
+                        },
+                      ]}
                     >
                       <InputNumber
                         parser={numberOnly}
                         formatter={numberFormatter}
                         min={0}
-                        style={{ width: "100%" }}
+                        className="full-width"
                       />
                     </Form.Item>
                   </Col>

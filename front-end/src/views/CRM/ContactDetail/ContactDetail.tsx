@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { Breadcrumb, Button, Card } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import "./ContactDetail.css";
 import { ROUTES_APP } from "../../../app/routes";
 import { getContact, getContacts } from "../ContactList/contactService";
 import { Contact } from "@/components/CRM/TableContact/TableContact";
@@ -38,8 +37,8 @@ const ContactDetail: React.FC = () => {
   }, [id]);
 
   return (
-    <div className="contact-detail-container">
-      <div className="contact-detail-header">
+    <div className="detail-container">
+      <div className="detail-header">
         <Button
           icon={<ArrowLeftOutlined />}
           type="text"
@@ -47,7 +46,7 @@ const ContactDetail: React.FC = () => {
           className="back-button"
         />
         <Breadcrumb
-          className="contact-detail-breadcrumb"
+          className="detail-breadcrumb"
           separator=">"
           items={[
             {
@@ -61,9 +60,9 @@ const ContactDetail: React.FC = () => {
       </div>
 
       <Card>
-        <div className="contact-detail-title">Chi tiết {contact?.contactName}</div>
+        <div className="detail-title">Chi tiết {contact?.contactName}</div>
 
-        <div className="contact-detail-form">
+        <div className="detail-form">
           <div className="form-row first-row">
             <label>Tên liên hệ:</label>
             <input value={contact?.contactName || ""} disabled />

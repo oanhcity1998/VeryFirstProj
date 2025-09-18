@@ -10,7 +10,6 @@ import {
   DownloadOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-;
 import dayjs from "dayjs";
 import Search from "antd/es/input/Search";
 import TableEmployee from "@/components/HRM/TableEmployee/TableEmployee";
@@ -47,23 +46,34 @@ const EmployeeList: React.FC = () => {
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [employees, setEmployees] = useState<Employee[] | null>(null);
-  const [meta, setMeta] = useState<{ page: number; limit: number; total: number; pages: number } | null>(null);
+  const [meta, setMeta] = useState<{
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  } | null>(null);
 
   const [queryParams, setQueryParams] = useState({
     q: searchParams.get("q") || "",
-    department_id: searchParams.get("department_id") ? Number(searchParams.get("department_id")) : undefined,
+    department_id: searchParams.get("department_id")
+      ? Number(searchParams.get("department_id"))
+      : undefined,
     job_id: searchParams.get("job_id") ? Number(searchParams.get("job_id")) : undefined,
     status: searchParams.get("status") || undefined,
     contractType: searchParams.get("contractType") || undefined,
     gender: searchParams.get("gender") || undefined,
-    employee_id: searchParams.get("employee_id") ? Number(searchParams.get("employee_id")) : undefined,
+    employee_id: searchParams.get("employee_id")
+      ? Number(searchParams.get("employee_id"))
+      : undefined,
     page: searchParams.get("page") ? Number(searchParams.get("page")) : 1,
     limit: searchParams.get("limit") ? Number(searchParams.get("limit")) : 10,
   });
 
   const { data, isLoading, isError, refetch } = useGetEmployeesQuery(queryParams);
-  const [createEmployee, { isLoading: isCreating, isError: isCreateError }] = useCreateEmployeeMutation();
-  const [updateEmployee, { isLoading: isUpdating, isError: isUpdateError }] = useUpdateEmployeeMutation();
+  const [createEmployee, { isLoading: isCreating, isError: isCreateError }] =
+    useCreateEmployeeMutation();
+  const [updateEmployee, { isLoading: isUpdating, isError: isUpdateError }] =
+    useUpdateEmployeeMutation();
   const [deleteEmployee] = useDeleteEmployeeMutation();
   const [batchDeleteEmployees, { isLoading: isBatchDeleting }] = useBatchDeleteEmployeesMutation();
   const [exportTemplate, { isLoading: isExportingTemplate }] = useExportTemplateMutation();
@@ -92,7 +102,8 @@ const EmployeeList: React.FC = () => {
   useEffect(() => {
     const params = new URLSearchParams();
     if (queryParams.q) params.set("q", queryParams.q);
-    if (queryParams.department_id) params.set("department_id", queryParams.department_id.toString());
+    if (queryParams.department_id)
+      params.set("department_id", queryParams.department_id.toString());
     if (queryParams.job_id) params.set("job_id", queryParams.job_id.toString());
     if (queryParams.status) params.set("status", queryParams.status);
     if (queryParams.contractType) params.set("contractType", queryParams.contractType);
@@ -112,7 +123,8 @@ const EmployeeList: React.FC = () => {
       gender: record.gender,
       work_phone: record.work_phone,
       work_email: record.work_email,
-      department_id: record.department_id && record.department_id > 0 ? record.department_id : undefined,
+      department_id:
+        record.department_id && record.department_id > 0 ? record.department_id : undefined,
       job_id: record.job_id && record.job_id > 0 ? record.job_id : undefined,
       status: record.status,
       id_number: record.id_number,
@@ -146,7 +158,9 @@ const EmployeeList: React.FC = () => {
       if (response.error) {
         throw new Error(response.error);
       }
-      const newData = (employees || []).filter((item) => !selectedRowKeys.includes(item.id.toString()));
+      const newData = (employees || []).filter(
+        (item) => !selectedRowKeys.includes(item.id.toString())
+      );
       setEmployees(newData);
       setMeta((prev) => (prev ? { ...prev, total: newData.length } : null));
       toast.success("Xóa nhân sự thành công");
@@ -288,7 +302,10 @@ const EmployeeList: React.FC = () => {
         saveAs(response, `employees_export_${dayjs().format("YYYYMMDD_HHmmss")}.xlsx`);
         toast.success("Xuất danh sách nhân sự thành công");
       } else {
-        generateExcel((response as { data?: Employee[] }).data || [], `employees_export_${dayjs().format("YYYYMMDD_HHmmss")}.xlsx`);
+        generateExcel(
+          (response as { data?: Employee[] }).data || [],
+          `employees_export_${dayjs().format("YYYYMMDD_HHmmss")}.xlsx`
+        );
         toast.success("Xuất danh sách nhân sự thành công");
       }
     } catch (err: any) {
@@ -344,7 +361,9 @@ const EmployeeList: React.FC = () => {
         "permanent_address",
       ];
 
-      const missingFields = requiredFields.filter((field) => !values[field as keyof EmployeeRequest]);
+      const missingFields = requiredFields.filter(
+        (field) => !values[field as keyof EmployeeRequest]
+      );
       if (missingFields.length > 0) {
         toast.error(`Vui lòng điền các trường bắt buộc: ${missingFields.join(", ")}`);
         setIsSubmitting(false);
@@ -358,8 +377,17 @@ const EmployeeList: React.FC = () => {
       }
 
       for (const [index, contract] of values.contract.entries()) {
-        if (!contract.contract_type || !contract.date_start || contract.wage === undefined || contract.bonus === undefined) {
-          toast.error(`Hợp đồng ${index + 1} thiếu các trường bắt buộc: loại hợp đồng, ngày bắt đầu, mức lương, hoặc tiền thưởng`);
+        if (
+          !contract.contract_type ||
+          !contract.date_start ||
+          contract.wage === undefined ||
+          contract.bonus === undefined
+        ) {
+          toast.error(
+            `Hợp đồng ${
+              index + 1
+            } thiếu các trường bắt buộc: loại hợp đồng, ngày bắt đầu, mức lương, hoặc tiền thưởng`
+          );
           setIsSubmitting(false);
           return;
         }
@@ -375,7 +403,8 @@ const EmployeeList: React.FC = () => {
       } else {
         const payload: EmployeeRequest = {
           ...values,
-          department_id: values.department_id && values.department_id > 0 ? values.department_id : 1,
+          department_id:
+            values.department_id && values.department_id > 0 ? values.department_id : 1,
           job_id: values.job_id && values.job_id > 0 ? values.job_id : 1,
           contract: values.contract || [],
         };
@@ -388,7 +417,11 @@ const EmployeeList: React.FC = () => {
       form.resetFields();
     } catch (err: any) {
       console.error("Save error:", err);
-      toast.error(`Không thể ${editingEmployee ? "cập nhật" : "thêm"} nhân sự: ${err.message || "Lỗi không xác định"}`);
+      toast.error(
+        `Không thể ${editingEmployee ? "cập nhật" : "thêm"} nhân sự: ${
+          err.message || "Lỗi không xác định"
+        }`
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -414,7 +447,7 @@ const EmployeeList: React.FC = () => {
           </Button>
           <Popover
             content={
-              <Space direction="vertical" style={{ width: "100%" }}>
+              <Space direction="vertical" className="full-width">
                 <Button
                   type="text"
                   onClick={handleExportTemplate}
@@ -467,8 +500,7 @@ const EmployeeList: React.FC = () => {
               </Button>,
             ]}
             centered
-            width={600}
-            bodyStyle={{ padding: "24px" }}
+            className="width-800 modal-body-padding"
           >
             <Dragger
               name="file"
@@ -476,22 +508,13 @@ const EmployeeList: React.FC = () => {
               beforeUpload={handleImport}
               showUploadList={false}
               disabled={importing || isImporting}
-              style={{
-                border: "1px dashed #d9d9d9",
-                borderRadius: "4px",
-                background: "#fafafa",
-                padding: "16px",
-              }}
+              className="dragger-upload"
             >
               <p className="ant-upload-drag-icon">
-                <InboxOutlined style={{ color: "#1890ff", fontSize: "48px" }} />
+                <InboxOutlined className="upload-drag-icon" />
               </p>
-              <p className="ant-upload-text" style={{ fontSize: "16px", color: "#000" }}>
-                Kéo thả file hoặc click để tải lên
-              </p>
-              <p className="ant-upload-hint" style={{ fontSize: "14px", color: "#888" }}>
-                Chỉ chấp nhận file .xlsx hoặc .csv
-              </p>
+              <p className="ant-upload-text upload-text">Kéo thả file hoặc click để tải lên</p>
+              <p className="ant-upload-hint upload-hint">Chỉ chấp nhận file .xlsx hoặc .csv</p>
             </Dragger>
           </Modal>
           <Button
@@ -512,7 +535,10 @@ const EmployeeList: React.FC = () => {
             okButtonProps={{ danger: true, loading: deleting || isBatchDeleting }}
             centered
           >
-            <p>Bạn có chắc muốn xóa {selectedRowKeys.length} nhân sự này? Hành động này không thể hoàn tác.</p>
+            <p>
+              Bạn có chắc muốn xóa {selectedRowKeys.length} nhân sự này? Hành động này không thể
+              hoàn tác.
+            </p>
           </Modal>
           <Button
             type="primary"

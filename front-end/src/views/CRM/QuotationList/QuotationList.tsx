@@ -7,8 +7,6 @@ import { ROUTES_APP } from "../../../app/routes";
 import FilterQuotationDrawer from "@/components/CRM/Filter/FilterQuotationDrawer";
 import { TableQuotation } from "@/components/CRM/TableQuotation/TableQuotation";
 import { QuotationForm } from "@/components/CRM/QuotationForm/QuotationForm";
-;
-
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 export interface Product {
   id: number;
@@ -169,11 +167,7 @@ const QuotationList = () => {
             allowClear
           />
           {/* Filter button */}
-          <Button
-            icon={<FilterOutlined />}
-            onClick={() => setFilterOpen(true)}
-            style={{ marginLeft: 8 }}
-          >
+          <Button icon={<FilterOutlined />} onClick={() => setFilterOpen(true)}>
             Bộ lọc
           </Button>
           <FilterQuotationDrawer

@@ -60,7 +60,7 @@ export function UITable<T extends { id: number | string }>({
           const recordId = record[rowKey as keyof T] as string | number;
           return (
             <Link to={getRoutePath(col.linkTo, { id: recordId })}>
-              <FileTextOutlined style={{ marginRight: 6, color: "#1890ff" }} />
+              <FileTextOutlined className="icon-link" />
               {value}
             </Link>
           );
@@ -124,15 +124,11 @@ export function UITable<T extends { id: number | string }>({
     key: "action",
     align: "center",
     fixed: "right",
-    width: 80,
+    width: 60,
     render: (_, record) => (
       <Tooltip title="Chỉnh sửa">
         <EditOutlined
-          style={{
-            fontSize: 18,
-            color: "#1890ff",
-            cursor: "pointer",
-          }}
+          className="base-edit-icon"
           onClick={(e) => {
             e.stopPropagation();
             onEditClick?.(record);

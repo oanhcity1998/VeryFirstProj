@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import Search from "antd/es/input/Search";
 import OpportunityForm from "@/components/CRM/OpportunityForm/OpportunityForm";
 import { ROUTES_APP } from "@/app/routes";
-import "@/index.css";
+
 import { TableOpportunity } from "@/components/CRM/TableOpportunity/TableOpportunity";
 
 const { Option } = Select;

@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import Search from "antd/es/input/Search";
 import TableProduct, { Product } from "@/components/CRM/TableProduct/TableProduct";
 import ProductForm from "@/components/CRM/ProductForm/ProductForm";
-import "@/index.css";
 
 const { Option } = Select;
 
@@ -70,9 +69,7 @@ const ProductList: React.FC = () => {
     setIsSubmitting(true);
     try {
       if (selectedProduct) {
-        setProducts((prev) =>
-          prev.map((item) => (item.id === selectedProduct.id ? values : item))
-        );
+        setProducts((prev) => prev.map((item) => (item.id === selectedProduct.id ? values : item)));
         toast.success("Cập nhật sản phẩm thành công");
       } else {
         const newProduct: Product = {
@@ -98,9 +95,7 @@ const ProductList: React.FC = () => {
 
   const handleDelete = async () => {
     try {
-      setProducts((prev) =>
-        prev.filter((item) => !selectedRowKeys.includes(item.id))
-      );
+      setProducts((prev) => prev.filter((item) => !selectedRowKeys.includes(item.id)));
       setMeta((prev) => ({
         ...prev,
         total: prev.total - selectedRowKeys.length,

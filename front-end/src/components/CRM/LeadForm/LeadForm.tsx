@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { Modal, Form, Input, Button, Select, Card, Row, Col } from "antd";
-import "@/index.css";
 
 const { Option } = Select;
 
@@ -87,31 +86,26 @@ const LeadForm: React.FC<LeadFormProps> = ({
 
   return (
     <Modal
-      title={<h2>{modalTitle || (lead ? "Chỉnh sửa khách hàng tiềm năng" : "Thêm mới khách hàng tiềm năng")}</h2>}
+      title={
+        <h2>
+          {modalTitle ||
+            (lead ? "Chỉnh sửa khách hàng tiềm năng" : "Thêm mới khách hàng tiềm năng")}
+        </h2>
+      }
       open={open}
       onCancel={onCancel}
       footer={[
         <Button key="cancel" onClick={onCancel} disabled={loading}>
           {cancelText}
         </Button>,
-        <Button
-          key="submit"
-          type="primary"
-          onClick={() => form.submit()}
-          loading={loading}
-        >
+        <Button key="submit" type="primary" onClick={() => form.submit()} loading={loading}>
           {saveText}
         </Button>,
       ]}
-      width={800}
+      className="width-800"
     >
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={onFinish}
-      >
+      <Form form={form} layout="vertical" onFinish={onFinish}>
         <Card title="Thông tin khách hàng tiềm năng" className="card-section">
-
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item
@@ -159,7 +153,10 @@ const LeadForm: React.FC<LeadFormProps> = ({
                 name="phone"
                 rules={[
                   { required: true, message: "Vui lòng nhập số điện thoại!" },
-                  { pattern: /^0\d{9}$/, message: "Số điện thoại phải có 10 chữ số và bắt đầu bằng 0!" },
+                  {
+                    pattern: /^0\d{9}$/,
+                    message: "Số điện thoại phải có 10 chữ số và bắt đầu bằng 0!",
+                  },
                 ]}
               >
                 <Input placeholder="Nhập số điện thoại" />
@@ -171,18 +168,10 @@ const LeadForm: React.FC<LeadFormProps> = ({
               >
                 <Input placeholder="Nhập địa chỉ" />
               </Form.Item>
-              <Form.Item
-                label="Website"
-                name="website"
-                rules={[{ required: false }]}
-              >
+              <Form.Item label="Website" name="website" rules={[{ required: false }]}>
                 <Input placeholder="Nhập website" />
               </Form.Item>
-              <Form.Item
-                label="Nguồn"
-                name="source"
-                rules={[{ required: false }]}
-              >
+              <Form.Item label="Nguồn" name="source" rules={[{ required: false }]}>
                 <Select placeholder="Chọn nguồn" allowClear>
                   <Option value="web">Website</Option>
                   <Option value="event">Sự kiện</Option>

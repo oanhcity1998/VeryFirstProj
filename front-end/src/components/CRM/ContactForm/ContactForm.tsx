@@ -34,7 +34,9 @@ const ContactForm = ({ mode, open, onCancel, onOk, initialValues }: ContactFormP
 
   return (
     <Modal
-      title={<h2>{mode === "create" ? "Tạo" : mode === "edit" ? "Chỉnh sửa" : "Chi tiết"} liên hệ</h2>}
+      title={
+        <h2>{mode === "create" ? "Tạo" : mode === "edit" ? "Chỉnh sửa" : "Chi tiết"} liên hệ</h2>
+      }
       open={open}
       onCancel={onCancel}
       footer={[
@@ -47,7 +49,7 @@ const ContactForm = ({ mode, open, onCancel, onOk, initialValues }: ContactFormP
           </Button>
         ),
       ]}
-      width={800}
+      className="top-20 width-800"
     >
       <Form form={form} layout="vertical" disabled={isDetail}>
         <Card title="Thông tin liên hệ" className="card-section">
@@ -102,11 +104,7 @@ const ContactForm = ({ mode, open, onCancel, onOk, initialValues }: ContactFormP
           >
             <Input placeholder="Nhập tên người liên hệ chính" />
           </Form.Item>
-          <Form.Item
-            label="Ghi chú"
-            name="note"
-            rules={[{ required: false }]}
-          >
+          <Form.Item label="Ghi chú" name="note" rules={[{ required: false }]}>
             <Input.TextArea rows={3} placeholder="Nhập ghi chú thêm (nếu có)" />
           </Form.Item>
         </Card>

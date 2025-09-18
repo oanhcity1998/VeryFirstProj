@@ -1,7 +1,6 @@
 import React from "react";
 import { Drawer, Form, Button, Select } from "antd";
 import { Quotation } from "@/views/CRM/QuotationList/QuotationList";
-// import "./FilterQuotationDrawer.css";
 
 const { Option } = Select;
 
@@ -56,7 +55,7 @@ const FilterQuotationDrawer: React.FC<FilterQuotationDrawerProps> = ({
       placement="right"
       open={open}
       onClose={onClose}
-      width={350}
+      className="width-350"
       footer={
         <div className="filter-footer">
           <Button danger onClick={onClose}>

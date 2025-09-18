@@ -300,10 +300,7 @@ const ProposalTemplateList: React.FC = () => {
       }
 
       if (errors.length > 0) {
-        message.error(
-          <div style={{ maxHeight: 200, overflowY: "auto" }}>{errors.join(", ")}</div>,
-          5
-        );
+        message.error(<div className="error-message-list">{errors.join(", ")}</div>, 5);
         setImporting(false);
       } else {
         setData((prev) => [...prev, ...newTemplates]);

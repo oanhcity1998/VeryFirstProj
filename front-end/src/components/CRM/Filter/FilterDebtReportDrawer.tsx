@@ -47,13 +47,23 @@ export const FilterDebtReportDrawer = ({
       placement="right"
       onClose={onClose}
       open={open}
-      width={350}
+      className="width-350"
+      footer={
+        <div className="filter-footer">
+          <Button danger onClick={onClose}>
+            Huỷ
+          </Button>
+          <Button type="primary" onClick={onConfirm}>
+            Xác nhận
+          </Button>
+        </div>
+      }
     >
       <Form layout="vertical">
         {/* Ngày báo cáo */}
         {/* <Form.Item label="Ngày báo cáo">
           <RangePicker
-            style={{ width: "100%" }}
+            className="full-width"
             format="YYYY-MM-DD"
             value={filterDate ? [dayjs(filterDate[0]), dayjs(filterDate[1])] : undefined}
             onChange={(dates) =>
@@ -116,10 +126,6 @@ export const FilterDebtReportDrawer = ({
             <Select.Option value="Hủy">Hủy</Select.Option>
           </Select>
         </Form.Item>
-
-        <Button type="primary" onClick={onConfirm} block>
-          Lọc
-        </Button>
       </Form>
     </Drawer>
   );

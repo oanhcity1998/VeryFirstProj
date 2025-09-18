@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Modal, Form, Input, Button, Select, Card, InputNumber } from "antd";
-import "@/index.css";
 
 const { Option } = Select;
 
@@ -94,16 +93,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
           {saveText}
         </Button>,
       ]}
-      width={800}
-      className="modal-body"
+      className="modal-body width-800"
       centered
     >
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={onFinish}
-        onValuesChange={handleValuesChange}
-      >
+      <Form form={form} layout="vertical" onFinish={onFinish} onValuesChange={handleValuesChange}>
         <Card title="Thông tin sản phẩm" className="card-section">
           <Form.Item
             name="name"
@@ -118,10 +111,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
             label="Mô tả"
             rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}
           >
-            <Input.TextArea
-              placeholder="Nhập mô tả"
-              autoSize={{ minRows: 3, maxRows: 5 }}
-            />
+            <Input.TextArea placeholder="Nhập mô tả" autoSize={{ minRows: 3, maxRows: 5 }} />
           </Form.Item>
 
           <Form.Item
@@ -141,7 +131,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
             rules={[{ required: true, message: "Vui lòng nhập giá VND!" }]}
           >
             <InputNumber
-              style={{ width: "100%" }}
+              className="full-width"
               placeholder="Nhập giá VND"
               formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
               parser={(value) => value!.replace(/,/g, "") as any}
@@ -154,7 +144,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
             rules={[{ required: true, message: "Vui lòng nhập giá USD!" }]}
           >
             <InputNumber
-              style={{ width: "100%" }}
+              className="full-width"
               placeholder="Nhập giá USD"
               formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
               parser={(value) => value!.replace(/,/g, "") as any}
@@ -175,7 +165,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
           <Form.Item name="priceAfterVatVND" label="Giá sau VAT (VND)">
             <InputNumber
-              style={{ width: "100%" }}
+              className="full-width"
               placeholder="Giá sau VAT (VND)"
               disabled
               formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
@@ -185,7 +175,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
           <Form.Item name="priceAfterVatUSD" label="Giá sau VAT (USD)">
             <InputNumber
-              style={{ width: "100%" }}
+              className="full-width"
               placeholder="Giá sau VAT (USD)"
               disabled
               formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}

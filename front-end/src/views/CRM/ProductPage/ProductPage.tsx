@@ -2,7 +2,6 @@ import { useState, useMemo } from "react";
 import { Table, Button, Space, Modal, Form, Select } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
-import "./ProductPage.css";
 import Search from "antd/es/input/Search";
 import type { ColumnsType, TableRowSelection } from "antd/es/table/interface";
 import type { Key } from "react";
@@ -133,14 +132,14 @@ const ProductPage = () => {
       dataIndex: "name",
       key: "name",
       fixed: "left",
-      width: 200,
+      width: 150,
     },
     {
       title: "Mô tả",
       align: "center",
       dataIndex: "description",
       key: "description",
-      width: 200,
+      width: 150,
     },
     {
       title: "Loại sản phẩm",
@@ -155,7 +154,7 @@ const ProductPage = () => {
       align: "center",
       dataIndex: "priceVND",
       key: "priceVND",
-      width: 120,
+      width: 150,
       render: (value) => value?.toLocaleString("vi-VN"),
     },
     {
@@ -163,7 +162,7 @@ const ProductPage = () => {
       align: "center",
       dataIndex: "priceUSD",
       key: "priceUSD",
-      width: 120,
+      width: 150,
       render: (value) => value?.toLocaleString("en-US"),
     },
     {
@@ -171,7 +170,7 @@ const ProductPage = () => {
       align: "center",
       dataIndex: "vat",
       key: "vat",
-      width: 100,
+      width: 150,
     },
     {
       title: "Giá sau VAT (VND)",
@@ -194,7 +193,7 @@ const ProductPage = () => {
       align: "center",
       dataIndex: "createdAt",
       key: "createdAt",
-      width: 120,
+      width: 150,
       render: (date: Dayjs) => dayjs(date).format("YYYY-MM-DD"),
     },
     {
@@ -202,7 +201,7 @@ const ProductPage = () => {
       align: "center",
       dataIndex: "updatedAt",
       key: "updatedAt",
-      width: 120,
+      width: 150,
       render: (date: Dayjs) => dayjs(date).format("YYYY-MM-DD"),
     },
     {
@@ -210,13 +209,13 @@ const ProductPage = () => {
       align: "center",
       key: "action",
       fixed: "right",
-      width: 100,
+      width: 150,
       render: (_: any, record: Product) => (
         <Button
           type="link"
           icon={<EditOutlined />}
           onClick={() => handleEdit(record)}
-          className="product-edit-icon"
+          className="base-edit-icon"
         />
       ),
     },
@@ -237,13 +236,7 @@ const ProductPage = () => {
   return (
     <div>
       {/* Thanh công cụ */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: 16,
-        }}
-      >
+      <div className="list-header">
         <Space>
           <h2 className="card-title">Danh sách sản phẩm</h2>
         </Space>
@@ -256,13 +249,13 @@ const ProductPage = () => {
             name="search"
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            style={{ width: 250 }}
+            className="width-150"
           />
           {/* Bộ lọc */}
           <Select
             allowClear
             placeholder="Loại sản phẩm"
-            style={{ width: 180 }}
+            className="width-150"
             value={filters.productType}
             onChange={(val) => setFilters((prev) => ({ ...prev, productType: val }))}
             options={[
@@ -274,7 +267,7 @@ const ProductPage = () => {
           <Select<number>
             allowClear
             placeholder="VAT"
-            style={{ width: 150 }}
+            className="width-150"
             value={filters.vat}
             onChange={(val) => setFilters((prev) => ({ ...prev, vat: val }))}
             options={[

@@ -33,31 +33,21 @@ const EmployeeDetail: React.FC = () => {
         bankAccount: profile.bank_account,
         ...(contracts && contracts.length > 0
           ? {
-            contractType: contracts[0].contract_type || "",
-            contractTerm: contracts[0].contract_term
-              ? "Có thời hạn"
-              : "Không thời hạn",
-            startDate: contracts[0].date_start
-              ? dayjs(contracts[0].date_start)
-              : null,
-            endDate: contracts[0].date_end
-              ? dayjs(contracts[0].date_end)
-              : null,
-            salary: contracts[0].wage
-              ? Number(contracts[0].wage).toLocaleString("en-US")
-              : "",
-            bonus: contracts[0].bonus
-              ? Number(contracts[0].bonus).toLocaleString("en-US")
-              : "",
-          }
+              contractType: contracts[0].contract_type || "",
+              contractTerm: contracts[0].contract_term ? "Có thời hạn" : "Không thời hạn",
+              startDate: contracts[0].date_start ? dayjs(contracts[0].date_start) : null,
+              endDate: contracts[0].date_end ? dayjs(contracts[0].date_end) : null,
+              salary: contracts[0].wage ? Number(contracts[0].wage).toLocaleString("en-US") : "",
+              bonus: contracts[0].bonus ? Number(contracts[0].bonus).toLocaleString("en-US") : "",
+            }
           : {
-            contractType: "",
-            contractTerm: "",
-            startDate: null,
-            endDate: null,
-            salary: "",
-            bonus: "",
-          }),
+              contractType: "",
+              contractTerm: "",
+              startDate: null,
+              endDate: null,
+              salary: "",
+              bonus: "",
+            }),
       });
     } else if (isError) {
       navigate(ROUTES_APP.hrm.employeeList);
@@ -66,18 +56,14 @@ const EmployeeDetail: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div style={{ textAlign: "center", padding: "50px 0" }}>
+      <div className="loading-container">
         <Spin size="large" />
       </div>
     );
   }
 
   if (isError || !data) {
-    return (
-      <div style={{ textAlign: "center", padding: "50px 0", color: "#888" }}>
-        Không tìm thấy nhân viên
-      </div>
-    );
+    return <div className="empty-message">Không tìm thấy nhân viên</div>;
   }
 
   const { profile } = data;
@@ -112,10 +98,7 @@ const EmployeeDetail: React.FC = () => {
                       <Input />
                     </Form.Item>
                     <Form.Item label="Ngày sinh" name="birthDate">
-                      <DatePicker
-                        format="DD/MM/YYYY"
-                        style={{ width: "100%" }}
-                      />
+                      <DatePicker format="DD/MM/YYYY" className="full-width" />
                     </Form.Item>
                     <Form.Item label="Số điện thoại" name="phone">
                       <Input />
@@ -149,10 +132,7 @@ const EmployeeDetail: React.FC = () => {
                       <Input />
                     </Form.Item>
                     <Form.Item label="Ngày cấp" name="issueDate">
-                      <DatePicker
-                        format="DD/MM/YYYY"
-                        style={{ width: "100%" }}
-                      />
+                      <DatePicker format="DD/MM/YYYY" className="full-width" />
                     </Form.Item>
                     <Form.Item label="Địa chỉ thường trú" name="permanentAddress">
                       <Input />
@@ -182,23 +162,14 @@ const EmployeeDetail: React.FC = () => {
                     <Form.Item label="Loại hợp đồng lao động" name="contractType">
                       <Input />
                     </Form.Item>
-                    <Form.Item
-                      label="Thời hạn hợp đồng lao động"
-                      name="contractTerm"
-                    >
+                    <Form.Item label="Thời hạn hợp đồng lao động" name="contractTerm">
                       <Input />
                     </Form.Item>
                     <Form.Item label="Ngày bắt đầu" name="startDate">
-                      <DatePicker
-                        format="DD/MM/YYYY"
-                        style={{ width: "100%" }}
-                      />
+                      <DatePicker format="DD/MM/YYYY" className="full-width" />
                     </Form.Item>
                     <Form.Item label="Ngày kết thúc" name="endDate">
-                      <DatePicker
-                        format="DD/MM/YYYY"
-                        style={{ width: "100%" }}
-                      />
+                      <DatePicker format="DD/MM/YYYY" className="full-width" />
                     </Form.Item>
                     <Form.Item label="Mức lương" name="salary">
                       <Input />

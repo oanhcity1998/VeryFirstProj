@@ -95,14 +95,14 @@ const TableCustomer: React.FC<TableCustomerProps> = ({
       title: "Mã khách hàng",
       align: "center",
       dataIndex: "id",
-      width: 200,
+      width: 150,
       fixed: "left", // ✅ fixed
     },
     {
       title: "Tên khách hàng",
       align: "center",
       dataIndex: "customerName",
-      width: 200,
+      width: 150,
       fixed: "left", // ✅ fixed
       render: (text: any, record: any) => (
         <Link to={generatePath(ROUTES_APP.crm.customerDetail, { id: record.id })}>{text}</Link>
@@ -112,37 +112,47 @@ const TableCustomer: React.FC<TableCustomerProps> = ({
       title: "Tên DN ghi trên hợp đồng",
       align: "center",
       dataIndex: "contractName",
-      width: 200,
+      width: 150,
     },
-    { title: "Tên DN bằng tiếng Anh", align: "center", dataIndex: "englishName", width: 200 },
+    {
+      title: "Tên DN bằng tiếng Anh",
+      align: "center",
+      dataIndex: "englishName",
+      width: 150,
+    },
     { title: "Mã số thuế", align: "center", dataIndex: "taxCode", width: 150 },
     { title: "Số điện thoại", align: "center", dataIndex: "phone", width: 150 },
     { title: "Số fax", align: "center", dataIndex: "fax", width: 150 },
-    { title: "Email", align: "center", dataIndex: "email", width: 200 },
+    { title: "Email", align: "center", dataIndex: "email", width: 150 },
     { title: "Địa chỉ", align: "center", dataIndex: "address", width: 250 },
-    { title: "Ngành", align: "center", dataIndex: "industry", width: 180 },
-    { title: "Thị trường chính", align: "center", dataIndex: "market", width: 180 },
-    { title: "Số lượng chi nhánh", align: "center", dataIndex: "branches", width: 180 },
-    { title: "Số nhân sự", align: "center", dataIndex: "employees", width: 180 },
-    { title: "Doanh thu TB/năm", align: "center", dataIndex: "revenue", width: 180 },
-    { title: "Văn bản TB/tháng", align: "center", dataIndex: "documentsPerMonth", width: 180 },
+    { title: "Ngành", align: "center", dataIndex: "industry", width: 150 },
+    { title: "Thị trường chính", align: "center", dataIndex: "market", width: 150 },
+    { title: "Số lượng chi nhánh", align: "center", dataIndex: "branches", width: 150 },
+    { title: "Số nhân sự", align: "center", dataIndex: "employees", width: 150 },
+    { title: "Doanh thu TB/năm", align: "center", dataIndex: "revenue", width: 150 },
+    {
+      title: "Văn bản TB/tháng",
+      align: "center",
+      dataIndex: "documentsPerMonth",
+      width: 150,
+    },
     {
       title: "Trạng thái quyết toán thuế ",
       align: "center",
       dataIndex: "taxSettlementStatus",
-      width: 180,
+      width: 150,
     },
     {
       title: "Năm quyết toán thuế ",
       align: "center",
       dataIndex: "taxSettlementYear",
-      width: 200,
+      width: 150,
     },
     {
       title: "Tài liệu",
       align: "center",
       dataIndex: "documents",
-      width: 200,
+      width: 150,
       render: (file: any) =>
         file ? (
           <a href={file} download target="_blank" rel="noopener noreferrer">
@@ -157,7 +167,7 @@ const TableCustomer: React.FC<TableCustomerProps> = ({
       align: "center",
       key: "actions",
       fixed: "right", // 👈 always stick on the right
-      width: 80,
+      width: 60,
       render: (_: any, record: any) => (
         <Button
           icon={<EditOutlined />}

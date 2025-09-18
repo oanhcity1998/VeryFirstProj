@@ -4,9 +4,8 @@ import { Input, Table, Button, Row, Col, Modal, Breadcrumb, Card, Typography, Sp
 import { Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 
-import "./QuoteDetail.css";
 import ReactDOM from "react-dom/client";
-import QuotePDF from "@/components/CRM/QuotePDF/QuotePDF"
+import QuotePDF from "@/components/CRM/QuotePDF/QuotePDF";
 import { ROUTES_APP } from "../../../app/routes";
 // import jsPDF from "jspdf";
 // import autoTable from "jspdf-autotable";
@@ -19,14 +18,11 @@ interface ContractDetailProps {
   onBack: () => void;
 }
 
-
 const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai, onBack }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
-
 
   const { id } = useParams(); // lấy contact id từ URL
   const title = "Chi tiết báo giá";
@@ -76,13 +72,12 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
     link.click();
   };
 
-
   return (
-    <div className="quote-detail">
+    <div>
       {/* Header */}
-      <div className="quote-detail-header">
+      <div>
         <Button icon={<ArrowLeftOutlined />} type="text" onClick={onBack} className="back-button" />
-        <Breadcrumb className="quote-detail-title" separator=">">
+        <Breadcrumb separator=">">
           <Breadcrumb.Item>
             <Link to={ROUTES_APP.crm.quoteList}>Danh sách báo giá</Link>
           </Breadcrumb.Item>
@@ -91,7 +86,7 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
       </div>
 
       {/* Card wrapper */}
-      <Card title={title} style={{ marginTop: 16 }}>
+      <Card title={title} className="margin-top-16">
         <Row gutter={24} className="form-grid">
           <Col span={12}>
             <FormItem label="Mã báo giá" value="AF25_BG1" />
@@ -127,9 +122,9 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
       </Card>
 
       {/* Products card */}
-      <Card title="Danh sách sản phẩm" style={{ marginTop: 16 }}>
+      <Card title="Danh sách sản phẩm" className="margin-top-16">
         <Table dataSource={products} columns={columns} pagination={false} bordered />
-        <div className="totals" style={{ marginTop: 16 }}>
+        <div className="totals" className="margin-top-16">
           <p>Tổng giá trước VAT (VND): {totalVND.toLocaleString("vi-VN")}</p>
           <p>Tổng giá trước VAT (USD): {totalUSD}</p>
           <p>Tổng giá sau VAT (VND): {totalVNDWithVAT.toLocaleString("vi-VN")}</p>
@@ -138,16 +133,7 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
       </Card>
 
       {/* Actions */}
-      <div
-        style={{
-          marginTop: 16,
-          display: "flex",
-          justifyContent: "flex-end",
-          flexWrap: "wrap",
-          gap: 12,
-          position: "sticky",
-        }}
-      >
+      <div className="form-actions">
         <Space wrap>
           <Button onClick={() => setShowModal(true)}>Xem báo giá</Button>
           <Button type="primary" onClick={() => setIsModalOpen(true)}>
@@ -166,7 +152,7 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
         onCancel={() => setIsModalOpen(false)}
       />
 
-     {showModal && (
+      {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
             {/* Close button */}
@@ -183,16 +169,14 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
           </div>
         </div>
       )}
-
-      
     </div>
   );
 };
 
 // Small helper component for read-only fields
 const FormItem: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <div style={{ marginBottom: 12 }}>
-    <label style={{ display: "block", fontWeight: 500 }}>{label}</label>
+  <div className="margin-bottom-16">
+    <label>{label}</label>
     <Input value={value} disabled />
   </div>
 );

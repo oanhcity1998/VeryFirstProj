@@ -62,7 +62,7 @@ const TableProposalTemplate: React.FC<TableProposalTemplateProps> = ({
       title: "Tên mẫu đề xuất",
       dataIndex: "name",
       key: "name",
-      width: 200,
+      width: 150,
       align: "center" as const,
       fixed: "left" as const,
       render: (value: string, record: ProposalTemplate) => (
@@ -82,14 +82,14 @@ const TableProposalTemplate: React.FC<TableProposalTemplateProps> = ({
       title: "Ngày tạo",
       dataIndex: "createdDate",
       key: "createdDate",
-      width: 120,
+      width: 150,
       align: "center" as const,
     },
     {
       title: "Số lượng đề xuất",
       dataIndex: "quantity",
       key: "quantity",
-      width: 120,
+      width: 150,
       align: "center" as const,
     },
     {
@@ -103,14 +103,14 @@ const TableProposalTemplate: React.FC<TableProposalTemplateProps> = ({
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
-      width: 100,
+      width: 150,
       align: "center" as const,
     },
     {
       title: "",
       key: "action",
       fixed: "right" as const,
-      width: 80,
+      width: 60,
       align: "center" as const,
       render: (_: any, record: ProposalTemplate) => (
         <Button

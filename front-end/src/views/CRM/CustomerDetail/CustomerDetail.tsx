@@ -6,7 +6,6 @@ import ContactForm from "@/components/CRM/ContactForm/ContactForm";
 import TableQuote from "@/components/CRM/TableQuote/TableQuote";
 import ContractList from "../ContractList/ContractList";
 import { ROUTES_APP } from "../../../app/routes";
-import "./CustomerDetail.css";
 import TableContract from "@/components/CRM/TableContract/TableContract";
 
 const { TextArea } = Input;
@@ -377,7 +376,7 @@ export default function CustomerDetail() {
             }}
           />
         </>
-      )
+      ),
     },
     { key: "5", label: "Tài liệu", children: <p>File tài liệu…</p> },
   ];
@@ -385,7 +384,10 @@ export default function CustomerDetail() {
   return (
     <>
       <Breadcrumb className="breadcrumb" items={breadcrumbItems} separator=">" />
-      <Card className="card-section" title={<h2 className="card-title">Chi tiết khách hàng: {customer.name}</h2>}>
+      <Card
+        className="card-section"
+        title={<h2 className="card-title">Chi tiết khách hàng: {customer.name}</h2>}
+      >
         <Tabs type="card" defaultActiveKey="1" items={tabs} />
       </Card>
     </>

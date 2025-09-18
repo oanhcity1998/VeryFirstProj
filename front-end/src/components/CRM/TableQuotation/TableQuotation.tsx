@@ -6,8 +6,6 @@ import { ColumnsType } from "antd/es/table";
 import { Product, Quotation } from "@/views/CRM/QuotationList/QuotationList";
 import { ROUTES_APP } from "@/app/routes";
 
-
-
 interface TableQuotationProps {
   data: Quotation[];
   searchText: string;
@@ -44,8 +42,8 @@ export const TableQuotation = ({
 
       const matchProduct = filterProduct
         ? item.products.some((p) =>
-          p.productName.toLowerCase().includes(filterProduct.toLowerCase())
-        )
+            p.productName.toLowerCase().includes(filterProduct.toLowerCase())
+          )
         : true;
 
       const matchVat = filterVat !== null ? item.products.some((p) => p.vat === filterVat) : true;
@@ -62,11 +60,11 @@ export const TableQuotation = ({
       align: "center",
       dataIndex: "quotationName",
       key: "quotationName",
-      width: 220,
+      width: 150,
       fixed: "left",
       render: (_, record) => (
         <Link to={generatePath(ROUTES_APP.crm.quotationDetail, { id: record.id })}>
-          <FileTextOutlined style={{ marginRight: 6, color: "#1890ff" }} />
+          <FileTextOutlined className="icon-link" />
           {record.quotationName}
         </Link>
       ),
@@ -76,21 +74,21 @@ export const TableQuotation = ({
       align: "center",
       dataIndex: "validityPeriod",
       key: "validityPeriod",
-      width: 180,
+      width: 150,
     },
     {
       title: "Điều khoản thanh toán",
       align: "center",
       dataIndex: "paymentTerms",
       key: "paymentTerms",
-      width: 180,
+      width: 150,
     },
     {
       title: "Sản phẩm",
       align: "center",
       dataIndex: "products",
       key: "products",
-      width: 220,
+      width: 150,
       render: (products: Product[]) =>
         Array.isArray(products) ? products.map((p) => p.productName).join(", ") : "",
     },
@@ -99,7 +97,7 @@ export const TableQuotation = ({
       align: "center",
       dataIndex: "products",
       key: "totalBeforeVat",
-      width: 180,
+      width: 150,
       render: (products: Product[]) => getSummary(products).totalBeforeVat.toLocaleString(),
     },
     {
@@ -123,7 +121,7 @@ export const TableQuotation = ({
       align: "center",
       dataIndex: "status",
       key: "status",
-      width: 160,
+      width: 150,
     },
     {
       title: "",
@@ -134,13 +132,7 @@ export const TableQuotation = ({
       render: (_, record) => (
         <Tooltip title="Chỉnh sửa">
           <EditOutlined
-            style={{
-              fontSize: 20,
-              display: "block",
-              cursor: "pointer",
-              color: "#1890ff",
-              padding: 8,
-            }}
+            className="base-edit-icon"
             onClick={(e) => {
               e.stopPropagation();
               onEditClick?.(record);

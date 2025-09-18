@@ -202,11 +202,10 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
           {saveText}
         </Button>,
       ]}
-      width={800}
+      className="width-800"
     >
       <Form form={form} layout="horizontal" onFinish={onFinish}>
-
-        <Card style={{ marginBottom: 16 }} title="Thông tin mẫu đề xuất" className="card-section">
+        <Card title="Thông tin mẫu đề xuất" className="card-section ">
           <Form.Item
             labelAlign="left"
             labelCol={{ span: 6 }}
@@ -234,14 +233,7 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
         </Card>
 
         <Card className="card-section">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 16,
-            }}
-          >
+          <div className="header-container">
             <h3 className="card-title">Danh sách trường của mẫu đề xuất</h3>
             <Button type="primary" onClick={addFieldRow}>
               <PlusOutlined /> Thêm trường
@@ -257,7 +249,7 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
           />
 
           <Form.Item
-            style={{ marginTop: 16 }}
+            className="margin-top-16"
             name="approvalRequired"
             valuePropName="checked" // ✅ rất quan trọng
             getValueFromEvent={(e) => (e.target.checked ? "Có" : "Không")}
@@ -267,7 +259,7 @@ const ProposalTemplateForm: React.FC<ProposalTemplateFormProps> = ({
           </Form.Item>
         </Card>
       </Form>
-    </Modal >
+    </Modal>
   );
 };
 

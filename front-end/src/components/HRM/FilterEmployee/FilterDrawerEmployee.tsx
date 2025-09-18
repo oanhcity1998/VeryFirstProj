@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Drawer, Form, Button, Select } from "antd";
-import "./FilterDrawerEmployee.css";
 import { useGetEmployeesQuery } from "@/services/HRM/employee.service";
 import { useGetDepartmentsQuery } from "@/services/HRM/department.service";
 import { useGetJobsQuery } from "@/services/HRM/position.service";
@@ -30,8 +29,12 @@ const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({
   const [form] = Form.useForm();
 
   // Fetch data from APIs
-  const { data: employeesData, isLoading: employeesLoading } = useGetEmployeesQuery({ limit: 1000 });
-  const { data: departmentsData, isLoading: departmentsLoading } = useGetDepartmentsQuery({ limit: 1000 });
+  const { data: employeesData, isLoading: employeesLoading } = useGetEmployeesQuery({
+    limit: 1000,
+  });
+  const { data: departmentsData, isLoading: departmentsLoading } = useGetDepartmentsQuery({
+    limit: 1000,
+  });
   const { data: jobsData, isLoading: jobsLoading } = useGetJobsQuery({ limit: 1000 });
 
   // Initialize form with queryParams when drawer opens
@@ -81,7 +84,7 @@ const FilterDrawerEmployee: React.FC<FilterDrawerEmployeeProps> = ({
       placement="right"
       open={open}
       onClose={onClose}
-      width={350}
+      className="width-350"
       footer={
         <div className="filter-footer">
           <Button danger onClick={handleClearAll}>

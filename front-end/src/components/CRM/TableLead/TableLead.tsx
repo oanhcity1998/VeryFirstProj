@@ -3,7 +3,6 @@ import { EditOutlined } from "@ant-design/icons";
 import { useNavigate, generatePath, Link } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";
 import { ROUTES_APP } from "@/app/routes";
-import "@/index.css";
 
 interface Lead {
   id: string;
@@ -79,9 +78,7 @@ const TableLead: React.FC<TableLeadProps> = ({
       fixed: "left",
       align: "center",
       render: (text: string, record: Lead) => (
-        <Link to={generatePath(ROUTES_APP.crm.leadDetail, { id: record.id })}>
-          {text}
-        </Link>
+        <Link to={generatePath(ROUTES_APP.crm.leadDetail, { id: record.id })}>{text}</Link>
       ),
     },
     {
@@ -102,48 +99,48 @@ const TableLead: React.FC<TableLeadProps> = ({
       title: "Số điện thoại",
       dataIndex: "phone",
       key: "phone",
-      width: 120,
+      width: 150,
       align: "center",
     },
     {
       title: "Ưu tiên",
       dataIndex: "priority",
       key: "priority",
-      width: 120,
+      width: 150,
       align: "center",
     },
     {
       title: "Nhân viên phụ trách",
       dataIndex: "owner",
       key: "owner",
-      width: 200,
+      width: 150,
       align: "center",
     },
     {
       title: "Giai đoạn",
       dataIndex: "status",
       key: "status",
-      width: 120,
+      width: 150,
       align: "center",
     },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
-      width: 120,
+      width: 150,
       align: "center",
     },
     {
       title: "Ngày cập nhật",
       dataIndex: "updatedAt",
       key: "updatedAt",
-      width: 180,
+      width: 150,
       align: "center",
     },
     {
       title: "",
       key: "action",
-      width: 80,
+      width: 60,
       fixed: "right",
       align: "center",
       render: (_: any, record: Lead) => (
@@ -171,9 +168,7 @@ const TableLead: React.FC<TableLeadProps> = ({
       pagination={false}
       rowKey="id"
       scroll={{ x: 1000 }}
-      rowClassName={(record: Lead) =>
-        selectedRowKeys.includes(record.id) ? "selected-row" : ""
-      }
+      rowClassName={(record: Lead) => (selectedRowKeys.includes(record.id) ? "selected-row" : "")}
     />
   );
 };

@@ -16,7 +16,6 @@
 // import { ROUTES_APP } from "../../../routes";
 // import { ArrowLeftOutlined } from "@ant-design/icons";
 // import dayjs from "dayjs";
-// import "./DebtReportDetail.css";
 
 // const { TabPane } = Tabs;
 
@@ -34,7 +33,7 @@
 //   return (
 //     <>
 //       {/* Breadcrumb */}
-//       <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: 16 }}>
+//       <div className="header-container">
 //         <Button icon={<ArrowLeftOutlined />} type="text" onClick={() => navigate(-1)} />
 //         <Breadcrumb
 //           items={[
@@ -62,14 +61,14 @@
 //         {/* Card thông tin chung */}
 //         <Card
 //           title="Thông tin chung"
-//           style={{ marginBottom: 16 }}
+//           className="margin-bottom-16"
 //           extra={
 //             <Form.Item
 //               name="status"
 //               label="Trạng thái báo cáo"
 //               labelCol={{ span: 10 }}
 //               wrapperCol={{ span: 14 }}
-//               style={{ marginBottom: 0 }}
+//               className="margin-bottom-0"
 //             >
 //               <Input />
 //             </Form.Item>
@@ -83,7 +82,7 @@
 //             </Col>
 //             <Col span={12}>
 //               <Form.Item name="reportDate" label="Ngày báo cáo">
-//                 <DatePicker style={{ width: "100%" }} />
+//                 <DatePicker className="full-width" />
 //               </Form.Item>
 //             </Col>
 //             <Col span={12}>
@@ -114,15 +113,15 @@
 //           <Tabs defaultActiveKey="fee">
 //             {/* Tab phí */}
 //             <TabPane tab="Phí" key="fee">
-//               <Card size="small" style={{ marginBottom: 12 }}>
-//                 <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
+//               <Card size="small" className="margin-bottom-16">
+//                 <h3 className="text-bold-margin">
 //                   Phí báo cáo công nợ {`<${report?.reportNo}>`}
 //                 </h3>
 
 //                 <Row gutter={16}>
 //                   <Col span={12}>
 //                     <Form.Item name="exchangeRate" label="Tỉ giá">
-//                       <InputNumber disabled style={{ width: "100%" }} formatter={numberFormatter} />
+//                       <InputNumber disabled className="full-width" formatter={numberFormatter} />
 //                     </Form.Item>
 //                   </Col>
 //                   <Col span={12}>
@@ -130,22 +129,22 @@
 //                   </Col>
 //                   <Col span={12}>
 //                     <Form.Item name="feeUSD" label="Phí USD">
-//                       <InputNumber disabled style={{ width: "100%" }} formatter={numberFormatter} />
+//                       <InputNumber disabled className="full-width" formatter={numberFormatter} />
 //                     </Form.Item>
 //                   </Col>
 //                   <Col span={12}>
 //                     <Form.Item name="feeVND" label="Phí VNĐ">
-//                       <InputNumber disabled style={{ width: "100%" }} formatter={numberFormatter} />
+//                       <InputNumber disabled className="full-width" formatter={numberFormatter} />
 //                     </Form.Item>
 //                   </Col>
 //                   <Col span={12}>
 //                     <Form.Item name="feeNoVAT" label="Phí chưa VAT">
-//                       <InputNumber disabled style={{ width: "100%" }} formatter={numberFormatter} />
+//                       <InputNumber disabled className="full-width" formatter={numberFormatter} />
 //                     </Form.Item>
 //                   </Col>
 //                   <Col span={12}>
 //                     <Form.Item name="feeWithVAT" label="Phí gồm VAT">
-//                       <InputNumber disabled style={{ width: "100%" }} formatter={numberFormatter} />
+//                       <InputNumber disabled className="full-width" formatter={numberFormatter} />
 //                     </Form.Item>
 //                   </Col>
 //                 </Row>
@@ -155,8 +154,8 @@
 //             {/* Tab hóa đơn */}
 //             <TabPane tab="Hóa đơn" key="invoice">
 //               {(report.invoices || []).map((inv, idx) => (
-//                 <Card key={idx} size="small" style={{ marginBottom: 12 }}>
-//                   <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
+//                 <Card key={idx} size="small" className="margin-bottom-16">
+//                   <h3 className="text-bold-margin">
 //                     Hóa đơn báo cáo công nợ {`<${report?.reportNo}>`}
 //                   </h3>
 
@@ -176,7 +175,7 @@
 //                         <InputNumber
 //                           value={inv.rate}
 //                           disabled
-//                           style={{ width: "100%" }}
+//                           className="full-width"
 //                           formatter={numberFormatter}
 //                         />
 //                       </Form.Item>
@@ -186,7 +185,7 @@
 //                         <InputNumber
 //                           value={inv.amountNoVAT}
 //                           disabled
-//                           style={{ width: "100%" }}
+//                           className="full-width"
 //                           formatter={numberFormatter}
 //                         />
 //                       </Form.Item>
@@ -204,7 +203,7 @@
 //                         <InputNumber
 //                           value={inv.totalAmount}
 //                           disabled
-//                           style={{ width: "100%" }}
+//                           className="full-width"
 //                           formatter={numberFormatter}
 //                         />
 //                       </Form.Item>
@@ -217,8 +216,8 @@
 //             {/* Tab thanh toán */}
 //             <TabPane tab="Thanh toán" key="payment">
 //               {(report.payments || []).map((pmt, idx) => (
-//                 <Card key={idx} size="small" style={{ marginBottom: 12 }}>
-//                   <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
+//                 <Card key={idx} size="small" className="margin-bottom-16">
+//                   <h3 className="text-bold-margin">
 //                     Thanh toán báo cáo công nợ {`<${report?.reportNo}>`}
 //                   </h3>
 
@@ -235,7 +234,7 @@
 //                     </Col>
 //                     <Col span={12}>
 //                       <Form.Item label="Số tiền đã thu">
-//                         <InputNumber value={pmt.amount} disabled style={{ width: "100%" }} />
+//                         <InputNumber value={pmt.amount} disabled className="full-width" />
 //                       </Form.Item>
 //                     </Col>
 //                     <Col span={12}>
@@ -255,19 +254,19 @@
 
 //             {/* Tab công nợ */}
 //             <TabPane tab="Công nợ" key="debt">
-//               <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
+//               <h3 className="text-bold-margin">
 //                 Công nợ {`<${report?.reportNo}>`}
 //               </h3>
 
 //               <Row gutter={16}>
 //                 <Col span={12}>
 //                   <Form.Item name="debtNoVAT" label="Số tiền chưa VAT">
-//                     <InputNumber style={{ width: "100%" }} />
+//                     <InputNumber className="full-width" />
 //                   </Form.Item>
 //                 </Col>
 //                 <Col span={12}>
 //                   <Form.Item name="debtWithVAT" label="Số tiền đã VAT">
-//                     <InputNumber style={{ width: "100%" }} />
+//                     <InputNumber className="full-width" />
 //                   </Form.Item>
 //                 </Col>
 //                 <Col span={12}>
@@ -277,12 +276,12 @@
 //                     // labelCol={{ span: 10 }}
 //                     // wrapperCol={{ span: 14 }}
 //                   >
-//                     <InputNumber style={{ width: "100%" }} />
+//                     <InputNumber className="full-width" />
 //                   </Form.Item>
 //                 </Col>
 //                 <Col span={12}>
 //                   <Form.Item name="badDebt" label="Nợ khó đòi">
-//                     <InputNumber style={{ width: "100%" }} />
+//                     <InputNumber className="full-width" />
 //                   </Form.Item>
 //                 </Col>
 //               </Row>
@@ -291,8 +290,8 @@
 //             {/* Tab hoa hồng CTV */}
 //             <TabPane tab="Hoa hồng CTV" key="collaborator">
 //               {(report.collaborators || []).map((ctv, idx) => (
-//                 <Card key={idx} size="small" style={{ marginBottom: 12 }}>
-//                   <h3 style={{ marginBottom: 24, marginLeft: 12, fontWeight: "bold" }}>
+//                 <Card key={idx} size="small" className="margin-bottom-16">
+//                   <h3 className="text-bold-margin">
 //                     Hoa hồng cộng tác viên {`<${report?.reportNo}>`}
 //                   </h3>
 
@@ -312,13 +311,13 @@
 //                         <InputNumber
 //                           value={ctv.commissionRate}
 //                           disabled
-//                           style={{ width: "100%" }}
+//                           className="full-width"
 //                         />
 //                       </Form.Item>
 //                     </Col>
 //                     <Col span={12}>
 //                       <Form.Item label="Số tiền hoa hồng">
-//                         <InputNumber value={ctv.amount} disabled style={{ width: "100%" }} />
+//                         <InputNumber value={ctv.amount} disabled className="full-width" />
 //                       </Form.Item>
 //                     </Col>
 //                     <Col span={12}>
@@ -326,7 +325,7 @@
 //                         <InputNumber
 //                           value={ctv.remainingAmount}
 //                           disabled
-//                           style={{ width: "100%" }}
+//                           className="full-width"
 //                         />
 //                       </Form.Item>
 //                     </Col>

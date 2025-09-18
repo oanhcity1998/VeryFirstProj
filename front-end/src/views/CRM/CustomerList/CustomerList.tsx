@@ -13,7 +13,6 @@ import Search from "antd/es/input/Search";
 import TableCustomer from "@/components/CRM/TableCustomer/TableCustomer";
 import CustomerForm from "@/components/CRM/CustomerForm/CustomerForm";
 import FilterDrawer from "@/components/CRM/Filter/FilterDrawer";
-import "@/index.css";
 
 const CustomerList = () => {
   const navigate = useNavigate();
@@ -181,9 +180,7 @@ const CustomerList = () => {
           console.log("Saved customer:", values);
           setData((prev) =>
             editingCustomer
-              ? prev.map((item) =>
-                item.id === editingCustomer.id ? { ...item, ...values } : item
-              )
+              ? prev.map((item) => (item.id === editingCustomer.id ? { ...item, ...values } : item))
               : [...prev, { ...values, key: String(Date.now()), id: String(Date.now()) }]
           );
           setIsModalOpen(false);

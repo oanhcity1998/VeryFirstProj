@@ -21,7 +21,6 @@ import {
 import { useEffect, useState } from "react";
 import { ArrowLeftOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { ROUTES_APP } from "../../../app/routes";
-import "./OpportunityDetail.css";
 import { fmt } from "@/components/CRM/QuotationForm/QuotationForm";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -178,13 +177,7 @@ const OpportunityDetail = () => {
       align: "center",
       render: (_, record: Activity) => (
         <Button
-          style={{
-            fontSize: 20,
-            display: "block",
-            cursor: "pointer",
-            color: "#1890ff",
-            padding: 8,
-          }}
+          className="base-edit-icon"
           type="link"
           onClick={() => {
             setEditingActivity(record);
@@ -214,12 +207,12 @@ const OpportunityDetail = () => {
     },
     { title: "VAT (%)", dataIndex: "vat" },
     {
-      title: <p style={{ fontWeight: "bold" }}>Giá sau VAT (VND)</p>,
+      title: <p className="font-bolder">Giá sau VAT (VND)</p>,
       dataIndex: "afterVatVND",
       render: (value: number) => fmt(value),
     },
     {
-      title: <p style={{ fontWeight: "bold" }}>Giá sau VAT (USD)</p>,
+      title: <p className="font-bolder">Giá sau VAT (USD)</p>,
       dataIndex: "afterVatUSD",
       render: (value: number) => fmt(value),
     },
@@ -248,9 +241,9 @@ const OpportunityDetail = () => {
   ];
 
   return (
-    <div className="opportunity-detail-container">
+    <div className="detail-container">
       {/* Header */}
-      <div className="opportunity-detail-header">
+      <div className="detail-header">
         <Button
           icon={<ArrowLeftOutlined />}
           type="text"
@@ -282,7 +275,7 @@ const OpportunityDetail = () => {
                 <Button
                   disabled={currentStage > opportunityStages.length - 3}
                   type="primary"
-                  style={{ backgroundColor: "#60A917", borderColor: "#60A917" }}
+                  className="green-btn"
                   onClick={() => {
                     setCurrentStage(opportunityStages.length - 1);
                     setStageClose("Đạt");
@@ -327,7 +320,7 @@ const OpportunityDetail = () => {
             </Button>
           </Popover>
         }
-        style={{ marginBottom: 16 }}
+        className="margin-bottom-16"
       >
         <Steps
           current={currentStage}
@@ -430,18 +423,16 @@ const OpportunityDetail = () => {
               label: "Hoạt động",
               children: (
                 <>
-                  <div
-                    style={{ marginBottom: 16, display: "flex", justifyContent: "space-between" }}
-                  >
+                  <div className="header-container">
                     <h3>Danh sách hoạt động</h3>
 
-                    <Space style={{ marginBottom: 16 }}>
+                    <Space className="margin-bottom-16">
                       {/* Filter type  */}
                       <Select
                         placeholder="Hình thức hoạt động"
                         allowClear
                         onChange={(value) => setFilterMethod(value)}
-                        style={{ width: 150 }}
+                        className="width-150"
                         options={[
                           { value: "Gọi", label: "Gọi" },
                           { value: "Gặp mặt", label: "Gặp mặt" },
@@ -450,7 +441,7 @@ const OpportunityDetail = () => {
 
                       {/* Date picker Filter */}
                       <DatePicker.RangePicker
-                        style={{ height: 32 }}
+                        className="input-height"
                         allowClear
                         placeholder={["Từ gặp mặt ngày", "Đến ngày"]}
                         onChange={(dates) => setFilterDateRange(dates as any)}
@@ -544,7 +535,7 @@ const OpportunityDetail = () => {
                         name="date"
                         rules={[{ required: true, message: "Vui lòng chọn ngày" }]}
                       >
-                        <DatePicker style={{ width: "100%" }} />
+                        <DatePicker className="full-width" />
                       </Form.Item>
 
                       <Form.Item

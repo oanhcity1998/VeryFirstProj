@@ -3,9 +3,158 @@ body,
 .ant-layout,
 #root {
   height: auto;
-  min-height: 100%;
+  min-height: 100vh;
   overflow-y: auto;
 }
+
+.full-iframe {
+  width: 100%;
+  height: 600px;
+  border: none;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.img-container {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+}
+
+.dashed-box {
+  border: 1px dashed #d9d9d9;
+  border-radius: 4px;
+  padding: 32px;
+  text-align: center;
+  color: #999;
+}
+
+.link-container {
+  color: #1890ff;
+  cursor: pointer;
+}
+
+.icon-link {
+  margin-right: 6px;
+}
+
+.summary-box {
+  margin-top: 16px;
+  text-align: right;
+}
+
+.modal-title {
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.form-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  position: sticky;
+}
+
+.modal-scroll .ant-modal-body {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.modal-body-padding .ant-modal-body {
+  padding: 24px;
+}
+
+.range-inputs {
+  display: flex;
+  gap: 8px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+.icon-size {
+  font-size: 20px;
+}
+.base-edit-icon {
+  font-size: 20px;
+  cursor: pointer;
+  color: #1890ff;
+  padding: 8px;
+}
+
+.form-item {
+  margin-bottom: 16px;
+}
+
+.form-item label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 4px; /* cho label cách nhẹ Input */
+}
+
+.text-bold-margin {
+  margin-bottom: 24px;
+  margin-left: 12px;
+  font-weight: bold;
+}
+
+.loading-container {
+  text-align: center;
+  padding: 50px 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 50px 0;
+  color: #888;
+}
+
+.input-height {
+  height: 32px;
+}
+
+.dragger-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 4px;
+  background: #fafafa;
+  padding: 16px;
+}
+
+.upload-drag-icon {
+  color: #1890ff;
+  font-size: 48px;
+}
+
+.upload-text {
+  font-size: 16px;
+  color: #000;
+}
+
+.upload-hint {
+  font-size: 14px;
+  color: #888;
+}
+
+.error-message-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* ================================================ */
 
 .card-title {
   margin: 0;
@@ -24,7 +173,6 @@ body,
   height: auto !important;
   /* khóa chiều cao của input */
 }
-
 
 .loading-icon {
   display: flex;
@@ -50,16 +198,19 @@ body,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
 }
 
 .list-actions {
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
-.search-bar .ant-input {
+.search-bar {
   border-radius: 4px;
   width: 250px;
 }
@@ -68,11 +219,11 @@ body,
   border-radius: 4px;
 }
 
-
 /* Form Card Section Styling */
 .card-section {
   border: 1px solid #d9d9d9;
   border-radius: 6px;
+  margin-bottom: 16px;
 }
 
 .card-section .ant-card-head {
@@ -91,13 +242,9 @@ body,
   overflow: hidden;
 }
 
-.base-table .ant-table-thead>tr>th {
+.base-table .ant-table-thead > tr > th {
   background: #fafafa;
   font-weight: 600;
-}
-
-.base-edit-icon {
-  font-size: 20px;
 }
 
 .selected-row {
@@ -125,8 +272,94 @@ body,
   /* không đậm */
 }
 
+/* ============================================================== */
+.detail-container {
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+}
 
-/* Space Breadcrumb */
-.ant-breadcrumb {
+.detail-header {
+  display: flex;
+  align-items: center;
   margin-bottom: 16px;
+}
+
+.detail-stage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.detail-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.form-row label {
+  width: 160px;
+  font-weight: 500;
+}
+
+.form-row input {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fafafa;
+}
+
+/* segment */
+/* text mặc định */
+.ant-segmented-item-label {
+  color: #595959;
+}
+
+/* active stage */
+.ant-segmented-item-selected * {
+  color: #fff !important;
+}
+.ant-segmented-item-selected {
+  background-color: #1890ff !important;
+  font-weight: 500;
+}
+
+/* Style riêng cho item bị disable trong Segmented */
+.ant-segmented-item-disabled {
+  color: rgba(0, 0, 0, 0.25) !important; /* chữ xám */
+  background-color: #f5f5f5 !important; /* nền xám nhạt */
+  cursor: not-allowed !important; /* con trỏ chuột kiểu cấm */
+  opacity: 0.6; /* mờ hơn */
+  border: none; /* bỏ border nếu muốn */
+}
+
+.filter-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.filter-footer .ant-btn-dangerous {
+  background: #ff4d4f;
+  border-color: #ff4d4f;
+  color: white;
+}
+
+.filter-footer .ant-btn-primary {
+  background: #1677ff;
+  border-color: #1677ff;
+}
+
+.green-btn {
+  /* color: #fff; */
+  background-color: #60a917;
+  border-color: #60a917;
 }

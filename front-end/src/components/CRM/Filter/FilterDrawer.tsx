@@ -1,6 +1,5 @@
 import React from "react";
 import { Drawer, Form, Button, Select } from "antd";
-import "./FilterDrawer.css";
 
 const { Option } = Select;
 
@@ -33,7 +32,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ open, onClose, onConfirm })
       placement="right"
       open={open}
       onClose={onClose as any}
-      width={350}
+      className="width-350"
       footer={
         <div className="filter-footer">
           <Button danger onClick={onClose as any}>

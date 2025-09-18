@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Modal, Form, Input, Button, Upload, Select, Row, Col, Card, FormInstance } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import "@/index.css";
 
 const { Option } = Select;
 
@@ -61,8 +60,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
           {saveText}
         </Button>,
       ]}
-      width={1100}
-      style={{ top: 20 }}
+      className="width-1100 top-20"
     >
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Row gutter={16} align="stretch">
