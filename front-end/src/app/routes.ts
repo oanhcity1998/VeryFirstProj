@@ -31,7 +31,9 @@ export const ROUTES_APP = {
     departmentList: "/hrm/department-list",
     assetList: "/hrm/asset-list",
     assetDetail: "/hrm/asset-list/:id",
-    proposalTemplateList: "/hrm/proposals",
-    proposalTemplateDetail: "/hrm/proposals/:id",
+    proposalTemplateList: "/hrm/proposals-template",
+    proposalTemplateDetail: "/hrm/proposals-template/:id",
+    proposalList: "/hrm/proposals",
+    proposalDetail: "/hrm/proposals/:id"
   },
 };

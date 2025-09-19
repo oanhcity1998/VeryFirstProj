@@ -28,6 +28,9 @@ import AssetDetail from "./views/HRM/AssetDetail/AssetDetail";
 import DebtReportList from "./views/CRM/DebtReportList/DebtReportList";
 import DebtReportDetail from "./views/CRM/DebtReportDetail/DebtReportDetail";
 import ProposalTemplateList from "./views/HRM/ProposalTemplateList/ProposalTemplateList";
+import ProposalList from "./views/HRM/ProposalList/ProposalList";
+// import ProposalDetail 
+
 import Login from "./views/public/Login/Login";
 import EmployeeList from "./views/HRM/EmployeeList/EmployeeList";
 import { ConfigProvider } from "antd";
@@ -112,6 +115,13 @@ export default function App() {
               path={ROUTES_APP.hrm.proposalTemplateDetail}
               element={<ProposalTemplateDetail />}
             />
+
+            {/* Đề xuất */}
+            <Route path={ROUTES_APP.hrm.proposalList} element={<ProposalList />} />
+            {/* <Route
+              path={ROUTES_APP.hrm.proposalDetail}
+              element={<ProposalDetail />}
+            /> */}
           </Route>
           {/* </Route> */}
 

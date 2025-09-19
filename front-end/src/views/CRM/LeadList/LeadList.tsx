@@ -221,7 +221,7 @@ const LeadList: React.FC = () => {
             selectedRowKeys={selectedRowKeys}
             setSelectedRowKeys={setSelectedRowKeys}
             onEdit={handleEdit}
-            onRowClick={handleRowClick}
+            // onRowClick={handleRowClick}
             loading={false}
           />
           <div className="pagination-container">

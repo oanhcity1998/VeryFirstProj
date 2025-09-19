@@ -30,6 +30,7 @@ const TableLead: React.FC<TableLeadProps> = ({
   selectedRowKeys = [],
   setSelectedRowKeys,
   onEdit,
+  
   loading = false,
 }) => {
   const navigate = useNavigate();
