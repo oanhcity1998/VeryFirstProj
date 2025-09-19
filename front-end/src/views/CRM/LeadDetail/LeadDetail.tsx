@@ -11,6 +11,8 @@ import {
   Modal,
   Input,
   Checkbox,
+  Row,
+  Col,
 } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ROUTES_APP } from "../../../app/routes";
@@ -48,10 +50,13 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({ op
       ]}
     >
       <Card>
-        {/* Khách hàng */}
-        <div className="option-row">
-          <h3 className="option-label">Khách hàng</h3>
-          <Checkbox checked={customerOption === "new"} onChange={() => setCustomerOption("new")}>
+      {/* Khách hàng */}
+      <Row className="option-row">
+        <h3 className="option-label">Khách hàng</h3>
+          <Checkbox
+            checked={customerOption === "new"}
+            onChange={() => setCustomerOption("new")}
+          >
             Tạo mới
           </Checkbox>
           <Checkbox
@@ -60,21 +65,22 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({ op
           >
             Cập nhật
           </Checkbox>
-        </div>
+      </Row>
 
-        {customerOption === "new" && (
-          <Card>
-            <Form.Item label="Tên khách hàng">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Số điện thoại">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Email">
-              <Input />
-            </Form.Item>
-          </Card>
-        )}
+      {customerOption === "new" && (
+        <Card>
+          <Form layout="horizontal" 
+            labelCol={{ span: 8 }} 
+            wrapperCol={{ span: 16 }} 
+            labelAlign="left" 
+            className="convert-form"
+            >
+              <Form.Item label="Tên khách hàng"><Input /></Form.Item>
+              <Form.Item label="Số điện thoại"><Input /></Form.Item>
+              <Form.Item label="Email"><Input /></Form.Item>
+          </Form>
+        </Card>
+      )}
 
         {customerOption === "update" && (
           <Card className="update-card">
@@ -98,19 +104,20 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({ op
           </Checkbox>
         </div>
 
-        {contactOption === "new" && (
-          <Card>
-            <Form.Item label="Tên liên hệ">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Số điện thoại">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Email">
-              <Input />
-            </Form.Item>
-          </Card>
-        )}
+      {contactOption === "new" && (
+        <Card>
+          <Form layout="horizontal" 
+            labelCol={{ span: 8 }} 
+            wrapperCol={{ span: 16 }} 
+            labelAlign="left" 
+            className="convert-form"
+            >
+              <Form.Item label="Tên liên hệ"><Input /></Form.Item>
+              <Form.Item label="Số điện thoại"><Input /></Form.Item>
+              <Form.Item label="Email"><Input /></Form.Item>
+          </Form>
+        </Card>
+      )}
 
         {contactOption === "update" && (
           <Card className="update-card">
@@ -137,16 +144,19 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({ op
           </Checkbox>
         </div>
 
-        {opportunityOption === "new" && (
-          <Card>
-            <Form.Item label="Tên cơ hội">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Giai đoạn">
-              <Select options={[{ value: "Mới", label: "Mới" }]} />
-            </Form.Item>
-          </Card>
-        )}
+      {opportunityOption === "new" && (
+        <Card>
+          <Form layout="horizontal" 
+            labelCol={{ span: 8 }} 
+            wrapperCol={{ span: 16 }} 
+            labelAlign="left" 
+            className="convert-form"
+            >
+              <Form.Item label="Tên cơ hội"><Input /></Form.Item>
+              <Form.Item label="Giai đoạn"><Select options={[{ value: "Mới", label: "Mới" }]} /></Form.Item>
+          </Form>
+        </Card>
+      )}
 
         {opportunityOption === "update" && (
           <Card className="update-card">

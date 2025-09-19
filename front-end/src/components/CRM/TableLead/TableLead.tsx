@@ -30,6 +30,7 @@ const TableLead: React.FC<TableLeadProps> = ({
   selectedRowKeys = [],
   setSelectedRowKeys,
   onEdit,
+  
   loading = false,
 }) => {
   const navigate = useNavigate();
@@ -71,7 +72,7 @@ const TableLead: React.FC<TableLeadProps> = ({
       ),
     },
     {
-      title: "Tên lead",
+      title: "Tên khách hàng tiềm năng",
       dataIndex: "leadName",
       key: "leadName",
       width: 150,

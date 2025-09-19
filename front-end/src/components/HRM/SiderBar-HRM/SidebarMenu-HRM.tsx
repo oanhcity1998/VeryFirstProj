@@ -66,6 +66,11 @@ const SidebarMenuHRM: React.FC<SidebarMenuHRMProps> = ({ collapsed }) => {
       icon: <NotificationOutlined />,
       label: <Link to={ROUTES_APP.hrm.proposalTemplateList}>Mẫu đề xuất</Link>,
     },
+    {
+      key: "7",
+      icon: <NotificationOutlined />,
+      label: <Link to={ROUTES_APP.hrm.proposalList}>Đề xuất</Link>,
+    },
   ];
 
   return (

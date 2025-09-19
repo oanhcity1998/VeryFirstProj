@@ -1,6 +1,6 @@
 import { ROUTES_APP } from "./app/routes";
 import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom";
-import MainLayout from "@/layouts/MainLayout/mainLayout";
+import MainLayout from "@/components/layouts/mainLayout";
 import Home from "./views/public/Home/Home";
 import CustomerList from "./views/CRM/CustomerList/CustomerList";
 import CustomerDetail from "./views/CRM/CustomerDetail/CustomerDetail";
@@ -28,20 +28,28 @@ import AssetDetail from "./views/HRM/AssetDetail/AssetDetail";
 import DebtReportList from "./views/CRM/DebtReportList/DebtReportList";
 import DebtReportDetail from "./views/CRM/DebtReportDetail/DebtReportDetail";
 import ProposalTemplateList from "./views/HRM/ProposalTemplateList/ProposalTemplateList";
+import ProposalList from "./views/HRM/ProposalList/ProposalList";
+// import ProposalDetail 
+
 import Login from "./views/public/Login/Login";
 import EmployeeList from "./views/HRM/EmployeeList/EmployeeList";
 import { ConfigProvider } from "antd";
 import viVN from "antd/es/locale/vi_VN";
 import ProposalTemplateDetail from "./views/HRM/ProposalTemplateDetail/ProposalTemplateDetail";
+import { NotFound } from "./views/public/NotFound/NotFound";
+import { NotAuthenticated } from "./views/public/NotAuthenticated/NotAuthenticated";
+import ProtectedRoute from "./components/routing/ProtectedRoute";
 
 export default function App() {
   return (
     <ConfigProvider locale={viVN}>
       <BrowserRouter>
-        <Routes>
+        <Routes >
           <Route path={ROUTES_APP.login} element={<Login />} />
           <Route path={ROUTES_APP.home} element={<Home />} />
+          <Route path={ROUTES_APP.notAuthenticated} element={<NotAuthenticated />} />
 
+          {/* <Route element={<ProtectedRoute />}> */}
           <Route element={<MainLayout />}>
             <Route path={ROUTES_APP.profile} element={<Profile />} />
 
@@ -107,9 +115,19 @@ export default function App() {
               path={ROUTES_APP.hrm.proposalTemplateDetail}
               element={<ProposalTemplateDetail />}
             />
+
+            {/* Đề xuất */}
+            <Route path={ROUTES_APP.hrm.proposalList} element={<ProposalList />} />
+            {/* <Route
+              path={ROUTES_APP.hrm.proposalDetail}
+              element={<ProposalDetail />}
+            /> */}
           </Route>
+          {/* </Route> */}
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
-    </ConfigProvider>
+    </ConfigProvider >
   );
 }

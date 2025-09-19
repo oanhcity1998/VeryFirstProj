@@ -2,6 +2,7 @@ export const ROUTES_APP = {
   login: "/login",
   profile: "/profile",
   home: "/",
+  notAuthenticated: "/notauthenticated",
   crm: {
     homeCRM: "/crm/home",
     customerList: "/crm/customerlist",
@@ -23,14 +24,16 @@ export const ROUTES_APP = {
     debtReportDetail: "/crm/debtReportList/:id",
   },
   hrm: {
-    homeHRM: "hrm/home",
+    homeHRM: "/hrm/home",
     employeeList: "/hrm/employee-list",
     employeeDetail: "/hrm/employee-list/:id",
     positionList: "/hrm/position-list",
     departmentList: "/hrm/department-list",
     assetList: "/hrm/asset-list",
     assetDetail: "/hrm/asset-list/:id",
-    proposalTemplateList: "/hrm/proposals",
-    proposalTemplateDetail: "/hrm/proposals/:id",
+    proposalTemplateList: "/hrm/proposals-template",
+    proposalTemplateDetail: "/hrm/proposals-template/:id",
+    proposalList: "/hrm/proposals",
+    proposalDetail: "/hrm/proposals/:id"
   },
 };
