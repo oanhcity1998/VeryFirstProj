@@ -11,6 +11,8 @@ import {
   Modal,
   Input,
   Checkbox,
+  Row,
+  Col,
 } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -49,10 +51,13 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({ op
       ]}
     >
       <Card>
-        {/* Khách hàng */}
-        <div className="option-row">
-          <h3 className="option-label">Khách hàng</h3>
-          <Checkbox checked={customerOption === "new"} onChange={() => setCustomerOption("new")}>
+      {/* Khách hàng */}
+      <Row className="option-row">
+        <h3 className="option-label">Khách hàng</h3>
+          <Checkbox
+            checked={customerOption === "new"}
+            onChange={() => setCustomerOption("new")}
+          >
             Tạo mới
           </Checkbox>
           <Checkbox
@@ -61,7 +66,7 @@ const ConvertLeadModal: React.FC<{ open: boolean; onClose: () => void }> = ({ op
           >
             Cập nhật
           </Checkbox>
-        </div>
+      </Row>
 
         {customerOption === "new" && (
           <Card>

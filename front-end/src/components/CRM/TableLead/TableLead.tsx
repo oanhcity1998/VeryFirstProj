@@ -71,7 +71,7 @@ const TableLead: React.FC<TableLeadProps> = ({
       ),
     },
     {
-      title: "Tên lead",
+      title: "Tên khách hàng tiềm năng",
       dataIndex: "leadName",
       key: "leadName",
       width: 150,
