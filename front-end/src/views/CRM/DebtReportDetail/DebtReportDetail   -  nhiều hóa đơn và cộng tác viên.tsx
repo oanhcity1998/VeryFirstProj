@@ -14,7 +14,6 @@
 // } from "antd";
 // import { DebtReport, mockDebtReportData } from "../DebtReportList/DebtReportList";
 // import { ROUTES_APP } from "../../../routes";
-// import { ArrowLeftOutlined } from "@ant-design/icons";
 // import dayjs from "dayjs";
 
 // const { TabPane } = Tabs;
@@ -34,7 +33,6 @@
 //     <>
 //       {/* Breadcrumb */}
 //       <div className="header-container">
-//         <Button icon={<ArrowLeftOutlined />} type="text" onClick={() => navigate(-1)} />
 //         <Breadcrumb
 //           items={[
 //             { title: <Link to={ROUTES_APP.crm.debtReportList}>Danh sách báo cáo công nợ</Link> },

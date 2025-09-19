@@ -13,7 +13,6 @@ import {
   Checkbox,
 } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeftOutlined } from "@ant-design/icons";
 import { ROUTES_APP } from "../../../app/routes";
 
 // Định nghĩa kiểu Activity
@@ -211,12 +210,6 @@ const LeadDetail: React.FC = () => {
   return (
     <div className="detail-container">
       <div className="detail-header">
-        <Button
-          icon={<ArrowLeftOutlined />}
-          type="text"
-          onClick={() => navigate(-1)}
-          className="back-button"
-        />
         <Breadcrumb className="detail-breadcrumb" separator=">">
           <Breadcrumb.Item>
             <Link to={ROUTES_APP.crm.leadList}>Danh sách khách hàng tiềm năng</Link>
@@ -268,8 +261,10 @@ const LeadDetail: React.FC = () => {
         />
       </Card>
 
-      <Card className="detail-content">
-        <div className="detail-title">Chi tiết {lead.leadName}</div>
+      <Card
+        className="detail-content"
+        title={<h2 className="card-title">Chi tiết khách hàng tiềm năng: {lead.leadName}</h2>}
+      >
         <div className="detail-form">
           <div className="form-row first-row">
             <label>Tên khách hàng tiềm năng:</label>

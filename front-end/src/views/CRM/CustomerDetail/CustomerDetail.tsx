@@ -383,7 +383,9 @@ export default function CustomerDetail() {
 
   return (
     <>
-      <Breadcrumb className="breadcrumb" items={breadcrumbItems} separator=">" />
+      <div className="detail-header">
+        <Breadcrumb className="breadcrumb" items={breadcrumbItems} separator=">" />
+      </div>
       <Card
         className="card-section"
         title={<h2 className="card-title">Chi tiết khách hàng: {customer.name}</h2>}

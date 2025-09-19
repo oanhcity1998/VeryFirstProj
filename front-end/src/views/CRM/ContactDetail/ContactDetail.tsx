@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Breadcrumb, Button, Card } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeftOutlined } from "@ant-design/icons";
 import { ROUTES_APP } from "../../../app/routes";
 import { getContact, getContacts } from "../ContactList/contactService";
 import { Contact } from "@/components/CRM/TableContact/TableContact";
@@ -39,12 +38,6 @@ const ContactDetail: React.FC = () => {
   return (
     <div className="detail-container">
       <div className="detail-header">
-        <Button
-          icon={<ArrowLeftOutlined />}
-          type="text"
-          onClick={() => navigate(-1)}
-          className="back-button"
-        />
         <Breadcrumb
           className="detail-breadcrumb"
           separator=">"
@@ -59,9 +52,7 @@ const ContactDetail: React.FC = () => {
         />
       </div>
 
-      <Card>
-        <div className="detail-title">Chi tiết {contact?.contactName}</div>
-
+      <Card title={<h2 className="card-title">Chi tiết liên hệ: {contact?.contactName}</h2>}>
         <div className="detail-form">
           <div className="form-row first-row">
             <label>Tên liên hệ:</label>

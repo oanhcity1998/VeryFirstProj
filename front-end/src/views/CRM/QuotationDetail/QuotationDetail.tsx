@@ -12,7 +12,6 @@ import {
   Space,
 } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeftOutlined } from "@ant-design/icons";
 import { ROUTES_APP } from "../../../app/routes";
 import Input from "antd/es/input/Input";
 import TextArea from "antd/es/input/TextArea";
@@ -75,24 +74,21 @@ const QuotationDetail: React.FC = () => {
   return (
     <Card className="detail-container" bordered={false}>
       {/* Header */}
-      <Space>
-        <Button
-          icon={<ArrowLeftOutlined />}
-          type="text"
-          onClick={() => navigate(-1)}
-          className="back-button"
-        />
+      <div className="detail-header">
         <Breadcrumb className="detail-breadcrumb" separator=">">
           <Breadcrumb.Item>
             <Link to={ROUTES_APP.crm.quotationList}>Danh sách mẫu báo giá</Link>
           </Breadcrumb.Item>
           <Breadcrumb.Item>{quotation.quotationName}</Breadcrumb.Item>
         </Breadcrumb>
-      </Space>
+      </div>
 
-      <Card className="margin-y-24">
+      <Card
+        title={<h2 className="card-title">Thông tin chi tiết mẫu báo giá</h2>}
+        className="margin-y-24"
+      >
         {/* Thông tin chung */}
-        <h3>Thông tin chi tiết mẫu báo giá</h3>
+
         <Form
           layout="horizontal"
           initialValues={quotation}
@@ -123,7 +119,7 @@ const QuotationDetail: React.FC = () => {
           </Form.Item>
         </Form>
 
-        <Divider />
+        <Divider size="small" />
         {/* Danh sách sản phẩm */}
         <h3>Danh sách sản phẩm</h3>
         <Table

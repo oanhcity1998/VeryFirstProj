@@ -76,13 +76,15 @@ const AssetDetail: React.FC = () => {
 
   return (
     <div className="asset-detail-container">
-      <Breadcrumb>
-        <Breadcrumb.Item>
-          <Link to={ROUTES_APP.hrm.assetList}>Danh sách tài sản</Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>Chi tiết tài sản</Breadcrumb.Item>
-        <Breadcrumb.Item>{asset.name}</Breadcrumb.Item>
-      </Breadcrumb>
+      <div className="detail-header">
+        <Breadcrumb>
+          <Breadcrumb.Item>
+            <Link to={ROUTES_APP.hrm.assetList}>Danh sách tài sản</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Chi tiết tài sản</Breadcrumb.Item>
+          <Breadcrumb.Item>{asset.name}</Breadcrumb.Item>
+        </Breadcrumb>
+      </div>
 
       <Row gutter={16}>
         <Col span={24}>

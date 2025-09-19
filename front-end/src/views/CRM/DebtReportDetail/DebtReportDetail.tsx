@@ -14,7 +14,6 @@ import {
   Space,
 } from "antd";
 import { ROUTES_APP } from "../../../app/routes";
-import { ArrowLeftOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { mockDebtReportData } from "../DebtReportList/DebtReportList";
 
@@ -34,8 +33,7 @@ const DebtReportDetail = () => {
   return (
     <>
       {/* Breadcrumb */}
-      <Space>
-        <Button icon={<ArrowLeftOutlined />} type="text" onClick={() => navigate(-1)} />
+      <div className="detail-header">
         <Breadcrumb
           items={[
             { title: <Link to={ROUTES_APP.crm.debtReportList}>Danh sách báo cáo công nợ</Link> },
@@ -44,7 +42,7 @@ const DebtReportDetail = () => {
           ]}
           separator=">"
         />
-      </Space>
+      </div>
 
       <Form
         form={form}
@@ -110,7 +108,7 @@ const DebtReportDetail = () => {
         </Card>
 
         {/* Tabs */}
-        <Card>
+        <Card title={<h2 className="card-title">Thông tin chi tiết</h2>}>
           <Tabs defaultActiveKey="fee">
             {/* Tab phí */}
             <TabPane tab="Phí" key="fee">

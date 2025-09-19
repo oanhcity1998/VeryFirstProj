@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Input, Table, Button, Row, Col, Modal, Breadcrumb, Card, Typography, Space } from "antd";
 import { Link } from "react-router-dom";
-import { ArrowLeftOutlined } from "@ant-design/icons";
 import { ROUTES_APP } from "../../../app/routes";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
@@ -116,11 +115,10 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
   };
 
   return (
-    <div className="detail">
+    <>
       {/* Header */}
       <div className="detail-header">
-        <Button icon={<ArrowLeftOutlined />} type="text" onClick={onBack} className="back-button" />
-        <Breadcrumb className="detail-title" separator=">">
+        <Breadcrumb separator=">">
           <Breadcrumb.Item>
             <Link to={ROUTES_APP.crm.contractList}>Danh sách hợp đồng & cơ hội</Link>
           </Breadcrumb.Item>
@@ -129,7 +127,7 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
       </div>
 
       {/* Card wrapper */}
-      <Card title={title} className="margin-top-16">
+      <Card title={<h2 className="card-title">{title}</h2>} className="margin-top-16">
         <Row gutter={24} className="form-grid">
           <Col span={12}>
             <FormItem label="Mã hợp đồng" value="AF25_BG1" />
@@ -212,7 +210,7 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
       >
         {pdfUrl && <iframe src={pdfUrl} title="PDF Preview" className="full-iframe" />}
       </Modal>
-    </div>
+    </>
   );
 };
 

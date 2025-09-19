@@ -19,7 +19,7 @@ import {
   Input,
 } from "antd";
 import { useEffect, useState } from "react";
-import { ArrowLeftOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
 import { ROUTES_APP } from "../../../app/routes";
 import { fmt } from "@/components/CRM/QuotationForm/QuotationForm";
 import dayjs from "dayjs";
@@ -244,12 +244,6 @@ const OpportunityDetail = () => {
     <div className="detail-container">
       {/* Header */}
       <div className="detail-header">
-        <Button
-          icon={<ArrowLeftOutlined />}
-          type="text"
-          onClick={() => navigate(-1)}
-          className="back-button"
-        />
         <Breadcrumb separator=">">
           <Breadcrumb.Item>
             <Link to={ROUTES_APP.crm.opportunityList}>Danh sách cơ hội</Link>
@@ -332,7 +326,7 @@ const OpportunityDetail = () => {
         />
       </Card>
 
-      <Card>
+      <Card title="Chi tiết cơ hội">
         {/* Tabs */}
         <Tabs
           defaultActiveKey="general"
@@ -494,7 +488,11 @@ const OpportunityDetail = () => {
 
                   <Modal
                     open={isModalOpen}
-                    title={editingActivity ? "Sửa hoạt động" : "Thêm hoạt động"}
+                    title={
+                      <h2 className="card-title">
+                        editingActivity ? "Sửa hoạt động" : "Thêm hoạt động"
+                      </h2>
+                    }
                     onCancel={() => {
                       setIsModalOpen(false);
                       setEditingActivity(null);

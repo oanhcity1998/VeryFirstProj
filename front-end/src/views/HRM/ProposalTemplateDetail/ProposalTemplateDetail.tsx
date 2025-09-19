@@ -16,13 +16,15 @@ const ProposalTemplateDetail: React.FC = () => {
   return (
     <>
       {/* Header */}
-      <Breadcrumb>
-        <Breadcrumb.Item>
-          <Link to={ROUTES_APP.hrm.proposalTemplateList}>Danh sách mẫu đề xuất</Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>Chi tiết mẫu đề xuất</Breadcrumb.Item>
-        <Breadcrumb.Item>{proposal?.name}</Breadcrumb.Item>
-      </Breadcrumb>
+      <div className="detail-header">
+        <Breadcrumb>
+          <Breadcrumb.Item>
+            <Link to={ROUTES_APP.hrm.proposalTemplateList}>Danh sách mẫu đề xuất</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Chi tiết mẫu đề xuất</Breadcrumb.Item>
+          <Breadcrumb.Item>{proposal?.name}</Breadcrumb.Item>
+        </Breadcrumb>
+      </div>
 
       <Card
         className="card-section"
@@ -54,9 +56,7 @@ const ProposalTemplateDetail: React.FC = () => {
 
             <Form.Item label="Trạng thái" name="status">
               <Select>
-                <Select.Option>
-                  status
-                </Select.Option>
+                <Select.Option>status</Select.Option>
               </Select>
             </Form.Item>
           </Card>

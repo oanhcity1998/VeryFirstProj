@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Input, Table, Button, Row, Col, Modal, Breadcrumb, Card, Typography, Space } from "antd";
 import { Link } from "react-router-dom";
-import { ArrowLeftOutlined } from "@ant-design/icons";
 
 import ReactDOM from "react-dom/client";
 import QuotePDF from "@/components/CRM/QuotePDF/QuotePDF";
@@ -75,8 +74,7 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
   return (
     <div>
       {/* Header */}
-      <div>
-        <Button icon={<ArrowLeftOutlined />} type="text" onClick={onBack} className="back-button" />
+      <div className="detail-header">
         <Breadcrumb separator=">">
           <Breadcrumb.Item>
             <Link to={ROUTES_APP.crm.quoteList}>Danh sách báo giá</Link>
@@ -86,7 +84,7 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
       </div>
 
       {/* Card wrapper */}
-      <Card title={title} className="margin-top-16">
+      <Card title={<h2 className="card-title">{title}</h2>} className="margin-top-16">
         <Row gutter={24} className="form-grid">
           <Col span={12}>
             <FormItem label="Mã báo giá" value="AF25_BG1" />
@@ -124,7 +122,7 @@ const QuoteDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", loai
       {/* Products card */}
       <Card title="Danh sách sản phẩm" className="margin-top-16">
         <Table dataSource={products} columns={columns} pagination={false} bordered />
-        <div className="totals" className="margin-top-16">
+        <div className="totals margin-top-16">
           <p>Tổng giá trước VAT (VND): {totalVND.toLocaleString("vi-VN")}</p>
           <p>Tổng giá trước VAT (USD): {totalUSD}</p>
           <p>Tổng giá sau VAT (VND): {totalVNDWithVAT.toLocaleString("vi-VN")}</p>

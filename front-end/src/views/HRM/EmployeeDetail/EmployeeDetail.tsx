@@ -70,13 +70,15 @@ const EmployeeDetail: React.FC = () => {
 
   return (
     <>
-      <Breadcrumb>
-        <Breadcrumb.Item>
-          <Link to={ROUTES_APP.hrm.employeeList}>Danh sách nhân sự</Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>Chi tiết nhân sự</Breadcrumb.Item>
-        <Breadcrumb.Item>{profile.name}</Breadcrumb.Item>
-      </Breadcrumb>
+      <div className="detail-header">
+        <Breadcrumb>
+          <Breadcrumb.Item>
+            <Link to={ROUTES_APP.hrm.employeeList}>Danh sách nhân sự</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Chi tiết nhân sự</Breadcrumb.Item>
+          <Breadcrumb.Item>{profile.name}</Breadcrumb.Item>
+        </Breadcrumb>
+      </div>
 
       <Row gutter={16}>
         <Col span={24}>
