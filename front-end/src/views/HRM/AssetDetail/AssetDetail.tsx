@@ -75,7 +75,7 @@ const AssetDetail: React.FC = () => {
   if (!asset) return <div>Đang tải...</div>;
 
   return (
-    <div className="asset-detail-container">
+    <>
       <Breadcrumb>
         <Breadcrumb.Item>
           <Link to={ROUTES_APP.hrm.assetList}>Danh sách tài sản</Link>
@@ -167,7 +167,7 @@ const AssetDetail: React.FC = () => {
           </Card>
         </Col>
       </Row>
-    </div>
+    </>
   );
 };
 

@@ -1,7 +1,9 @@
-import { Table, Checkbox, Button, Tooltip } from "antd";
+import React from "react";
+import { Button, Space, Table, Typography } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
-import { useNavigate, generatePath, Link } from "react-router-dom";
-import { ColumnsType } from "antd/es/table";
+import { useNavigate, generatePath } from "react-router-dom";
+import { Key } from "antd/lib/table/interface";
 import { ROUTES_APP } from "@/app/routes";
 
 interface Lead {
@@ -19,156 +21,145 @@ interface Lead {
 
 interface TableLeadProps {
   data?: Lead[];
-  selectedRowKeys?: string[];
-  setSelectedRowKeys: (keys: string[]) => void;
+  selectedRowKeys?: Key[];
+  setSelectedRowKeys?: (keys: Key[]) => void;
   onEdit?: (record: Lead) => void;
+  onShowClick?: (record: Lead) => void;
   loading?: boolean;
+  selectable?: boolean;
 }
 
 const TableLead: React.FC<TableLeadProps> = ({
   data = [],
-  selectedRowKeys = [],
+  selectedRowKeys,
   setSelectedRowKeys,
   onEdit,
+  onShowClick,
   loading = false,
+  selectable = true,
 }) => {
   const navigate = useNavigate();
-  const allKeys = data.map((item) => item.id);
-  const isAllChecked = selectedRowKeys.length === data.length && data.length > 0;
-  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
+
+  const handleEdit = (record: Lead) => {
+    if (onEdit) {
+      onEdit(record);
+    }
+  };
 
   const columns: ColumnsType<Lead> = [
-    {
-      title: (
-        <Checkbox
-          indeterminate={isIndeterminate}
-          checked={isAllChecked}
-          onChange={(e) => {
-            if (e.target.checked) {
-              setSelectedRowKeys(allKeys);
-            } else {
-              setSelectedRowKeys([]);
-            }
-          }}
-          disabled={data.length === 0}
-        />
-      ),
-      dataIndex: "option",
-      width: 60,
-      fixed: "left",
-      align: "center",
-      render: (_: any, record: Lead) => (
-        <Checkbox
-          checked={selectedRowKeys.includes(record.id)}
-          onChange={(e) => {
-            if (e.target.checked) {
-              setSelectedRowKeys([...selectedRowKeys, record.id]);
-            } else {
-              setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.id));
-            }
-          }}
-        />
-      ),
-    },
     {
       title: "Tên lead",
       dataIndex: "leadName",
       key: "leadName",
+      align: "center" as const,
       width: 150,
-      fixed: "left",
-      align: "center",
+      fixed: "left" as const,
       render: (text: string, record: Lead) => (
-        <Link to={generatePath(ROUTES_APP.crm.leadDetail, { id: record.id })}>{text}</Link>
+        <Typography.Link
+          className="contact-link"
+          onClick={() => {
+            if (onShowClick) {
+              onShowClick(record);
+            } else {
+              navigate(generatePath(ROUTES_APP.crm.leadDetail, { id: record.id }));
+            }
+          }}
+        >
+          {text}
+        </Typography.Link>
       ),
     },
     {
       title: "Tên liên hệ",
       dataIndex: "contactName",
       key: "contactName",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     {
       title: "Số điện thoại",
       dataIndex: "phone",
       key: "phone",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     {
       title: "Ưu tiên",
       dataIndex: "priority",
       key: "priority",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     {
       title: "Nhân viên phụ trách",
       dataIndex: "owner",
       key: "owner",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     {
       title: "Giai đoạn",
       dataIndex: "status",
       key: "status",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     {
       title: "Ngày cập nhật",
       dataIndex: "updatedAt",
       key: "updatedAt",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     {
       title: "",
       key: "action",
       width: 60,
-      fixed: "right",
-      align: "center",
+      align: "center" as const,
       render: (_: any, record: Lead) => (
-        <Tooltip title="Chỉnh sửa">
+        <Space size="middle">
           <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit?.(record);
-            }}
             className="base-edit-icon"
+            type="link"
+            onClick={() => handleEdit(record)}
+            icon={<EditOutlined />}
           />
-        </Tooltip>
+        </Space>
       ),
     },
   ];
 
   return (
     <Table
+      {...(selectable && setSelectedRowKeys
+        ? {
+          rowSelection: {
+            selectedRowKeys,
+            onChange: (keys: Key[]) => setSelectedRowKeys(keys),
+          },
+        }
+        : {})}
       className="base-table"
       columns={columns}
       dataSource={data}
       loading={loading}
       pagination={false}
       rowKey="id"
-      scroll={{ x: 1000 }}
-      rowClassName={(record: Lead) => (selectedRowKeys.includes(record.id) ? "selected-row" : "")}
+      scroll={{ x: "max-content" }}
     />
   );
 };

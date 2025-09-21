@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { Table, Checkbox, Button } from "antd";
+import React from "react";
+import { Button, Space, Table, Typography } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
-
-import { generatePath, Link } from "react-router-dom";
+import { generatePath, useNavigate } from "react-router-dom";
+import { Key } from "antd/lib/table/interface";
 import { ROUTES_APP } from "@/app/routes";
 
 interface Asset {
@@ -18,142 +19,130 @@ interface Asset {
 
 interface TableAssetProps {
   data?: Asset[];
-  selectedRowKeys?: string[];
-  setSelectedRowKeys: (keys: string[]) => void;
+  selectedRowKeys?: Key[];
+  setSelectedRowKeys?: (keys: Key[]) => void;
   onEdit?: (record: Asset) => void;
+  onShowClick?: (record: Asset) => void;
+  selectable?: boolean;
 }
 
 const TableAsset: React.FC<TableAssetProps> = ({
   data = [],
-  selectedRowKeys = [],
+  selectedRowKeys,
   setSelectedRowKeys,
   onEdit,
+  onShowClick,
+  selectable = true,
 }) => {
-  const allKeys = data.map((item) => item.key);
-  const isAllChecked = selectedRowKeys.length === data.length;
-  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
-
-  const [assetData, setAssetData] = useState<Asset[]>([...data]);
+  const navigate = useNavigate();
 
   const handleEdit = (record: Asset) => {
-    if (onEdit) onEdit(record);
+    if (onEdit) {
+      onEdit(record);
+    }
   };
 
-  const columns = [
-    {
-      title: (
-        <Checkbox
-          indeterminate={isIndeterminate}
-          checked={isAllChecked}
-          onChange={(e: { target: { checked: boolean } }) => {
-            if (e.target.checked) {
-              setSelectedRowKeys(allKeys);
-            } else {
-              setSelectedRowKeys([]);
-            }
-          }}
-        />
-      ),
-      dataIndex: "option",
-      width: 60,
-      fixed: "left" as const,
-      align: "center" as const,
-      render: (_: any, record: Asset) => (
-        <Checkbox
-          checked={selectedRowKeys.includes(record.key)}
-          onChange={(e: { target: { checked: boolean } }) => {
-            if (e.target.checked) {
-              setSelectedRowKeys([...selectedRowKeys, record.key]);
-            } else {
-              setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.key));
-            }
-          }}
-        />
-      ),
-    },
+  const columns: ColumnsType<Asset> = [
     {
       title: "Mã tài sản",
       dataIndex: "id",
       key: "id",
-      fixed: "left" as const,
+      align: "center",
       width: 150,
-      align: "center" as const,
+      fixed: "left",
     },
     {
       title: "Tên tài sản",
       dataIndex: "name",
       key: "name",
+      align: "center",
       width: 150,
-      align: "center" as const,
+      fixed: "left",
       render: (text: string, record: Asset) => (
-        <Link to={generatePath(ROUTES_APP.hrm.assetDetail, { id: record.id })}>{text}</Link>
+        <Typography.Link
+          className="contact-link"
+          onClick={() => {
+            if (onShowClick) {
+              onShowClick(record);
+            } else {
+              navigate(generatePath(ROUTES_APP.hrm.assetDetail, { id: record.id }));
+            }
+          }}
+        >
+          {text}
+        </Typography.Link>
       ),
     },
     {
       title: "Ngày mua",
       dataIndex: "purchaseDate",
       key: "purchaseDate",
+      align: "center",
       width: 150,
-      align: "center" as const,
     },
     {
       title: "Giá trị ban đầu",
       dataIndex: "value",
       key: "value",
-      align: "center" as const,
+      align: "center",
+      width: 150,
       render: (value: number) => Number(value).toLocaleString("en-US"),
     },
     {
       title: "Tình trạng",
       dataIndex: "status",
       key: "status",
+      align: "center",
       width: 150,
-      align: "center" as const,
     },
     {
       title: "Nhân viên sở hữu",
       dataIndex: "owner",
       key: "owner",
+      align: "center",
       width: 150,
-      align: "center" as const,
     },
     {
       title: "Hạn bảo hành",
       dataIndex: "warranty",
       key: "warranty",
+      align: "center",
       width: 150,
-      align: "center" as const,
     },
     {
       title: "",
       key: "action",
-      fixed: "right" as const,
       width: 60,
-      align: "center" as const,
+      align: "center",
       render: (_: any, record: Asset) => (
-        <Button
-          type="link"
-          icon={<EditOutlined />}
-          onClick={() => handleEdit(record)}
-          className="base-edit-icon"
-        ></Button>
+        <Space size="middle">
+          <Button
+            className="base-edit-icon"
+            type="link"
+            onClick={() => handleEdit(record)}
+            icon={<EditOutlined />}
+          />
+        </Space>
       ),
     },
   ];
 
   return (
     <Table
+      {...(selectable && setSelectedRowKeys
+        ? {
+          rowSelection: {
+            selectedRowKeys,
+            onChange: (keys: Key[]) => setSelectedRowKeys(keys),
+          },
+        }
+        : {})}
       className="base-table"
       columns={columns}
-      dataSource={assetData}
-      pagination={{
-        position: ["bottomCenter"],
-        pageSize: 10,
-        showSizeChanger: false,
-      }}
+      dataSource={data}
+      pagination={false}
       rowKey="key"
-      scroll={{ x: "max-content", y: 600 }}
-      rowClassName={(record: Asset) => (selectedRowKeys.includes(record.key) ? "selected-row" : "")}
+      scroll={{ x: "max-content" }}
     />
   );
 };

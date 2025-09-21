@@ -1,6 +1,9 @@
-import { Table, Checkbox, Button, Tooltip } from "antd";
+import React from "react";
+import { Button, Space, Table, Typography } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
-import { ColumnsType } from "antd/es/table";
+import { useNavigate } from "react-router-dom";
+import { Key } from "antd/lib/table/interface";
 
 export interface Product {
   id: string;
@@ -16,152 +19,143 @@ export interface Product {
 
 interface TableProductProps {
   data?: Product[];
-  selectedRowKeys?: string[];
-  setSelectedRowKeys: (keys: string[]) => void;
+  selectedRowKeys?: Key[];
+  setSelectedRowKeys?: (keys: Key[]) => void;
   onEdit?: (record: Product) => void;
+  onShowClick?: (record: Product) => void;
   loading?: boolean;
+  selectable?: boolean;
 }
 
 const TableProduct: React.FC<TableProductProps> = ({
   data = [],
-  selectedRowKeys = [],
+  selectedRowKeys,
   setSelectedRowKeys,
   onEdit,
+  onShowClick,
   loading = false,
+  selectable = true,
 }) => {
-  const allKeys = data.map((item) => item.id);
-  const isAllChecked = selectedRowKeys.length === data.length && data.length > 0;
-  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
+  const navigate = useNavigate();
+
+  const handleEdit = (record: Product) => {
+    if (onEdit) {
+      onEdit(record);
+    }
+  };
 
   const columns: ColumnsType<Product> = [
-    {
-      title: (
-        <Checkbox
-          indeterminate={isIndeterminate}
-          checked={isAllChecked}
-          onChange={(e) => {
-            if (e.target.checked) {
-              setSelectedRowKeys(allKeys);
-            } else {
-              setSelectedRowKeys([]);
-            }
-          }}
-          disabled={data.length === 0}
-        />
-      ),
-      dataIndex: "option",
-      width: 60,
-      fixed: "left",
-      align: "center",
-      render: (_: any, record: Product) => (
-        <Checkbox
-          checked={selectedRowKeys.includes(record.id)}
-          onChange={(e) => {
-            if (e.target.checked) {
-              setSelectedRowKeys([...selectedRowKeys, record.id]);
-            } else {
-              setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.id));
-            }
-          }}
-        />
-      ),
-    },
     {
       title: "Tên sản phẩm",
       dataIndex: "name",
       key: "name",
+      align: "center" as const,
       width: 150,
-      fixed: "left",
-      align: "center",
+      fixed: "left" as const,
+      render: (text: string, record: Product) => (
+        <Typography.Link
+          className="contact-link"
+          onClick={() => {
+            if (onShowClick) {
+              onShowClick(record);
+            } else {
+              navigate(`/crm/productlist/${record.id}`);
+            }
+          }}
+        >
+          {text}
+        </Typography.Link>
+      ),
     },
     {
       title: "Mô tả",
       dataIndex: "description",
       key: "description",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     {
       title: "Loại sản phẩm",
       dataIndex: "type",
       key: "type",
+      align: "center" as const,
       width: 150,
-      align: "center",
       render: (value: string) => (value === "package" ? "Theo gói" : "Theo tháng"),
     },
     {
       title: "Giá (VND)",
       dataIndex: "priceVND",
       key: "priceVND",
+      align: "center" as const,
       width: 150,
-      align: "center",
       render: (value: number) => value.toLocaleString("vi-VN"),
     },
     {
       title: "Giá (USD)",
       dataIndex: "priceUSD",
       key: "priceUSD",
+      align: "center" as const,
       width: 150,
-      align: "center",
       render: (value: number) => value.toLocaleString("en-US"),
     },
     {
       title: "VAT (%)",
       dataIndex: "vat",
       key: "vat",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     {
       title: "Giá sau VAT (VND)",
       dataIndex: "priceAfterVatVND",
       key: "priceAfterVatVND",
+      align: "center" as const,
       width: 150,
-      align: "center",
       render: (value: number) => value.toLocaleString("vi-VN"),
     },
     {
       title: "Giá sau VAT (USD)",
       dataIndex: "priceAfterVatUSD",
       key: "priceAfterVatUSD",
+      align: "center" as const,
       width: 150,
-      align: "center",
       render: (value: number) => value.toLocaleString("en-US"),
     },
     {
       title: "",
       key: "action",
       width: 60,
-      fixed: "right",
-      align: "center",
+      align: "center" as const,
       render: (_: any, record: Product) => (
-        <Tooltip title="Chỉnh sửa">
+        <Space size="middle">
           <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit?.(record);
-            }}
             className="base-edit-icon"
+            type="link"
+            onClick={() => handleEdit(record)}
+            icon={<EditOutlined />}
           />
-        </Tooltip>
+        </Space>
       ),
     },
   ];
 
   return (
     <Table
+      {...(selectable && setSelectedRowKeys
+        ? {
+          rowSelection: {
+            selectedRowKeys,
+            onChange: (keys: Key[]) => setSelectedRowKeys(keys),
+          },
+        }
+        : {})}
       className="base-table"
       columns={columns}
       dataSource={data}
       loading={loading}
       pagination={false}
       rowKey="id"
-      scroll={{ x: 1200 }}
-      rowClassName={(record: Product) =>
-        selectedRowKeys.includes(record.id) ? "selected-row" : ""
-      }
+      scroll={{ x: "max-content" }}
     />
   );
 };

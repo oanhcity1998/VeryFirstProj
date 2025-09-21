@@ -1,201 +1,178 @@
-import { Table, Checkbox, Button, Tooltip } from "antd";
-import { generatePath, Link } from "react-router-dom";
+import React from "react";
+import { Button, Space, Table, Typography } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
+import { generatePath, useNavigate } from "react-router-dom";
+import { Key } from "antd/lib/table/interface";
 import { ROUTES_APP } from "@/app/routes";
 import { Employee } from "@/models/HRM/employee.model";
-
 import dayjs from "dayjs";
 
 interface TableEmployeeProps {
   data?: Employee[];
-  selectedRowKeys?: string[];
-  setSelectedRowKeys: (keys: string[]) => void;
+  selectedRowKeys?: Key[];
+  setSelectedRowKeys?: (keys: Key[]) => void;
   loading?: boolean;
   onEdit?: (record: Employee) => void;
+  onShowClick?: (record: Employee) => void;
+  selectable?: boolean;
 }
 
 const TableEmployee: React.FC<TableEmployeeProps> = ({
   data = [],
-  selectedRowKeys = [],
+  selectedRowKeys,
   setSelectedRowKeys,
   loading = false,
   onEdit,
+  onShowClick,
+  selectable = true,
 }) => {
-  // Đảm bảo data luôn là mảng Employee hợp lệ, không có phần tử null/undefined và id hợp lệ
-  const safeData: Employee[] = Array.isArray(data)
-    ? data.filter((item) => item && item.id !== undefined && item.id !== null)
-    : [];
-  const allKeys = safeData.map((item) => item.id.toString());
-  const isAllChecked = selectedRowKeys.length === safeData.length;
-  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < safeData.length;
+  const navigate = useNavigate();
 
-  const columns = [
-    {
-      title: (
-        <Checkbox
-          indeterminate={isIndeterminate}
-          checked={isAllChecked}
-          onChange={(e) => {
-            if (e.target.checked) setSelectedRowKeys(allKeys);
-            else setSelectedRowKeys([]);
-          }}
-        />
-      ),
-      dataIndex: "option",
-      width: 60,
-      fixed: "left",
-      align: "center",
-      render: (_: any, record: Employee) => (
-        <Checkbox
-          checked={selectedRowKeys.includes(record.id.toString())}
-          onChange={(e) => {
-            if (e.target.checked) setSelectedRowKeys([...selectedRowKeys, record.id.toString()]);
-            else setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.id.toString()));
-          }}
-        />
-      ),
-    },
+  const handleEdit = (record: Employee) => {
+    if (onEdit) {
+      onEdit(record);
+    }
+  };
+
+  const columns: ColumnsType<Employee> = [
     {
       title: "Mã nhân viên",
       dataIndex: "code",
       key: "code",
-      fixed: "left",
-      width: 150,
       align: "center",
+      width: 150,
+      fixed: "left",
     },
     {
       title: "Họ và tên",
       dataIndex: "name",
       key: "name",
-      fixed: "left",
-      width: 150,
       align: "center",
+      width: 200,
+      fixed: "left",
       render: (text: string, record: Employee) => (
-        <Link to={generatePath(ROUTES_APP.hrm.employeeDetail, { id: record.id.toString() })}>
+        <Typography.Link
+          className="contact-link"
+          onClick={() => {
+            if (onShowClick) {
+              onShowClick(record);
+            } else {
+              navigate(generatePath(ROUTES_APP.hrm.employeeDetail, { id: record.id.toString() }));
+            }
+          }}
+        >
           {text}
-        </Link>
+        </Typography.Link>
       ),
     },
     {
       title: "Giới tính",
       dataIndex: "gender",
       key: "gender",
-      width: 150,
       align: "center",
+      width: 120,
     },
     {
       title: "Ngày sinh",
       dataIndex: "birthday",
       key: "birthday",
-      width: 150,
       align: "center",
+      width: 150,
       render: (date: string) => (date ? dayjs(date).format("DD/MM/YYYY") : "-"),
     },
     {
       title: "Số CCCD",
       dataIndex: "id_number",
       key: "id_number",
-      width: 150,
       align: "center",
+      width: 180,
     },
     {
       title: "Địa chỉ thường trú",
       dataIndex: "permanent_address",
       key: "permanent_address",
-      width: 250,
       align: "center",
+      width: 250,
     },
     {
       title: "Địa chỉ tạm trú",
       dataIndex: "temporary_address",
       key: "temporary_address",
-      width: 250,
       align: "center",
+      width: 250,
     },
     {
       title: "Mã số thuế TNCN",
       dataIndex: "tax_id",
       key: "tax_id",
-      width: 150,
       align: "center",
+      width: 180,
     },
     {
       title: "Tài khoản ngân hàng",
       dataIndex: "bank_account",
       key: "bank_account",
-      width: 150,
       align: "center",
+      width: 200,
     },
     {
       title: "Phòng ban",
       dataIndex: "department_name",
       key: "department_name",
-      width: 150,
       align: "center",
+      width: 180,
     },
     {
       title: "Vị trí",
       dataIndex: "job_name",
       key: "job_name",
-      width: 150,
       align: "center",
+      width: 200,
     },
     {
       title: "Loại hợp đồng",
       dataIndex: "contract",
       key: "contract_type",
-      width: 150,
       align: "center",
-      render: (contract: Employee["contract"]) => (
-        <Tooltip
-          title={
-            contract.length > 0 ? (
-              <ul>
-                {contract.map((c, index) => (
-                  <li key={index}>{c.contract_type}</li>
-                ))}
-              </ul>
-            ) : (
-              "-"
-            )
-          }
-        >
-          {contract.length > 0 ? contract.map((c) => c.contract_type).join(", ") : "-"}
-        </Tooltip>
-      ),
+      width: 200,
+      render: (contract: Employee["contract"]) =>
+        contract.length > 0 ? contract.map((c) => c.contract_type).join(", ") : "-",
     },
     {
       title: "",
       key: "action",
-      fixed: "right",
-      width: 60,
+      width: 80,
       align: "center",
       render: (_: any, record: Employee) => (
-        <Button
-          type="link"
-          icon={<EditOutlined />}
-          onClick={() => {
-            console.log("Edit clicked for record:", record); // Debug
-            onEdit?.(record);
-          }}
-          className="base-edit-icon"
-        />
+        <Space size="middle">
+          <Button
+            className="base-edit-icon"
+            type="link"
+            onClick={() => handleEdit(record)}
+            icon={<EditOutlined />}
+          />
+        </Space>
       ),
     },
   ];
 
   return (
     <Table
+      {...(selectable && setSelectedRowKeys
+        ? {
+          rowSelection: {
+            selectedRowKeys,
+            onChange: (keys: Key[]) => setSelectedRowKeys(keys),
+          },
+        }
+        : {})}
+      className="base-table"
       columns={columns}
-      dataSource={safeData}
+      dataSource={data}
       loading={loading}
       rowKey="id"
-      scroll={{ x: 2000, y: 600 }}
-      sticky={{ offsetHeader: 64 }}
-      rowClassName={(record: Employee) => {
-        const key = record?.id?.toString?.() ?? "";
-        return selectedRowKeys.includes(key) ? "selected-row" : "";
-      }}
+      scroll={{ x: "max-content" }}
       pagination={false}
     />
   );

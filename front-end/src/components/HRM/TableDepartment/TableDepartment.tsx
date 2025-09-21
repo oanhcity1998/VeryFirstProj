@@ -1,128 +1,127 @@
-import { Table, Checkbox, Button } from "antd";
+import React from "react";
+import { Button, Space, Table, Typography } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
-
+import { useNavigate } from "react-router-dom";
+import { Key } from "antd/lib/table/interface";
 import { Department } from "@/models/HRM/department.model";
 
 interface TableDepartmentProps {
   data?: Department[];
-  selectedRowKeys?: string[];
-  setSelectedRowKeys: (keys: string[]) => void;
+  selectedRowKeys?: Key[];
+  setSelectedRowKeys?: (keys: Key[]) => void;
   onEdit?: (record: Department) => void;
+  onShowClick?: (record: Department) => void;
+  selectable?: boolean;
   loading?: boolean;
 }
 
 const TableDepartment: React.FC<TableDepartmentProps> = ({
   data = [],
-  selectedRowKeys = [],
+  selectedRowKeys,
   setSelectedRowKeys,
   onEdit,
+  onShowClick,
+  selectable = true,
   loading = false,
 }) => {
-  const allKeys = data.map((item) => item.id.toString());
-  const isAllChecked = selectedRowKeys.length === data.length;
-  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
+  const navigate = useNavigate();
 
-  const columns = [
-    {
-      title: (
-        <Checkbox
-          indeterminate={isIndeterminate}
-          checked={isAllChecked}
-          onChange={(e) => {
-            if (e.target.checked) setSelectedRowKeys(allKeys);
-            else setSelectedRowKeys([]);
-          }}
-        />
-      ),
-      dataIndex: "option",
-      width: 60,
-      fixed: "left" as const,
-      align: "center" as const,
-      render: (_: any, record: Department) => (
-        <Checkbox
-          checked={selectedRowKeys.includes(record.id.toString())}
-          onChange={(e) => {
-            if (e.target.checked) {
-              setSelectedRowKeys([...selectedRowKeys, record.id.toString()]);
-            } else {
-              setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.id.toString()));
-            }
-          }}
-        />
-      ),
-    },
+  const handleEdit = (record: Department) => {
+    if (onEdit) {
+      onEdit(record);
+    }
+  };
+
+  const columns: ColumnsType<Department> = [
     {
       title: "Mã phòng ban",
       dataIndex: "code",
       key: "code",
-      fixed: "left" as const,
-      width: 150,
-      align: "center" as const,
-      render: (code: string | null) => code || "-",
+      align: "center",
+      width: 120,
+      fixed: "left",
+      render: (code: string | null, record: Department) => (
+        <Typography.Link
+          className="contact-link"
+          onClick={() => {
+            if (onShowClick) {
+              onShowClick(record);
+            } else {
+              navigate(`/crm/department/${record.id}`);
+            }
+          }}
+        >
+          {code || "-"}
+        </Typography.Link>
+      ),
     },
     {
       title: "Tên phòng ban",
       dataIndex: "name",
       key: "name",
-      width: 150,
-      align: "center" as const,
+      align: "center",
+      width: 200,
     },
     {
       title: "Trưởng phòng",
       dataIndex: "manager_name",
       key: "manager_name",
+      align: "center",
       width: 150,
-      align: "center" as const,
       render: (manager_name: string | null) => manager_name || "-",
     },
     {
       title: "Số nhân viên",
       dataIndex: "employee_count",
       key: "employee_count",
-      width: 150,
-      align: "center" as const,
+      align: "center",
+      width: 100,
       render: (count: number | undefined) => count ?? "-",
     },
     {
       title: "Ghi chú",
       dataIndex: "note",
       key: "note",
-      width: 150,
-      align: "center" as const,
+      align: "center",
+      width: 200,
       render: (note: string | null) => note || "-",
     },
     {
       title: "",
       key: "action",
-      fixed: "right" as const,
-      width: 60,
-      align: "center" as const,
+      width: 80,
+      align: "center",
       render: (_: any, record: Department) => (
-        <Button
-          type="link"
-          icon={<EditOutlined />}
-          onClick={() => {
-            console.log("Edit clicked for record:", record); // Debug edit click
-            onEdit?.(record);
-          }}
-          className="base-edit-icon"
-        />
+        <Space size="middle">
+          <Button
+            className="base-edit-icon"
+            type="link"
+            onClick={() => handleEdit(record)}
+            icon={<EditOutlined />}
+          />
+        </Space>
       ),
     },
   ];
 
   return (
     <Table
+      {...(selectable && setSelectedRowKeys
+        ? {
+          rowSelection: {
+            selectedRowKeys,
+            onChange: (keys: Key[]) => setSelectedRowKeys(keys),
+          },
+        }
+        : {})}
       className="base-table"
       columns={columns}
       dataSource={data}
       loading={loading}
       pagination={false}
       rowKey="id"
-      scroll={{ x: 800, y: 600 }}
-      rowClassName={(record: Department) =>
-        selectedRowKeys.includes(record.id.toString()) ? "selected-row" : ""
-      }
+      scroll={{ x: "max-content" }}
     />
   );
 };

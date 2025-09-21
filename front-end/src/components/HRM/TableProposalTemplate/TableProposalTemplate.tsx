@@ -1,143 +1,129 @@
-import { useState } from "react";
-import { Table, Checkbox, Button } from "antd";
+import React from "react";
+import { Button, Space, Table, Typography } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
+import { generatePath, useNavigate } from "react-router-dom";
+import { Key } from "antd/lib/table/interface";
 import { ProposalTemplate } from "@/views/HRM/ProposalTemplateList/ProposalTemplateList";
-import { generatePath, Link } from "react-router-dom";
 import { ROUTES_APP } from "@/app/routes";
 
 interface TableProposalTemplateProps {
   data?: ProposalTemplate[];
-  selectedRowKeys?: string[];
-  setSelectedRowKeys: (keys: string[]) => void;
+  selectedRowKeys?: Key[];
+  setSelectedRowKeys?: (keys: Key[]) => void;
   onEdit?: (record: ProposalTemplate) => void;
+  onShowClick?: (record: ProposalTemplate) => void;
+  selectable?: boolean;
 }
 
 const TableProposalTemplate: React.FC<TableProposalTemplateProps> = ({
   data = [],
-  selectedRowKeys = [],
+  selectedRowKeys,
   setSelectedRowKeys,
   onEdit,
+  onShowClick,
+  selectable = true,
 }) => {
-  const allKeys = data.map((item) => item.key);
-  const isAllChecked = selectedRowKeys.length === data.length;
-  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
+  const navigate = useNavigate();
 
   const handleEdit = (record: ProposalTemplate) => {
-    if (onEdit) onEdit(record);
+    if (onEdit) {
+      onEdit(record);
+    }
   };
 
-  const columns = [
-    {
-      title: (
-        <Checkbox
-          indeterminate={isIndeterminate}
-          checked={isAllChecked}
-          onChange={(e: { target: { checked: boolean } }) => {
-            if (e.target.checked) {
-              setSelectedRowKeys(allKeys);
-            } else {
-              setSelectedRowKeys([]);
-            }
-          }}
-        />
-      ),
-      dataIndex: "option",
-      width: 60,
-      fixed: "left" as const,
-      align: "center" as const,
-      render: (_: any, record: ProposalTemplate) => (
-        <Checkbox
-          checked={selectedRowKeys.includes(record.key)}
-          onChange={(e: { target: { checked: boolean } }) => {
-            if (e.target.checked) {
-              setSelectedRowKeys([...selectedRowKeys, record.key]);
-            } else {
-              setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.key));
-            }
-          }}
-        />
-      ),
-    },
+  const columns: ColumnsType<ProposalTemplate> = [
     {
       title: "Tên mẫu đề xuất",
       dataIndex: "name",
       key: "name",
+      align: "center",
       width: 150,
-      align: "center" as const,
-      fixed: "left" as const,
+      fixed: "left",
       render: (value: string, record: ProposalTemplate) => (
-        <Link to={generatePath(ROUTES_APP.hrm.proposalTemplateDetail, { id: record.key })}>
+        <Typography.Link
+          className="contact-link"
+          onClick={() => {
+            if (onShowClick) {
+              onShowClick(record);
+            } else {
+              navigate(generatePath(ROUTES_APP.hrm.proposalTemplateDetail, { id: record.key }));
+            }
+          }}
+        >
           {value}
-        </Link>
+        </Typography.Link>
       ),
     },
     {
       title: "Người tạo",
       dataIndex: "creator",
       key: "creator",
+      align: "center",
       width: 150,
-      align: "center" as const,
     },
     {
       title: "Ngày tạo",
       dataIndex: "createdDate",
       key: "createdDate",
+      align: "center",
       width: 150,
-      align: "center" as const,
     },
     {
       title: "Số lượng đề xuất",
       dataIndex: "quantity",
       key: "quantity",
+      align: "center",
       width: 150,
-      align: "center" as const,
     },
     {
       title: "Bắt buộc phê duyệt",
       dataIndex: "approvalRequired",
       key: "approvalRequired",
+      align: "center",
       width: 150,
-      align: "center" as const,
     },
     {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      align: "center",
       width: 150,
-      align: "center" as const,
     },
     {
       title: "",
       key: "action",
-      fixed: "right" as const,
       width: 60,
-      align: "center" as const,
+      align: "center",
       render: (_: any, record: ProposalTemplate) => (
-        <Button
-          type="link"
-          icon={<EditOutlined />}
-          onClick={() => handleEdit(record)}
-          className="base-edit-icon"
-        ></Button>
+        <Space size="middle">
+          <Button
+            className="base-edit-icon"
+            type="link"
+            onClick={() => handleEdit(record)}
+            icon={<EditOutlined />}
+          />
+        </Space>
       ),
     },
   ];
 
   return (
     <Table
+      {...(selectable && setSelectedRowKeys
+        ? {
+          rowSelection: {
+            selectedRowKeys,
+            onChange: (keys: Key[]) => setSelectedRowKeys(keys),
+          },
+        }
+        : {})}
       className="base-table"
       columns={columns}
       dataSource={data}
-      pagination={{
-        position: ["bottomCenter"],
-        pageSize: 10,
-        showSizeChanger: false,
-      }}
+      pagination={false}
       rowKey="key"
-      scroll={{ x: 1200, y: 600 }}
-      rowClassName={(record: ProposalTemplate) =>
-        selectedRowKeys.includes(record.key) ? "selected-row" : ""
-      }
+      scroll={{ x: "max-content" }}
     />
   );
 };

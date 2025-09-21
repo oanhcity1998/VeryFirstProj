@@ -1,11 +1,10 @@
 import React, { useMemo } from "react";
-import { Table, Tooltip, Typography } from "antd";
+import { Button, Space, Table, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
 import { useNavigate, generatePath } from "react-router-dom";
+import { Key } from "antd/lib/table/interface";
 import { ROUTES_APP } from "@/app/routes";
-
-const { Link } = Typography;
 
 export interface Contact {
   id: string;
@@ -23,11 +22,10 @@ interface TableContactProps {
   searchText: string;
   filterCustomer: string | null;
   filterMainContact: string | null;
-  selectedRowKeys?: React.Key[];
-  setSelectedRowKeys?: (keys: string[]) => void;
-  onEditClick?: (record: Contact) => void;
+  selectedRowKeys?: Key[];
+  setSelectedRowKeys?: (keys: Key[]) => void;
+  onEdit?: (record: Contact) => void;
   onShowClick?: (record: Contact) => void;
-  onRowClick?: (record: Contact) => void;
   selectable?: boolean;
   showEdit?: boolean;
 }
@@ -39,12 +37,18 @@ const TableContact: React.FC<TableContactProps> = ({
   filterMainContact,
   selectedRowKeys,
   setSelectedRowKeys,
-  onEditClick,
-  onRowClick,
+  onEdit,
+  onShowClick,
   selectable = true,
   showEdit = true,
 }) => {
   const navigate = useNavigate();
+
+  const handleEdit = (record: Contact) => {
+    if (onEdit) {
+      onEdit(record);
+    }
+  };
 
   const filteredData = useMemo(() => {
     return data.filter((item) => {
@@ -64,82 +68,85 @@ const TableContact: React.FC<TableContactProps> = ({
       title: "Tên liên hệ",
       dataIndex: "contactName",
       key: "contactName",
+      align: "center" as const,
       width: 150,
       fixed: "left" as const,
-      align: "center" as const,
-      render: (text: string, record: Contact) =>
-        showEdit ? (
-          <Link
-            className="contact-link"
-            onClick={() => {
-              if (onRowClick) {
-                onRowClick(record);
-              } else {
-                navigate(generatePath(ROUTES_APP.crm.contactDetail, { id: record.id }));
-              }
-            }}
-          >
-            {text}
-          </Link>
-        ) : (
-          <>{text}</>
-        ),
+      render: (text: string, record: Contact) => (
+        <Typography.Link
+          className="contact-link"
+          onClick={() => {
+            if (onShowClick) {
+              onShowClick(record);
+            } else {
+              navigate(generatePath(ROUTES_APP.crm.contactDetail, { id: record.id }));
+            }
+          }}
+        >
+          {text}
+        </Typography.Link>
+      ),
     },
     {
       title: "Khách hàng",
       dataIndex: "customerName",
       key: "customerName",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "Số điện thoại",
       dataIndex: "phone",
       key: "phone",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "Chức danh",
       dataIndex: "title",
       key: "title",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "Liên hệ chính",
       dataIndex: "mainContact",
       key: "mainContact",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "Ghi chú",
       dataIndex: "note",
       key: "note",
+      align: "center" as const,
       width: 150,
     },
     ...(showEdit
       ? [
-          {
-            title: "",
-            key: "action",
-            width: 60,
-            render: (_, record) => (
-              <Tooltip title="Chỉnh sửa">
-                <EditOutlined
-                  className="base-edit-icon"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEditClick?.(record);
-                  }}
-                />
-              </Tooltip>
-            ),
-          },
-        ]
+        {
+          title: "",
+          key: "action",
+          width: 60,
+          align: "center" as const,
+          render: (_: any, record: Contact) => (
+            <Space size="middle">
+              <Button
+                className="base-edit-icon"
+                type="link"
+                onClick={() => handleEdit(record)}
+                icon={<EditOutlined />}
+              />
+            </Space>
+          ),
+        },
+      ]
       : []),
   ];
 
@@ -147,18 +154,18 @@ const TableContact: React.FC<TableContactProps> = ({
     <Table
       {...(selectable && setSelectedRowKeys
         ? {
-            rowSelection: {
-              selectedRowKeys,
-              onChange: (keys) => setSelectedRowKeys(keys as string[]),
-            },
-          }
+          rowSelection: {
+            selectedRowKeys,
+            onChange: (keys: Key[]) => setSelectedRowKeys(keys),
+          },
+        }
         : {})}
+      className="base-table"
       columns={columns}
       dataSource={filteredData}
       rowKey="id"
       pagination={false}
-      className="base-table"
-      scroll={{ x: 1050 }}
+      scroll={{ x: "max-content" }}
     />
   );
 };

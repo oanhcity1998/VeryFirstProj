@@ -1,8 +1,9 @@
-import { useMemo } from "react";
-import { Table, Tooltip, Tag, Progress, Spin } from "antd";
+import React, { useMemo } from "react";
+import { Button, Space, Table, Typography, Spin } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { EditOutlined, FileTextOutlined } from "@ant-design/icons";
-import { generatePath, Link } from "react-router-dom";
-import { ColumnsType } from "antd/es/table";
+import { generatePath, useNavigate } from "react-router-dom";
+import { Key } from "antd/lib/table/interface";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
@@ -15,17 +16,18 @@ dayjs.extend(isSameOrBefore);
 interface TableOpportunityProps {
   data: Opportunity[];
   searchText: string;
-  selectedRowKeys: React.Key[];
-  setSelectedRowKeys: (keys: number[]) => void;
+  selectedRowKeys?: Key[];
+  setSelectedRowKeys?: (keys: Key[]) => void;
   onShowClick?: (record: Opportunity) => void;
   onEditClick?: (record: Opportunity) => void;
   filterPriority: string | null;
   filterStage: string | null;
   filterDate: [string, string] | null;
   loading?: boolean;
+  selectable?: boolean;
 }
 
-export const TableOpportunity = ({
+export const TableOpportunity: React.FC<TableOpportunityProps> = ({
   data,
   searchText,
   selectedRowKeys,
@@ -35,8 +37,17 @@ export const TableOpportunity = ({
   filterPriority,
   filterStage,
   filterDate,
-  loading,
-}: TableOpportunityProps) => {
+  loading = false,
+  selectable = true,
+}) => {
+  const navigate = useNavigate();
+
+  const handleEdit = (record: Opportunity) => {
+    if (onEditClick) {
+      onEditClick(record);
+    }
+  };
+
   const filteredData = useMemo(() => {
     return data.filter((item) => {
       const text = searchText?.toLowerCase() || "";
@@ -49,12 +60,11 @@ export const TableOpportunity = ({
       const matchPriority = filterPriority ? item.priority === filterPriority : true;
       const matchStage = filterStage ? item.stage === filterStage : true;
 
-      // ✅ Fix: kiểm tra kỹ filterDate trước khi dùng
       const hasValidDateRange = Array.isArray(filterDate) && filterDate[0] && filterDate[1];
 
       const matchDate = hasValidDateRange
         ? dayjs(item.expectedCloseDate).isSameOrAfter(dayjs(filterDate[0]), "day") &&
-          dayjs(item.expectedCloseDate).isSameOrBefore(dayjs(filterDate[1]), "day")
+        dayjs(item.expectedCloseDate).isSameOrBefore(dayjs(filterDate[1]), "day")
         : true;
 
       return matchSearch && matchPriority && matchStage && matchDate;
@@ -64,104 +74,108 @@ export const TableOpportunity = ({
   const columns: ColumnsType<Opportunity> = [
     {
       title: "Tên cơ hội",
-      align: "center",
       dataIndex: "name",
       key: "name",
+      align: "center" as const,
       width: 150,
-      fixed: "left",
-      render: (_, record) => (
-        <Link
-          to={generatePath(ROUTES_APP.crm.opportunityDetail, { id: record.id })}
-          onClick={() => onShowClick?.(record)}
+      fixed: "left" as const,
+      render: (text: string, record: Opportunity) => (
+        <Typography.Link
+          className="contract-link"
+          onClick={() => {
+            if (onShowClick) {
+              onShowClick(record);
+            } else {
+              navigate(generatePath(ROUTES_APP.crm.opportunityDetail, { id: record.id }));
+            }
+          }}
         >
           <FileTextOutlined className="icon-link" />
-          {record.name}
-        </Link>
+          {text}
+        </Typography.Link>
       ),
     },
     {
       title: "Liên hệ",
-      align: "center",
       dataIndex: "contactName",
       key: "contactName",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "Công ty",
-      align: "center",
       dataIndex: "company",
       key: "company",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "Giá trị dự kiến (VND)",
-      align: "center",
       dataIndex: "expectedValue",
       key: "expectedValue",
+      align: "center" as const,
       width: 150,
       render: (val: number) => val.toLocaleString(),
     },
     {
       title: "Ngày chốt dự kiến",
-      align: "center",
       dataIndex: "expectedCloseDate",
       key: "expectedCloseDate",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "Dịch vụ dự kiến",
-      align: "center",
       dataIndex: "service",
       key: "service",
+      align: "center" as const,
       width: 150,
       render: (services) =>
         Array.isArray(services) ? services.map((s) => <p key={s.id}>{s.productName}</p>) : "-",
     },
     {
       title: "Xác suất",
-      align: "center",
       dataIndex: "probability",
       key: "probability",
+      align: "center" as const,
       width: 150,
       render: (prob: number) => <>{prob}%</>,
     },
     {
       title: "Ưu tiên",
-      align: "center",
       dataIndex: "priority",
       key: "priority",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "Nhân viên phụ trách",
-      align: "center",
       dataIndex: "owner",
       key: "owner",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "Giai đoạn",
-      align: "center",
       dataIndex: "stage",
       key: "stage",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "",
-      align: "center",
       key: "action",
       width: 60,
-      fixed: "right",
-      render: (_, record) => (
-        <Tooltip title="Chỉnh sửa">
-          <EditOutlined
+      align: "center" as const,
+      render: (_: any, record: Opportunity) => (
+        <Space size="middle">
+          <Button
             className="base-edit-icon"
-            onClick={(e) => {
-              e.stopPropagation();
-              onEditClick?.(record);
-            }}
+            type="link"
+            onClick={() => handleEdit(record)}
+            icon={<EditOutlined />}
           />
-        </Tooltip>
+        </Space>
       ),
     },
   ];
@@ -172,18 +186,20 @@ export const TableOpportunity = ({
         <Spin />
       ) : (
         <Table<Opportunity>
+          {...(selectable && setSelectedRowKeys
+            ? {
+              rowSelection: {
+                selectedRowKeys,
+                onChange: (keys: Key[]) => setSelectedRowKeys(keys),
+              },
+            }
+            : {})}
           className="base-table"
-          rowSelection={{
-            selectedRowKeys,
-            onChange: (keys) => {
-              setSelectedRowKeys(keys as number[]);
-            },
-          }}
           columns={columns}
           dataSource={filteredData}
           rowKey="id"
           pagination={false}
-          scroll={{ x: "max-content", y: "calc(100vh - 150px)" }}
+          scroll={{ x: "max-content" }}
         />
       )}
     </>

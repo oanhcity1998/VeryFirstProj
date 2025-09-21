@@ -1,159 +1,214 @@
-import { useState } from "react";
-import { Table, Form, Checkbox, Button, Modal } from "antd";
-import { generatePath, Link } from "react-router-dom";
+import React from "react";
+import { Button, Space, Table, Typography, Form, Modal } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
+import { useNavigate, generatePath } from "react-router-dom";
+import { Key } from "antd/lib/table/interface";
 import CreateCustomerForm from "../CustomerForm/CustomerForm";
-import dayjs from "dayjs";
-
 import { ROUTES_APP } from "@/app/routes";
 
+interface Customer {
+  key: string;
+  id: string;
+  customerName: string;
+  contractName: string;
+  englishName: string;
+  taxCode: string;
+  phone: string;
+  fax: string;
+  email: string;
+  address: string;
+  industry: string;
+  market: string;
+  branches: number;
+  employees: number;
+  revenue: number;
+  documentsPerMonth: number;
+  taxSettlementStatus: string;
+  taxSettlementYear: number;
+  documents?: string;
+}
+
 interface TableCustomerProps {
-  data?: any[];
-  selectedRowKeys?: (string | number)[];
-  setSelectedRowKeys: React.Dispatch<React.SetStateAction<(string | number)[]>>;
-  onEdit: (customer: any) => void;
+  data?: Customer[];
+  selectedRowKeys?: Key[];
+  setSelectedRowKeys?: React.Dispatch<React.SetStateAction<Key[]>>;
+  onEdit?: (customer: Customer) => void;
+  onShowClick?: (customer: Customer) => void;
+  selectable?: boolean;
 }
 
 const TableCustomer: React.FC<TableCustomerProps> = ({
   data = [],
-  selectedRowKeys = [],
+  selectedRowKeys,
   setSelectedRowKeys,
   onEdit,
+  onShowClick,
+  selectable = true,
 }) => {
-  const allKeys = data.map((item) => item.key);
-  const isAllChecked = selectedRowKeys.length === data.length;
-  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
-
-  const [customerdata, setcustomerData] = useState([...data]);
-
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<any>(null);
-  const [editingCustomer, setEditingCustomer] = useState(null);
-
+  const navigate = useNavigate();
   const [form] = Form.useForm();
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const [editingCustomer, setEditingCustomer] = React.useState<Customer | null>(null);
 
-  // Chỉnh sửa sản phẩm
-  const handleEdit = (record: any) => {
+  const handleEdit = (record: Customer) => {
     setEditingCustomer(record);
-    form.setFieldsValue(record); // ✅ preload values
+    form.setFieldsValue(record);
     setIsModalVisible(true);
   };
 
-  // Xác nhận dữ liệu từ form
   const handleSave = (values: any) => {
-    if (editingProduct) {
-      setcustomerData((prev) =>
-        prev.map((item) =>
-          item.key === editingProduct.key ? { ...item, ...values, updatedAt: dayjs() } : item
-        )
-      );
-    } else {
-      const newProduct = {
-        key: Date.now().toString(),
-        ...values,
-        createdAt: dayjs(),
-        updatedAt: dayjs(),
-      };
-      setcustomerData((prev) => [...prev, newProduct]);
+    if (onEdit && editingCustomer) {
+      onEdit({ ...editingCustomer, ...values });
     }
     setIsModalVisible(false);
+    form.resetFields();
+    setEditingCustomer(null);
   };
 
-  const columns = [
-    {
-      title: (
-        <Checkbox
-          indeterminate={isIndeterminate}
-          checked={isAllChecked}
-          onChange={(e) => {
-            if (e.target.checked) {
-              setSelectedRowKeys(allKeys);
-            } else {
-              setSelectedRowKeys([]);
-            }
-          }}
-        />
-      ),
-      align: "center",
-      dataIndex: "option",
-      width: 60,
-      fixed: "left", // ✅ fixed
-      render: (_: any, record: any) => (
-        <Checkbox
-          checked={selectedRowKeys.includes(record.key)}
-          onChange={(e) => {
-            if (e.target.checked) {
-              setSelectedRowKeys([...selectedRowKeys, record.key]);
-            } else {
-              setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.key));
-            }
-          }}
-        />
-      ),
-    },
+  const columns: ColumnsType<Customer> = [
     {
       title: "Mã khách hàng",
-      align: "center",
       dataIndex: "id",
+      key: "id",
+      align: "center" as const,
       width: 150,
-      fixed: "left", // ✅ fixed
+      fixed: "left" as const,
     },
     {
       title: "Tên khách hàng",
-      align: "center",
       dataIndex: "customerName",
+      key: "customerName",
+      align: "center" as const,
       width: 150,
-      fixed: "left", // ✅ fixed
-      render: (text: any, record: any) => (
-        <Link to={generatePath(ROUTES_APP.crm.customerDetail, { id: record.id })}>{text}</Link>
+      fixed: "left" as const,
+      render: (text: string, record: Customer) => (
+        <Typography.Link
+          className="contact-link"
+          onClick={() => {
+            if (onShowClick) {
+              onShowClick(record);
+            } else {
+              navigate(generatePath(ROUTES_APP.crm.customerDetail, { id: record.id }));
+            }
+          }}
+        >
+          {text}
+        </Typography.Link>
       ),
     },
     {
       title: "Tên DN ghi trên hợp đồng",
-      align: "center",
       dataIndex: "contractName",
+      key: "contractName",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "Tên DN bằng tiếng Anh",
-      align: "center",
       dataIndex: "englishName",
+      key: "englishName",
+      align: "center" as const,
       width: 150,
     },
-    { title: "Mã số thuế", align: "center", dataIndex: "taxCode", width: 150 },
-    { title: "Số điện thoại", align: "center", dataIndex: "phone", width: 150 },
-    { title: "Số fax", align: "center", dataIndex: "fax", width: 150 },
-    { title: "Email", align: "center", dataIndex: "email", width: 150 },
-    { title: "Địa chỉ", align: "center", dataIndex: "address", width: 250 },
-    { title: "Ngành", align: "center", dataIndex: "industry", width: 150 },
-    { title: "Thị trường chính", align: "center", dataIndex: "market", width: 150 },
-    { title: "Số lượng chi nhánh", align: "center", dataIndex: "branches", width: 150 },
-    { title: "Số nhân sự", align: "center", dataIndex: "employees", width: 150 },
-    { title: "Doanh thu TB/năm", align: "center", dataIndex: "revenue", width: 150 },
+    {
+      title: "Mã số thuế",
+      dataIndex: "taxCode",
+      key: "taxCode",
+      align: "center" as const,
+      width: 150,
+    },
+    {
+      title: "Số điện thoại",
+      dataIndex: "phone",
+      key: "phone",
+      align: "center" as const,
+      width: 150,
+    },
+    {
+      title: "Số fax",
+      dataIndex: "fax",
+      key: "fax",
+      align: "center" as const,
+      width: 150,
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      align: "center" as const,
+      width: 150,
+    },
+    {
+      title: "Địa chỉ",
+      dataIndex: "address",
+      key: "address",
+      align: "center" as const,
+      width: 250,
+    },
+    {
+      title: "Ngành",
+      dataIndex: "industry",
+      key: "industry",
+      align: "center" as const,
+      width: 150,
+    },
+    {
+      title: "Thị trường chính",
+      dataIndex: "market",
+      key: "market",
+      align: "center" as const,
+      width: 150,
+    },
+    {
+      title: "Số lượng chi nhánh",
+      dataIndex: "branches",
+      key: "branches",
+      align: "center" as const,
+      width: 150,
+    },
+    {
+      title: "Số nhân sự",
+      dataIndex: "employees",
+      key: "employees",
+      align: "center" as const,
+      width: 150,
+    },
+    {
+      title: "Doanh thu TB/năm",
+      dataIndex: "revenue",
+      key: "revenue",
+      align: "center" as const,
+      width: 150,
+    },
     {
       title: "Văn bản TB/tháng",
-      align: "center",
       dataIndex: "documentsPerMonth",
+      key: "documentsPerMonth",
+      align: "center" as const,
       width: 150,
     },
     {
-      title: "Trạng thái quyết toán thuế ",
-      align: "center",
+      title: "Trạng thái quyết toán thuế",
       dataIndex: "taxSettlementStatus",
+      key: "taxSettlementStatus",
+      align: "center" as const,
       width: 150,
     },
     {
-      title: "Năm quyết toán thuế ",
-      align: "center",
+      title: "Năm quyết toán thuế",
       dataIndex: "taxSettlementYear",
+      key: "taxSettlementYear",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "Tài liệu",
-      align: "center",
       dataIndex: "documents",
+      key: "documents",
+      align: "center" as const,
       width: 150,
-      render: (file: any) =>
+      render: (file: string) =>
         file ? (
           <a href={file} download target="_blank" rel="noopener noreferrer">
             📂 Tải xuống
@@ -164,17 +219,18 @@ const TableCustomer: React.FC<TableCustomerProps> = ({
     },
     {
       title: "",
-      align: "center",
       key: "actions",
-      fixed: "right", // 👈 always stick on the right
       width: 60,
-      render: (_: any, record: any) => (
-        <Button
-          icon={<EditOutlined />}
-          type="link"
-          onClick={() => onEdit(record)}
-          className="base-edit-icon"
-        />
+      align: "center" as const,
+      render: (_: any, record: Customer) => (
+        <Space size="middle">
+          <Button
+            className="base-edit-icon"
+            type="link"
+            onClick={() => handleEdit(record)}
+            icon={<EditOutlined />}
+          />
+        </Space>
       ),
     },
   ];
@@ -182,45 +238,35 @@ const TableCustomer: React.FC<TableCustomerProps> = ({
   return (
     <div>
       <Table
+        {...(selectable && setSelectedRowKeys
+          ? {
+            rowSelection: {
+              selectedRowKeys,
+              onChange: (keys: Key[]) => setSelectedRowKeys(keys),
+            },
+          }
+          : {})}
         className="base-table"
-        columns={columns as any}
+        columns={columns}
         dataSource={data}
-        pagination={{ position: ["bottomCenter"] }} // center positioning
         rowKey="key"
-        scroll={{ x: 2500, y: 600 }} // enable horizontal scroll
-        rowClassName={(record) => (selectedRowKeys.includes(record.key) ? "selected-row" : "")}
+        scroll={{ x: "max-content" }}
+        pagination={false}
       />
 
       <Modal
         open={isModalVisible}
         onOk={() => form.submit()}
-        onCancel={() => setIsModalVisible(false)}
+        onCancel={() => {
+          setIsModalVisible(false);
+          form.resetFields();
+          setEditingCustomer(null);
+        }}
         okText="Xác nhận"
         cancelText="Hủy"
       >
-        <CreateCustomerForm
-          // form={form}
-          onSave={handleSave as any}
-        />
+        <CreateCustomerForm form={form} onSave={handleSave} />
       </Modal>
-
-      {/* <Modal
-        title={editingProduct ? "Sửa khách hàng" : "Thêm khách hàng"}
-        open={isModalVisible}
-        onOk={() => form.submit()}
-        onCancel={() => setIsModalVisible(false)}
-        okText="Lưu"
-        cancelText="Hủy"
-        afterClose={() => {
-          setEditingProduct(null); // reset
-          form.resetFields();
-        }}
-      >
-        <EditCustomerForm
-          form={form}
-          initialValues={editingProduct || {}} // ✅ if editing, pre-fill data
-        />
-      </Modal> */}
     </div>
   );
 };

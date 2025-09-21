@@ -1,117 +1,119 @@
-import { Table, Checkbox, Button } from "antd";
+import React from "react";
+import { Button, Space, Table, Typography } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
-
+import { useNavigate } from "react-router-dom";
+import { Key } from "antd/lib/table/interface";
 import { Position } from "@/models/HRM/position.model";
 
 interface TablePositionProps {
   data?: Position[];
-  selectedRowKeys?: string[];
-  setSelectedRowKeys: (keys: string[]) => void;
+  selectedRowKeys?: Key[];
+  setSelectedRowKeys?: (keys: Key[]) => void;
   onEdit?: (record: Position) => void;
+  onShowClick?: (record: Position) => void;
   loading?: boolean;
+  selectable?: boolean;
 }
 
 const TablePosition: React.FC<TablePositionProps> = ({
   data = [],
-  selectedRowKeys = [],
+  selectedRowKeys,
   setSelectedRowKeys,
   onEdit,
+  onShowClick,
   loading = false,
+  selectable = true,
 }) => {
-  const allKeys = data.map((item) => item.id.toString());
-  const isAllChecked = selectedRowKeys.length === data.length;
-  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
+  const navigate = useNavigate();
 
-  const columns = [
-    {
-      title: (
-        <Checkbox
-          indeterminate={isIndeterminate}
-          checked={isAllChecked}
-          onChange={(e) => {
-            if (e.target.checked) setSelectedRowKeys(allKeys);
-            else setSelectedRowKeys([]);
-          }}
-        />
-      ),
-      dataIndex: "option",
-      width: 60,
-      fixed: "left" as const,
-      align: "center" as const,
-      render: (_: any, record: Position) => (
-        <Checkbox
-          checked={selectedRowKeys.includes(record.id.toString())}
-          onChange={(e) => {
-            if (e.target.checked) {
-              setSelectedRowKeys([...selectedRowKeys, record.id.toString()]);
-            } else {
-              setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.id.toString()));
-            }
-          }}
-        />
-      ),
-    },
+  const handleEdit = (record: Position) => {
+    if (onEdit) {
+      onEdit(record);
+    }
+  };
+
+  const columns: ColumnsType<Position> = [
     {
       title: "Mã chức vụ",
       dataIndex: "code",
       key: "code",
-      fixed: "left" as const,
-      width: 150,
-      align: "center" as const,
-      render: (code: string | null) => code || "-",
+      align: "center",
+      width: 120,
+      fixed: "left",
+      render: (code: string | null, record: Position) => (
+        <Typography.Link
+          className="contact-link"
+          onClick={() => {
+            if (onShowClick) {
+              onShowClick(record);
+            } else {
+              navigate(`/crm/position/${record.id}`);
+            }
+          }}
+        >
+          {code || "-"}
+        </Typography.Link>
+      ),
     },
     {
       title: "Tên chức vụ",
       dataIndex: "name",
       key: "name",
-      width: 150,
-      align: "center" as const,
+      align: "center",
+      width: 200,
     },
     {
       title: "Độ ưu tiên",
       dataIndex: "priority_level",
       key: "priority_level",
-      width: 150,
-      align: "center" as const,
+      align: "center",
+      width: 100,
       render: (priority: number | null) => priority ?? "-",
     },
     {
       title: "Ghi chú",
       dataIndex: "note",
       key: "note",
-      width: 150,
-      align: "center" as const,
+      align: "center",
+      width: 200,
       render: (note: string | null) => note || "-",
     },
     {
       title: "",
       key: "action",
-      fixed: "right" as const,
-      width: 60,
-      align: "center" as const,
+      width: 80,
+      align: "center",
       render: (_: any, record: Position) => (
-        <Button
-          type="link"
-          icon={<EditOutlined />}
-          onClick={() => onEdit?.(record)}
-          className="base-edit-icon"
-        />
+        <Space size="middle">
+          <Button
+            className="base-edit-icon"
+            type="link"
+            onClick={() => handleEdit(record)}
+            icon={<EditOutlined />}
+          />
+        </Space>
       ),
     },
   ];
 
   return (
     <Table
+      {...(selectable && setSelectedRowKeys
+        ? {
+          rowSelection: {
+            selectedRowKeys,
+            onChange: (keys: Key[]) => setSelectedRowKeys(keys),
+          },
+        }
+        : {})}
       className="base-table"
       columns={columns}
       dataSource={data}
       loading={loading}
       pagination={false}
       rowKey="id"
-      scroll={{ x: 800, y: 600 }}
-      rowClassName={(record: Position) =>
-        selectedRowKeys.includes(record.id.toString()) ? "selected-row" : ""
-      }
+      scroll={{ x: "max-content" }}
     />
   );
 };
