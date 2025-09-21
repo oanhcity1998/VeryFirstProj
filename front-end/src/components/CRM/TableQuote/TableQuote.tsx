@@ -1,11 +1,10 @@
 import React, { useMemo } from "react";
-import { Table, Tooltip, Typography } from "antd";
+import { Button, Space, Table, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
 import { useNavigate, generatePath } from "react-router-dom";
+import { Key } from "antd/lib/table/interface";
 import { ROUTES_APP } from "@/app/routes";
-
-const { Link } = Typography;
 
 export interface Quote {
   id: string;
@@ -23,8 +22,8 @@ export interface Quote {
 
 interface TableQuoteProps {
   data: Quote[];
-  selectedRowKeys?: React.Key[];
-  setSelectedRowKeys?: (keys: string[]) => void;
+  selectedRowKeys?: Key[];
+  setSelectedRowKeys?: (keys: Key[]) => void;
   onEditClick?: (record: Quote) => void;
   onShowClick?: (record: Quote) => void;
   onRowClick?: (record: Quote) => void;
@@ -41,6 +40,7 @@ const TableQuote: React.FC<TableQuoteProps> = ({
   selectedRowKeys,
   setSelectedRowKeys,
   onEditClick,
+  onShowClick,
   onRowClick,
   loading = false,
   selectable = true,
@@ -50,6 +50,12 @@ const TableQuote: React.FC<TableQuoteProps> = ({
   filterMainContact = null,
 }) => {
   const navigate = useNavigate();
+
+  const handleEdit = (record: Quote) => {
+    if (onEditClick) {
+      onEditClick(record);
+    }
+  };
 
   const filteredData = useMemo(() => {
     return data.filter((item) => {
@@ -69,20 +75,25 @@ const TableQuote: React.FC<TableQuoteProps> = ({
       title: "Mã báo giá",
       dataIndex: "code",
       key: "code",
+      align: "center" as const,
       width: 150,
+      fixed: "left" as const,
     },
     {
       title: "Tên báo giá",
       dataIndex: "name",
       key: "name",
-      width: 150,
       align: "center" as const,
+      width: 150,
+      fixed: "left" as const,
       render: (text: string, record: Quote) =>
         showEdit ? (
-          <Link
+          <Typography.Link
             className="contract-link"
             onClick={() => {
-              if (onRowClick) {
+              if (onShowClick) {
+                onShowClick(record);
+              } else if (onRowClick) {
                 onRowClick(record);
               } else {
                 navigate(
@@ -92,7 +103,7 @@ const TableQuote: React.FC<TableQuoteProps> = ({
             }}
           >
             {text}
-          </Link>
+          </Typography.Link>
         ) : (
           <>{text}</>
         ),
@@ -101,12 +112,14 @@ const TableQuote: React.FC<TableQuoteProps> = ({
       title: "Khách hàng",
       dataIndex: "customer",
       key: "customer",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "Tổng giá trị (VND)",
       dataIndex: "total",
       key: "total",
+      align: "center" as const,
       width: 150,
       render: (value?: number) => (typeof value === "number" ? value.toLocaleString("vi-VN") : "0"),
     },
@@ -114,51 +127,56 @@ const TableQuote: React.FC<TableQuoteProps> = ({
       title: "Nhân viên phụ trách",
       dataIndex: "owner",
       key: "owner",
+      align: "center" as const,
       width: 250,
     },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "Người duyệt",
       dataIndex: "approver",
       key: "approver",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "Ngày duyệt",
       dataIndex: "approvedAt",
       key: "approvedAt",
+      align: "center" as const,
       width: 150,
     },
     {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      align: "center" as const,
       width: 150,
     },
     ...(showEdit
       ? [
-          {
-            title: "",
-            key: "action",
-            width: 60,
-            render: (_, record) => (
-              <Tooltip title="Chỉnh sửa">
-                <EditOutlined
-                  className="base-edit-icon"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEditClick?.(record);
-                  }}
-                />
-              </Tooltip>
-            ),
-          },
-        ]
+        {
+          title: "",
+          key: "action",
+          width: 60,
+          align: "center" as const,
+          render: (_: any, record: Quote) => (
+            <Space size="middle">
+              <Button
+                className="base-edit-icon"
+                type="link"
+                onClick={() => handleEdit(record)}
+                icon={<EditOutlined />}
+              />
+            </Space>
+          ),
+        },
+      ]
       : []),
   ];
 
@@ -166,19 +184,19 @@ const TableQuote: React.FC<TableQuoteProps> = ({
     <Table
       {...(selectable && setSelectedRowKeys
         ? {
-            rowSelection: {
-              selectedRowKeys,
-              onChange: (keys) => setSelectedRowKeys(keys as string[]),
-            },
-          }
+          rowSelection: {
+            selectedRowKeys,
+            onChange: (keys: Key[]) => setSelectedRowKeys(keys),
+          },
+        }
         : {})}
+      className="base-table"
       columns={columns}
       dataSource={filteredData}
       loading={loading}
       pagination={false}
       rowKey="id"
-      className="base-table"
-      scroll={{ x: 1050 }}
+      scroll={{ x: "max-content" }}
     />
   );
 };

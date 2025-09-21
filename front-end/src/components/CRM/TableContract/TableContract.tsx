@@ -1,11 +1,10 @@
 import React from "react";
-import { Table, Checkbox, Button, Typography, Tooltip } from "antd";
+import { Button, Space, Table, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { EditOutlined } from "@ant-design/icons";
 import { useNavigate, generatePath } from "react-router-dom";
+import { Key } from "antd/lib/table/interface";
 import { ROUTES_APP } from "@/app/routes";
-
-const { Link } = Typography;
 
 export interface Product {
   key: number;
@@ -33,191 +32,162 @@ export interface Contract {
 
 interface TableContractProps {
   data?: Contract[];
-  selectedRowKeys?: string[];
-  setSelectedRowKeys?: (keys: string[]) => void;
-  onEditClick?: (record: Contract) => void;
+  selectedRowKeys?: Key[];
+  setSelectedRowKeys?: (keys: Key[]) => void;
   onEdit?: (record: Contract) => void;
-  onRowClick?: (record: Contract) => void;
+  onShowClick?: (record: Contract) => void;
   loading?: boolean;
+  selectable?: boolean;
   showEdit?: boolean;
 }
 
 const TableContract: React.FC<TableContractProps> = ({
   data = [],
-  selectedRowKeys = [],
+  selectedRowKeys,
   setSelectedRowKeys,
-  onEditClick,
-  onRowClick,
+  onEdit,
+  onShowClick,
   loading = false,
+  selectable = true,
   showEdit = true,
 }) => {
   const navigate = useNavigate();
-  const allKeys = data.map((item) => item.id);
-  const isAllChecked = selectedRowKeys.length === data.length && data.length > 0;
-  const isIndeterminate = selectedRowKeys.length > 0 && selectedRowKeys.length < data.length;
+
+  const handleEdit = (record: Contract) => {
+    if (onEdit) {
+      onEdit(record);
+    }
+  };
 
   const columns: ColumnsType<Contract> = [
-    {
-      title: (
-        <Checkbox
-          indeterminate={isIndeterminate}
-          checked={isAllChecked}
-          onChange={(e) => {
-            if (e.target.checked && setSelectedRowKeys) {
-              setSelectedRowKeys(allKeys);
-            } else if (setSelectedRowKeys) {
-              setSelectedRowKeys([]);
-            }
-          }}
-          disabled={data.length === 0 || !setSelectedRowKeys}
-        />
-      ),
-      dataIndex: "option",
-      width: 60,
-      fixed: "left",
-      align: "center",
-      render: (_: any, record: Contract) => (
-        <Checkbox
-          checked={selectedRowKeys.includes(record.id)}
-          onChange={(e) => {
-            if (e.target.checked && setSelectedRowKeys) {
-              setSelectedRowKeys([...selectedRowKeys, record.id]);
-            } else if (setSelectedRowKeys) {
-              setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.id));
-            }
-          }}
-          disabled={!setSelectedRowKeys}
-        />
-      ),
-    },
     {
       title: "Mã hợp đồng",
       dataIndex: "code",
       key: "code",
+      align: "center" as const,
       width: 150,
-      align: "center",
-      fixed: "left",
+      fixed: "left" as const,
     },
     {
       title: "Tên hợp đồng",
       dataIndex: "name",
       key: "name",
-      width: 150,
       align: "center" as const,
-      render: (text: string, record: Contract) =>
-        showEdit ? (
-          <Link
-            className="contract-link"
-            onClick={() => {
-              if (onRowClick) {
-                onRowClick(record);
-              } else {
-                navigate(
-                  generatePath(ROUTES_APP.crm.contractDetail, { id: record.id }) + `?loai=hopdong`
-                );
-              }
-            }}
-          >
-            {text}
-          </Link>
-        ) : (
-          <>{text}</>
-        ),
+      width: 150,
+      fixed: "left" as const,
+      render: (text: string, record: Contract) => (
+        <Typography.Link
+          className="contract-link"
+          onClick={() => {
+            if (onShowClick) {
+              onShowClick(record);
+            } else {
+              navigate(
+                generatePath(ROUTES_APP.crm.contractDetail, { id: record.id }) + `?loai=hopdong`
+              );
+            }
+          }}
+        >
+          {text}
+        </Typography.Link>
+      ),
     },
     {
       title: "Loại",
       dataIndex: "type",
       key: "type",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     {
       title: "Khách hàng",
       dataIndex: "customer",
       key: "customer",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     {
       title: "Tổng giá trị (VND)",
       dataIndex: "total",
       key: "total",
+      align: "center" as const,
       width: 150,
-      align: "center",
       render: (value?: number) => (typeof value === "number" ? value.toLocaleString("vi-VN") : "0"),
     },
     {
       title: "Nhân viên phụ trách",
       dataIndex: "owner",
       key: "owner",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     {
       title: "Người duyệt",
       dataIndex: "approver",
       key: "approver",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     {
       title: "Ngày duyệt",
       dataIndex: "approvedAt",
       key: "approvedAt",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      align: "center" as const,
       width: 150,
-      align: "center",
     },
     ...(showEdit
       ? [
-          {
-            title: "",
-            key: "action",
-            width: 60,
-            render: (_, record) => (
-              <Tooltip title="Chỉnh sửa">
-                <EditOutlined
-                  className="base-edit-icon"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEditClick?.(record);
-                  }}
-                />
-              </Tooltip>
-            ),
-          },
-        ]
+        {
+          title: "",
+          key: "action",
+          width: 60,
+          align: "center" as const,
+          render: (_: any, record: Contract) => (
+            <Space size="middle">
+              <Button
+                className="base-edit-icon"
+                type="link"
+                onClick={() => handleEdit(record)}
+                icon={<EditOutlined />}
+              />
+            </Space>
+          ),
+        },
+      ]
       : []),
   ];
 
   return (
     <Table
+      {...(selectable && setSelectedRowKeys
+        ? {
+          rowSelection: {
+            selectedRowKeys,
+            onChange: (keys: Key[]) => setSelectedRowKeys(keys),
+          },
+        }
+        : {})}
       className="base-table"
       columns={columns}
       dataSource={data}
       loading={loading}
       pagination={false}
       rowKey="id"
-      scroll={{ x: 1200 }}
-      rowClassName={(record: Contract) =>
-        selectedRowKeys.includes(record.id) ? "selected-row" : ""
-      }
-      onRow={(record) => ({
-        onClick: () => onRowClick?.(record),
-      })}
+      scroll={{ x: "max-content" }}
     />
   );
 };

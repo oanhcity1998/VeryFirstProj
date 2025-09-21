@@ -240,6 +240,10 @@ body,
   flex-direction: column;
 }
 
+.ant-breadcrumb {
+  margin-bottom: 16px;
+}
+
 /* Table Styling */
 .base-table .ant-table {
   border-radius: 8px;
@@ -274,6 +278,54 @@ body,
   /* bỏ mờ */
   font-weight: normal;
   /* không đậm */
+}
+
+/*Error page*/
+
+/* Wrapper chung cho error page */
+.error-page {
+  min-height: 100vh;
+  background: #f5f6fa;
+}
+
+/* Card hiển thị lỗi */
+.error-card {
+  text-align: center;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 40px 24px;
+}
+
+/* Icon wrapper */
+.error-icon-wrapper {
+  margin-bottom: 24px;
+}
+
+/* Icon mặc định */
+.error-icon {
+  font-size: 64px;
+  color: #fa8c16;
+}
+
+/* Icon cho warning/unauthorized */
+.error-icon.warning {
+  color: #fa541c;
+}
+
+/* Title lỗi */
+.error-title {
+  margin-bottom: 8px;
+}
+
+/* Subtitle mô tả lỗi */
+.error-subtitle {
+  margin-bottom: 32px;
+  color: #595959;
+}
+
+/* Footer bản quyền */
+.error-footer {
+  margin-top: 40px;
 }
 
 /* ============================================================== */
@@ -351,53 +403,6 @@ body,
   /* bỏ border nếu muốn */
 }
 
-/*Error page*/
-
-/* Wrapper chung cho error page */
-.error-page {
-  min-height: 100vh;
-  background: #f5f6fa;
-}
-
-/* Card hiển thị lỗi */
-.error-card {
-  text-align: center;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 40px 24px;
-}
-
-/* Icon wrapper */
-.error-icon-wrapper {
-  margin-bottom: 24px;
-}
-
-/* Icon mặc định */
-.error-icon {
-  font-size: 64px;
-  color: #fa8c16;
-}
-
-/* Icon cho warning/unauthorized */
-.error-icon.warning {
-  color: #fa541c;
-}
-
-/* Title lỗi */
-.error-title {
-  margin-bottom: 8px;
-}
-
-/* Subtitle mô tả lỗi */
-.error-subtitle {
-  margin-bottom: 32px;
-  color: #595959;
-}
-
-/* Footer bản quyền */
-.error-footer {
-  margin-top: 40px;
-}
 
 .filter-footer {
   display: flex;
