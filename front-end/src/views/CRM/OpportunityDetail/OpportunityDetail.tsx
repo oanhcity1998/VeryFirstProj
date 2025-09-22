@@ -417,7 +417,7 @@ const OpportunityDetail = () => {
               label: "Hoạt động",
               children: (
                 <>
-                  <div className="header-container">
+                  <div className="form-header-container">
                     <h3>Danh sách hoạt động</h3>
 
                     <Space className="margin-bottom-16">

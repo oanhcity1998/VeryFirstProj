@@ -217,7 +217,7 @@ const ContractDetail: React.FC<ContractDetailProps> = ({ role = "Nhân viên", l
 // Small helper component for read-only fields
 const FormItem: React.FC<{ label: string; value: string }> = ({ label, value }) => (
   <div className="margin-bottom-16">
-    <label className="form-item">{label}</label>
+    <label>{label}</label>
     <Input value={value} disabled />
   </div>
 );

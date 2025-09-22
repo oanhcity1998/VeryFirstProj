@@ -193,7 +193,7 @@ export const DebtReportForm = ({
   };
 
   const renderHeader = (label: string, key: string) => (
-    <div className="header-container">
+    <div className="form-header-container">
       <span>{label}</span>
       {key === "init" && isEdit && (
         <Form.Item name="status" className="width-150 margin-bottom-0">

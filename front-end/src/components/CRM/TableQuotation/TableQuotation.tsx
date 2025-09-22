@@ -52,8 +52,8 @@ export const TableQuotation: React.FC<TableQuotationProps> = ({
 
       const matchProduct = filterProduct
         ? item.products.some((p) =>
-          p.productName.toLowerCase().includes(filterProduct.toLowerCase())
-        )
+            p.productName.toLowerCase().includes(filterProduct.toLowerCase())
+          )
         : true;
 
       const matchVat = filterVat !== null ? item.products.some((p) => p.vat === filterVat) : true;
@@ -83,7 +83,6 @@ export const TableQuotation: React.FC<TableQuotationProps> = ({
             }
           }}
         >
-          <FileTextOutlined className="icon-link" />
           {text}
         </Typography.Link>
       ),
@@ -164,11 +163,11 @@ export const TableQuotation: React.FC<TableQuotationProps> = ({
     <Table<Quotation>
       {...(selectable && setSelectedRowKeys
         ? {
-          rowSelection: {
-            selectedRowKeys,
-            onChange: (keys: Key[]) => setSelectedRowKeys(keys),
-          },
-        }
+            rowSelection: {
+              selectedRowKeys,
+              onChange: (keys: Key[]) => setSelectedRowKeys(keys),
+            },
+          }
         : {})}
       className="base-table"
       columns={columns}

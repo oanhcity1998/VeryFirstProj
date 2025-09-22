@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import { Key, use, useEffect, useState } from "react";
 import { Button, Space, Modal, message, Upload, Select, DatePicker } from "antd";
 import { PlusOutlined, DeleteOutlined, InboxOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
@@ -179,7 +179,7 @@ export const proposalTemplateMocks: ProposalTemplate[] = [
 const ProposalTemplateList: React.FC = () => {
   const [data, setData] = useState<ProposalTemplate[]>(proposalTemplateMocks);
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);

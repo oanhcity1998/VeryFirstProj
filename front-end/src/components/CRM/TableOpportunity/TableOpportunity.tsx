@@ -64,7 +64,7 @@ export const TableOpportunity: React.FC<TableOpportunityProps> = ({
 
       const matchDate = hasValidDateRange
         ? dayjs(item.expectedCloseDate).isSameOrAfter(dayjs(filterDate[0]), "day") &&
-        dayjs(item.expectedCloseDate).isSameOrBefore(dayjs(filterDate[1]), "day")
+          dayjs(item.expectedCloseDate).isSameOrBefore(dayjs(filterDate[1]), "day")
         : true;
 
       return matchSearch && matchPriority && matchStage && matchDate;
@@ -90,7 +90,6 @@ export const TableOpportunity: React.FC<TableOpportunityProps> = ({
             }
           }}
         >
-          <FileTextOutlined className="icon-link" />
           {text}
         </Typography.Link>
       ),
@@ -188,11 +187,11 @@ export const TableOpportunity: React.FC<TableOpportunityProps> = ({
         <Table<Opportunity>
           {...(selectable && setSelectedRowKeys
             ? {
-              rowSelection: {
-                selectedRowKeys,
-                onChange: (keys: Key[]) => setSelectedRowKeys(keys),
-              },
-            }
+                rowSelection: {
+                  selectedRowKeys,
+                  onChange: (keys: Key[]) => setSelectedRowKeys(keys),
+                },
+              }
             : {})}
           className="base-table"
           columns={columns}

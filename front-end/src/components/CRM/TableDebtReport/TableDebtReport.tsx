@@ -69,7 +69,6 @@ export const TableDebtReport: React.FC<TableDebtReportProps> = ({
             }
           }}
         >
-          <FileTextOutlined className="icon-link" />
           {text}
         </Typography.Link>
       ),
@@ -170,11 +169,11 @@ export const TableDebtReport: React.FC<TableDebtReportProps> = ({
     <Table<DebtReport>
       {...(selectable && setSelectedRowKeys
         ? {
-          rowSelection: {
-            selectedRowKeys,
-            onChange: (keys: Key[]) => setSelectedRowKeys(keys),
-          },
-        }
+            rowSelection: {
+              selectedRowKeys,
+              onChange: (keys: Key[]) => setSelectedRowKeys(keys),
+            },
+          }
         : {})}
       className="base-table"
       columns={columns}

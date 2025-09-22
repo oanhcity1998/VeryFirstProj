@@ -29,7 +29,7 @@ import DebtReportList from "./views/CRM/DebtReportList/DebtReportList";
 import DebtReportDetail from "./views/CRM/DebtReportDetail/DebtReportDetail";
 import ProposalTemplateList from "./views/HRM/ProposalTemplateList/ProposalTemplateList";
 import ProposalList from "./views/HRM/ProposalList/ProposalList";
-// import ProposalDetail 
+// import ProposalDetail
 
 import Login from "./views/public/Login/Login";
 import EmployeeList from "./views/HRM/EmployeeList/EmployeeList";
@@ -39,12 +39,13 @@ import ProposalTemplateDetail from "./views/HRM/ProposalTemplateDetail/ProposalT
 import { NotFound } from "./views/public/NotFound/NotFound";
 import { NotAuthenticated } from "./views/public/NotAuthenticated/NotAuthenticated";
 import ProtectedRoute from "./components/routing/ProtectedRoute";
+import ProposalDetail from "./views/HRM/ProposalDetail/ProposalDetail";
 
 export default function App() {
   return (
     <ConfigProvider locale={viVN}>
       <BrowserRouter>
-        <Routes >
+        <Routes>
           <Route path={ROUTES_APP.login} element={<Login />} />
           <Route path={ROUTES_APP.home} element={<Home />} />
           <Route path={ROUTES_APP.notAuthenticated} element={<NotAuthenticated />} />
@@ -118,16 +119,13 @@ export default function App() {
 
             {/* Đề xuất */}
             <Route path={ROUTES_APP.hrm.proposalList} element={<ProposalList />} />
-            {/* <Route
-              path={ROUTES_APP.hrm.proposalDetail}
-              element={<ProposalDetail />}
-            /> */}
+            <Route path={ROUTES_APP.hrm.proposalDetail} element={<ProposalDetail />} />
           </Route>
           {/* </Route> */}
 
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
-    </ConfigProvider >
+    </ConfigProvider>
   );
 }

@@ -33,6 +33,8 @@ const SidebarMenuHRM: React.FC<SidebarMenuHRMProps> = ({ collapsed }) => {
     selectedKey = "5";
   } else if (location.pathname.startsWith(ROUTES_APP.hrm.proposalTemplateList)) {
     selectedKey = "6";
+  } else if (location.pathname.startsWith(ROUTES_APP.hrm.proposalList)) {
+    selectedKey = "7";
   }
 
   const items = [

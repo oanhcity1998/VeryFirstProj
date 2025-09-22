@@ -32,7 +32,7 @@
 //   return (
 //     <>
 //       {/* Breadcrumb */}
-//       <div className="header-container">
+//       <div className="form-header-container">
 //         <Breadcrumb
 //           items={[
 //             { title: <Link to={ROUTES_APP.crm.debtReportList}>Danh sách báo cáo công nợ</Link> },

@@ -89,7 +89,7 @@
 //   };
 
 //   const renderHeader = (label: string, key: string) => (
-//     <div className="header-container">
+//     <div className="form-header-container">
 //       <span className="font-bolder">{label}</span>
 //       {key === "init" && (
 //         <Row className="header-row">

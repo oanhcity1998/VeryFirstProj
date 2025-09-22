@@ -345,7 +345,7 @@ const ContractForm: React.FC<ContractFormProps> = ({
         </Card>
 
         <Card className="card-section">
-          <div className="header-container">
+          <div className="form-header-container">
             <h3 className="card-title">Danh sách sản phẩm</h3>
             <Button type="primary" onClick={handleAddProduct}>
               <PlusOutlined /> Thêm sản phẩm

@@ -13,11 +13,20 @@ body,
   border: none;
 }
 
-.header-container {
+.form-header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
+}
+
+.form-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  position: sticky;
 }
 
 .img-container {
@@ -34,11 +43,6 @@ body,
   padding: 32px;
   text-align: center;
   color: #999;
-}
-
-.link-container {
-  color: #1890ff;
-  cursor: pointer;
 }
 
 .icon-link {
@@ -59,15 +63,6 @@ body,
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-}
-
-.form-actions {
-  margin-top: 16px;
-  display: flex;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: 12px;
-  position: sticky;
 }
 
 .modal-scroll .ant-modal-body {
@@ -97,17 +92,6 @@ body,
   cursor: pointer;
   color: #1890ff;
   padding: 8px;
-}
-
-.form-item {
-  margin-bottom: 16px;
-}
-
-.form-item label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 4px;
-  /* cho label cách nhẹ Input */
 }
 
 .text-bold-margin {
@@ -250,7 +234,7 @@ body,
   overflow: hidden;
 }
 
-.base-table .ant-table-thead>tr>th {
+.base-table .ant-table-thead > tr > th {
   background: #fafafa;
   font-weight: 600;
 }
@@ -403,7 +387,6 @@ body,
   /* bỏ border nếu muốn */
 }
 
-
 .filter-footer {
   display: flex;
   justify-content: space-between;
@@ -425,4 +408,8 @@ body,
   /* color: #fff; */
   background-color: #60a917;
   border-color: #60a917;
+}
+
+.ant-col label {
+  font-weight: 600;
 }
